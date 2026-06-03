@@ -2,9 +2,19 @@
 
 **Story:** [Story 3 — Testcontainers Pilot](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T3.1 | S | Must | _TBD_ | Not started | T1.4 |
+| Field | Value |
+|-------|-------|
+| **ID** | T3.1 |
+| **Type** | Research |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 3 — Testcontainers Pilot |
+| **Estimate** | S |
+| **Priority** | Must |
+| **Labels** | `testcontainers`, `integration-test`, `selection` |
+| **Sprint** | Week 2 |
+| **Depends on** | T1.4 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 The first Testcontainers pilot should de-risk the idea, not stress-test it. Picking a manageable dependency that is already exercised by existing tests gives a fair, low-cost signal about whether the approach is worth expanding.

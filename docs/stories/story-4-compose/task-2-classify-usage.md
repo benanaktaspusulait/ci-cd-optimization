@@ -2,9 +2,19 @@
 
 **Story:** [Story 4 — Docker Compose Rationalisation](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T4.2 | M | Must | _TBD_ | Not started | T4.1 |
+| Field | Value |
+|-------|-------|
+| **ID** | T4.2 |
+| **Type** | Analysis |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 4 — Docker Compose Rationalisation |
+| **Estimate** | M |
+| **Priority** | Must |
+| **Labels** | `docker-compose`, `classification`, `ci-vs-local` |
+| **Sprint** | Week 3 |
+| **Depends on** | T4.1 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 Not every service in the compose file is needed for CI tests — some exist only for local debugging or are leftovers. Classifying them is what makes a safe reduction possible.

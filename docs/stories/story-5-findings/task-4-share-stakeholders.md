@@ -2,9 +2,19 @@
 
 **Story:** [Story 5 — Findings, Ownership & Recommendations](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T5.4 | S | Should | _TBD_ | Not started | T5.3 |
+| Field | Value |
+|-------|-------|
+| **ID** | T5.4 |
+| **Type** | Documentation |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 5 — Findings, Ownership & Recommendations |
+| **Estimate** | S |
+| **Priority** | Should |
+| **Labels** | `stakeholders`, `communication`, `findings` |
+| **Sprint** | Week 4 |
+| **Depends on** | T5.3 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 The pilot's purpose is to inform a decision. Sharing the findings and capturing feedback is what closes the loop and determines whether any patterns move forward.

@@ -2,9 +2,19 @@
 
 **Story:** [Story 3 — Testcontainers Pilot](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T3.4 | S | Should | _TBD_ | Not started | T3.3 |
+| Field | Value |
+|-------|-------|
+| **ID** | T3.4 |
+| **Type** | Documentation |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 3 — Testcontainers Pilot |
+| **Estimate** | S |
+| **Priority** | Should |
+| **Labels** | `testcontainers`, `documentation`, `findings` |
+| **Sprint** | Week 3 |
+| **Depends on** | T3.3 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 A pilot only pays off if its lessons are captured. Clear findings and constraints let stakeholders decide on wider adoption without repeating the experiment.

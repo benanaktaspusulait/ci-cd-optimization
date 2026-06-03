@@ -2,9 +2,19 @@
 
 **Story:** [Story 3 — Testcontainers Pilot](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T3.2 | L | Must | _TBD_ | Not started | T3.1 |
+| Field | Value |
+|-------|-------|
+| **ID** | T3.2 |
+| **Type** | Implementation |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 3 — Testcontainers Pilot |
+| **Estimate** | L |
+| **Priority** | Must |
+| **Labels** | `testcontainers`, `integration-test`, `implementation` |
+| **Sprint** | Week 2 |
+| **Depends on** | T3.1 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 A working, runnable setup is the only way to get real numbers and a real developer-experience signal. Prototyping it for one dependency proves feasibility before any wider commitment.

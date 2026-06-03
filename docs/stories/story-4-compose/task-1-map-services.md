@@ -2,9 +2,19 @@
 
 **Story:** [Story 4 — Docker Compose Rationalisation](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T4.1 | S | Must | _TBD_ | Not started | T1.4 |
+| Field | Value |
+|-------|-------|
+| **ID** | T4.1 |
+| **Type** | Research |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 4 — Docker Compose Rationalisation |
+| **Estimate** | S |
+| **Priority** | Must |
+| **Labels** | `docker-compose`, `mapping`, `inventory` |
+| **Sprint** | Week 3 |
+| **Depends on** | T1.4 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 You cannot rationalise what you have not mapped. A clear inventory of compose services is the foundation for deciding what is genuinely needed in CI.

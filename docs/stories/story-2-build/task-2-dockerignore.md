@@ -2,9 +2,19 @@
 
 **Story:** [Story 2 — Docker Build Optimisation](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T2.2 | S | Must | _TBD_ | Not started | T2.1 |
+| Field | Value |
+|-------|-------|
+| **ID** | T2.2 |
+| **Type** | Implementation |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 2 — Docker Build Optimisation |
+| **Estimate** | S |
+| **Priority** | Must |
+| **Labels** | `docker`, `dockerignore`, `build-context` |
+| **Sprint** | Week 2 |
+| **Depends on** | T2.1 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 A missing or weak `.dockerignore` sends unnecessary files into the build context, slowing builds and invalidating cache when irrelevant files change. This is one of the cheapest, lowest-risk wins available.

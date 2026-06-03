@@ -2,9 +2,19 @@
 
 **Story:** [Story 5 — Findings, Ownership & Recommendations](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T5.1 | M | Must | _TBD_ | Not started | T2.4, T3.4, T4.3 |
+| Field | Value |
+|-------|-------|
+| **ID** | T5.1 |
+| **Type** | Documentation |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 5 — Findings, Ownership & Recommendations |
+| **Estimate** | M |
+| **Priority** | Must |
+| **Labels** | `findings`, `summary`, `consolidation` |
+| **Sprint** | Week 4 |
+| **Depends on** | T2.4, T3.4, T4.3 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 Evidence spread across stories is hard to act on. A single consolidated summary turns the pilot into something stakeholders can review and decide on quickly.

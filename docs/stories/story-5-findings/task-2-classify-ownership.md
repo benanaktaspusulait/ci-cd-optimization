@@ -2,9 +2,19 @@
 
 **Story:** [Story 5 — Findings, Ownership & Recommendations](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T5.2 | S | Must | _TBD_ | Not started | T5.1 |
+| Field | Value |
+|-------|-------|
+| **ID** | T5.2 |
+| **Type** | Analysis |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 5 — Findings, Ownership & Recommendations |
+| **Estimate** | S |
+| **Priority** | Must |
+| **Labels** | `ownership`, `cst-vs-eto`, `classification` |
+| **Sprint** | Week 4 |
+| **Depends on** | T5.1 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 Some improvements are safe to own and validate inside CST; others touch shared infrastructure and need platform/ETO involvement. Classifying them prevents progressing wider-impact changes without the right ownership.

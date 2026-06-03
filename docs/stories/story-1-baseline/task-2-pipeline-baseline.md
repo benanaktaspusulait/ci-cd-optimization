@@ -2,9 +2,19 @@
 
 **Story:** [Story 1 — Baseline & Pilot Scope](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T1.2 | M | Must | _TBD_ | Not started | T1.1 |
+| Field | Value |
+|-------|-------|
+| **ID** | T1.2 |
+| **Type** | Research |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 1 — Baseline & Pilot Scope |
+| **Estimate** | M |
+| **Priority** | Must |
+| **Labels** | `baseline`, `pipeline`, `metrics` |
+| **Sprint** | Week 1 |
+| **Depends on** | T1.1 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 Pipeline duration is the headline metric stakeholders care about. Capturing it now, with a documented method, makes any later improvement provable rather than anecdotal.

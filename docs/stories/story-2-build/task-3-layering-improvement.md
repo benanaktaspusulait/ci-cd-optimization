@@ -2,9 +2,19 @@
 
 **Story:** [Story 2 — Docker Build Optimisation](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T2.3 | M | Must | _TBD_ | Not started | T2.1 |
+| Field | Value |
+|-------|-------|
+| **ID** | T2.3 |
+| **Type** | Implementation |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 2 — Docker Build Optimisation |
+| **Estimate** | M |
+| **Priority** | Must |
+| **Labels** | `docker`, `dockerfile`, `layering`, `cache` |
+| **Sprint** | Week 2 |
+| **Depends on** | T2.1 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 The biggest build-time wins usually come from ordering layers so dependencies are cached separately from source code, and from using build cache mounts. Applying one focused change keeps the impact measurable and easy to review.

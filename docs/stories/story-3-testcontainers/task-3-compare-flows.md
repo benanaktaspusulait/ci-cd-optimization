@@ -2,9 +2,19 @@
 
 **Story:** [Story 3 — Testcontainers Pilot](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T3.3 | M | Should | _TBD_ | Not started | T3.2 |
+| Field | Value |
+|-------|-------|
+| **ID** | T3.3 |
+| **Type** | Analysis |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 3 — Testcontainers Pilot |
+| **Estimate** | M |
+| **Priority** | Should |
+| **Labels** | `testcontainers`, `docker-compose`, `comparison` |
+| **Sprint** | Week 3 |
+| **Depends on** | T3.2 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 The decision to adopt Testcontainers should rest on a like-for-like comparison, not impressions. Comparing both flows on the same dependency makes the trade-offs explicit.

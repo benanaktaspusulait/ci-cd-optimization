@@ -2,9 +2,19 @@
 
 **Story:** [Story 2 — Docker Build Optimisation](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T2.1 | M | Must | _TBD_ | Not started | T1.3 |
+| Field | Value |
+|-------|-------|
+| **ID** | T2.1 |
+| **Type** | Analysis |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 2 — Docker Build Optimisation |
+| **Estimate** | M |
+| **Priority** | Must |
+| **Labels** | `docker`, `dockerfile`, `build-context` |
+| **Sprint** | Week 2 |
+| **Depends on** | T1.3 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 Optimisation should be evidence-led, not guesswork. Reviewing the current Dockerfile reveals where the cache breaks and which layers are rebuilt unnecessarily, so effort goes where it actually helps.

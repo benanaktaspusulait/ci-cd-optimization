@@ -2,9 +2,19 @@
 
 **Story:** [Story 1 — Baseline & Pilot Scope](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T1.3 | S | Must | _TBD_ | Not started | T1.1 |
+| Field | Value |
+|-------|-------|
+| **ID** | T1.3 |
+| **Type** | Research |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 1 — Baseline & Pilot Scope |
+| **Estimate** | S |
+| **Priority** | Must |
+| **Labels** | `baseline`, `docker`, `image-size` |
+| **Sprint** | Week 1 |
+| **Depends on** | T1.1 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 Build optimisation (Story 2) targets build time and image size directly. These numbers must exist before changes are made, otherwise the optimisation cannot be judged.

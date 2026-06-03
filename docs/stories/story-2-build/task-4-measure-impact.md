@@ -2,9 +2,19 @@
 
 **Story:** [Story 2 — Docker Build Optimisation](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T2.4 | M | Should | _TBD_ | Not started | T2.3 |
+| Field | Value |
+|-------|-------|
+| **ID** | T2.4 |
+| **Type** | Analysis |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 2 — Docker Build Optimisation |
+| **Estimate** | M |
+| **Priority** | Should |
+| **Labels** | `docker`, `metrics`, `before-after` |
+| **Sprint** | Week 3 |
+| **Depends on** | T2.3 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 A change is only worth keeping if it measurably helps. Comparing against the Story 1 baseline turns the optimisation into evidence stakeholders can trust.

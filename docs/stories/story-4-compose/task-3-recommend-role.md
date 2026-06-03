@@ -2,9 +2,19 @@
 
 **Story:** [Story 4 — Docker Compose Rationalisation](./README.md)
 
-| ID | Estimate | Priority | Owner | Status | Depends on |
-|----|:--------:|:--------:|-------|--------|------------|
-| T4.3 | M | Should | _TBD_ | Not started | T3.4, T4.2 |
+| Field | Value |
+|-------|-------|
+| **ID** | T4.3 |
+| **Type** | Documentation |
+| **Epic** | Pilot Container & CI/CD Optimisation |
+| **Story** | Story 4 — Docker Compose Rationalisation |
+| **Estimate** | M |
+| **Priority** | Should |
+| **Labels** | `docker-compose`, `recommendation`, `rationalisation` |
+| **Sprint** | Week 4 |
+| **Depends on** | T3.4, T4.2 |
+| **Owner** | _TBD_ |
+| **Status** | Not started |
 
 ## Why
 The pilot's aim is not to remove Docker Compose, but to right-size its role: lean in CI, still useful locally. A clear recommendation prevents accidental over-reach and preserves valuable local workflows.
