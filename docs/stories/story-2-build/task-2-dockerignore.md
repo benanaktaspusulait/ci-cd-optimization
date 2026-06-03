@@ -36,9 +36,7 @@ build
 .vscode
 *.iml
 *.log
-node_modules
 .DS_Store
-coverage
 .tmp
 ```
 

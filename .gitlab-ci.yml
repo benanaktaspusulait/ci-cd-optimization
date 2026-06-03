@@ -4,9 +4,9 @@
 # This file is a starting point; adapt it to the pilot repository's existing pipeline structure.
 #
 # References:
-#   ADR-0005: BuildKit cache + layered multi-stage builds
-#   ADR-0007: CI runner Docker execution mode
-#   ADR-0008: Remote cache (platform/ETO prerequisite — see comments below)
+#   ADR-0004: BuildKit cache + layered multi-stage builds
+#   ADR-0005: CI runner Docker execution mode
+#   post-pilot (remote cache): Remote cache (platform/ETO prerequisite — see comments below)
 #   docs/stories/tech-notes.md
 
 ---
@@ -17,7 +17,7 @@ variables:
   REGISTRY_IMAGE: "registry.example.com/fdp/pilot-service"   # TODO: update in T1.1
   DOCKER_BUILDKIT: "1"
 
-  # Remote cache — requires platform/ETO registry namespace (ADR-0008).
+  # Remote cache — requires platform/ETO registry namespace (post-pilot (remote cache)).
   # Comment out the CACHE_FROM/CACHE_TO lines until infra is provisioned.
   CACHE_IMAGE: "${REGISTRY_IMAGE}/cache"
 
@@ -35,14 +35,14 @@ stages:
 # ─── Default ──────────────────────────────────────────────────────────────────
 default:
   tags:
-    - docker   # TODO: confirm runner tag with platform/ETO (ADR-0007)
+    - docker   # TODO: confirm runner tag with platform/ETO (ADR-0005)
 
 # ─── Build ────────────────────────────────────────────────────────────────────
 build-image:
   stage: build
   image: docker:24-cli
   services:
-    # Docker-in-Docker — assess with platform/ETO whether socket mount is preferred (ADR-0007).
+    # Docker-in-Docker — assess with platform/ETO whether socket mount is preferred (ADR-0005).
     - name: docker:24-dind
       alias: docker
   variables:
@@ -58,7 +58,7 @@ build-image:
     - |
       docker buildx build \
         --file Dockerfile \
-        # Remote cache (ADR-0008) — uncomment once platform/ETO provisions the cache namespace:
+        # Remote cache (post-pilot (remote cache)) — uncomment once platform/ETO provisions the cache namespace:
         # --cache-from=type=registry,ref=${CACHE_IMAGE}:main \
         # --cache-from=type=registry,ref=${CACHE_IMAGE}:${CI_COMMIT_REF_SLUG} \
         # --cache-to=type=registry,ref=${CACHE_IMAGE}:${CI_COMMIT_REF_SLUG},mode=max \
@@ -82,7 +82,7 @@ build-image:
 # ─── Unit tests ───────────────────────────────────────────────────────────────
 unit-test:
   stage: test
-  image: eclipse-temurin:17-jdk   # TODO: align with ADR-0006 base image once provisioned
+  image: eclipse-temurin:17-jdk   # TODO: align with post-pilot (base image) base image once provisioned
   cache:
     key: "$CI_COMMIT_REF_SLUG-maven"
     paths:
@@ -101,12 +101,12 @@ unit-test:
 # ─── Integration tests ────────────────────────────────────────────────────────
 #
 # T3.2 decision: Docker Compose (current) vs Testcontainers (pilot candidate).
-# ADR-0007 governs the Docker mode available to integration tests in CI.
+# ADR-0005 governs the Docker mode available to integration tests in CI.
 # Until T3.2 is complete, Docker Compose is used.
 #
 integration-test:
   stage: integration-test
-  image: eclipse-temurin:17-jdk   # TODO: align with ADR-0006 base image
+  image: eclipse-temurin:17-jdk   # TODO: align with post-pilot (base image) base image
   services:
     - name: docker:24-dind
       alias: docker

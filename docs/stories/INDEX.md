@@ -16,7 +16,7 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 | T1.3 | [Capture Docker build & image-size baseline](story-1-baseline/task-3-build-image-baseline.md) | S | _TBD_ | Not started | Week 1 |
 | T1.4 | [Capture integration-test baseline](story-1-baseline/task-4-integration-test-baseline.md) | M | _TBD_ | Not started | Week 1 |
 
-### [Story 2 — Docker Build Optimisation](story-2-build/README.md) · [ADR-0005](../adr/0005-buildkit-cache-and-layering.md)
+### [Story 2 — Docker Build Optimisation](story-2-build/README.md) · [ADR-0004](../adr/0004-buildkit-cache-and-layering.md)
 
 | ID | Task | Est | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
@@ -25,7 +25,7 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 | T2.3 | [Apply Dockerfile layering / cache improvement](story-2-build/task-3-layering-improvement.md) | M | _TBD_ | Not started | Week 2 |
 | T2.4 | [Measure local & CI build impact](story-2-build/task-4-measure-impact.md) | M | _TBD_ | Not started | Week 3 |
 
-### [Story 3 — Testcontainers Pilot](story-3-testcontainers/README.md) · [ADR-0003](../adr/0003-testcontainers-for-integration-tests.md)
+### [Story 3 — Testcontainers Pilot](story-3-testcontainers/README.md) · [ADR-0002](../adr/0002-testcontainers-for-integration-tests.md)
 
 | ID | Task | Est | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
@@ -34,7 +34,7 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 | T3.3 | [Compare with docker-compose flow](story-3-testcontainers/task-3-compare-flows.md) | M | _TBD_ | Not started | Week 3 |
 | T3.4 | [Document findings & constraints](story-3-testcontainers/task-4-document-findings.md) | S | _TBD_ | Not started | Week 3 |
 
-### [Story 4 — Docker Compose Rationalisation](story-4-compose/README.md) · [ADR-0004](../adr/0004-reduce-compose-in-ci.md)
+### [Story 4 — Docker Compose Rationalisation](story-4-compose/README.md) · [ADR-0003](../adr/0003-reduce-compose-in-ci.md)
 
 | ID | Task | Est | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|

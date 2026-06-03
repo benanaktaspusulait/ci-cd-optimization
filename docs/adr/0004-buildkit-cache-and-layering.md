@@ -1,4 +1,4 @@
-# ADR-0005: Use BuildKit cache + layered multi-stage builds
+# ADR-0004: Use BuildKit cache + layered multi-stage builds
 
 - **Status:** Proposed
 - **Date:** 2026-06-03

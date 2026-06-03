@@ -1,6 +1,6 @@
-# ADR-0002: Run a measured pilot, not a big-bang rollout
+# ADR-0001: Run a measured pilot, not a big-bang rollout
 
-- **Status:** Accepted
+- **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** Pilot team, stakeholders
 - **Related:** [Epic](../../README.md), [Project plan](../../PROJECT-PLAN.md)

@@ -9,14 +9,11 @@ A short, immutable record of one architecturally significant decision. When a de
 
 | ID | Title | Status |
 |----|-------|--------|
-| [ADR-0001](0001-record-architecture-decisions.md) | Record architecture decisions | Accepted |
-| [ADR-0002](0002-pilot-not-rollout.md) | Run a measured pilot, not a big-bang rollout | Accepted |
-| [ADR-0003](0003-testcontainers-for-integration-tests.md) | Use Testcontainers for selected integration tests | Proposed |
-| [ADR-0004](0004-reduce-compose-in-ci.md) | Reduce Docker Compose role in CI, keep it for local | Proposed |
-| [ADR-0005](0005-buildkit-cache-and-layering.md) | Use BuildKit cache + layered multi-stage builds | Proposed |
-| [ADR-0006](0006-base-image-strategy.md) | Use a layered base-image hierarchy | Proposed |
-| [ADR-0007](0007-ci-runner-docker-mode.md) | Choose CI runner Docker execution mode for Testcontainers | Proposed |
-| [ADR-0008](0008-remote-cache-infra.md) | BuildKit remote cache requires platform/ETO infrastructure | Proposed |
+| [ADR-0001](0001-pilot-not-rollout.md) | Run a measured pilot, not a big-bang rollout | Proposed |
+| [ADR-0002](0002-testcontainers-for-integration-tests.md) | Use Testcontainers for selected integration tests | Proposed |
+| [ADR-0003](0003-reduce-compose-in-ci.md) | Reduce Docker Compose role in CI, keep it for local | Proposed |
+| [ADR-0004](0004-buildkit-cache-and-layering.md) | Use BuildKit cache + layered multi-stage builds | Proposed |
+| [ADR-0005](0005-ci-runner-docker-mode.md) | Choose CI runner Docker execution mode for Testcontainers | Proposed |
 
 ## Statuses
 `Proposed` → under discussion · `Accepted` → decided · `Superseded by ADR-XXXX` · `Deprecated`.

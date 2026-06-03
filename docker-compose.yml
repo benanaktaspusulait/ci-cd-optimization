@@ -8,16 +8,16 @@
 #   docker compose down -v        # stop and remove volumes (clean state)
 #
 # References:
-#   ADR-0004: Reduce Docker Compose role in CI, keep it for local
+#   ADR-0003: Reduce Docker Compose role in CI, keep it for local
 #   docs/stories/story-4-compose/
 
 ---
 services:
 
   # ── Redis ──────────────────────────────────────────────────────────────────
-  # Candidate for replacement with Testcontainers in T3.1 / T3.2 (ADR-0003).
+  # Candidate for replacement with Testcontainers in T3.1 / T3.2 (ADR-0002).
   redis:
-    image: redis:7-alpine   # TODO: pin to digest after ADR-0006 base-image decision
+    image: redis:7-alpine   # TODO: pin to digest after base-image decision (post-pilot)
     ports:
       - "6379:6379"
     healthcheck:

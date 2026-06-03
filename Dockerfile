@@ -4,19 +4,19 @@
 # This file demonstrates the target pattern post-optimisation (Stories 2 & 3).
 #
 # Pattern: multi-stage build — separate dependency resolution from source compilation.
-# References: ADR-0005, ADR-0006, docs/stories/tech-notes.md
+# References: ADR-0004, post-pilot (base image), docs/stories/tech-notes.md
 #
 # TODOs before use:
-#   - Replace base image tags with org-approved images once ADR-0006 is implemented.
+#   - Replace base image tags with org-approved images once post-pilot (base image) is implemented.
 #   - Confirm Maven wrapper path (./mvnw) matches pilot repo.
 #   - Adjust EXPOSE port to match the application.
 #   - Confirm non-root user UID matches org policy (SECURITY.md).
 
 # ── Stage 1: dependency resolution ──────────────────────────────────────────
 # Copy only dependency metadata first so this layer is cached independently of source changes.
-# Cache mount keeps the Maven local repo across builds (local only; remote cache = ADR-0008).
+# Cache mount keeps the Maven local repo across builds (local only; remote cache = post-pilot (remote cache)).
 FROM eclipse-temurin:17-jdk-jammy AS deps
-# TODO: replace with org base-build image once ADR-0006 base images are provisioned.
+# TODO: replace with org base-build image once post-pilot (base image) base images are provisioned.
 
 WORKDIR /app
 
@@ -40,7 +40,7 @@ RUN --mount=type=cache,target=/root/.m2/repository \
 # ── Stage 3: runtime image ────────────────────────────────────────────────────
 # Use a JRE-only image — no JDK, no build tools shipped to production.
 FROM eclipse-temurin:17-jre-jammy AS runtime
-# TODO: replace with org base-runtime image once ADR-0006 base images are provisioned.
+# TODO: replace with org base-runtime image once post-pilot (base image) base images are provisioned.
 
 # Run as a non-root user (SECURITY.md requirement).
 RUN groupadd --gid 1001 appgroup && \

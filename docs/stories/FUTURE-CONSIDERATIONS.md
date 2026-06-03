@@ -43,3 +43,41 @@ These items may surface naturally during the pilot:
 - Story 5 (ownership) should explicitly list which of F1–F7 are CST vs platform/ETO.
 
 When writing the Story 5 consolidated findings, reference this list and recommend which items to pursue next.
+
+---
+
+## Post-pilot architecture decisions (candidates)
+
+These are decisions that will need to be made if the pilot succeeds and the team moves to production. They are **not pilot scope** — they require platform/ETO involvement. Record them as formal ADRs when the decision point arrives.
+
+### Base image strategy
+
+**Context:** Application Dockerfiles currently inherit from arbitrary upstream images (e.g. `eclipse-temurin:17-jre`). There is no shared base-image governance — each repo pins a different tag, CVE patching requires per-repo manual work, and runtime images often include build tooling.
+
+**Proposed pattern:** A four-layer hierarchy: `base-os → base-runtime → base-build → application`. Application Dockerfiles use versioned, digest-pinned `base-runtime` and `base-build` images rather than direct upstream references.
+
+**Why post-pilot:**
+- Requires platform/ETO to build, publish, scan, and maintain the base layers.
+- Needs a rebuild cadence, deprecation policy, and notification process.
+- CST can validate the pattern on one repo; ownership and infrastructure are platform/ETO.
+
+**Consequences if adopted:**
+- (+) CVE patches propagate centrally; smaller images; simpler Dockerfiles; central compliance.
+- (−) Teams lose direct control of runtime env; operational burden on platform/ETO.
+
+### BuildKit remote cache infrastructure
+
+**Context:** GitLab CI runners are ephemeral — no persistent local cache. Without a registry-backed remote cache, every CI build downloads dependencies and rebuilds layers from scratch. The pattern (`--cache-from`/`--cache-to` with registry refs) is documented in [tech-notes](tech-notes.md), but provisioning it requires:
+- Registry storage and retention/eviction policy.
+- Write permissions for CI jobs to a cache namespace.
+- Runner BuildKit support (`docker buildx`).
+- Security: cache images excluded from production promotion paths.
+
+**Why post-pilot:**
+- CST cannot provision the cache namespace without platform/ETO approval.
+- The pipeline duration target (≥20% reduction) may not be fully achievable without remote cache.
+- CST can implement local cache mounts (partial win) in the pilot; remote cache is the next step.
+
+**Consequences if adopted:**
+- (+) Faster CI builds; dependency-heavy layers reused across branches; predictable build time.
+- (−) Registry storage cost; cache invalidation must be controlled; fallback (no-cache build) must still work.

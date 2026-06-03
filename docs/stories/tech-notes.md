@@ -6,7 +6,7 @@ Decisions behind these notes are recorded as [ADRs](../adr/README.md); security 
 ### Base image strategy
 `base-os → base-runtime → base-build → application`. Benefits: standard runtime, shared layers, central patching, easier compliance. Needs: versioned tags, ownership, deprecation policy, scheduled rebuilds, scanning. _(Likely platform/ETO owned — classify in Story 5.)_
 
-### BuildKit remote cache · [ADR-0005](../adr/0005-buildkit-cache-and-layering.md)
+### BuildKit remote cache · [ADR-0004](../adr/0004-buildkit-cache-and-layering.md)
 CI runners often lose local cache between jobs. Use a branch-aware registry cache:
 ```bash
 docker buildx build \
@@ -17,7 +17,7 @@ docker buildx build \
 ```
 Branch builds reuse `main` cache. Keep a working fallback if cache is unavailable. _(Likely platform/ETO owned.)_
 
-### Testcontainers reuse policy · [ADR-0003](../adr/0003-testcontainers-for-integration-tests.md)
+### Testcontainers reuse policy · [ADR-0002](../adr/0002-testcontainers-for-integration-tests.md)
 Local: reuse may be enabled for faster feedback. CI: reuse disabled — clean, deterministic env per run, no hidden shared state.
 
 ### Security & compliance

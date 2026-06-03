@@ -1,4 +1,4 @@
-# ADR-0003: Use Testcontainers for selected integration tests
+# ADR-0002: Use Testcontainers for selected integration tests
 
 - **Status:** Proposed
 - **Date:** 2026-06-03
@@ -14,7 +14,7 @@ We will pilot **Testcontainers** for one selected integration dependency, managi
 ## Consequences
 - **Positive:** isolated, deterministic, per-test environments; better local/CI consistency; reduced reliance on Compose in CI.
 - **Negative / trade-offs:** requires a working Docker runtime in CI; Docker-in-Docker may be slow or restricted (risk R3); a code dependency on Testcontainers.
-- **Follow-ups:** assess CI suitability early (T3.2); if CI is unsuitable, keep Compose in CI and use Testcontainers locally (see ADR-0004).
+- **Follow-ups:** assess CI suitability early (T3.2); if CI is unsuitable, keep Compose in CI and use Testcontainers locally (see ADR-0003).
 
 ## Alternatives considered
 | Option | Pros | Cons | Why not chosen |

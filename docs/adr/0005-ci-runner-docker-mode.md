@@ -1,9 +1,9 @@
-# ADR-0007: Choose CI runner Docker execution mode for Testcontainers
+# ADR-0005: Choose CI runner Docker execution mode for Testcontainers
 
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** CST + platform/ETO (runner configuration)
-- **Related:** [ADR-0003 — Testcontainers](0003-testcontainers-for-integration-tests.md), [PROJECT-PLAN.md — R3](../../PROJECT-PLAN.md), [T3.2](../stories/story-3-testcontainers/task-2-implement-setup.md)
+- **Related:** [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md), [PROJECT-PLAN.md — R3](../../PROJECT-PLAN.md), [T3.2](../stories/story-3-testcontainers/task-2-implement-setup.md)
 
 ## Context
 
@@ -23,7 +23,7 @@ We will assess the available Docker execution modes in T3.2 and select the most 
 
 - **Preferred:** Docker socket mount (if the runner fleet already exposes it and the security posture is acceptable).
 - **Acceptable:** DinD with `--privileged`, restricted to a dedicated runner tag (e.g. `privileged`) — not on general-purpose runners.
-- **Fallback (per ADR-0003):** If neither mode is available or acceptable in CI, Testcontainers runs **locally only**; Docker Compose remains in CI.
+- **Fallback (per ADR-0002):** If neither mode is available or acceptable in CI, Testcontainers runs **locally only**; Docker Compose remains in CI.
 
 The final choice is documented in T3.2 findings and carried into T3.4 and T5.2.
 
@@ -50,4 +50,4 @@ The final choice is documented in T3.2 findings and carried into T3.4 and T5.2.
 | Docker-in-Docker (`--privileged`) | Widely documented; fully isolated daemon | `--privileged` = security risk on shared runners; slow startup | Acceptable only on a dedicated runner tag |
 | Docker socket mount | No `--privileged` on job; reuses host daemon | Grants root-equivalent host access | Preferred if security posture allows; confirm with platform/ETO |
 | Rootless Docker / Sysbox | Secure; no host privilege escalation | Requires specific kernel/runner setup | Assess in T3.2; not assumed available |
-| No Docker in CI (fallback) | No privilege concerns | No Testcontainers in CI; Compose remains | Valid fallback per ADR-0003 — not ideal but acceptable |
+| No Docker in CI (fallback) | No privilege concerns | No Testcontainers in CI; Compose remains | Valid fallback per ADR-0002 — not ideal but acceptable |

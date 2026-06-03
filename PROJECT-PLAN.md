@@ -87,6 +87,6 @@ Testcontainers (Story 3) covers integration tests. Everything else still needs v
 | Question | Decision | Resolved in |
 |----------|----------|-------------|
 | Minimum Java version for Testcontainers | Java 11 minimum; Java 17+ recommended. Confirm against `pom.xml` in T3.1. | T3.1 |
-| CI Docker execution mode | Docker-in-Docker vs socket mount vs rootless — assess available mode with platform/ETO. See [ADR-0007](docs/adr/0007-ci-runner-docker-mode.md). | T3.2 |
+| CI Docker execution mode | Docker-in-Docker vs socket mount vs rootless — assess available mode with platform/ETO. See [ADR-0005](docs/adr/0005-ci-runner-docker-mode.md). | T3.2 |
 | Which CI stage runs integration tests | `integration-test` stage in `.gitlab-ci.yml`, after unit tests. Runs on MR and `develop` branch; skipped on `main` (publish-only). Confirm in T3.2. | T3.2 |
-| Testcontainers reuse policy | Local: reuse enabled for faster feedback. CI: reuse disabled — clean, isolated env per run. See [ADR-0003](docs/adr/0003-testcontainers-for-integration-tests.md). | Decided (ADR-0003) |
+| Testcontainers reuse policy | Local: reuse enabled for faster feedback. CI: reuse disabled — clean, isolated env per run. See [ADR-0002](docs/adr/0002-testcontainers-for-integration-tests.md). | Decided (ADR-0002) |

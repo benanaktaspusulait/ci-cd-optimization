@@ -1,9 +1,9 @@
-# ADR-0004: Reduce Docker Compose role in CI, keep it for local
+# ADR-0003: Reduce Docker Compose role in CI, keep it for local
 
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** Pilot team
-- **Related:** [Story 4](../stories/story-4-compose/README.md), [ADR-0003](0003-testcontainers-for-integration-tests.md)
+- **Related:** [Story 4](../stories/story-4-compose/README.md), [ADR-0002](0002-testcontainers-for-integration-tests.md)
 
 ## Context
 The same Docker Compose file often serves both CI integration tests and local debugging, pulling extra services into every CI run. Some services may not be needed for CI at all.
