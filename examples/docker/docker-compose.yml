@@ -1,0 +1,105 @@
+# docker-compose.yml — Base example for local development & integration tests
+#
+# This is a REFERENCE docker-compose showing all typical FDP dependencies.
+# In the pilot, Story 4 will map which of these are truly needed for CI vs local-only.
+#
+# Services included:
+#   - Redis (cache / session store)
+#   - Zookeeper (Kafka dependency)
+#   - Kafka (event streaming)
+#   - Schema Registry (Avro/JSON schema management for Kafka)
+#   - LocalStack (AWS service emulation: S3, SQS, SNS, DynamoDB, etc.)
+#
+# Usage:
+#   Start all:    docker compose up -d --wait
+#   Start one:    docker compose up redis -d
+#   Stop + clean: docker compose down -v
+#   Logs:         docker compose logs -f kafka
+#
+# Reference: Story 4, ADR-0003
+
+services:
+
+  # ── Redis ──────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── Zookeeper (required by Kafka) ─────────────────────────────────────────
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    healthcheck:
+      test: ["CMD-SHELL", "echo ruok | nc localhost 2181 | grep imok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Kafka ──────────────────────────────────────────────────────────────────
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  # ── Schema Registry ────────────────────────────────────────────────────────
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.6.1
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:29092
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/subjects || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── LocalStack (AWS emulation) ─────────────────────────────────────────────
+  localstack:
+    image: localstack/localstack:3.5
+    ports:
+      - "4566:4566"         # All services on one port
+    environment:
+      SERVICES: s3,sqs,sns,dynamodb
+      DEFAULT_REGION: eu-west-2
+      EAGER_SERVICE_LOADING: 1
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4566/_localstack/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"   # Required for Lambda emulation (optional)

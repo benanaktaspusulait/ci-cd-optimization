@@ -43,8 +43,20 @@ public class CucumberSpringConfig {
     // ── Kafka ────────────────────────────────────────────────────────────────
     @DynamicPropertySource
     static void kafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", KafkaContainerConfig.KAFKA::getBootstrapServers);
+        registry.add("spring.kafka.bootstrap-servers", () -> KafkaContainerConfig.BOOTSTRAP_SERVERS);
         registry.add("spring.kafka.properties.schema.registry.url",
                 () -> KafkaContainerConfig.SCHEMA_REGISTRY_URL);
+    }
+
+    // ── LocalStack (AWS) ─────────────────────────────────────────────────────
+    @DynamicPropertySource
+    static void awsProperties(DynamicPropertyRegistry registry) {
+        registry.add("aws.endpoint", () -> LocalStackContainerConfig.LOCALSTACK
+                .getEndpoint().toString());
+        registry.add("aws.region", () -> "eu-west-2");
+        registry.add("aws.credentials.access-key-id",
+                () -> LocalStackContainerConfig.LOCALSTACK.getAccessKey());
+        registry.add("aws.credentials.secret-access-key",
+                () -> LocalStackContainerConfig.LOCALSTACK.getSecretKey());
     }
 }
