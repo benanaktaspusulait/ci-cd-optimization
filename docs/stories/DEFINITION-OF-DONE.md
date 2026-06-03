@@ -33,11 +33,12 @@ A task is only "Done" when all of the following are true.
 
 Capture every before/after measurement in the dedicated, fillable **[metrics template](metrics-template.md)** — it includes the pilot context, targets, and source-of-method columns. Quick reference of the core fields:
 
-| Metric | Baseline | After | Delta | Source / method |
-|--------|----------|-------|-------|-----------------|
-| Pipeline duration (avg) | | | | |
-| Docker build time (local / CI) | | | | |
-| Final image size | | | | |
-| Integration test startup / runtime | | | | |
+| Metric | Target | Measurement method |
+|--------|--------|-------------------|
+| Pipeline duration (avg) | < 10 min (≥ 20% ↓) | GitLab CI pipeline analytics (last N runs) |
+| Docker build time (local / CI) | ≥ 20% ↓ | `time docker build` / GitLab job duration |
+| Final image size | < 380 MB (≥ 15% ↓) | `docker images` / GitLab Container Registry |
+| Integration test startup | < 60 sec | GitLab CI job log timestamps |
+| Flaky / failed pipeline rate | < 2% | GitLab pipeline analytics |
 
 > Targets (e.g. ≥20% faster build, ≥15% smaller image) are tracked in the [metrics template](metrics-template.md) and the [README success criteria](../../README.md#success-criteria--targets).

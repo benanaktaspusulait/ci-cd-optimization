@@ -29,6 +29,9 @@ RUN --mount=type=secret,id=maven_settings,target=/root/.m2/settings.xml \
 ```
 
 ### Future platform opportunities (not in pilot)
-Golden paths, reusable CI/CD templates, service starter templates, shared Testcontainers helper lib, contract testing, policy as code, dependency proxy/artifact cache, base image lifecycle management.
+
+See **[FUTURE-CONSIDERATIONS.md](FUTURE-CONSIDERATIONS.md)** for the full post-pilot readiness list (rollback, monitoring, artifact management, environment strategy, cost, compliance, troubleshooting runbook).
+
+Platform-level capabilities that may become relevant if the pilot proves valuable: golden paths, reusable CI/CD templates, service starter templates, shared Testcontainers helper lib, contract testing, policy as code, dependency proxy/artifact cache, base image lifecycle management.
 
 [← Back to overview](../../README.md)

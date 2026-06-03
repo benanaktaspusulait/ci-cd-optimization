@@ -32,6 +32,20 @@ CI/CD and container workflows create recurring friction as projects grow. The co
 
 > Concrete baseline numbers (build time, image size, flaky rate) are **not assumed** — capturing them is the first story ([Story 1](docs/stories/story-1-baseline/README.md)). Until then, the pain points above are qualitative.
 
+## Current state (to be confirmed in Story 1)
+
+These are **placeholder estimates** based on initial observations. Exact values will be captured in T1.2–T1.4 and recorded in the [metrics template](docs/stories/metrics-template.md).
+
+| Metric | Estimated current state | Target (pilot) |
+|--------|-------------------------|----------------|
+| Pipeline duration (avg) | ~12 min | < 10 min (≥ 20% ↓) |
+| Final image size | ~450 MB | < 380 MB (≥ 15% ↓) |
+| Docker build time (CI) | ~5 min | < 4 min (≥ 20% ↓) |
+| Integration test startup | ~90 sec | < 60 sec |
+| Flaky / failed pipeline rate | ~5% | < 2% |
+
+> These numbers will be **replaced with real data** once Story 1 is complete. They exist here to make the ambition visible.
+
 ## Approach — how we tackle it
 
 A small, measurable pilot on **one** representative repository:
@@ -99,7 +113,7 @@ Story 1 (baseline, gate)
 
 📋 [**Full backlog index**](docs/stories/INDEX.md) — all stories and task titles on one page.
 
-**More docs:** [Project plan & timeline](PROJECT-PLAN.md) · [Security plan](SECURITY.md) · [Architecture decisions (ADR)](docs/adr/README.md) · [Technical notes](docs/stories/tech-notes.md) · [Definition of Done](docs/stories/DEFINITION-OF-DONE.md) · [How to contribute](CONTRIBUTING.md)
+**More docs:** [Project plan & timeline](PROJECT-PLAN.md) · [Security plan](SECURITY.md) · [Architecture decisions (ADR)](docs/adr/README.md) · [Technical notes](docs/stories/tech-notes.md) · [Definition of Done](docs/stories/DEFINITION-OF-DONE.md) · [Future considerations](docs/stories/FUTURE-CONSIDERATIONS.md) · [How to contribute](CONTRIBUTING.md)
 
 ---
 
