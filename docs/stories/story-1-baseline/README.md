@@ -1,6 +1,6 @@
 # Story 1 — Baseline & Pilot Scope
 
-**Epic:** [Container & CI/CD Optimisation Pilot](../../README.md)
+**Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
 **Depends on:** — (gate for the whole pilot) · **Parallel with:** —
 
 ## Goal

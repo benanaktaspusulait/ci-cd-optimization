@@ -1,6 +1,6 @@
 # Story 2 — Docker Build Optimisation
 
-**Epic:** [Container & CI/CD Optimisation Pilot](../../README.md)
+**Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
 **Depends on:** Story 1 · **Parallel with:** Story 3
 
 ## Goal

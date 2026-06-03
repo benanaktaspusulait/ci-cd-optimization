@@ -1,6 +1,6 @@
 # Story 4 — Docker Compose Rationalisation
 
-**Epic:** [Container & CI/CD Optimisation Pilot](../../README.md)
+**Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
 **Depends on:** Story 3 (uses its findings) · **Parallel with:** —
 
 ## Goal

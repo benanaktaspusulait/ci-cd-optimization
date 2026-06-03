@@ -8,7 +8,7 @@ A task is only "Done" when all of the following are true.
 - [ ] Output (findings, change, or decision) is written down in a shareable form
 - [ ] Any assumptions or open questions are recorded
 - [ ] Result is reviewed by at least one other person
-- [ ] Task status is updated on the [status board](../README.md#status-board)
+- [ ] Task status is updated on the [status board](../../README.md#status-board)
 
 ### Tasks that produce a measurement
 - [ ] Metric is captured using the shared [metrics template](#metrics-template)
@@ -31,14 +31,13 @@ A task is only "Done" when all of the following are true.
 
 ## Metrics template
 
-Use this table wherever a before/after measurement is captured:
+Capture every before/after measurement in the dedicated, fillable **[metrics template](metrics-template.md)** — it includes the pilot context, targets, and source-of-method columns. Quick reference of the core fields:
 
 | Metric | Baseline | After | Delta | Source / method |
 |--------|----------|-------|-------|-----------------|
 | Pipeline duration (avg) | | | | |
-| Build stage duration | | | | |
-| Docker build time (local) | | | | |
-| Docker build time (CI) | | | | |
+| Docker build time (local / CI) | | | | |
 | Final image size | | | | |
-| Integration test startup | | | | |
-| Integration test runtime | | | | |
+| Integration test startup / runtime | | | | |
+
+> Targets (e.g. ≥20% faster build, ≥15% smaller image) are tracked in the [metrics template](metrics-template.md) and the [README success criteria](../../README.md#success-criteria--targets).

@@ -1,6 +1,6 @@
 # Story 5 — Findings, Ownership & Recommendations
 
-**Epic:** [Container & CI/CD Optimisation Pilot](../../README.md)
+**Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
 **Depends on:** Stories 2, 3, 4 · **Parallel with:** —
 
 ## Goal

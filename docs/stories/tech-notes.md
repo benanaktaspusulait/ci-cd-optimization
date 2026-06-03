@@ -1,11 +1,12 @@
 # Technical Notes (Reference)
 
 Supporting detail for the pilot. Not tasks — reference only.
+Decisions behind these notes are recorded as [ADRs](../adr/README.md); security specifics live in [SECURITY.md](../../SECURITY.md).
 
 ### Base image strategy
-`base-os → base-runtime → base-build → application`. Benefits: standard runtime, shared layers, central patching, easier compliance. Needs: versioned tags, ownership, deprecation policy, scheduled rebuilds, scanning. _(Likely platform/ETO owned.)_
+`base-os → base-runtime → base-build → application`. Benefits: standard runtime, shared layers, central patching, easier compliance. Needs: versioned tags, ownership, deprecation policy, scheduled rebuilds, scanning. _(Likely platform/ETO owned — classify in Story 5.)_
 
-### BuildKit remote cache
+### BuildKit remote cache · [ADR-0005](../adr/0005-buildkit-cache-and-layering.md)
 CI runners often lose local cache between jobs. Use a branch-aware registry cache:
 ```bash
 docker buildx build \
@@ -16,10 +17,11 @@ docker buildx build \
 ```
 Branch builds reuse `main` cache. Keep a working fallback if cache is unavailable. _(Likely platform/ETO owned.)_
 
-### Testcontainers reuse policy
+### Testcontainers reuse policy · [ADR-0003](../adr/0003-testcontainers-for-integration-tests.md)
 Local: reuse may be enabled for faster feedback. CI: reuse disabled — clean, deterministic env per run, no hidden shared state.
 
 ### Security & compliance
+Summary only — the actionable plan (tools, gates, policies, secret handling) is in **[SECURITY.md](../../SECURITY.md)**.
 Versioned base images, digest pinning for critical images, vulnerability scanning, SBOM, image signing if supported, scheduled rebuilds, secret-safe builds:
 ```dockerfile
 RUN --mount=type=secret,id=maven_settings,target=/root/.m2/settings.xml \
@@ -29,4 +31,4 @@ RUN --mount=type=secret,id=maven_settings,target=/root/.m2/settings.xml \
 ### Future platform opportunities (not in pilot)
 Golden paths, reusable CI/CD templates, service starter templates, shared Testcontainers helper lib, contract testing, policy as code, dependency proxy/artifact cache, base image lifecycle management.
 
-[← Back to overview](../README.md)
+[← Back to overview](../../README.md)

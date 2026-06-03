@@ -8,13 +8,75 @@
 
 ---
 
+## Audience
+
+| Reader | What to look at |
+|--------|-----------------|
+| **Developers / engineers** | [Backlog index](docs/stories/INDEX.md), [tech notes](docs/stories/tech-notes.md), [ADRs](docs/adr/README.md), [CONTRIBUTING](CONTRIBUTING.md) |
+| **Ops / platform (ETO)** | [Security plan](SECURITY.md), [tech notes](docs/stories/tech-notes.md), ownership classification (Story 5) |
+| **Leads / managers** | This README (goals, success targets), [project plan](PROJECT-PLAN.md) (timeline, risks) |
+
+> **Glossary:** **FDP** = the product/team context this pilot runs in. **CST** = the local team that can own and validate changes directly. **ETO / platform** = the wider engineering/platform org that owns shared infrastructure (base images, CI templates, cache infra).
+
+---
+
+## Background — why this pilot
+
+CI/CD and container workflows create recurring friction as projects grow. The concrete pain points behind this pilot:
+
+- **Long build times** — repeated dependency downloads, poor layer caching, large build contexts.
+- **Heavy integration-test setup** — full Docker Compose stacks are slow to start and share hidden state.
+- **Flaky, environment-dependent tests** — failures that depend on local vs CI environment differences.
+- **Inconsistent Dockerfiles** across repositories, with no shared base-image strategy.
+- **Unclear ownership** — some improvements are local to CST, others need platform/ETO.
+
+> Concrete baseline numbers (build time, image size, flaky rate) are **not assumed** — capturing them is the first story ([Story 1](docs/stories/story-1-baseline/README.md)). Until then, the pain points above are qualitative.
+
+## Approach — how we tackle it
+
+A small, measurable pilot on **one** representative repository:
+
+1. **Baseline** the current state so every change is provable.
+2. **Optimise the Docker build** (layering, `.dockerignore`, cache mounts) and measure the delta.
+3. **Pilot Testcontainers** for one integration dependency for better isolation/determinism.
+4. **Rationalise Docker Compose** — keep it for local debugging, reduce its role in CI.
+5. **Consolidate findings** and classify each pattern as CST-local vs platform/ETO.
+
+## Technology stack
+
+| Area | Tooling |
+|------|---------|
+| Containers | Docker, BuildKit / `docker buildx`, multi-stage builds |
+| CI/CD | **GitLab CI** (`.gitlab-ci.yml`) |
+| Registry | GitLab Container Registry |
+| Integration testing | Testcontainers (Java); existing Docker Compose for comparison |
+| Build / deps | Maven (`mvnw`), Maven cache mounts |
+| Candidate test deps | Redis, Kafka, Schema Registry, LocalStack |
+| Security | Trivy / Snyk (scanning), SBOM (Syft), secret mounts — see [SECURITY.md](SECURITY.md) |
+
+---
+
 ## Epic
 
 **Pilot Container & CI/CD Optimisation Improvements for FDP** — validate selected build and integration-testing improvements with before/after evidence, then identify reusable patterns and their owners (CST vs platform/ETO).
 
-**Success:** pilot repo baselined · ≥1 build optimisation measured · ≥1 Testcontainers test compared to docker-compose · Compose role reviewed · ownership documented · findings shared.
+**Out of scope:** org-wide rollout, removing all Compose, building shared platform capabilities, guaranteeing a specific speedup beyond the pilot targets below.
 
-**Out of scope:** org-wide rollout, removing all Compose, building shared platform capabilities, guaranteeing a specific speedup.
+### Success criteria & targets
+
+Targets are **proposed** and confirmed against the real baseline in Story 1.
+
+| Success criterion | Target | Measured |
+|-------------------|--------|----------|
+| Pilot repo baselined | All baseline metrics captured | Once, in Story 1 |
+| Build optimisation measured | **≥ 20%** reduction in Docker build time | Before vs after (T2.4) |
+| Image size reduced | **≥ 15%** smaller final image | Before vs after (T2.4) |
+| Pipeline duration improved | **≥ 20%** reduction (stretch; depends on cache infra) | Per-pipeline avg over last N runs |
+| Testcontainers validated | ≥ 1 dependency running + compared to Compose | Before vs after (T3.3) |
+| Integration test reliability | No new flakiness; isolation improved | Across pilot test runs |
+| Ownership documented | Every item classified CST vs platform/ETO | Once, in Story 5 |
+
+**Measurement cadence:** build/image metrics on **every pilot build** (before/after pairs); pipeline duration as a **rolling average over the last N runs** (N agreed in T1.2); a **weekly** snapshot during the pilot to track trend. All numbers go into the [metrics template](docs/stories/metrics-template.md).
 
 ---
 
@@ -22,11 +84,11 @@
 
 | # | Story | Tasks | Depends on | Parallel with |
 |---|-------|:-----:|------------|----------------|
-| 1 | [Baseline & Pilot Scope](backlog/story-1-baseline/README.md) | 4 | — | — |
-| 2 | [Docker Build Optimisation](backlog/story-2-build/README.md) | 4 | 1 | 3 |
-| 3 | [Testcontainers Pilot](backlog/story-3-testcontainers/README.md) | 4 | 1 | 2 |
-| 4 | [Docker Compose Rationalisation](backlog/story-4-compose/README.md) | 3 | 3 | — |
-| 5 | [Findings, Ownership & Recommendations](backlog/story-5-findings/README.md) | 4 | 2, 3, 4 | — |
+| 1 | [Baseline & Pilot Scope](docs/stories/story-1-baseline/README.md) | 4 | — | — |
+| 2 | [Docker Build Optimisation](docs/stories/story-2-build/README.md) | 4 | 1 | 3 |
+| 3 | [Testcontainers Pilot](docs/stories/story-3-testcontainers/README.md) | 4 | 1 | 2 |
+| 4 | [Docker Compose Rationalisation](docs/stories/story-4-compose/README.md) | 3 | 3 | — |
+| 5 | [Findings, Ownership & Recommendations](docs/stories/story-5-findings/README.md) | 4 | 2, 3, 4 | — |
 
 ```text
 Story 1 (baseline, gate)
@@ -35,9 +97,9 @@ Story 1 (baseline, gate)
                  └──> Story 5
 ```
 
-📋 [**Full backlog index**](backlog/INDEX.md) — all stories and task titles on one page.
+📋 [**Full backlog index**](docs/stories/INDEX.md) — all stories and task titles on one page.
 
-See also: [Technical Notes](backlog/tech-notes.md) · [Definition of Done](backlog/DEFINITION-OF-DONE.md)
+**More docs:** [Project plan & timeline](PROJECT-PLAN.md) · [Security plan](SECURITY.md) · [Architecture decisions (ADR)](docs/adr/README.md) · [Technical notes](docs/stories/tech-notes.md) · [Definition of Done](docs/stories/DEFINITION-OF-DONE.md) · [How to contribute](CONTRIBUTING.md)
 
 ---
 
@@ -75,16 +137,15 @@ Estimates: `S` ≤0.5d · `M` 0.5–1d · `L` 1–2d. Priority: MoSCoW.
 
 ---
 
-## Risks & assumptions
+## Risks (summary)
 
-| # | Risk / assumption | Impact | Mitigation |
-|---|-------------------|--------|------------|
-| R1 | Pilot repo selection slips or stakeholders disagree | Blocks all later work (Story 1 is the gate) | Time-box selection; agree criteria up front in T1.1 |
-| R2 | CI history lacks reliable timing data for a clean baseline | Weak before/after evidence | Fall back to local measurements; document the method |
-| R3 | Docker-in-Docker / runner constraints limit Testcontainers in CI | Testcontainers pilot stays local-only | Assess CI suitability early in T3.2; treat CI as a separate finding |
-| R4 | Reducing Compose services breaks a hidden local workflow | Developer disruption | Keep Compose for local debugging; change CI usage only (Story 4) |
-| R5 | Optimisations turn out to be platform/ETO-owned, not CST-local | Limited CST autonomy to act | Classify ownership early (Story 5) before progressing wider changes |
-| A1 | Assumption: one representative repo is enough to validate the ideas | Findings may not generalise | State scope limits explicitly in the final summary |
+Top risks only — the full risk register with fallback plans lives in the [project plan](PROJECT-PLAN.md#risk-register).
+
+| # | Risk | Mitigation / fallback |
+|---|------|-----------------------|
+| R1 | Pilot repo selection slips | Time-box selection; agree criteria in T1.1 |
+| R3 | Testcontainers too slow / unsupported in CI runners | **Fallback:** keep docker-compose in CI; treat Testcontainers as local-only |
+| R4 | Reducing Compose breaks a local workflow | Change CI usage only; keep Compose for local debugging |
 
 ---
 
@@ -92,12 +153,16 @@ Estimates: `S` ≤0.5d · `M` 0.5–1d · `L` 1–2d. Priority: MoSCoW.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for structure, conventions, and the task workflow. In short:
 
-- **Browse** from the [backlog index](backlog/INDEX.md) → story → task.
+- **Browse** from the [backlog index](docs/stories/INDEX.md) → story → task.
 - **Track progress** only in the [status board](#status-board) — it's the single source of truth.
-- **Close a task** when its acceptance criteria **and** the shared [Definition of Done](backlog/DEFINITION-OF-DONE.md) are met.
+- **Close a task** when its acceptance criteria **and** the shared [Definition of Done](docs/stories/DEFINITION-OF-DONE.md) are met.
+
+### Ticket-creation order
+
+Create incrementally — not all at once:
 
 1. Epic
 2. Story 1 → T1.1 (select repo) → T1.2 (pipeline baseline)
 3. Story 2 → T2.1 (review Dockerfile)
 
-Open the rest once the baseline and a first build review are underway. This keeps work controlled and avoids raising implementation tickets before baseline and ownership are agreed.
+Open the rest once the baseline and a first build review are underway.
