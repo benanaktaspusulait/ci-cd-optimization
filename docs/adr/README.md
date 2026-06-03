@@ -14,6 +14,9 @@ A short, immutable record of one architecturally significant decision. When a de
 | [ADR-0003](0003-testcontainers-for-integration-tests.md) | Use Testcontainers for selected integration tests | Proposed |
 | [ADR-0004](0004-reduce-compose-in-ci.md) | Reduce Docker Compose role in CI, keep it for local | Proposed |
 | [ADR-0005](0005-buildkit-cache-and-layering.md) | Use BuildKit cache + layered multi-stage builds | Proposed |
+| [ADR-0006](0006-base-image-strategy.md) | Use a layered base-image hierarchy | Proposed |
+| [ADR-0007](0007-ci-runner-docker-mode.md) | Choose CI runner Docker execution mode for Testcontainers | Proposed |
+| [ADR-0008](0008-remote-cache-infra.md) | BuildKit remote cache requires platform/ETO infrastructure | Proposed |
 
 ## Statuses
 `Proposed` → under discussion · `Accepted` → decided · `Superseded by ADR-XXXX` · `Deprecated`.

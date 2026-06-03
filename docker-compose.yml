@@ -1,0 +1,96 @@
+# docker-compose.yml — Local development and integration-test dependencies
+#
+# BASELINE TEMPLATE — replace services with those actually used by the pilot repository (T4.1).
+# Story 4 will classify which services are needed for CI vs local debugging only.
+#
+# Usage:
+#   docker compose up -d --wait   # start all services
+#   docker compose down -v        # stop and remove volumes (clean state)
+#
+# References:
+#   ADR-0004: Reduce Docker Compose role in CI, keep it for local
+#   docs/stories/story-4-compose/
+
+---
+services:
+
+  # ── Redis ──────────────────────────────────────────────────────────────────
+  # Candidate for replacement with Testcontainers in T3.1 / T3.2 (ADR-0003).
+  redis:
+    image: redis:7-alpine   # TODO: pin to digest after ADR-0006 base-image decision
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    profiles:
+      - integration   # Only started when --profile integration is passed
+      - local         # Also available for local debugging
+
+  # ── Kafka + Zookeeper ──────────────────────────────────────────────────────
+  # Candidate for replacement with Testcontainers (Kafka module) in T3.1.
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    profiles:
+      - integration
+      - local
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    profiles:
+      - integration
+      - local
+
+  # ── Schema Registry ────────────────────────────────────────────────────────
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.6.0
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka:29092"
+    profiles:
+      - integration
+      - local
+
+  # ── LocalStack (AWS services) ──────────────────────────────────────────────
+  localstack:
+    image: localstack/localstack:3.4
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: s3,sqs,sns          # TODO: confirm which services the pilot repo uses (T4.1)
+      DEFAULT_REGION: eu-west-1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    profiles:
+      - local   # Local debugging only — not required for integration tests (classify in T4.2)
+
+# ── Volumes ──────────────────────────────────────────────────────────────────
+# No named volumes by default — each 'down -v' gives a clean state for CI reproducibility.

@@ -1,0 +1,154 @@
+# GitLab CI/CD Pipeline — Container & CI/CD Optimisation Pilot
+#
+# BASELINE TEMPLATE — fill in real values once T1.1 (pilot repo selection) is complete.
+# This file is a starting point; adapt it to the pilot repository's existing pipeline structure.
+#
+# References:
+#   ADR-0005: BuildKit cache + layered multi-stage builds
+#   ADR-0007: CI runner Docker execution mode
+#   ADR-0008: Remote cache (platform/ETO prerequisite — see comments below)
+#   docs/stories/tech-notes.md
+
+---
+
+# ─── Variables ────────────────────────────────────────────────────────────────
+variables:
+  # Replace with the pilot repository's actual registry path (set in T1.1)
+  REGISTRY_IMAGE: "registry.example.com/fdp/pilot-service"   # TODO: update in T1.1
+  DOCKER_BUILDKIT: "1"
+
+  # Remote cache — requires platform/ETO registry namespace (ADR-0008).
+  # Comment out the CACHE_FROM/CACHE_TO lines until infra is provisioned.
+  CACHE_IMAGE: "${REGISTRY_IMAGE}/cache"
+
+  # Maven settings — injected via GitLab CI/CD variable (masked/protected).
+  # Never hardcode credentials here. See SECURITY.md.
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+# ─── Stages ───────────────────────────────────────────────────────────────────
+stages:
+  - build
+  - test
+  - integration-test
+  - publish
+
+# ─── Default ──────────────────────────────────────────────────────────────────
+default:
+  tags:
+    - docker   # TODO: confirm runner tag with platform/ETO (ADR-0007)
+
+# ─── Build ────────────────────────────────────────────────────────────────────
+build-image:
+  stage: build
+  image: docker:24-cli
+  services:
+    # Docker-in-Docker — assess with platform/ETO whether socket mount is preferred (ADR-0007).
+    - name: docker:24-dind
+      alias: docker
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker info
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    # Record build start time for T1.3 / T2.4 baseline measurement.
+    - BUILD_START=$(date +%s)
+
+    - |
+      docker buildx build \
+        --file Dockerfile \
+        # Remote cache (ADR-0008) — uncomment once platform/ETO provisions the cache namespace:
+        # --cache-from=type=registry,ref=${CACHE_IMAGE}:main \
+        # --cache-from=type=registry,ref=${CACHE_IMAGE}:${CI_COMMIT_REF_SLUG} \
+        # --cache-to=type=registry,ref=${CACHE_IMAGE}:${CI_COMMIT_REF_SLUG},mode=max \
+        --tag "${REGISTRY_IMAGE}:${CI_COMMIT_SHA}" \
+        --tag "${REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}" \
+        --push \
+        .
+
+    - BUILD_END=$(date +%s)
+    - echo "Build duration $(( BUILD_END - BUILD_START ))s" | tee build-metrics.txt
+    - docker image inspect "${REGISTRY_IMAGE}:${CI_COMMIT_SHA}" --format '{{.Size}}' | tee -a build-metrics.txt
+  artifacts:
+    paths:
+      - build-metrics.txt   # Capture for T1.3 / T2.4 before/after comparison
+    expire_in: 7 days
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# ─── Unit tests ───────────────────────────────────────────────────────────────
+unit-test:
+  stage: test
+  image: eclipse-temurin:17-jdk   # TODO: align with ADR-0006 base image once provisioned
+  cache:
+    key: "$CI_COMMIT_REF_SLUG-maven"
+    paths:
+      - .m2/repository
+  script:
+    - ./mvnw -B test -Dskip.integration.tests=true
+  artifacts:
+    reports:
+      junit: target/surefire-reports/TEST-*.xml
+    expire_in: 7 days
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# ─── Integration tests ────────────────────────────────────────────────────────
+#
+# T3.2 decision: Docker Compose (current) vs Testcontainers (pilot candidate).
+# ADR-0007 governs the Docker mode available to integration tests in CI.
+# Until T3.2 is complete, Docker Compose is used.
+#
+integration-test:
+  stage: integration-test
+  image: eclipse-temurin:17-jdk   # TODO: align with ADR-0006 base image
+  services:
+    - name: docker:24-dind
+      alias: docker
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker info
+  script:
+    - ITEST_START=$(date +%s)
+    - docker compose -f docker-compose.yml up -d --wait
+    - ./mvnw -B verify -Dskip.unit.tests=true
+    - ITEST_END=$(date +%s)
+    - echo "Integration test startup + run duration $(( ITEST_END - ITEST_START ))s" | tee itest-metrics.txt
+  after_script:
+    - docker compose -f docker-compose.yml down -v
+  artifacts:
+    reports:
+      junit: target/failsafe-reports/TEST-*.xml
+    paths:
+      - itest-metrics.txt   # Capture for T1.4 / T3.3 before/after comparison
+    expire_in: 7 days
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+
+# ─── Publish (main only) ──────────────────────────────────────────────────────
+publish-image:
+  stage: publish
+  image: docker:24-cli
+  services:
+    - name: docker:24-dind
+      alias: docker
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    # Re-tag the SHA-tagged image as 'latest' on main.
+    - docker pull "${REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
+    - docker tag "${REGISTRY_IMAGE}:${CI_COMMIT_SHA}" "${REGISTRY_IMAGE}:latest"
+    - docker push "${REGISTRY_IMAGE}:latest"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'

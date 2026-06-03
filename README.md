@@ -113,7 +113,7 @@ Story 1 (baseline, gate)
 
 📋 [**Full backlog index**](docs/stories/INDEX.md) — all stories and task titles on one page.
 
-**More docs:** [Project plan & timeline](PROJECT-PLAN.md) · [Security plan](SECURITY.md) · [Architecture decisions (ADR)](docs/adr/README.md) · [Technical notes](docs/stories/tech-notes.md) · [Definition of Done](docs/stories/DEFINITION-OF-DONE.md) · [Future considerations](docs/stories/FUTURE-CONSIDERATIONS.md) · [How to contribute](CONTRIBUTING.md)
+**More docs:** [Project plan & timeline](PROJECT-PLAN.md) · [Security plan](SECURITY.md) · [Architecture decisions (ADR)](docs/adr/README.md) · [Technical notes](docs/stories/tech-notes.md) · [Definition of Done](docs/stories/DEFINITION-OF-DONE.md) · [Future considerations](docs/stories/FUTURE-CONSIDERATIONS.md) · [Glossary](docs/glossary.md) · [How to contribute](CONTRIBUTING.md)
 
 ---
 
@@ -122,32 +122,34 @@ Story 1 (baseline, gate)
 Single source of truth for progress. Update the **Status** column as work moves.
 Estimates: `S` ≤0.5d · `M` 0.5–1d · `L` 1–2d. Priority: MoSCoW.
 
-| ID | Item | Est | Priority | Status | Owner |
-|----|------|:---:|:--------:|--------|-------|
-| **S1** | **Baseline & Pilot Scope** | — | Must | Not started | _TBD_ |
-| T1.1 | Select pilot repository/service | S | Must | Not started | _TBD_ |
-| T1.2 | Capture CI/CD pipeline baseline | M | Must | Not started | _TBD_ |
-| T1.3 | Capture Docker build & image-size baseline | S | Must | Not started | _TBD_ |
-| T1.4 | Capture integration-test baseline | M | Must | Not started | _TBD_ |
-| **S2** | **Docker Build Optimisation** | — | Must | Not started | _TBD_ |
-| T2.1 | Review current Dockerfile & build context | M | Must | Not started | _TBD_ |
-| T2.2 | Add or validate .dockerignore | S | Must | Not started | _TBD_ |
-| T2.3 | Apply Dockerfile layering / cache improvement | M | Must | Not started | _TBD_ |
-| T2.4 | Measure local & CI build impact | M | Should | Not started | _TBD_ |
-| **S3** | **Testcontainers Pilot** | — | Must | Not started | _TBD_ |
-| T3.1 | Select candidate dependency/test | S | Must | Not started | _TBD_ |
-| T3.2 | Implement Testcontainers setup | L | Must | Not started | _TBD_ |
-| T3.3 | Compare with docker-compose flow | M | Should | Not started | _TBD_ |
-| T3.4 | Document findings & constraints | S | Should | Not started | _TBD_ |
-| **S4** | **Docker Compose Rationalisation** | — | Should | Not started | _TBD_ |
-| T4.1 | Map services started by docker-compose | S | Must | Not started | _TBD_ |
-| T4.2 | Classify services & usage | M | Must | Not started | _TBD_ |
-| T4.3 | Recommend reduced Compose role | M | Should | Not started | _TBD_ |
-| **S5** | **Findings, Ownership & Recommendations** | — | Must | Not started | _TBD_ |
-| T5.1 | Consolidate pilot findings | M | Must | Not started | _TBD_ |
-| T5.2 | Classify CST-local vs platform/ETO items | S | Must | Not started | _TBD_ |
-| T5.3 | Recommend ticket ownership & target board | S | Should | Not started | _TBD_ |
-| T5.4 | Share findings with stakeholders | S | Should | Not started | _TBD_ |
+> **Tickets:** Create GitLab/GitHub issues for each task and add the links to the `Issue` column below as work is picked up. Issue creation order: Epic → S1 → T1.1 → T1.2 → S2 → T2.1 (see [CONTRIBUTING.md](CONTRIBUTING.md)).
+
+| ID | Item | Est | Priority | Status | Owner | Issue |
+|----|------|:---:|:--------:|--------|-------|-------|
+| **S1** | **Baseline & Pilot Scope** | — | Must | Not started | _TBD_ | — |
+| T1.1 | Select pilot repository/service | S | Must | Not started | _TBD_ | — |
+| T1.2 | Capture CI/CD pipeline baseline | M | Must | Not started | _TBD_ | — |
+| T1.3 | Capture Docker build & image-size baseline | S | Must | Not started | _TBD_ | — |
+| T1.4 | Capture integration-test baseline | M | Must | Not started | _TBD_ | — |
+| **S2** | **Docker Build Optimisation** | — | Must | Not started | _TBD_ | — |
+| T2.1 | Review current Dockerfile & build context | M | Must | Not started | _TBD_ | — |
+| T2.2 | Add or validate .dockerignore | S | Must | Not started | _TBD_ | — |
+| T2.3 | Apply Dockerfile layering / cache improvement | M | Must | Not started | _TBD_ | — |
+| T2.4 | Measure local & CI build impact | M | Should | Not started | _TBD_ | — |
+| **S3** | **Testcontainers Pilot** | — | Must | Not started | _TBD_ | — |
+| T3.1 | Select candidate dependency/test | S | Must | Not started | _TBD_ | — |
+| T3.2 | Implement Testcontainers setup | L | Must | Not started | _TBD_ | — |
+| T3.3 | Compare with docker-compose flow | M | Should | Not started | _TBD_ | — |
+| T3.4 | Document findings & constraints | S | Should | Not started | _TBD_ | — |
+| **S4** | **Docker Compose Rationalisation** | — | Should | Not started | _TBD_ | — |
+| T4.1 | Map services started by docker-compose | S | Must | Not started | _TBD_ | — |
+| T4.2 | Classify services & usage | M | Must | Not started | _TBD_ | — |
+| T4.3 | Recommend reduced Compose role | M | Should | Not started | _TBD_ | — |
+| **S5** | **Findings, Ownership & Recommendations** | — | Must | Not started | _TBD_ | — |
+| T5.1 | Consolidate pilot findings | M | Must | Not started | _TBD_ | — |
+| T5.2 | Classify CST-local vs platform/ETO items | S | Must | Not started | _TBD_ | — |
+| T5.3 | Recommend ticket ownership & target board | S | Should | Not started | _TBD_ | — |
+| T5.4 | Share findings with stakeholders | S | Should | Not started | _TBD_ | — |
 
 ---
 

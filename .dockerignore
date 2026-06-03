@@ -1,0 +1,60 @@
+# .dockerignore — Reduce build context size (T2.2)
+#
+# Goal: exclude everything that is not needed to build the image.
+# Effect: smaller build context sent to Docker daemon = faster builds, no accidental secret inclusion.
+# Reference: docs/stories/story-2-build/task-2-dockerignore.md
+
+# ── Version control ──────────────────────────────────────────────────────────
+.git/
+.gitignore
+.gitattributes
+
+# ── Build output ─────────────────────────────────────────────────────────────
+target/
+out/
+build/
+*.class
+*.jar
+!target/*.jar   # Exception: the final fat JAR is needed by the runtime stage COPY
+
+# ── IDE / editor files ───────────────────────────────────────────────────────
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Local environment / secrets ──────────────────────────────────────────────
+.env
+.env.*
+*.local
+secrets/
+credentials/
+
+# ── Documentation and CI config (not needed in the image) ────────────────────
+docs/
+README.md
+CONTRIBUTING.md
+SECURITY.md
+PROJECT-PLAN.md
+MISSING.md
+FUTURE-CONSIDERATIONS.md
+.gitlab-ci.yml
+
+# ── Test sources (not shipped in production image) ───────────────────────────
+src/test/
+
+# ── Docker Compose files ─────────────────────────────────────────────────────
+docker-compose*.yml
+docker-compose*.yaml
+
+# ── Scripts ──────────────────────────────────────────────────────────────────
+scripts/
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/

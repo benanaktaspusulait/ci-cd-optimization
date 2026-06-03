@@ -21,3 +21,16 @@ Agree on one FDP repository/service to use for the entire pilot.
 - [ ] One candidate repository/service is selected
 - [ ] Selection rationale is documented (why this one, why not others)
 - [ ] Pilot scope is agreed with relevant stakeholders
+
+## Selection output (fill in when T1.1 is complete)
+
+| Field | Value |
+|-------|-------|
+| Selected repository | _TBD_ |
+| GitLab project URL | _TBD_ |
+| GitLab environment | _TBD_ (self-hosted / GitLab.com — see [glossary](../../../docs/glossary.md)) |
+| Primary language / build tool | _TBD_ (e.g. Java 17 / Maven) |
+| Selection rationale | _TBD_ |
+| Stakeholder who agreed scope | _TBD_ |
+
+> After filling in this table: update `REGISTRY_IMAGE` in `.gitlab-ci.yml` and confirm the Maven cache path in `Dockerfile`.

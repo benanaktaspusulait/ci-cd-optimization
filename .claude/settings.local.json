@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod +x /Users/benanaktas/project/home-office/ci-cd-optimization/scripts/measure-baseline.sh)"
+    ]
+  }
+}
