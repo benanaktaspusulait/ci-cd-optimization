@@ -3,7 +3,7 @@
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** CST + platform/ETO (runner configuration)
-- **Related:** [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md), [PROJECT-PLAN.md — R3](../../PROJECT-PLAN.md), [T3.2](../stories/story-3-testcontainers/task-2-implement-setup.md)
+- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md) · [ADR-0004 — BuildKit](0004-buildkit-cache-and-layering.md) · [PROJECT-PLAN.md — R3](../../PROJECT-PLAN.md) · [T3.2](../stories/story-3-testcontainers/task-2-implement-setup.md)
 
 ## Context
 

@@ -7,13 +7,13 @@ A short, immutable record of one architecturally significant decision. When a de
 
 ## Index
 
-| ID | Title | Status |
-|----|-------|--------|
-| [ADR-0001](0001-pilot-not-rollout.md) | Run a measured pilot, not a big-bang rollout | Proposed |
-| [ADR-0002](0002-testcontainers-for-integration-tests.md) | Use Testcontainers for selected integration tests | Proposed |
-| [ADR-0003](0003-reduce-compose-in-ci.md) | Reduce Docker Compose role in CI, keep it for local | Proposed |
-| [ADR-0004](0004-buildkit-cache-and-layering.md) | Use BuildKit cache + layered multi-stage builds | Proposed |
-| [ADR-0005](0005-ci-runner-docker-mode.md) | Choose CI runner Docker execution mode for Testcontainers | Proposed |
+| ID | Title | Status | Related ADRs |
+|----|-------|--------|--------------|
+| [ADR-0001](0001-pilot-not-rollout.md) | Run a measured pilot, not a big-bang rollout | Proposed | 0002, 0003, 0004 |
+| [ADR-0002](0002-testcontainers-for-integration-tests.md) | Use Testcontainers for selected integration tests | Proposed | 0001, 0003, 0005 |
+| [ADR-0003](0003-reduce-compose-in-ci.md) | Reduce Docker Compose role in CI, keep it for local | Proposed | 0002, 0004, 0005 |
+| [ADR-0004](0004-buildkit-cache-and-layering.md) | Use BuildKit cache + layered multi-stage builds | Proposed | 0001, 0003, 0005 |
+| [ADR-0005](0005-ci-runner-docker-mode.md) | Choose CI runner Docker execution mode for Testcontainers | Proposed | 0001, 0002, 0004 |
 
 ## Statuses
 `Proposed` → under discussion · `Accepted` → decided · `Superseded by ADR-XXXX` · `Deprecated`.
