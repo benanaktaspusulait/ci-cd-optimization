@@ -12,7 +12,7 @@
 | **Priority** | Must |
 | **Labels** | `docker-compose`, `mapping`, `inventory` |
 | **Sprint** | Week 3 |
-| **Depends on** | T1.4 |
+| **Depends on** | T3.4 |
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 

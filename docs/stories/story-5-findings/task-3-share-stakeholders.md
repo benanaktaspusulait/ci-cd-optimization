@@ -1,10 +1,10 @@
-# T5.4 — Share findings with stakeholders
+# T5.3 — Share findings with stakeholders
 
 **Story:** [Story 5 — Findings, Ownership & Recommendations](./README.md)
 
 | Field | Value |
 |-------|-------|
-| **ID** | T5.4 |
+| **ID** | T5.3 |
 | **Type** | Documentation |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 5 — Findings, Ownership & Recommendations |
@@ -12,7 +12,7 @@
 | **Priority** | Should |
 | **Labels** | `stakeholders`, `communication`, `findings` |
 | **Sprint** | Week 4 |
-| **Depends on** | T5.3 |
+| **Depends on** | T5.2 |
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 

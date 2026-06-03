@@ -12,7 +12,7 @@
 | **Priority** | Must |
 | **Labels** | `testcontainers`, `integration-test`, `selection` |
 | **Sprint** | Week 2 |
-| **Depends on** | T1.4 |
+| **Depends on** | T1.1 |
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 

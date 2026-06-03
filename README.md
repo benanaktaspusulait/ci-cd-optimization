@@ -43,8 +43,17 @@ These are **placeholder estimates** based on initial observations. Exact values 
 | Docker build time (CI) | ~5 min | < 4 min (≥ 20% ↓) |
 | Integration test startup | ~90 sec | < 60 sec |
 | Flaky / failed pipeline rate | ~5% | < 2% |
+| Developer feedback loop (local change → test green) | ~8 min | < 5 min |
 
 > These numbers will be **replaced with real data** once Story 1 is complete. They exist here to make the ambition visible.
+
+### Business impact (estimated)
+
+These translate the technical gains into terms stakeholders care about:
+
+- **Developer productivity:** if a developer hits the pipeline ~8×/day, a 3-min reduction = **~24 min saved per developer per day**. For a team of 5, that's **~2 hours/day** back into delivery.
+- **CI cost:** fewer runner minutes per pipeline × number of daily pipelines = direct cost reduction (quantify against GitLab CI pricing once baseline is captured).
+- **Security posture:** fewer flaky failures = faster, more reliable deployments = security patches applied sooner. In a border-security context, delayed patches carry real risk.
 
 ## Approach — how we tackle it
 
@@ -102,7 +111,7 @@ Targets are **proposed** and confirmed against the real baseline in Story 1.
 | 2 | [Docker Build Optimisation](docs/stories/story-2-build/README.md) | 4 | 1 | 3 |
 | 3 | [Testcontainers Pilot](docs/stories/story-3-testcontainers/README.md) | 4 | 1 | 2 |
 | 4 | [Docker Compose Rationalisation](docs/stories/story-4-compose/README.md) | 3 | 3 | — |
-| 5 | [Findings, Ownership & Recommendations](docs/stories/story-5-findings/README.md) | 4 | 2, 3, 4 | — |
+| 5 | [Findings, Ownership & Recommendations](docs/stories/story-5-findings/README.md) | 3 | 2, 3, 4 | — |
 
 ```text
 Story 1 (baseline, gate)
@@ -147,9 +156,8 @@ Estimates: `S` ≤0.5d · `M` 0.5–1d · `L` 1–2d. Priority: MoSCoW.
 | T4.3 | Recommend reduced Compose role | M | Should | Not started | _TBD_ | — |
 | **S5** | **Findings, Ownership & Recommendations** | — | Must | Not started | _TBD_ | — |
 | T5.1 | Consolidate pilot findings | M | Must | Not started | _TBD_ | — |
-| T5.2 | Classify CST-local vs platform/ETO items | S | Must | Not started | _TBD_ | — |
-| T5.3 | Recommend ticket ownership & target board | S | Should | Not started | _TBD_ | — |
-| T5.4 | Share findings with stakeholders | S | Should | Not started | _TBD_ | — |
+| T5.2 | Classify ownership & recommend target board | M | Must | Not started | _TBD_ | — |
+| T5.3 | Share findings with stakeholders | S | Should | Not started | _TBD_ | — |
 
 ---
 

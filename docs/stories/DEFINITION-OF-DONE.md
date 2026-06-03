@@ -40,5 +40,6 @@ Capture every before/after measurement in the dedicated, fillable **[metrics tem
 | Final image size | < 380 MB (≥ 15% ↓) | `docker images` / GitLab Container Registry |
 | Integration test startup | < 60 sec | GitLab CI job log timestamps |
 | Flaky / failed pipeline rate | < 2% | GitLab pipeline analytics |
+| Developer feedback loop | ≤ 5 min (change → test green) | Local stopwatch / script timing |
 
 > Targets (e.g. ≥20% faster build, ≥15% smaller image) are tracked in the [metrics template](metrics-template.md) and the [README success criteria](../../README.md#success-criteria--targets).

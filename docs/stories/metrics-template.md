@@ -31,6 +31,7 @@ Copy a fresh block per pilot iteration if you measure more than once. [← Back 
 | Integration test startup time | | | | — | |
 | Build context size | | | | — | |
 | Failed-pipeline / flaky rate | | | | no regression | |
+| Developer feedback loop (change → test green) | | | | ≤ 5 min | |
 | Cache hit/miss rate (if available) | | | | — | |
 
 ## Notes & observations

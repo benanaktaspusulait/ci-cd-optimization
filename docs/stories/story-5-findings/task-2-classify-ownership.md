@@ -1,4 +1,4 @@
-# T5.2 — Classify CST-local vs platform/ETO items
+# T5.2 — Classify ownership & recommend target board
 
 **Story:** [Story 5 — Findings, Ownership & Recommendations](./README.md)
 
@@ -8,26 +8,33 @@
 | **Type** | Analysis |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 5 — Findings, Ownership & Recommendations |
-| **Estimate** | S |
+| **Estimate** | M |
 | **Priority** | Must |
-| **Labels** | `ownership`, `cst-vs-eto`, `classification` |
+| **Labels** | `ownership`, `cst-vs-eto`, `classification`, `jira-board` |
 | **Sprint** | Week 4 |
 | **Depends on** | T5.1 |
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
 ## Why
-Some improvements are safe to own and validate inside CST; others touch shared infrastructure and need platform/ETO involvement. Classifying them prevents progressing wider-impact changes without the right ownership.
+Some improvements are safe to own inside CST; others touch shared infrastructure and need platform/ETO. Classification without a board/owner recommendation is incomplete — both must happen together so follow-up work lands in the right place immediately.
 
 ## Goal
-Classify each optimisation item as CST-local or platform/ETO, with a short rationale.
+Classify each optimisation item as CST-local or platform/ETO, and for each item recommend which board/owner should carry it forward.
 
 ## Scope
-Likely **CST-local**: baseline measurement, Dockerfile review, `.dockerignore`, local layering experiment, small Testcontainers pilot, Compose review.
+**Classify** each item:
+- Likely **CST-local**: baseline measurement, Dockerfile review, `.dockerignore`, local layering experiment, Testcontainers pilot, Compose review.
+- Likely **platform/ETO**: org base images, shared CI/CD templates, BuildKit remote cache infrastructure, shared Testcontainers helpers, security-scanning standards, ephemeral environments.
 
-Likely **platform/ETO**: organisation-maintained base images, shared CI/CD templates, BuildKit remote cache infrastructure, shared Testcontainers helper libraries, security-scanning standards, ephemeral-environment platform capability.
+**Recommend** for each item one of:
+- CST board
+- ETO / platform board
+- shared visibility only
+- further discussion needed
 
 ## Acceptance criteria
-- [ ] Each item is classified CST-local vs platform/ETO
-- [ ] Each classification has a short rationale
+- [ ] Each item is classified CST-local vs platform/ETO with short rationale
+- [ ] Each item is mapped to a suggested owner/board
+- [ ] No wider-impact item is progressed without appropriate visibility
 - [ ] Assumptions are documented

@@ -19,6 +19,5 @@ A pilot is only valuable if it ends in a clear decision. This story turns scatte
 | Task | Title | Est | Priority | Status |
 |------|-------|:---:|:--------:|--------|
 | T5.1 | [Consolidate pilot findings](./task-1-consolidate-findings.md) | M | Must | Not started |
-| T5.2 | [Classify CST-local vs platform/ETO items](./task-2-classify-ownership.md) | S | Must | Not started |
-| T5.3 | [Recommend ticket ownership & target board](./task-3-recommend-ownership.md) | S | Should | Not started |
-| T5.4 | [Share findings with stakeholders](./task-4-share-stakeholders.md) | S | Should | Not started |
+| T5.2 | [Classify ownership & recommend target board](./task-2-classify-ownership.md) | M | Must | Not started |
+| T5.3 | [Share findings with stakeholders](./task-3-share-stakeholders.md) | S | Should | Not started |

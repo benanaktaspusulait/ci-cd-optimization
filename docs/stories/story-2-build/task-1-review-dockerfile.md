@@ -12,7 +12,7 @@
 | **Priority** | Must |
 | **Labels** | `docker`, `dockerfile`, `build-context` |
 | **Sprint** | Week 2 |
-| **Depends on** | T1.3 |
+| **Depends on** | T1.1 |
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 

@@ -47,6 +47,5 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 | ID | Task | Est | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
 | T5.1 | [Consolidate pilot findings](story-5-findings/task-1-consolidate-findings.md) | M | _TBD_ | Not started | Week 4 |
-| T5.2 | [Classify CST-local vs platform/ETO items](story-5-findings/task-2-classify-ownership.md) | S | _TBD_ | Not started | Week 4 |
-| T5.3 | [Recommend ticket ownership & target board](story-5-findings/task-3-recommend-ownership.md) | S | _TBD_ | Not started | Week 4 |
-| T5.4 | [Share findings with stakeholders](story-5-findings/task-4-share-stakeholders.md) | S | _TBD_ | Not started | Week 4 |
+| T5.2 | [Classify ownership & recommend target board](story-5-findings/task-2-classify-ownership.md) | M | _TBD_ | Not started | Week 4 |
+| T5.3 | [Share findings with stakeholders](story-5-findings/task-3-share-stakeholders.md) | S | _TBD_ | Not started | Week 4 |
