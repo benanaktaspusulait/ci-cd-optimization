@@ -13,8 +13,9 @@
 #
 # Prerequisites:
 #   - Docker with BuildKit enabled
-#   - jq (for JSON parsing)
-#   - The Dockerfile must be at the project root
+#   - awk
+#   - git (optional, only for the default label)
+#   - The selected pilot repo must contain Dockerfile, pom.xml, mvnw, and src/
 #
 # References:
 #   docs/stories/story-1-baseline/task-3-build-image-baseline.md
@@ -30,6 +31,19 @@ OUTPUT_DIR="${PROJECT_ROOT}/metrics-output"
 CSV_FILE="${OUTPUT_DIR}/build-metrics.csv"
 IMAGE_TAG="pilot-baseline-measure:tmp"
 LABEL="${1:-$(git -C "$PROJECT_ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")}"
+
+missing=()
+for required_path in Dockerfile pom.xml mvnw src; do
+  if [[ ! -e "${PROJECT_ROOT}/${required_path}" ]]; then
+    missing+=("$required_path")
+  fi
+done
+
+if (( ${#missing[@]} > 0 )); then
+  echo "This measurement script must run from the selected pilot repo." >&2
+  echo "Missing required path(s): ${missing[*]}" >&2
+  exit 1
+fi
 
 # ── Setup ─────────────────────────────────────────────────────────────────────
 mkdir -p "$OUTPUT_DIR"
@@ -56,7 +70,7 @@ log "Warm build completed in ${WARM_DURATION}s"
 
 # ── Image size ────────────────────────────────────────────────────────────────
 IMAGE_SIZE_BYTES=$(docker image inspect "$IMAGE_TAG" --format '{{.Size}}')
-IMAGE_SIZE_MB=$(echo "scale=1; ${IMAGE_SIZE_BYTES} / 1048576" | bc)
+IMAGE_SIZE_MB=$(awk "BEGIN { printf \"%.1f\", ${IMAGE_SIZE_BYTES} / 1048576 }")
 log "Image size: ${IMAGE_SIZE_MB} MB (${IMAGE_SIZE_BYTES} bytes)"
 
 # ── Cold build (no cache) ─────────────────────────────────────────────────────

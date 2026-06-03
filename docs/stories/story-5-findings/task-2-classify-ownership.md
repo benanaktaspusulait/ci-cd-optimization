@@ -10,7 +10,7 @@
 | **Story** | Story 5 — Findings, Ownership & Recommendations |
 | **Estimate** | M |
 | **Priority** | Must |
-| **Labels** | `ownership`, `cst-vs-eto`, `classification`, `jira-board` |
+| **Labels** | `ownership`, `cst-vs-eto`, `classification`, `target-board` |
 | **Sprint** | Week 4 |
 | **Depends on** | T5.1 |
 | **Owner** | _TBD_ |

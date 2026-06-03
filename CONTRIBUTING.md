@@ -52,6 +52,8 @@ Every task file follows the same shape:
 - **Status:** `Not started` · `In progress` · `Blocked` · `Done`
 - **IDs:** stories `S1…S5`, tasks `T<story>.<n>` (e.g. `T2.3`)
 
+> The README status board is the only live progress tracker. Any status values in story/task files are planning snapshots and should not be maintained separately.
+
 ## Working a task
 
 1. Set the task **Status** to `In progress` on the [status board](README.md#status-board).
@@ -66,4 +68,4 @@ Every task file follows the same shape:
 
 ## Raising tickets
 
-Create tickets incrementally, following the order in the README. Don't raise everything at once — keep work controlled until the baseline and ownership are agreed.
+Confirm the tracker in T1.1. Default to GitLab issues/MRs for a GitLab-hosted pilot repository; use GitHub only if the selected pilot repo is GitHub-hosted, and route cross-team follow-ups to the CST or ETO/platform board in Story 5. Create tickets incrementally, following the order in the README. Don't raise everything at once — keep work controlled until the baseline and ownership are agreed.

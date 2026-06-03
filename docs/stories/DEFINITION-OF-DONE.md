@@ -11,7 +11,7 @@ A task is only "Done" when all of the following are true.
 - [ ] Task status is updated on the [status board](../../README.md#status-board)
 
 ### Tasks that produce a measurement
-- [ ] Metric is captured using the shared [metrics template](#metrics-template)
+- [ ] Metric is captured using the shared [metrics template](metrics-template.md)
 - [ ] Measurement method/source is noted so it can be repeated
 
 ### Tasks that change code or config

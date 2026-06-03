@@ -6,6 +6,8 @@
 
 **Key message:** the difference is not Docker vs no Docker — it's *optimised, standardised, cached and test-driven* Docker usage.
 
+> **Repository type:** this repository is a planning and template pack, not the selected application repository. Root-level files such as `.gitlab-ci.yml`, `Dockerfile`, `docker-compose.yml`, and `scripts/measure-baseline.sh` are starting templates to copy/adapt after T1.1 selects a pilot repo with application sources (`pom.xml`, `mvnw`, `.mvn/`, `src/`).
+
 ---
 
 ## Audience
@@ -128,10 +130,10 @@ Story 1 (baseline, gate)
 
 ## Status board
 
-Single source of truth for progress. Update the **Status** column as work moves.
+Single source of truth for progress. Update the **Status** column as work moves; status-looking metadata in story/task files is only an initial planning snapshot.
 Estimates: `S` ≤0.5d · `M` 0.5–1d · `L` 1–2d. Priority: MoSCoW.
 
-> **Tickets:** Create GitLab/GitHub issues for each task and add the links to the `Issue` column below as work is picked up. Issue creation order: Epic → S1 → T1.1 → T1.2 → S2 → T2.1 (see [CONTRIBUTING.md](CONTRIBUTING.md)).
+> **Tickets:** Confirm the tracker in T1.1 (default: GitLab issues/MRs for GitLab-hosted pilot repos; use GitHub only if the pilot repo is GitHub-hosted). Add links to the `Issue` column below as work is picked up. Issue creation order: Epic → S1 → T1.1 → T1.2 → S2 → T2.1 (see [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 | ID | Item | Est | Priority | Status | Owner | Issue |
 |----|------|:---:|:--------:|--------|-------|-------|

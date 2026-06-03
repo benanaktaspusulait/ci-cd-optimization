@@ -4,8 +4,9 @@
 # Story 4 will classify which services are needed for CI vs local debugging only.
 #
 # Usage:
-#   docker compose up -d --wait   # start all services
-#   docker compose down -v        # stop and remove volumes (clean state)
+#   docker compose --profile integration up -d --wait   # start CI-like deps
+#   docker compose --profile local up -d --wait         # start local debugging deps
+#   docker compose --profile integration down -v        # stop and remove volumes
 #
 # References:
 #   ADR-0003: Reduce Docker Compose role in CI, keep it for local

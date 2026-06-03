@@ -28,7 +28,7 @@ Key terms and abbreviations used across this project. [← Back to overview](../
 | Question | Answer |
 |----------|--------|
 | GitLab: self-hosted or cloud? | **To be confirmed in T1.1.** Affects remote-cache feasibility (post-pilot (remote cache)) and runner Docker mode (ADR-0005). |
-| Maven cache path in CI | Default: `~/.m2/repository`. BuildKit cache mount uses `--mount=type=cache,target=/root/.m2/repository`. Verify this path matches the CI runner's user in T2.3. |
+| Maven cache paths | Docker build stages use `/root/.m2/repository` because the image builds as root. GitLab Maven job cache uses `.m2/repository` via `MAVEN_OPTS=-Dmaven.repo.local=.m2/repository`. Local developer runs usually use `~/.m2/repository`. Confirm the selected pilot repo matches these paths in T2.3. |
 | Java version for Testcontainers | Minimum **Java 11**; Java 17+ recommended. Confirm against pilot repo's `pom.xml` in T3.1. |
 
 [← Back to overview](../README.md)

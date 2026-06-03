@@ -25,7 +25,7 @@ We will assess the available Docker execution modes in T3.2 and select the most 
 - **Acceptable:** DinD with `--privileged`, restricted to a dedicated runner tag (e.g. `privileged`) — not on general-purpose runners.
 - **Fallback (per ADR-0002):** If neither mode is available or acceptable in CI, Testcontainers runs **locally only**; Docker Compose remains in CI.
 
-The final choice is documented in T3.2 findings and carried into T3.4 and T5.2.
+The final choice is documented in T3.2 findings and carried into T3.4 and T5.2. The repository `.gitlab-ci.yml` uses DinD only as a replace-before-use template default; it must not be run on a shared runner until the runner tag and privilege model are approved.
 
 ## Consequences
 
@@ -40,6 +40,7 @@ The final choice is documented in T3.2 findings and carried into T3.4 and T5.2.
 
 - **Follow-ups:**
   - T3.2: confirm which mode is available on the pilot runner; document the method used.
+  - T3.2: replace the placeholder `.gitlab-ci.yml` runner tag (`docker-privileged-tbd`) with the approved runner tag or switch the template to socket/rootless mode.
   - T5.2: classify as CST-local (config change to `.gitlab-ci.yml`) or platform/ETO (runner reconfiguration).
   - If platform/ETO action is needed: raise as a separate ticket with this ADR attached.
 

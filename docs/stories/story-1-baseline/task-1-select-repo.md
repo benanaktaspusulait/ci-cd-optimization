@@ -29,8 +29,9 @@ Agree on one FDP repository/service to use for the entire pilot.
 | Selected repository | _TBD_ |
 | GitLab project URL | _TBD_ |
 | GitLab environment | _TBD_ (self-hosted / GitLab.com — see [glossary](../../../docs/glossary.md)) |
+| Issue / board tracker | _TBD_ (default GitLab issues/MRs if the pilot repo is GitLab-hosted) |
 | Primary language / build tool | _TBD_ (e.g. Java 17 / Maven) |
 | Selection rationale | _TBD_ |
 | Stakeholder who agreed scope | _TBD_ |
 
-> After filling in this table: update `REGISTRY_IMAGE` in `.gitlab-ci.yml` and confirm the Maven cache path in `Dockerfile`.
+> After filling in this table: update `REGISTRY_IMAGE` and the runner tag in `.gitlab-ci.yml`, confirm the tracker, and confirm the Maven cache paths in `Dockerfile` / CI.

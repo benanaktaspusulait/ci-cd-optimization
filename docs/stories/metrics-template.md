@@ -39,3 +39,17 @@ Copy a fresh block per pilot iteration if you measure more than once. [← Back 
 
 ## Source data
 - _Links to pipeline runs, build logs, or commands used._
+
+## Source artefact mapping
+
+Use this mapping when copying raw measurements into the core metrics table.
+
+| Source | Produced by | Use for |
+|--------|-------------|---------|
+| `metrics-output/build-metrics.csv` | `scripts/measure-baseline.sh` in the selected pilot repo | Local warm/cold Docker build time and local image size |
+| `build-metrics.txt` | `.gitlab-ci.yml` `build-image` job | CI build duration and registry image size |
+| `itest-metrics.txt` | `.gitlab-ci.yml` `integration-test` job | Integration-test startup + run duration |
+| `pipeline-metrics.json` | `.gitlab-ci.yml` `collect-metrics` job | Pipeline id, branch, commit, timestamp, and source URL |
+| GitLab pipeline analytics | GitLab UI/API | Rolling average pipeline duration and failed/flaky pipeline rate |
+
+The metrics template remains the final human-readable summary; raw artefacts are supporting evidence and should be linked in the `Source / method` column.

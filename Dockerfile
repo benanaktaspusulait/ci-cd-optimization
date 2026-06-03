@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # Dockerfile — Baseline template for the CI/CD Optimisation Pilot
 #
 # BEFORE state (Story 1 baseline): replace with the actual pilot repo Dockerfile in T1.3.
@@ -11,6 +12,7 @@
 #   - Confirm Maven wrapper path (./mvnw) matches pilot repo.
 #   - Adjust EXPOSE port to match the application.
 #   - Confirm non-root user UID matches org policy (SECURITY.md).
+#   - Add a HEALTHCHECK once the pilot app's health endpoint and runtime tooling are known.
 
 # ── Stage 1: dependency resolution ──────────────────────────────────────────
 # Copy only dependency metadata first so this layer is cached independently of source changes.
@@ -57,5 +59,7 @@ RUN chown appuser:appgroup app.jar
 USER appuser
 
 EXPOSE 8080
+
+# TODO: add a real application healthcheck here once the pilot service exposes one.
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

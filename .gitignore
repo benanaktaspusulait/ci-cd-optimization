@@ -1,0 +1,25 @@
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Local environment and secrets
+.env
+.env.*
+*.local
+secrets/
+credentials/
+
+# Build and generated output
+target/
+build/
+out/
+*.class
+metrics-output/
+
+# Local assistant/tooling state
+.claude/settings.local.json

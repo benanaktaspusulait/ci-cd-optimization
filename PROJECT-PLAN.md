@@ -15,7 +15,7 @@ Sized from the story estimates (S ≤0.5d · M 0.5–1d · L 1–2d). Stories 2 
 | **Week 1** | Baseline & scope | Story 1 (T1.1–T1.4) | Pilot repo agreed; baseline metrics captured |
 | **Week 2** | Build + Testcontainers (parallel) | Story 2 (T2.1–T2.3), Story 3 (T3.1–T3.2) | `.dockerignore` + one layering change applied; Testcontainers setup running locally |
 | **Week 3** | Measure + compare | Story 2 (T2.4), Story 3 (T3.3–T3.4), Story 4 (T4.1–T4.2) | Before/after build metrics; Testcontainers vs Compose comparison; Compose services mapped |
-| **Week 4** | Rationalise + consolidate | Story 4 (T4.3), Story 5 (T5.1–T5.4) | Compose recommendation; consolidated findings; ownership classified; findings shared |
+| **Week 4** | Rationalise + consolidate | Story 4 (T4.3), Story 5 (T5.1–T5.3) | Compose recommendation; consolidated findings; ownership classified; findings shared |
 
 > This is a ~4-week part-time pilot, not a full-time programme. Adjust per team capacity.
 

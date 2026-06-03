@@ -34,17 +34,18 @@ docker buildx build --secret id=maven_settings,src=$HOME/.m2/settings.xml .
 
 ## 2. Scanning policy
 
-| What | Tool (candidate) | When | Gate |
-|------|------------------|------|------|
-| Image vulnerabilities | **Trivy** or **Snyk** | Every pilot build | Fail on **Critical**; review High |
-| Dependency vulnerabilities | Trivy / Snyk / `mvn` audit | On MR + weekly schedule | Fail on Critical |
-| Secret scanning | **gitleaks** / **trufflehog** | On MR | Fail on any verified secret |
-| SBOM generation | **Syft** (SPDX/CycloneDX) | On image build | Artefact attached to build |
-| Base image freshness | scheduled rebuild + scan | Weekly | Flag outdated/EOL base images |
+| What | Tool (candidate) | When | Pilot mode | Target gate |
+|------|------------------|------|------------|-------------|
+| Image vulnerabilities | **Trivy** or **Snyk** | Every pilot build | Report-only / warn | Fail on **Critical**; review High |
+| Dependency vulnerabilities | Trivy / Snyk / `mvn` audit | On MR + weekly schedule | Report-only / warn | Fail on Critical |
+| Secret scanning | **gitleaks** / **trufflehog** | On MR | Report-only until tool is chosen | Fail on any verified secret |
+| SBOM generation | **Syft** (SPDX/CycloneDX) | On image build | Artefact attached to build | Required artefact |
+| Base image freshness | scheduled rebuild + scan | Weekly | Report-only / warn | Flag outdated/EOL base images |
 
 > Tool **choice** is CST-local for the pilot. A shared, org-wide scanning **standard / gate** is **platform/ETO** — classify in Story 5.
+> The template CI starts in report-only mode to avoid blocking before baseline data exists. Promote the target gates only after Story 1 captures the baseline and stakeholders agree the thresholds.
 
-**Severity policy (pilot default)**
+**Severity policy (target gate, after promotion)**
 - **Critical:** block merge/build.
 - **High:** review and decide (waiver with expiry if accepted).
 - **Medium/Low:** track, don't block.
@@ -58,7 +59,7 @@ Container/image rules to enforce automatically rather than by review.
 | Policy | Rule | How |
 |--------|------|-----|
 | No `root` runtime | Container must run as non-root `USER` | Dockerfile lint (**hadolint**) + image policy check |
-| No `latest` tags | Base images pinned to a version (digest for critical) | hadolint rule + CI grep/lint |
+| No unpinned base/job images | Base images and CI job images pinned to a version (digest for critical) | hadolint rule + CI grep/lint |
 | No secrets in image | Built image contains no secret material | secret scan of built image |
 | Healthcheck present | Long-running images define a healthcheck | hadolint / policy check |
 | Approved base images | Use sanctioned base images only | policy check against allowlist *(platform/ETO)* |
@@ -67,6 +68,7 @@ Container/image rules to enforce automatically rather than by review.
 - Start with **hadolint** for Dockerfile rules (fast, local + CI).
 - Express image/admission policies as code (**OPA/Conftest** or equivalent) where a gate is wanted.
 - For the pilot, run policies in **warn** mode first; promote to **block** once stable.
+- Release alias tags such as `:main` are allowed only when the immutable SHA tag is also pushed; avoid `:latest` in pilot templates.
 
 ---
 
@@ -89,4 +91,4 @@ Container/image rules to enforce automatically rather than by review.
 
 ## Reporting a vulnerability
 
-This is a planning/pilot repository (docs only). If a security issue is found in pilot **code or config**, raise it privately with the pilot lead rather than opening a public issue.
+This is a planning/pilot repository with docs plus executable templates/config. If a security issue is found in pilot **code, config, or templates**, raise it privately with the pilot lead rather than opening a public issue.

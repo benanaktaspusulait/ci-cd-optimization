@@ -15,7 +15,6 @@ out/
 build/
 *.class
 *.jar
-!target/*.jar   # Exception: the final fat JAR is needed by the runtime stage COPY
 
 # ── IDE / editor files ───────────────────────────────────────────────────────
 .idea/

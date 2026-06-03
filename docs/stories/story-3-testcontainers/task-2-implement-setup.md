@@ -33,13 +33,15 @@ Reference pattern:
 ```java
 @Container
 static KafkaContainer kafka = new KafkaContainer(
-    DockerImageName.parse("confluentinc/cp-kafka:7.5.5"));
+    DockerImageName.parse("confluentinc/cp-kafka:7.6.0"));
 
 @DynamicPropertySource
 static void props(DynamicPropertyRegistry r) {
     r.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
 }
 ```
+
+Use the same dependency image/tag as the Compose baseline unless T3.1 explicitly documents a reason to change it.
 
 ## Acceptance criteria
 - [ ] The dependency starts via Testcontainers
