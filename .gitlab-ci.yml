@@ -28,8 +28,10 @@ variables:
 # ─── Stages ───────────────────────────────────────────────────────────────────
 stages:
   - build
+  - scan
   - test
   - integration-test
+  - metrics
   - publish
 
 # ─── Default ──────────────────────────────────────────────────────────────────
@@ -78,6 +80,32 @@ build-image:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH == "develop"'
     - if: '$CI_COMMIT_BRANCH == "main"'
+
+# ─── Security scan (Trivy) ────────────────────────────────────────────────────
+# Scans the built image for known vulnerabilities.
+# Non-blocking during pilot (--exit-code 0) — reports only.
+# Promote to blocking (--exit-code 1) once baseline is understood.
+# Reference: SECURITY.md
+#
+container-scan:
+  stage: scan
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  variables:
+    FULL_IMAGE_NAME: "${REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
+  script:
+    - trivy image --exit-code 0 --severity HIGH,CRITICAL --format table "$FULL_IMAGE_NAME"
+    - trivy image --exit-code 0 --severity HIGH,CRITICAL --format json --output trivy-report.json "$FULL_IMAGE_NAME"
+  artifacts:
+    paths:
+      - trivy-report.json
+    expire_in: 30 days
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  allow_failure: true   # Non-blocking during pilot; remove once gates are agreed
 
 # ─── Unit tests ───────────────────────────────────────────────────────────────
 unit-test:
@@ -132,6 +160,35 @@ integration-test:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH == "develop"'
+
+# ─── Pipeline metrics (observability) ─────────────────────────────────────────
+# Collects pipeline timing data after every run for trend analysis.
+# Feeds into the metrics-template.md and enables regression detection.
+# Reference: docs/stories/metrics-template.md
+#
+collect-metrics:
+  stage: metrics
+  image: alpine:3.19
+  script:
+    - |
+      echo "{
+        \"pipeline_id\": \"$CI_PIPELINE_ID\",
+        \"commit\": \"$CI_COMMIT_SHORT_SHA\",
+        \"branch\": \"$CI_COMMIT_REF_SLUG\",
+        \"timestamp\": \"$(date -Iseconds)\",
+        \"pipeline_url\": \"$CI_PIPELINE_URL\"
+      }" > pipeline-metrics.json
+    - cat pipeline-metrics.json
+  artifacts:
+    paths:
+      - pipeline-metrics.json
+      - build-metrics.txt
+      - itest-metrics.txt
+    expire_in: 90 days
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
 
 # ─── Publish (main only) ──────────────────────────────────────────────────────
 publish-image:

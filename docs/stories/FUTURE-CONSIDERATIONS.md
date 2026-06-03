@@ -81,3 +81,59 @@ These are decisions that will need to be made if the pilot succeeds and the team
 **Consequences if adopted:**
 - (+) Faster CI builds; dependency-heavy layers reused across branches; predictable build time.
 - (−) Registry storage cost; cache invalidation must be controlled; fallback (no-cache build) must still work.
+
+---
+
+## Post-pilot technical opportunities
+
+These are concrete next steps that build on the pilot's findings. They do not require platform/ETO infrastructure — CST could pursue them independently.
+
+### Selective test execution
+
+**What:** Only run tests affected by the changed code. If only `payment/` changed, skip `notification/` tests entirely.
+
+**How:** Maven module selection (`-pl`, `-am`) combined with `git diff` against the merge base. GitLab CI `rules:changes` can also skip entire jobs when certain paths are untouched.
+
+**Expected impact:** After build optimisation, this is the next-largest pipeline speed gain. On a multi-module project, it can cut integration test time by 50%+ for focused changes.
+
+**When:** After Story 3 (Testcontainers) proves which tests are truly independent and isolated.
+
+### GitLab CI include template
+
+**What:** Extract the pilot's `.gitlab-ci.yml` pattern (BuildKit build, scan, Testcontainers, metrics) into a reusable template that other FDP repos can `include:`.
+
+**How:** GitLab CI supports `include: project` and `include: remote`. Place the template in a shared repo; consuming repos override only their variables (registry path, image tag).
+
+**Expected impact:** Eliminates copy-paste drift across repos; a fix in the template propagates to all consumers. Reduces onboarding effort for new services.
+
+**When:** After pilot findings are shared (Story 5) and at least one other repo wants to adopt the pattern.
+
+### Contract testing (Pact)
+
+**What:** Verify that services agree on their API contracts (request/response shapes) without deploying them together.
+
+**How:** Pact (consumer-driven contract testing). Consumer tests generate contracts; provider verifies them in its own pipeline. No shared environment needed.
+
+**Expected impact:** Catches integration mismatches before deploy, without heavy end-to-end tests. Reduces the need for full-stack staging environments.
+
+**When:** When multiple FDP services interact and integration failures are a recurring problem.
+
+### Ephemeral review environments
+
+**What:** Spin up a short-lived deployment for each MR so reviewers can test the change in a real environment, then tear it down on merge.
+
+**How:** GitLab Environments + Kubernetes namespace per MR (or Docker Compose on a shared VM). GitLab's `environment: on_stop` handles cleanup.
+
+**Expected impact:** Faster feedback on behaviour changes; QA can verify without waiting for a shared staging deploy.
+
+**When:** After the pipeline is fast and reliable (pilot goals achieved); requires platform/ETO infrastructure for dynamic namespaces.
+
+### Dependency proxy / artifact cache
+
+**What:** Cache Maven dependencies and Docker base image pulls at the organisation level so every pipeline doesn't re-download them from the internet.
+
+**How:** GitLab Dependency Proxy (built-in) for Docker images; Nexus/Artifactory or GitLab Package Registry for Maven.
+
+**Expected impact:** Eliminates network variability from builds; protects against upstream outages (Docker Hub rate limits, Maven Central downtime).
+
+**When:** When multiple teams hit download latency or rate-limit issues. Platform/ETO owned.

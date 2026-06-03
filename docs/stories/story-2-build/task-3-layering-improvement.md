@@ -53,3 +53,4 @@ ENTRYPOINT ["java","-jar","/app/app.jar"]
 - [ ] One layering/cache change is applied
 - [ ] Expected benefit is described
 - [ ] Compatibility risks or concerns are noted
+- [ ] Built image passes Trivy scan without new Critical vulnerabilities (non-blocking report)
