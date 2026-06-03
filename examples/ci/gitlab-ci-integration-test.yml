@@ -1,0 +1,104 @@
+# GitLab CI integration test stage — Testcontainers mode
+#
+# This snippet shows how to run Spring Boot + Cucumber + Testcontainers integration tests
+# in GitLab CI using Docker-in-Docker (DinD).
+#
+# Prerequisites:
+#   - Runner tagged 'docker-privileged' (or equivalent) — see ADR-0005
+#   - Docker-in-Docker service enabled
+#   - Testcontainers configured to use the DinD daemon (DOCKER_HOST)
+#
+# How Testcontainers finds Docker in CI:
+#   - DOCKER_HOST=tcp://docker:2375 tells Testcontainers where the daemon is.
+#   - TESTCONTAINERS_RYUK_DISABLED=true — Ryuk cannot connect in some DinD setups.
+#   - TESTCONTAINERS_CHECKS_DISABLE=true — skip pre-flight checks that may fail in DinD.
+#
+# Reference: ADR-0002, ADR-0005, Story 3, T3.2
+
+# ─── Integration test with Testcontainers ────────────────────────────────────
+integration-test-testcontainers:
+  stage: integration-test
+  image: eclipse-temurin:17-jdk
+  tags:
+    - docker-privileged   # TODO: confirm runner tag with platform/ETO (ADR-0005)
+  services:
+    - name: docker:24-dind
+      alias: docker
+      command: ["--tls=false"]   # DinD without TLS for simplicity in test environments
+  variables:
+    # Tell Testcontainers where the Docker daemon is.
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+    # Testcontainers CI-specific settings.
+    TESTCONTAINERS_RYUK_DISABLED: "true"
+    TESTCONTAINERS_CHECKS_DISABLE: "true"
+    # Maven settings.
+    MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  cache:
+    key: "$CI_COMMIT_REF_SLUG-maven"
+    paths:
+      - .m2/repository
+  before_script:
+    # Verify Docker connectivity before running tests.
+    - |
+      echo "Waiting for Docker daemon..."
+      for i in $(seq 1 30); do
+        docker info >/dev/null 2>&1 && break
+        sleep 1
+      done
+    - docker info
+  script:
+    - ITEST_START=$(date +%s)
+    # Run only integration tests (Failsafe plugin, *IT.java pattern).
+    # Cucumber features are picked up via TestcontainersBaseIT.java.
+    - ./mvnw -B verify -Dskip.unit.tests=true -Dspring.profiles.active=integration-test
+    - ITEST_END=$(date +%s)
+    - echo "Integration test duration $(( ITEST_END - ITEST_START ))s" | tee itest-metrics.txt
+  artifacts:
+    reports:
+      junit: target/failsafe-reports/TEST-*.xml
+    paths:
+      - itest-metrics.txt
+      - target/cucumber-report.json
+    expire_in: 7 days
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+
+# ─── Integration test with Docker Compose (current/fallback) ─────────────────
+# Keep this job as the fallback until T3.2 confirms Testcontainers works in CI.
+# Once confirmed, this job can be removed or kept for E2E-style testing.
+integration-test-compose:
+  stage: integration-test
+  image: eclipse-temurin:17-jdk
+  services:
+    - name: docker:24-dind
+      alias: docker
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+    MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  cache:
+    key: "$CI_COMMIT_REF_SLUG-maven"
+    paths:
+      - .m2/repository
+  before_script:
+    - docker info
+    - docker compose -f docker-compose.yml up -d --wait
+  script:
+    - ITEST_START=$(date +%s)
+    - ./mvnw -B verify -Dskip.unit.tests=true
+    - ITEST_END=$(date +%s)
+    - echo "Integration test (compose) duration $(( ITEST_END - ITEST_START ))s" | tee itest-compose-metrics.txt
+  after_script:
+    - docker compose -f docker-compose.yml down -v
+  artifacts:
+    reports:
+      junit: target/failsafe-reports/TEST-*.xml
+    paths:
+      - itest-compose-metrics.txt
+    expire_in: 7 days
+  rules:
+    # Run Compose variant only on develop until Testcontainers is validated.
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+  when: manual   # Manual trigger — used for comparison (T3.3), not every pipeline

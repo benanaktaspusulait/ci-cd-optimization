@@ -1,0 +1,58 @@
+# .dockerignore — Keep the build context lean for a Java/Maven Spring Boot project.
+# Reference: T2.2, Story 2
+#
+# Without this file, Docker sends EVERYTHING in the project root to the daemon.
+# With it, only files needed for the build are sent — faster builds, no secret leaks.
+
+# ── Version control ──────────────────────────────────────────────────────────
+.git/
+.gitignore
+.gitattributes
+.gitlab/
+
+# ── Build output (rebuild inside Docker, don't copy stale artefacts) ─────────
+target/
+out/
+build/
+*.class
+*.jar
+
+# ── IDE / editor ─────────────────────────────────────────────────────────────
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Local environment / secrets (NEVER send secrets to Docker context) ───────
+.env
+.env.*
+*.local
+secrets/
+credentials/
+
+# ── Documentation (not needed in the image) ──────────────────────────────────
+docs/
+*.md
+LICENSE
+
+# ── CI/CD config (not needed in the image) ───────────────────────────────────
+.gitlab-ci.yml
+
+# ── Docker Compose (building the image doesn't need compose files) ───────────
+docker-compose*.yml
+docker-compose*.yaml
+
+# ── Scripts (helper scripts, not shipped in production) ──────────────────────
+scripts/
+
+# ── Test sources (not shipped in production image) ───────────────────────────
+src/test/
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/

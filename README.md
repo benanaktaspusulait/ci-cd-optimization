@@ -124,7 +124,7 @@ Story 1 (baseline, gate)
 
 📋 [**Full backlog index**](docs/stories/INDEX.md) — all stories and task titles on one page.
 
-**More docs:** [Project plan & timeline](PROJECT-PLAN.md) · [Security plan](SECURITY.md) · [Architecture decisions (ADR)](docs/adr/README.md) · [Technical notes](docs/stories/tech-notes.md) · [Definition of Done](docs/stories/DEFINITION-OF-DONE.md) · [Future considerations](docs/stories/FUTURE-CONSIDERATIONS.md) · [Glossary](docs/glossary.md) · [How to contribute](CONTRIBUTING.md)
+**More docs:** [Project plan & timeline](PROJECT-PLAN.md) · [Security plan](SECURITY.md) · [Architecture decisions (ADR)](docs/adr/README.md) · [Technical notes](docs/stories/tech-notes.md) · [Definition of Done](docs/stories/DEFINITION-OF-DONE.md) · [Future considerations](docs/stories/FUTURE-CONSIDERATIONS.md) · [Example code](examples/README.md) · [Glossary](docs/glossary.md) · [How to contribute](CONTRIBUTING.md)
 
 ---
 
