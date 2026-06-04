@@ -83,7 +83,7 @@ A small, measurable pilot on **one** representative repository:
 
 ## Epic
 
-**Pilot Container & CI/CD Optimisation Improvements for FDP** — validate selected build and integration-testing improvements with before/after evidence, then identify reusable patterns and their owners (CST vs platform/ETO).
+**Pilot Container & CI/CD Optimisation — FDP Initial Scope** — validate selected build and integration-testing improvements with before/after evidence, then identify reusable patterns and their owners (CST vs platform/ETO).
 
 **Out of scope:** org-wide rollout, removing all Compose, building shared platform capabilities, guaranteeing a specific speedup beyond the pilot targets below.
 
@@ -129,6 +129,8 @@ Story 1 (baseline, gate)
 ---
 
 ## Status board
+
+> **Note:** The backlog below is a **candidate structure only**. Individual tickets should not be created until priority, ownership and target board are agreed. The purpose is to support review and prioritisation — not to imply that every task will be implemented immediately.
 
 Single source of truth for progress. Update the **Status** column as work moves; status-looking metadata in story/task files is only an initial planning snapshot.
 Estimates: `S` ≤0.5d · `M` 0.5–1d · `L` 1–2d. Priority: MoSCoW.
@@ -192,3 +194,100 @@ Create incrementally — not all at once:
 3. Story 2 → T2.1 (review Dockerfile)
 
 Open the rest once the baseline and a first build review are underway.
+
+---
+
+## Immediate pilot scope
+
+The initial pilot should remain small and measurable.
+
+**Included in the first pilot:**
+- Baseline measurement (pipeline, build, image, integration tests)
+- Pilot repository/service selection
+- Dockerfile / build context review
+- `.dockerignore` validation
+- One small Dockerfile layering experiment
+- One small Testcontainers pilot (one dependency)
+- Docker Compose usage review
+- CST-local vs platform/ETO ownership assessment
+- Security scan (Trivy — non-blocking report)
+- CI observability (pipeline metrics collection)
+
+**Not in initial pilot scope** (unless separately agreed):
+- Organisation-wide base image rollout
+- BuildKit remote cache rollout (requires platform/ETO infrastructure)
+- Pre-built test image rollout
+- Ephemeral environment implementation
+- Full platform transformation programme
+- Organisation-wide CI/CD template rollout
+- Shared Testcontainers library implementation
+- Replacing all Docker Compose usage
+
+---
+
+## Assumptions
+
+- The first pilot will use **one** selected repository/service.
+- Baseline metrics will be captured **before** any implementation changes.
+- Any platform-impacting work will be reviewed with relevant platform/ETO stakeholders.
+- Docker Compose will not be removed without understanding current CI and local debugging usage.
+- Testcontainers will be piloted with one dependency first before wider migration is considered.
+- Projected benefits will not be treated as guaranteed until measured.
+- The pilot is part-time work (~4 weeks), not a full-time dedicated programme.
+
+---
+
+## Decision points
+
+Before creating detailed implementation tickets, the following decisions should be agreed:
+
+1. Which repository/service should be used as the pilot?
+2. Which metrics should be captured as the baseline and how (data source, N runs)?
+3. Which Dockerfile/build optimisation should be tested first?
+4. Which integration dependency should be used for the first Testcontainers pilot?
+5. Which items can stay on the CST board?
+6. Which items need platform/ETO visibility or ownership?
+7. What success criteria must be met before considering wider adoption?
+
+---
+
+## Open questions
+
+- Which FDP repository/service is the best pilot candidate?
+- Do we have reliable access to current pipeline timing data (GitLab CI analytics)?
+- Which integration dependency is safest for the first Testcontainers pilot (Redis? Kafka?)?
+- Are current CI runners capable of supporting Docker-in-Docker or socket mount for Testcontainers?
+- Is there an existing platform-owned base image strategy?
+- Which team should own shared base image lifecycle if this progresses?
+- Should any items be raised on the ETO/platform board instead of CST?
+- What is the approval process for using `--privileged` runners?
+
+---
+
+## Recommended first local changes
+
+The first local changes should be small and low-risk:
+
+1. Add or validate `.dockerignore` (T2.2 — minimal effort, immediate context-size reduction)
+2. Capture current Docker build timing with `scripts/measure-baseline.sh`
+3. Review Dockerfile layer ordering (T2.1)
+4. Propose one Dockerfile cache optimisation (T2.3)
+5. Measure local build before/after (T2.4)
+6. Identify one candidate integration test for Testcontainers (T3.1)
+
+> Avoid combining Dockerfile optimisation and Testcontainers changes in the same MR — keep changes attributable.
+
+---
+
+## Do not do yet
+
+Do not start with:
+
+- Organisation-wide rollout
+- Replacing all Docker Compose usage
+- Building shared base images without platform ownership
+- Enabling BuildKit remote cache without CI/platform review
+- Implementing ephemeral environments
+- Creating a shared Testcontainers library before the first pilot proves value
+- Opening all candidate tasks as delivery tickets before ownership is agreed
+- Changing anything on `main` branch of the pilot repo without baseline captured first
