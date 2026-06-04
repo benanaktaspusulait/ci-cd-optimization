@@ -3,7 +3,7 @@
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** CST + platform/ETO (RepoSync pipeline owner)
-- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md) · [ADR-0004 — BuildKit](0004-buildkit-cache-and-layering.md) · [PROJECT-PLAN.md — R3](../../PROJECT-PLAN.md) · [T0.4](../stories/story-0-pipeline-assessment/task-4-testcontainers-feasibility.md) · [Drone considerations](../../examples/ci/drone-considerations.md)
+- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md) · [ADR-0004 — BuildKit](0004-buildkit-cache-and-layering.md) · [PROJECT-PLAN.md — R3](../../PROJECT-PLAN.md) · [T1.4](../stories/story-1-pipeline-assessment/task-4-testcontainers-feasibility.md) · [Drone considerations](../../examples/ci/drone-considerations.md)
 
 ## Context
 
@@ -26,12 +26,12 @@ These are **environment variable changes in `.drone.star`** — controlled by Re
 
 ## Decision
 
-The current Drone setup provides DIND. We will assess its suitability for Testcontainers in T0.4 and select the appropriate execution model:
+The current Drone setup provides DIND. We will assess its suitability for Testcontainers in T1.4 and select the appropriate execution model:
 
 - **Preferred (if feasible):** Add `DOCKER_HOST`, `TESTCONTAINERS_RYUK_DISABLED=true`, and `TESTCONTAINERS_CHECKS_DISABLE=true` to the Maven step in `.drone.star` via a RepoSync change request. Testcontainers then runs inside the existing CI pipeline.
 - **Fallback (per ADR-0002):** If the RepoSync change is not approved or DIND connectivity doesn't work, Testcontainers runs **locally only**; Docker Compose remains in CI.
 
-The final decision is documented in T0.4 findings and carried into Story 3 and Story 5.
+The final decision is documented in T1.4 findings and carried into Story 4 and Story 6.
 
 ## Consequences
 
@@ -47,9 +47,9 @@ The final decision is documented in T0.4 findings and carried into Story 3 and S
   - If `DOCKER_HOST` is not set in the Maven step, Testcontainers defaults to looking for a local socket (which doesn't exist in the pod).
 
 - **Follow-ups:**
-  - T0.4: confirm DIND connectivity from Maven step.
+  - T1.4: confirm DIND connectivity from Maven step.
   - If feasible: submit RepoSync change request with env vars.
-  - T5.2: classify as RepoSync/platform-owned change.
+  - T6.2: classify as RepoSync/platform-owned change.
   - Document the workaround for the team (env vars needed in CI vs local).
 
 ## Alternatives considered
@@ -58,5 +58,5 @@ The final decision is documented in T0.4 findings and carried into Story 3 and S
 |--------|------|------|--------------------------|
 | Docker-in-Docker (`--privileged`) | Widely documented; fully isolated daemon | `--privileged` = security risk on shared runners; slow startup | Acceptable only on a dedicated runner tag |
 | Docker socket mount | No `--privileged` on job; reuses host daemon | Grants root-equivalent host access | Preferred if security posture allows; confirm with platform/ETO |
-| Rootless Docker / Sysbox | Secure; no host privilege escalation | Requires specific kernel/runner setup | Assess in T3.2; not assumed available |
+| Rootless Docker / Sysbox | Secure; no host privilege escalation | Requires specific kernel/runner setup | Assess in T1.4; not assumed available |
 | No Docker in CI (fallback) | No privilege concerns | No Testcontainers in CI; Compose remains | Valid fallback per ADR-0002 — not ideal but acceptable |

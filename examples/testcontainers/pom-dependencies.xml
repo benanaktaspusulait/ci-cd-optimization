@@ -12,7 +12,7 @@
     To add Testcontainers, add ONLY the following to the integration-tests module pom.xml.
     Everything else (Cucumber, Spring Boot Test, etc.) already exists.
 
-    Reference: ADR-0002, Story 3, T3.2
+    Reference: ADR-0002, Story 4, T4.2
 -->
 
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->

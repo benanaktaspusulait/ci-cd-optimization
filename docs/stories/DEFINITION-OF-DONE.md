@@ -42,4 +42,4 @@ Capture every before/after measurement in the dedicated, fillable **[metrics tem
 | Developer feedback loop | ≤ 5 min (change → test green) | Local stopwatch / script timing |
 | Pipeline duration (CI, post-platform) | ≥ 20% ↓ | Drone pipeline UI (after RepoSync change) |
 
-> Targets (e.g. ≥20% faster build, ≥15% smaller image) are tracked in the [metrics template](metrics-template.md) and the [README success criteria](../../README.md#success-criteria--targets).
+> Targets are tracked in the [metrics template](metrics-template.md) and the [README success criteria](../../README.md#success-criteria--targets). Keep local pilot targets separate from post-platform CI targets.

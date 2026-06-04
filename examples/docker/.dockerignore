@@ -1,5 +1,5 @@
 # .dockerignore — Keep the build context lean for a Java/Maven Spring Boot project.
-# Reference: T2.2, Story 2
+# Reference: T3.2, Story 3
 #
 # Without this file, Docker sends EVERYTHING in the project root to the daemon.
 # With it, only files needed for the build are sent — faster builds, no secret leaks.

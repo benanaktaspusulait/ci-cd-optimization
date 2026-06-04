@@ -11,12 +11,12 @@
 # OPTIMISED VERSION (below):
 #   - Multi-stage: separate dependency resolution from build from runtime
 #   - BuildKit cache mounts for Maven local repo
-#   - Smaller runtime image (corretto:17-alpine or corretto:17 slim)
+#   - Smaller runtime payload: Maven, source and build artefacts stay out of the final image
 #   - Dependencies cached independently of source changes
 #   - OpenTelemetry agent downloaded once, cached in its own layer
 #   - Envconsul stays (required for Vault secret injection at runtime)
 #
-# Reference: ADR-0004, Story 2, T2.3
+# Reference: ADR-0004, Story 3, T3.3
 #
 # ══════════════════════════════════════════════════════════════════════════════
 # Stage 1: Resolve dependencies

@@ -11,19 +11,19 @@ The FDP CI/CD pipeline currently suffers from long build times (~12 min average)
 
 Implementing all of these at once across multiple repositories would be high-risk: if something breaks, diagnosing the cause is difficult; if something doesn't help, effort is wasted with no evidence to show. The team also lacks baseline data to prove whether any change actually improved the situation.
 
-Additionally, some improvements are CST-local (the team can act immediately) while others require platform/ETO infrastructure (shared base images, remote cache). Starting a rollout without knowing this boundary creates organisational friction.
+Additionally, some improvements are CST-local (the team can act immediately), some require RepoSync/platform template changes, and others require wider ETO infrastructure (shared base images, remote cache). Starting a rollout without knowing this boundary creates organisational friction.
 
 ## Decision
 
 We will validate the optimisation ideas through a **small, measurable pilot on one representative repository**, capturing before/after evidence, before proposing any wider rollout.
 
 The pilot:
-- selects one repo that is representative but low-risk (Story 1)
-- captures baseline metrics so improvement is provable (Story 1)
-- applies build optimisation and measures the delta (Story 2)
-- pilots Testcontainers for one dependency and compares to Compose (Story 3)
-- reviews Compose role and recommends a reduced set (Story 4)
-- consolidates findings and classifies CST vs platform/ETO ownership (Story 5)
+- selects one repo that is representative but low-risk (Story 2)
+- captures baseline metrics so improvement is provable (Story 2)
+- applies build optimisation and measures the delta (Story 3)
+- pilots Testcontainers for one dependency and compares to Compose (Story 4)
+- reviews Compose role and recommends a reduced set (Story 5)
+- consolidates findings and classifies CST-local vs RepoSync/platform vs wider ETO ownership (Story 6)
 
 Only after evidence is available and ownership is clear will any wider rollout be proposed.
 
@@ -38,12 +38,12 @@ Only after evidence is available and ownership is clear will any wider rollout b
 - **Negative / trade-offs:**
   - Findings from one repo may not fully generalise (assumption A1).
   - Slower than a rollout — the pilot takes ~4 weeks before wider adoption is even discussed.
-  - Some benefits (remote cache, base images) cannot be realised in the pilot alone — they require platform/ETO action post-pilot.
+  - Some benefits (remote cache, base images) cannot be realised in the pilot alone — they require RepoSync/platform or wider ETO action post-pilot.
 
 - **Follow-ups:**
-  - State scope limits explicitly in the Story 5 summary.
+  - State scope limits explicitly in the Story 6 summary.
   - Recommend a second repo before any org-wide rollout.
-  - Route platform/ETO items via Story 5 with evidence attached.
+  - Route RepoSync/platform and wider ETO items via Story 6 with evidence attached.
 
 ## Alternatives considered
 

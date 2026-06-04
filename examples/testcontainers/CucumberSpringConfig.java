@@ -32,7 +32,7 @@ import org.springframework.test.context.DynamicPropertySource;
  *   - Uses "integration-test" profile (similar to existing "docker" profile but for Testcontainers)
  *   - Application-specific properties can be overridden in application-integration-test.yml
  *
- * Related: ADR-0002, Story 3, T3.2
+ * Related: ADR-0002, Story 4, T4.2
  */
 @CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

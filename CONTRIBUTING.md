@@ -50,7 +50,7 @@ Every task file follows the same shape:
 - **Estimate (T-shirt):** `S` ≤0.5 day · `M` 0.5–1 day · `L` 1–2 days
 - **Priority (MoSCoW):** `Must` · `Should` · `Could` · `Won't (this pilot)`
 - **Status:** `Not started` · `In progress` · `Blocked` · `Done`
-- **IDs:** stories `S1…S5`, tasks `T<story>.<n>` (e.g. `T2.3`)
+- **IDs:** stories `S1…S6`, tasks `T<story>.<n>` (e.g. `T3.3`)
 
 > The README status board is the only live progress tracker. Any status values in story/task files are planning snapshots and should not be maintained separately.
 
@@ -68,4 +68,6 @@ Every task file follows the same shape:
 
 ## Raising tickets
 
-Confirm the tracker in T1.1. Default to GitLab issues/MRs for a GitLab-hosted pilot repository; use GitHub only if the selected pilot repo is GitHub-hosted, and route cross-team follow-ups to the CST or ETO/platform board in Story 5. Create tickets incrementally, following the order in the README. Don't raise everything at once — keep work controlled until the baseline and ownership are agreed.
+Confirm the delivery tracker before ticket creation. If the pilot repo is GitLab-hosted, use GitLab issues for task links and GitLab MRs for source review. If Jira is the team's delivery tracker, link the Jira ticket in the `Issue` column and still use GitLab MRs for code changes. Route cross-team follow-ups to the CST, RepoSync/platform, or wider ETO board in Story 6.
+
+Create tickets incrementally, following the order in the README. Don't raise everything at once — keep work controlled until pipeline boundaries, baseline data, and ownership are agreed.

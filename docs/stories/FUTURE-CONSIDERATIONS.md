@@ -2,23 +2,23 @@
 
 Items that are **out of scope for the pilot** but should be addressed if the patterns move to production. These are not tasks — they are a decision backlog for the next phase. [← Back to overview](../../README.md)
 
-> **When to revisit:** after Story 5 is complete and stakeholders decide to progress beyond the pilot.
+> **When to revisit:** after Story 6 is complete and stakeholders decide to progress beyond the pilot.
 
 ---
 
 ## Post-pilot production readiness
 
-> **How to action:** After T5.2 classifies ownership, create tickets on the relevant boards and replace the `Next action` cells below with issue links.
+> **How to action:** After T6.2 classifies ownership, create tickets on the relevant boards and replace the `Next action` cells below with issue links.
 
 | # | Category | What's needed | Why it matters | Likely owner | Board | Next action |
 |---|----------|---------------|----------------|--------------|-------|-------------|
-| F1 | **Rollback strategy** | Define how to revert to the previous image/config when a new build causes issues. Options: re-deploy previous image tag, or automated canary with auto-rollback. **KT confirmed: no automated rollback exists today — only manual `helm rollback`.** | Without rollback, a bad deploy stays live until someone manually intervenes. | CST + platform |
-| F2 | **Monitoring & alerting** | Track pipeline health metrics (queue time, failure rate, stage duration trend) and alert the team when thresholds breach. Drone API + external dashboards (Grafana). | Degradation goes unnoticed until someone manually checks. | CST (setup) / platform (infra) |
-| F3 | **Artifact management** | Define where images are stored (`docker.digital.homeoffice.gov.uk`, ECR, Artifactory), retention/expiry policy (e.g. keep last N tags per branch, expire untagged after 30 days), and cleanup automation. | Unmanaged registries grow indefinitely; stale images consume storage and create confusion. | Platform |
-| F4 | **Environment strategy** | Clarify the promotion path: dev → staging → prod. Same pipeline with environment-specific variables? Manual promote gate? Drone promotion pipelines + protected branches. | Pilot assumes one environment; production needs clear separation and gates. | CST + platform |
-| F5 | **Cost tracking** | Monitor CI runner minutes, registry storage, and image transfer costs. Set budget alerts. | Optimisation saves time but could shift cost elsewhere (e.g. larger cache storage). | Platform / finance | Platform board | Raise after T5.3 — _link issue here_ |
-| F6 | **Compliance & audit trail** | Ensure pipeline changes are traceable: who approved the MR, what ran, which image was deployed. GitLab audit events + merge request approval rules. | Enterprise/regulated environments require evidence of change control. | Platform / compliance | Platform board | Raise after T5.3 — _link issue here_ |
-| F7 | **Troubleshooting runbook** | Create a developer-facing guide: "pipeline failed — what do I do?" covering common failure modes, how to read logs, how to retry, and when to escalate. | Reduces mean-time-to-recovery and unblocks developers without senior intervention. | CST | CST board | Raise after T5.1 (findings consolidated) — _link issue here_ |
+| F1 | **Rollback strategy** | Define how to revert to the previous image/config when a new build causes issues. Options: re-deploy previous image tag, or automated canary with auto-rollback. **KT confirmed: no automated rollback exists today — only manual `helm rollback`.** | Without rollback, a bad deploy stays live until someone manually intervenes. | CST + platform | CST board + platform board | Raise after T6.2 — _link issue here_ |
+| F2 | **Monitoring & alerting** | Track pipeline health metrics (queue time, failure rate, stage duration trend) and alert the team when thresholds breach. Drone API + external dashboards (Grafana). | Degradation goes unnoticed until someone manually checks. | CST (setup) / platform (infra) | CST board + platform board | Raise after T6.2 — _link issue here_ |
+| F3 | **Artifact management** | Define where images are stored (`docker.digital.homeoffice.gov.uk`, ECR, Artifactory), retention/expiry policy (e.g. keep last N tags per branch, expire untagged after 30 days), and cleanup automation. | Unmanaged registries grow indefinitely; stale images consume storage and create confusion. | Platform | Platform board | Raise after T6.2 — _link issue here_ |
+| F4 | **Environment strategy** | Clarify the promotion path: dev → staging → prod. Same pipeline with environment-specific variables? Manual promote gate? Drone promotion pipelines + protected branches. | Pilot assumes one environment; production needs clear separation and gates. | CST + platform | CST board + platform board | Raise after T6.2 — _link issue here_ |
+| F5 | **Cost tracking** | Monitor CI runner minutes, registry storage, and image transfer costs. Set budget alerts. | Optimisation saves time but could shift cost elsewhere (e.g. larger cache storage). | Platform / finance | Platform board | Raise after T6.3 — _link issue here_ |
+| F6 | **Compliance & audit trail** | Ensure pipeline changes are traceable: who approved the MR, what ran, which image was deployed. GitLab audit events + merge request approval rules. | Enterprise/regulated environments require evidence of change control. | Platform / compliance | Platform board | Raise after T6.3 — _link issue here_ |
+| F7 | **Troubleshooting runbook** | Create a developer-facing guide: "pipeline failed — what do I do?" covering common failure modes, how to read logs, how to retry, and when to escalate. | Reduces mean-time-to-recovery and unblocks developers without senior intervention. | CST | CST board | Raise after T6.1 (findings consolidated) — _link issue here_ |
 
 ---
 
@@ -38,11 +38,11 @@ If the pilot succeeds and the team moves towards production adoption:
 ## Relationship to pilot
 
 These items may surface naturally during the pilot:
-- Story 2 (build optimisation) may reveal artifact/registry questions (→ F3).
-- Story 3 (Testcontainers) may expose runner cost implications (→ F5).
-- Story 5 (ownership) should explicitly list which of F1–F7 are CST vs platform/ETO.
+- Story 3 (build optimisation) may reveal artifact/registry questions (→ F3).
+- Story 4 (Testcontainers) may expose runner cost implications (→ F5).
+- Story 6 (ownership) should explicitly list which of F1–F7 are CST-local vs RepoSync/platform vs wider ETO.
 
-When writing the Story 5 consolidated findings, reference this list and recommend which items to pursue next.
+When writing the Story 6 consolidated findings, reference this list and recommend which items to pursue next.
 
 ---
 
@@ -96,7 +96,7 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 **Expected impact:** After build optimisation, this is the next-largest pipeline speed gain. On a multi-module project, it can cut integration test time by 50%+ for focused changes.
 
-**When:** After Story 3 (Testcontainers) proves which tests are truly independent and isolated.
+**When:** After Story 4 (Testcontainers) proves which tests are truly independent and isolated.
 
 ### Reusable Drone pipeline templates (via RepoSync)
 
@@ -106,7 +106,7 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 **Expected impact:** Eliminates copy-paste drift; a fix in the template propagates to all adaptors on next sync. Reduces onboarding effort for new services.
 
-**When:** After pilot findings are shared (Story 5) and the RepoSync team agrees to adopt the patterns. Requires central ownership.
+**When:** After pilot findings are shared (Story 6) and the RepoSync team agrees to adopt the patterns. Requires central ownership.
 
 ### Contract testing (Pact)
 
@@ -143,6 +143,6 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 **What:** An automation project is already in progress (led by Gareth) that aims to eliminate manual service chart management and automate release-branch → tag → deploy flows.
 
-**Coordination:** The CI optimisation pilot and the release automation project are complementary but separate. The pilot improves **build + test speed**; the release automation improves **deploy + release management**. Findings from Story 5 should be shared with Gareth's project to avoid conflicting changes to the pipeline or Helm chart structure.
+**Coordination:** The CI optimisation pilot and the release automation project are complementary but separate. The pilot improves **build + test speed**; the release automation improves **deploy + release management**. Findings from Story 6 should be shared with Gareth's project to avoid conflicting changes to the pipeline or Helm chart structure.
 
-**When:** After Story 5 findings are shared — include Gareth as a stakeholder.
+**When:** After Story 6 findings are shared — include Gareth as a stakeholder.

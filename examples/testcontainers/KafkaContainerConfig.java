@@ -29,9 +29,9 @@ import org.testcontainers.utility.DockerImageName;
  * 1. This class starts zookeeper → kafka → schema-registry programmatically
  * 2. No pre-integration-test wait container needed (wait strategies handle it)
  * 3. Tests connect via dynamic ports (no conflicts with other services)
- * 4. Cleanup is automatic (Ryuk container)
+ * 4. Cleanup is automatic in local runs (Ryuk); Drone may rely on ephemeral pod cleanup
  *
- * Comparison table (for T3.3):
+ * Comparison table (for T4.3):
  * ┌──────────────────────────────┬──────────────────────────────────────────────┐
  * │ Current (docker-compose)     │ Proposed (Testcontainers)                    │
  * ├──────────────────────────────┼──────────────────────────────────────────────┤
@@ -40,11 +40,11 @@ import org.testcontainers.utility.DockerImageName;
  * │ Separate wait container      │ Built-in wait strategies                     │
  * │ Shared state across tests    │ Isolated per test run                        │
  * │ `mvn docker-compose:up`      │ Started from test code (same JVM)            │
- * │ Manual cleanup (compose down)│ Automatic cleanup (Ryuk)                     │
+ * │ Manual cleanup (compose down)│ Ryuk locally; Drone pod cleanup if disabled  │
  * │ CI needs docker-compose CLI  │ CI needs Docker daemon only                  │
  * └──────────────────────────────┴──────────────────────────────────────────────┘
  *
- * Related: ADR-0002, ADR-0003, Story 3, T3.2
+ * Related: ADR-0002, ADR-0003, Story 4, T4.2
  */
 public class KafkaContainerConfig {
 

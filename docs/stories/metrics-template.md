@@ -1,9 +1,9 @@
 # Metrics — Baseline & Results
 
-Fill this in as the pilot progresses. Baseline values come from Story 1; "after" values from Stories 2–3.
+Fill this in as the pilot progresses. Baseline values come from Story 2; "after" values from Stories 3–5.
 Copy a fresh block per pilot iteration if you measure more than once. [← Back to overview](../../README.md)
 
-> **How to measure:** record the method/source for every number so it can be repeated identically for the "after" run. Pipeline duration = rolling average over the last **N** runs (set N in T1.2).
+> **How to measure:** record the method/source for every number so it can be repeated identically for the "after" run. Pipeline duration = rolling average over the last **N** runs (set N in T2.2).
 
 ---
 
@@ -11,7 +11,7 @@ Copy a fresh block per pilot iteration if you measure more than once. [← Back 
 
 | Field | Value |
 |-------|-------|
-| Pilot repository | _TBD (T1.1)_ |
+| Pilot repository | _TBD (T2.1)_ |
 | Measurement date (baseline) | _YYYY-MM-DD_ |
 | Measurement date (after) | _YYYY-MM-DD_ |
 | N (runs averaged) | _TBD_ |
@@ -21,15 +21,15 @@ Copy a fresh block per pilot iteration if you measure more than once. [← Back 
 
 | Metric | Baseline | After | Delta | Target | Source / method |
 |--------|----------|-------|-------|--------|-----------------|
-| Pipeline duration (avg) | | | | ≥ 20% ↓ | |
+| Pipeline duration (avg) | | | | ≥ 20% ↓ (post-platform) | |
 | Build stage duration | | | | — | |
 | Unit test duration | | | | — | |
 | Integration test duration | | | | — | |
-| Docker build time (local) | | | | ≥ 20% ↓ | |
-| Docker build time (CI) | | | | ≥ 20% ↓ | |
-| Final image size | | | | ≥ 15% ↓ | |
-| Integration test startup time | | | | — | |
-| Build context size | | | | — | |
+| Docker build time (local) | | | | ≥ 30% ↓ | |
+| Docker build time (CI) | | | | ≥ 20% ↓ (post-platform) | |
+| Final image size | | | | ≥ 30% ↓ | |
+| Integration test startup time | | | | < 30 sec | |
+| Build context size | | | | ≥ 50% ↓ | |
 | Failed-pipeline / flaky rate | | | | no regression | |
 | Developer feedback loop (change → test green) | | | | ≤ 5 min | |
 | Cache hit/miss rate (if available) | | | | — | |

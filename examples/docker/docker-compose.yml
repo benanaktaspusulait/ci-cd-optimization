@@ -5,13 +5,13 @@
 # Application services (aggregate-*, command-adaptor) are excluded — they would
 # be built from source or pulled from the internal registry.
 #
-# Story 4 (T4.1–T4.2) will classify which of these are:
+# Story 5 (T5.1–T5.2) will classify which of these are:
 #   - Required for CI integration tests
 #   - Useful for local debugging only
-#   - Candidates for Testcontainers replacement (Story 3)
+#   - Candidates for Testcontainers replacement (Story 4)
 #
 # Image versions pinned to match production MSK (3.5.1 = cp-kafka 7.5.5).
-# Reference: ADR-0003, Story 4
+# Reference: ADR-0003, Story 5
 
 services:
 

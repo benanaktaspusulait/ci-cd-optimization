@@ -90,7 +90,7 @@ This is a **RepoSync-controlled change** (environment variable in `.drone.star`)
 - Retention/eviction policy for cache layers
 - `.drone.star` change to add `--cache-from` / `--cache-to` flags
 
-This is **post-pilot** — classify in Story 5 as platform/ETO.
+This is **post-pilot** — classify in Story 6 as RepoSync/platform or wider ETO, depending on who owns the cache namespace and registry policy.
 
 ---
 
@@ -101,7 +101,7 @@ This is **post-pilot** — classify in Story 5 as platform/ETO.
 | Multi-stage Dockerfile | ✅ | ✅ (standard Docker) |
 | `.dockerignore` | ✅ | ✅ |
 | BuildKit cache mounts | ✅ (persistent) | ⚠️ (ephemeral per build) |
-| Testcontainers tests | ✅ | ❓ (needs T0.4 confirmation) |
+| Testcontainers tests | ✅ | ❓ (needs T1.4 confirmation) |
 | Maven `-P testcontainers` profile | ✅ | ❓ (needs RepoSync change to skip compose) |
 | Remote registry cache | ❌ | ❌ (needs platform/ETO) |
 
@@ -109,7 +109,7 @@ This is **post-pilot** — classify in Story 5 as platform/ETO.
 
 ## Recommended approach for the pilot
 
-1. **Story 0:** confirm T0.4 (Testcontainers) and T0.5 (BuildKit) feasibility
-2. **Story 2:** apply Dockerfile optimisation locally; measure local before/after; CI benefit comes from multi-stage (no special config) and `.dockerignore` (reduces context sent to DIND)
-3. **Story 3:** prototype Testcontainers locally; if T0.4 confirms CI feasibility, request RepoSync change to add DOCKER_HOST + RYUK env vars to Maven step
-4. **Story 5:** document what was local vs what needs RepoSync/platform action
+1. **Story 1:** confirm T1.4 (Testcontainers) and T1.5 (BuildKit) feasibility
+2. **Story 3:** apply Dockerfile optimisation locally; measure local before/after; CI benefit comes from multi-stage (no special config) and `.dockerignore` (reduces context sent to DIND)
+3. **Story 4:** prototype Testcontainers locally; if T1.4 confirms CI feasibility, request RepoSync change to add DOCKER_HOST + RYUK env vars to Maven step
+4. **Story 6:** document what was local vs what needs RepoSync/platform action

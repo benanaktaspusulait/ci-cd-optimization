@@ -1,6 +1,6 @@
 # Examples
 
-Reference code samples based on the **real FDP project structure**. These match the actual canlı ortam (fdp-cmd-adaptor-dvla, docker-compose via RepoSync, Maven multi-module).
+Reference code samples based on the **real FDP project structure**. These match the actual live environment (fdp-cmd-adaptor-dvla, docker-compose via RepoSync, Maven multi-module).
 
 Copy, adapt, and rename as needed when applying to the pilot repository.
 
@@ -31,7 +31,7 @@ Copy, adapt, and rename as needed when applying to the pilot repository.
 | [pom-dependencies.xml](testcontainers/pom-dependencies.xml) | What to add to the existing pom.xml (minimal — most deps already exist) |
 | [TestcontainersBaseIT.java](testcontainers/TestcontainersBaseIT.java) | Cucumber runner (JUnit 4 @RunWith style, matching existing FDP pattern) |
 | [CucumberSpringConfig.java](testcontainers/CucumberSpringConfig.java) | Spring Boot ↔ Testcontainers glue with FDP-specific properties (fdp.kafka.broker, fdp.app.redis.nodes, etc.) |
-| [RedisContainerConfig.java](testcontainers/RedisContainerConfig.java) | Redis 5.0.6 container (simplest candidate for T3.1) |
+| [RedisContainerConfig.java](testcontainers/RedisContainerConfig.java) | Redis 5.0.6 container (simplest candidate for T4.1) |
 | [KafkaContainerConfig.java](testcontainers/KafkaContainerConfig.java) | Zookeeper + Kafka + Schema Registry (cp-7.5.5, matching production MSK) |
 | [LocalStackContainerConfig.java](testcontainers/LocalStackContainerConfig.java) | LocalStack (IAM) — if chosen as candidate |
 
@@ -60,4 +60,4 @@ Copy, adapt, and rename as needed when applying to the pilot repository.
 4. **Copy container configs** (RedisContainerConfig, KafkaContainerConfig) to `src/test/java/`
 5. **Copy CucumberSpringConfig** (or merge into existing Spring test config)
 6. **Run locally:** `./mvnw verify -pl cmd-adaptor-dvla-integration-tests -P testcontainers`
-7. **Compare (T3.3):** same tests, Testcontainers vs `-P ci-cmd`, measure timing
+7. **Compare (T4.3):** same tests, Testcontainers vs `-P ci-cmd`, measure timing

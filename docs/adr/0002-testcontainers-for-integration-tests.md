@@ -3,7 +3,7 @@
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** Pilot team
-- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0003 — Compose role](0003-reduce-compose-in-ci.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 3](../stories/story-3-testcontainers/README.md)
+- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0003 — Compose role](0003-reduce-compose-in-ci.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 4](../stories/story-4-testcontainers/README.md)
 
 ## Context
 
@@ -23,12 +23,12 @@ The stronger value proposition for Testcontainers is **determinism and isolation
 We will pilot Testcontainers for **one selected integration dependency** (e.g. Redis or Kafka), managing its lifecycle from the test code, and compare it against the existing Compose flow before any wider adoption.
 
 Specifics:
-- The candidate dependency is selected in T3.1 based on simplicity and validation value.
-- The Testcontainers setup is implemented in T3.2 (container definition, property wiring, wait strategy, cleanup).
+- The candidate dependency is selected in T4.1 based on simplicity and validation value.
+- The Testcontainers setup is implemented in T4.2 (container definition, property wiring, wait strategy, cleanup).
 - Container **reuse** is allowed locally (`testcontainers.reuse.enable=true`) for faster feedback loops.
 - Container **reuse is disabled in CI** — every run gets a clean, isolated environment with no hidden shared state.
-- The comparison (T3.3) covers: startup time, test runtime, complexity, local developer experience, CI suitability, and determinism.
-- A continue/stop recommendation is documented in T3.4.
+- The comparison (T4.3) covers: startup time, test runtime, complexity, local developer experience, CI suitability, and determinism.
+- A continue/stop recommendation is documented in T4.4.
 
 ## Consequences
 
@@ -46,7 +46,7 @@ Specifics:
   - First-run cold pull of container images can be slow (mitigated by image caching in CI if available).
 
 - **Follow-ups:**
-  - T3.2: assess CI suitability early — if the runner cannot provide Docker, document it and treat Testcontainers as local-only.
+  - T4.2: assess CI suitability early — if the runner cannot provide Docker, document it and treat Testcontainers as local-only.
   - If CI is unsuitable: Compose remains in CI for integration tests ([ADR-0003](0003-reduce-compose-in-ci.md) fallback).
   - If successful: expand to more dependencies in post-pilot phase.
   - Route runner-mode decision to platform/ETO via [ADR-0005](0005-ci-runner-docker-mode.md).

@@ -22,7 +22,8 @@ import org.junit.runner.RunWith;
  * 5. CucumberSpringConfig starts Testcontainers (Kafka, Redis, SchemaRegistry)
  * 6. @DynamicPropertySource injects dynamic ports into Spring properties
  * 7. Tests run against isolated, deterministic containers
- * 8. Containers are cleaned up on JVM exit (Testcontainers Ryuk)
+ * 8. Containers are cleaned up by Testcontainers/Ryuk in local runs
+ *    (Drone may disable Ryuk and rely on ephemeral pod cleanup)
  *
  * Differences from existing RunCucumberIntegrationTest:
  * - No docker-compose-maven-plugin needed (skip.containers=true in profile)
@@ -30,7 +31,7 @@ import org.junit.runner.RunWith;
  * - No fixed ports (9092, 8081, 6379) — all dynamic
  * - Same Cucumber features, same step definitions, different infrastructure
  *
- * Related: ADR-0002, CucumberSpringConfig.java, Story 3
+ * Related: ADR-0002, CucumberSpringConfig.java, Story 4
  */
 @RunWith(Cucumber.class)
 @CucumberOptions(

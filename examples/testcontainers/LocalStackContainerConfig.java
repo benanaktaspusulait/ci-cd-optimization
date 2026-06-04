@@ -19,7 +19,7 @@ import static org.testcontainers.containers.localstack.LocalStackContainer.Servi
  *
  * This example shows option 2 (recommended for the pilot) with a note about option 1.
  *
- * Related: ADR-0002, T3.1 (if LocalStack is chosen as the Testcontainers candidate)
+ * Related: ADR-0002, T4.1 (if LocalStack is chosen as the Testcontainers candidate)
  */
 public class LocalStackContainerConfig {
 

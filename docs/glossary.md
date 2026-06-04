@@ -6,8 +6,8 @@ Key terms and abbreviations used across this project. [← Back to overview](../
 
 | Term | Full name / meaning |
 |------|---------------------|
-| **FDP** | The product/team context this pilot runs in. "FDP" is the pilot scope — one representative repository owned by this team is selected in T1.1. |
-| **CST** | The local development team that can own and directly validate changes (Dockerfiles, test code, CI steps). Changes classified as "CST-local" in Story 5 do not require platform approval. |
+| **FDP** | The product/team context this pilot runs in. "FDP" is the pilot scope — one representative repository owned by this team is selected in T2.1. |
+| **CST** | The local development team that can own and directly validate repo-local changes (Dockerfiles, test code, Maven profiles, docs/config). Changes classified as "CST-local" in Story 6 do not require platform approval. |
 | **ETO** | Engineering/Technology Operations — the wider platform/infrastructure org. Owns shared infrastructure: base images, CI/CD templates, registry, remote cache, security gates. Also referred to as "platform" or "platform/ETO" throughout this repo. |
 | **MR** | Merge Request — the GitLab equivalent of a Pull Request. All pilot changes require an MR into `develop`. |
 | **MMA Helm repo** | The central "service repo" that deploys all FDP services to Kubernetes via Helm. It has its own Drone pipeline for Helm packaging, linting, templating, and deploying. Separate from the adaptor CI pipeline. |
@@ -45,7 +45,7 @@ Key terms and abbreviations used across this project. [← Back to overview](../
 | Pipeline config | `.drone.star` (Starlark) — centrally managed via **RepoSync** |
 | Container registries | `docker.digital.homeoffice.gov.uk`, ECR, Artifactory |
 | RepoSync source repo | `https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync` |
-| Maven cache paths | Docker build stages use `/root/.m2/repository` because the image builds as root. GitLab Maven job cache uses `.m2/repository` via `MAVEN_OPTS=-Dmaven.repo.local=.m2/repository`. Local developer runs usually use `~/.m2/repository`. Confirm the selected pilot repo matches these paths in T2.3. |
-| Java version for Testcontainers | Minimum **Java 11**; Java 17+ recommended. Confirm against pilot repo's `pom.xml` in T3.1. |
+| Maven cache paths | Docker build stages use `/root/.m2/repository` because the image builds as root. Drone Maven steps can use `.m2/repository` via `MAVEN_OPTS=-Dmaven.repo.local=.m2/repository` if the central template enables a workspace cache. Local developer runs usually use `~/.m2/repository`. Confirm the selected pilot repo matches these paths in T3.3. |
+| Java version for Testcontainers | Minimum **Java 11**; Java 17+ recommended. Confirm against pilot repo's `pom.xml` in T4.1. |
 
 [← Back to overview](../README.md)

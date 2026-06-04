@@ -2,7 +2,7 @@
 
 Concrete security practices for the pilot. Turns the high-level notes in [tech-notes](docs/stories/tech-notes.md#security--compliance) into an actionable plan. [← Back to overview](README.md)
 
-> **Scope:** practices the pilot will apply or assess. Items needing org-wide infrastructure (shared scanners, signing infra) are flagged as **platform/ETO** and routed via Story 5.
+> **Scope:** practices the pilot will apply or assess. Items needing org-wide infrastructure (shared scanners, signing infra) are flagged as **platform/ETO** and routed via Story 6.
 
 ---
 
@@ -42,8 +42,8 @@ docker buildx build --secret id=maven_settings,src=$HOME/.m2/settings.xml .
 | SBOM generation | **Syft** (SPDX/CycloneDX) | On image build | Artefact attached to build | Required artefact |
 | Base image freshness | scheduled rebuild + scan | Weekly | Report-only / warn | Flag outdated/EOL base images |
 
-> Tool **choice** is CST-local for the pilot. A shared, org-wide scanning **standard / gate** is **platform/ETO** — classify in Story 5.
-> The template CI starts in report-only mode to avoid blocking before baseline data exists. Promote the target gates only after Story 1 captures the baseline and stakeholders agree the thresholds.
+> Tool **choice** is CST-local for the pilot. A shared, org-wide scanning **standard / gate** is **platform/ETO** — classify in Story 6.
+> The template CI starts in report-only mode to avoid blocking before baseline data exists. Promote the target gates only after Story 2 captures the baseline and stakeholders agree the thresholds.
 
 **Severity policy (target gate, after promotion)**
 - **Critical:** block merge/build.
@@ -87,7 +87,7 @@ Container/image rules to enforce automatically rather than by review.
 |------|-------|
 | Secret-safe builds, `.dockerignore`, hadolint | **CST (pilot)** |
 | Scanning tool trial in pilot CI | **CST (pilot)** |
-| Org-wide scanning gate, signing infra, base-image allowlist | **Platform / ETO** (route via Story 5) |
+| Org-wide scanning gate, signing infra, base-image allowlist | **Platform / ETO** (route via Story 6) |
 
 ## Reporting a vulnerability
 

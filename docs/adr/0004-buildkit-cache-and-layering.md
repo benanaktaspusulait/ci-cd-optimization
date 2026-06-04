@@ -3,7 +3,7 @@
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** Pilot team
-- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0003 — Compose role](0003-reduce-compose-in-ci.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 2](../stories/story-2-build/README.md) · [tech notes](../stories/tech-notes.md#buildkit-remote-cache) · [Drone considerations](../../examples/ci/drone-considerations.md)
+- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0003 — Compose role](0003-reduce-compose-in-ci.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 3](../stories/story-3-build/README.md) · [tech notes](../stories/tech-notes.md#buildkit-remote-cache) · [Drone considerations](../../examples/ci/drone-considerations.md)
 
 > **Drone constraint:** Multi-stage builds work in any Docker environment. BuildKit cache mounts work locally but are ephemeral in Drone DIND (lost between builds). Remote registry cache requires a `.drone.star` (RepoSync) change + platform/ETO registry namespace — this is post-pilot.
 
@@ -61,7 +61,7 @@ ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 
 - **Positive:**
   - Faster rebuilds: dependency layer cached separately — source-only changes rebuild in seconds locally.
-  - Smaller runtime image: JRE-only, no build tools → target < 380 MB (from ~450 MB).
+  - Smaller runtime image: no Maven/source/build artefacts in the final stage → target ≥30% smaller than baseline.
   - Predictable CI build time: once remote cache is available, branch builds reuse the main branch cache.
   - Improved security posture: runtime image has reduced attack surface (no compiler, no Maven).
 
@@ -69,12 +69,12 @@ ENTRYPOINT ["java", "-jar", "/app/app.jar"]
   - Registry remote cache requires platform/ETO infrastructure (storage, permissions, retention policy) — deferred to post-pilot.
   - Multi-stage Dockerfiles are slightly more complex to read for developers unfamiliar with the pattern.
   - Cache mounts are BuildKit-specific — if BuildKit is disabled, the Dockerfile still works but without the cache benefit.
-  - Risk R6: a corrupt or stale cache could theoretically produce an incorrect image — mitigated by the "clean build must work" rule and T2.4 verification.
+  - Risk R6: a corrupt or stale cache could theoretically produce an incorrect image — mitigated by the "clean build must work" rule and T3.4 verification.
 
 - **Follow-ups:**
-  - T2.3: apply one layering change at a time and measure (not a full rewrite at once).
-  - T2.4: compare before/after locally and in CI; verify a `--no-cache` build still succeeds.
-  - Story 5 / T5.2: route remote-cache infra requirement to platform/ETO.
+  - T3.3: apply one layering change at a time and measure (not a full rewrite at once).
+  - T3.4: compare before/after locally and in CI; verify a `--no-cache` build still succeeds.
+  - Story 6 / T6.2: route remote-cache infra requirement to platform/ETO.
   - Post-pilot: platform/ETO provisions cache namespace; request RepoSync change to add `--cache-from`/`--cache-to` to the Drone build step.
 
 ## Alternatives considered

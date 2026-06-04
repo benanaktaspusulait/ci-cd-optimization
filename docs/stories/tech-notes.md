@@ -4,18 +4,21 @@ Supporting detail for the pilot. Not tasks — reference only.
 Decisions behind these notes are recorded as [ADRs](../adr/README.md); security specifics live in [SECURITY.md](../../SECURITY.md).
 
 ### Base image strategy
-`base-os → base-runtime → base-build → application`. Benefits: standard runtime, shared layers, central patching, easier compliance. Needs: versioned tags, ownership, deprecation policy, scheduled rebuilds, scanning. _(Likely platform/ETO owned — classify in Story 5.)_
+`base-os → base-runtime → base-build → application`. Benefits: standard runtime, shared layers, central patching, easier compliance. Needs: versioned tags, ownership, deprecation policy, scheduled rebuilds, scanning. _(Likely platform/ETO owned — classify in Story 6.)_
 
 ### BuildKit remote cache · [ADR-0004](../adr/0004-buildkit-cache-and-layering.md)
 CI runners (Drone Kubernetes pods) are ephemeral — no persistent local cache between builds. Use a branch-aware registry cache:
 ```bash
+BRANCH_SLUG="${DRONE_BRANCH:-local}"
+COMMIT_SHA="${DRONE_COMMIT_SHA:-local}"
+
 docker buildx build \
-  --cache-from=type=registry,ref=$REGISTRY_IMAGE/cache:main \
-  --cache-from=type=registry,ref=$REGISTRY_IMAGE/cache:$CI_COMMIT_REF_SLUG \
-  --cache-to=type=registry,ref=$REGISTRY_IMAGE/cache:$CI_COMMIT_REF_SLUG,mode=max \
-  --tag $REGISTRY_IMAGE:$CI_COMMIT_SHA --push .
+  --cache-from=type=registry,ref="$REGISTRY_IMAGE/cache:main" \
+  --cache-from=type=registry,ref="$REGISTRY_IMAGE/cache:${BRANCH_SLUG}" \
+  --cache-to=type=registry,ref="$REGISTRY_IMAGE/cache:${BRANCH_SLUG}",mode=max \
+  --tag "$REGISTRY_IMAGE:${COMMIT_SHA}" --push .
 ```
-Branch builds reuse `main` cache. Keep a working fallback if cache is unavailable. _(Likely platform/ETO owned.)_
+Branch builds reuse `main` cache. Replace the variable names with the equivalent RepoSync/Starlark values if the central Drone template exposes different names. Keep a working fallback if cache is unavailable. _(Likely platform/ETO owned.)_
 
 ### Testcontainers reuse policy · [ADR-0002](../adr/0002-testcontainers-for-integration-tests.md)
 Local: reuse may be enabled for faster feedback. CI: reuse disabled — clean, deterministic env per run, no hidden shared state.

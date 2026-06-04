@@ -10,7 +10,7 @@ import org.testcontainers.utility.DockerImageName;
  * Used by: aggregate-party, aggregate-object, aggregate-location, aggregate-event,
  *          aggregate-service, aggregate-matching (FDP_APP_REDIS_NODES=redis:6379)
  *
- * Why Redis is the best first Testcontainers candidate (T3.1):
+ * Why Redis is the best first Testcontainers candidate (T4.1):
  * - Simplest dependency — single container, no multi-node setup
  * - Already used by multiple FDP services
  * - Fast to start (~2 seconds)
@@ -22,7 +22,7 @@ import org.testcontainers.utility.DockerImageName;
  * - In Testcontainers mode, Spring @DynamicPropertySource injects the dynamic host:port
  * - No change to application code needed — only test configuration
  *
- * Related: ADR-0002, CucumberSpringConfig.java, T3.1, T3.2
+ * Related: ADR-0002, CucumberSpringConfig.java, T4.1, T4.2
  */
 public class RedisContainerConfig {
 
@@ -31,7 +31,7 @@ public class RedisContainerConfig {
 
     /**
      * Shared Redis container — started once, reused across all scenarios.
-     * Testcontainers Ryuk will clean it up when the JVM exits.
+     * Testcontainers/Ryuk cleans it up in local runs; Drone may rely on pod teardown.
      */
     public static final GenericContainer<?> REDIS = new GenericContainer<>(REDIS_IMAGE)
             .withExposedPorts(6379);
