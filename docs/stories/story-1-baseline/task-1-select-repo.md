@@ -34,4 +34,4 @@ Agree on one FDP repository/service to use for the entire pilot.
 | Selection rationale | _TBD_ |
 | Stakeholder who agreed scope | _TBD_ |
 
-> After filling in this table: update `REGISTRY_IMAGE` and the runner tag in `.gitlab-ci.yml`, confirm the tracker, and confirm the Maven cache paths in `Dockerfile` / CI.
+> After filling in this table: confirm the tracker, verify Docker/Drone access, and confirm the Maven cache paths in `Dockerfile` / CI steps.

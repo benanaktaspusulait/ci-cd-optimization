@@ -6,7 +6,7 @@
 
 **Key message:** the difference is not Docker vs no Docker — it's *optimised, standardised, cached and test-driven* Docker usage.
 
-> **Repository type:** this repository is a planning and template pack, not the selected application repository. Root-level files such as `.gitlab-ci.yml`, `Dockerfile`, `docker-compose.yml`, and `scripts/measure-baseline.sh` are starting templates to copy/adapt after T1.1 selects a pilot repo with application sources (`pom.xml`, `mvnw`, `.mvn/`, `src/`).
+> **Repository type:** this repository is a planning and template pack, not the selected application repository. Root-level files (`Dockerfile`, `docker-compose.yml`, `scripts/measure-baseline.sh`) are starting templates to copy/adapt after T1.1 selects a pilot repo with application sources (`pom.xml`, `mvnw`, `.mvn/`, `src/`).
 
 ---
 
@@ -54,7 +54,7 @@ These are **placeholder estimates** based on initial observations. Exact values 
 These translate the technical gains into terms stakeholders care about:
 
 - **Developer productivity:** if a developer hits the pipeline ~8×/day, a 3-min reduction = **~24 min saved per developer per day**. For a team of 5, that's **~2 hours/day** back into delivery.
-- **CI cost:** fewer runner minutes per pipeline × number of daily pipelines = direct cost reduction (quantify against GitLab CI pricing once baseline is captured).
+- **CI cost:** fewer runner minutes per pipeline × number of daily pipelines = direct infrastructure cost reduction (quantify against Drone runner capacity once baseline is captured).
 - **Security posture:** fewer flaky failures = faster, more reliable deployments = security patches applied sooner. In a border-security context, delayed patches carry real risk.
 
 ## Approach — how we tackle it

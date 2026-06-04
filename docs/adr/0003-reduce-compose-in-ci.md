@@ -9,7 +9,7 @@
 
 The pilot repository uses a single `docker-compose.yml` that serves multiple purposes:
 
-1. **CI integration tests:** the GitLab CI pipeline runs `docker compose up` before integration tests, starting all services regardless of what the test actually needs.
+1. **CI integration tests:** the Drone pipeline runs `docker compose up` (via `.drone.star` steps) before integration tests, starting all services regardless of what the test actually needs.
 2. **Local debugging:** developers use the same file to spin up services while developing and debugging locally.
 3. **Exploratory testing:** occasionally used to stand up the full stack for manual testing.
 

@@ -40,9 +40,6 @@ README.md
 CONTRIBUTING.md
 SECURITY.md
 PROJECT-PLAN.md
-MISSING.md
-FUTURE-CONSIDERATIONS.md
-.gitlab-ci.yml
 
 # ── Test sources (not shipped in production image) ───────────────────────────
 src/test/

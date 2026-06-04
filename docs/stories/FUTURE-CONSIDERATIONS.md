@@ -12,10 +12,10 @@ Items that are **out of scope for the pilot** but should be addressed if the pat
 
 | # | Category | What's needed | Why it matters | Likely owner | Board | Next action |
 |---|----------|---------------|----------------|--------------|-------|-------------|
-| F1 | **Rollback strategy** | Define how to revert to the previous image/config when a new build causes issues. Options: GitLab environment rollback, re-deploy previous image tag, or automated canary with auto-rollback. | Without rollback, a bad deploy stays live until someone manually intervenes. | CST + platform | CST board + platform board | Raise after T5.2 — _link issue here_ |
-| F2 | **Monitoring & alerting** | Track pipeline health metrics (queue time, failure rate, stage duration trend) and alert the team when thresholds breach. GitLab CI/CD analytics + external dashboards (Grafana / GitLab Insights). | Degradation goes unnoticed until someone manually checks. | CST (setup) / platform (infra) | Platform board | Raise after T5.2 — _link issue here_ |
-| F3 | **Artifact management** | Define where images are stored (GitLab Container Registry), retention/expiry policy (e.g. keep last N tags per branch, expire untagged after 30 days), and cleanup automation. | Unmanaged registries grow indefinitely; stale images consume storage and create confusion. | Platform | Platform board | Raise after T5.3 (stakeholder sign-off) — _link issue here_ |
-| F4 | **Environment strategy** | Clarify the promotion path: dev → staging → prod. Same pipeline with environment-specific variables? Manual promote gate? GitLab Environments + protected branches. | Pilot assumes one environment; production needs clear separation and gates. | CST + platform | CST board + platform board | Raise after T5.2 — _link issue here_ |
+| F1 | **Rollback strategy** | Define how to revert to the previous image/config when a new build causes issues. Options: re-deploy previous image tag, or automated canary with auto-rollback. | Without rollback, a bad deploy stays live until someone manually intervenes. | CST + platform |
+| F2 | **Monitoring & alerting** | Track pipeline health metrics (queue time, failure rate, stage duration trend) and alert the team when thresholds breach. Drone API + external dashboards (Grafana). | Degradation goes unnoticed until someone manually checks. | CST (setup) / platform (infra) |
+| F3 | **Artifact management** | Define where images are stored (`docker.digital.homeoffice.gov.uk`, ECR, Artifactory), retention/expiry policy (e.g. keep last N tags per branch, expire untagged after 30 days), and cleanup automation. | Unmanaged registries grow indefinitely; stale images consume storage and create confusion. | Platform |
+| F4 | **Environment strategy** | Clarify the promotion path: dev → staging → prod. Same pipeline with environment-specific variables? Manual promote gate? Drone promotion pipelines + protected branches. | Pilot assumes one environment; production needs clear separation and gates. | CST + platform |
 | F5 | **Cost tracking** | Monitor CI runner minutes, registry storage, and image transfer costs. Set budget alerts. | Optimisation saves time but could shift cost elsewhere (e.g. larger cache storage). | Platform / finance | Platform board | Raise after T5.3 — _link issue here_ |
 | F6 | **Compliance & audit trail** | Ensure pipeline changes are traceable: who approved the MR, what ran, which image was deployed. GitLab audit events + merge request approval rules. | Enterprise/regulated environments require evidence of change control. | Platform / compliance | Platform board | Raise after T5.3 — _link issue here_ |
 | F7 | **Troubleshooting runbook** | Create a developer-facing guide: "pipeline failed — what do I do?" covering common failure modes, how to read logs, how to retry, and when to escalate. | Reduces mean-time-to-recovery and unblocks developers without senior intervention. | CST | CST board | Raise after T5.1 (findings consolidated) — _link issue here_ |
@@ -67,7 +67,7 @@ These are decisions that will need to be made if the pilot succeeds and the team
 
 ### BuildKit remote cache infrastructure
 
-**Context:** GitLab CI runners are ephemeral — no persistent local cache. Without a registry-backed remote cache, every CI build downloads dependencies and rebuilds layers from scratch. The pattern (`--cache-from`/`--cache-to` with registry refs) is documented in [tech-notes](tech-notes.md), but provisioning it requires:
+**Context:** Drone CI Kubernetes pods are ephemeral — no persistent local cache. Without a registry-backed remote cache, every CI build downloads dependencies and rebuilds layers from scratch. The pattern (`--cache-from`/`--cache-to` with registry refs) is documented in [tech-notes](tech-notes.md), but provisioning it requires:
 - Registry storage and retention/eviction policy.
 - Write permissions for CI jobs to a cache namespace.
 - Runner BuildKit support (`docker buildx`).
@@ -92,7 +92,7 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 **What:** Only run tests affected by the changed code. If only `payment/` changed, skip `notification/` tests entirely.
 
-**How:** Maven module selection (`-pl`, `-am`) combined with `git diff` against the merge base. GitLab CI `rules:changes` can also skip entire jobs when certain paths are untouched.
+**How:** Maven module selection (`-pl`, `-am`) combined with `git diff` against the merge base. Drone pipeline `when` conditions or Starlark logic can skip steps when certain paths are untouched.
 
 **Expected impact:** After build optimisation, this is the next-largest pipeline speed gain. On a multi-module project, it can cut integration test time by 50%+ for focused changes.
 

@@ -34,8 +34,8 @@ Probability (P) and Impact (I): Low / Med / High.
 | # | Risk / assumption | P | I | Mitigation | Fallback plan |
 |---|-------------------|---|---|------------|---------------|
 | R1 | Pilot repo selection slips or stakeholders disagree | Med | High | Time-box selection to Week 1; agree criteria up front (T1.1) | Pick the repo with the slowest known pipeline by default |
-| R2 | GitLab CI pipeline history lacks reliable timing data | Med | Med | Use last N pipeline runs; document method (T1.2) | Fall back to repeatable local measurements |
-| R3 | GitLab CI runners (Docker-in-Docker / shell executor) limit Testcontainers | Med | High | Assess CI suitability early in T3.2; isolate as a separate finding | **Keep docker-compose in CI**; run Testcontainers locally only |
+| R2 | Drone pipeline history lacks reliable timing data | Med | Med | Use last N pipeline runs from Drone UI; document method (T1.2) | Fall back to repeatable local measurements |
+| R3 | Drone Kubernetes runner / DIND limits Testcontainers | Med | High | Assess CI suitability early in T0.4; isolate as a separate finding | **Keep docker-compose in CI**; run Testcontainers locally only |
 | R4 | Reducing Compose services breaks a hidden local workflow | Low | Med | Change CI usage only; keep Compose for local debugging (Story 4) | Revert Compose change; document the dependency found |
 | R5 | Optimisations turn out to be platform/ETO-owned, not CST-local | Med | Med | Classify ownership early (Story 5) before wider changes | Hand item to platform/ETO board with findings attached |
 | R6 | Build cache change produces inconsistent/incorrect images | Low | High | Verify image runs after each change (see test strategy) | Disable cache mount; rebuild from clean context |
@@ -46,7 +46,7 @@ Probability (P) and Impact (I): Low / Med / High.
 
 ## Branching & CI flow
 
-How a task moves from work-in-progress to merged (GitLab).
+How a task moves from work-in-progress to merged.
 
 ```text
 feature branch  ──MR──>  develop  ──(stabilise)──>  main
@@ -56,12 +56,10 @@ feature branch  ──MR──>  develop  ──(stabilise)──>  main
 
 - **Branch naming:** `pilot/<story>-<short-desc>` (e.g. `pilot/s2-dockerfile-layering`).
 - **Merge request (MR) required** into `develop`; no direct pushes to `develop` or `main`.
-- **On MR open / update**, GitLab CI runs: build + unit tests + affected integration tests.
+- **On MR open / update**, Drone CI runs the pipeline (if configured for MR events — confirm in T0.1).
 - **Merge to `develop`** when: pipeline green, acceptance criteria met, [Definition of Done](docs/stories/DEFINITION-OF-DONE.md) satisfied, one review approved.
 - **Promote `develop` → `main`** at a milestone, once the pilot increment is stable.
-- **On merge**, the status board entry for the task moves to `Done` and the result is noted (metric, decision, or artefact).
-
-> Adapt branch targets to the pilot repo's existing model (some FDP repos may be trunk-based). The rule that matters: changes are reviewed, CI-verified, and traceable to a task.
+- **On merge**, the status board entry for the task moves to `Done` and the result is noted.
 
 ---
 
@@ -74,7 +72,7 @@ Testcontainers (Story 3) covers integration tests. Everything else still needs v
 | **Dockerfile / layering (T2.3)** | Image **builds** cleanly; container **starts**; app smoke-checks (health endpoint / startup logs); image runs the same workload as before |
 | **`.dockerignore` (T2.2)** | Build context size compared before/after; image still contains required files; build succeeds |
 | **Build cache (T2.3)** | Two consecutive builds: second reuses cache; a clean build (no cache) still succeeds (guards R6) |
-| **Testcontainers (T3.2)** | Integration test passes locally; dependency reachable; runs in GitLab CI or documented why not |
+| **Testcontainers (T3.2)** | Integration test passes locally; dependency reachable; runs in Drone CI or documented why not |
 | **Compose change (T4.3)** | Integration suite passes with the reduced set; local debugging workflow still works |
 | **Metrics (T1.x, T2.4, T3.3)** | Captured via the [metrics template](docs/stories/metrics-template.md); method documented so it's repeatable |
 
@@ -88,6 +86,6 @@ Testcontainers (Story 3) covers integration tests. Everything else still needs v
 | Question | Decision | Resolved in |
 |----------|----------|-------------|
 | Minimum Java version for Testcontainers | Java 11 minimum; Java 17+ recommended. Confirm against `pom.xml` in T3.1. | T3.1 |
-| CI Docker execution mode | Docker-in-Docker vs socket mount vs rootless — assess available mode with platform/ETO. See [ADR-0005](docs/adr/0005-ci-runner-docker-mode.md). | T3.2 |
-| Which CI stage runs integration tests | `integration-test` stage in `.gitlab-ci.yml`, after unit tests. Runs on MR and `develop` branch; skipped on `main` (publish-only). Confirm in T3.2. | T3.2 |
+| CI Docker execution mode | Drone Kubernetes runner + DIND — assess in T0.4. See [ADR-0005](docs/adr/0005-ci-runner-docker-mode.md). | T0.4 |
+| Which CI step runs integration tests | Drone `integration-tests` step via docker-compose. Testcontainers alternative assessed in T0.4/T3.2. | T0.4, T3.2 |
 | Testcontainers reuse policy | Local: reuse enabled for faster feedback. CI: reuse disabled — clean, isolated env per run. See [ADR-0002](docs/adr/0002-testcontainers-for-integration-tests.md). | Decided (ADR-0002) |

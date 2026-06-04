@@ -14,7 +14,7 @@ The pilot repository's Dockerfile currently follows a pattern that causes unnece
 1. **Single-stage or unordered COPY:** source code and dependency metadata are copied together, so any source change invalidates the dependency-download layer. Maven downloads ~200 MB of dependencies on every build.
 2. **No cache mounts:** even locally, there's no persistent Maven cache between builds — each `docker build` re-downloads the `.m2` repository.
 3. **Large runtime image:** the same image that builds the application is shipped to production, including the JDK, Maven, build tools, and intermediate artefacts — resulting in ~450 MB images.
-4. **No remote cache:** GitLab CI runners are ephemeral. Without registry-backed cache, every CI build starts cold — no layer reuse from previous runs.
+4. **No remote cache:** Drone CI pods are ephemeral. Without registry-backed cache, every CI build starts cold — no layer reuse from previous runs.
 
 The consequence: builds are slow (~5 min CI), images are unnecessarily large, and the team waits for dependency downloads that haven't changed.
 
@@ -34,14 +34,14 @@ We will restructure the pilot Dockerfile using BuildKit features:
 
 2. **BuildKit cache mounts** for the Maven local repository (`/root/.m2`), enabled for local builds immediately.
 
-3. **Registry remote cache** (branch-aware: `--cache-from` main + current branch): documented and templated in `.gitlab-ci.yml`, but **commented out** until platform/ETO provisions the cache namespace. This is a post-pilot item (see [FUTURE-CONSIDERATIONS](../stories/FUTURE-CONSIDERATIONS.md)).
+3. **Registry remote cache** (branch-aware: `--cache-from` main + current branch): documented in [tech-notes](../stories/tech-notes.md) and [drone-considerations](../../examples/ci/drone-considerations.md), but requires a RepoSync `.drone.star` change + platform/ETO registry namespace. This is a post-pilot item (see [FUTURE-CONSIDERATIONS](../stories/FUTURE-CONSIDERATIONS.md)).
 
 4. **Clean build must always work:** a `--no-cache` build must succeed, so cache is an optimisation, never a hard dependency (guards risk R6).
 
 Target Dockerfile pattern:
 ```dockerfile
 # syntax=docker/dockerfile:1
-FROM eclipse-temurin:17-jdk-jammy AS deps
+FROM amazoncorretto:17 AS deps
 WORKDIR /app
 COPY pom.xml .mvn mvnw ./
 RUN --mount=type=cache,target=/root/.m2 ./mvnw -B dependency:go-offline
@@ -50,7 +50,7 @@ FROM deps AS build
 COPY src ./src
 RUN --mount=type=cache,target=/root/.m2 ./mvnw -B package -DskipTests
 
-FROM eclipse-temurin:17-jre-jammy AS runtime
+FROM amazoncorretto:17 AS runtime
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 USER 1001
@@ -75,7 +75,7 @@ ENTRYPOINT ["java", "-jar", "/app/app.jar"]
   - T2.3: apply one layering change at a time and measure (not a full rewrite at once).
   - T2.4: compare before/after locally and in CI; verify a `--no-cache` build still succeeds.
   - Story 5 / T5.2: route remote-cache infra requirement to platform/ETO.
-  - Post-pilot: platform/ETO provisions cache namespace; uncomment `--cache-from`/`--cache-to` in `.gitlab-ci.yml`.
+  - Post-pilot: platform/ETO provisions cache namespace; request RepoSync change to add `--cache-from`/`--cache-to` to the Drone build step.
 
 ## Alternatives considered
 

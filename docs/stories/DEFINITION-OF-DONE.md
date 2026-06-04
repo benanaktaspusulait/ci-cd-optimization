@@ -35,11 +35,11 @@ Capture every before/after measurement in the dedicated, fillable **[metrics tem
 
 | Metric | Target | Measurement method |
 |--------|--------|-------------------|
-| Pipeline duration (avg) | < 10 min (≥ 20% ↓) | GitLab CI pipeline analytics (last N runs) |
-| Docker build time (local / CI) | ≥ 20% ↓ | `time docker build` / GitLab job duration |
-| Final image size | < 380 MB (≥ 15% ↓) | `docker images` / GitLab Container Registry |
-| Integration test startup | < 60 sec | GitLab CI job log timestamps |
-| Flaky / failed pipeline rate | < 2% | GitLab pipeline analytics |
+| Pipeline duration (avg) | < 10 min (≥ 20% ↓) | Drone pipeline UI / API (last N runs) |
+| Docker build time (local / CI) | ≥ 20% ↓ | `time docker build` / Drone job duration |
+| Final image size | < 380 MB (≥ 15% ↓) | `docker images` / `docker.digital.homeoffice.gov.uk` registry |
+| Integration test startup | < 60 sec | Drone CI job log timestamps |
+| Flaky / failed pipeline rate | < 2% | Drone pipeline history |
 | Developer feedback loop | ≤ 5 min (change → test green) | Local stopwatch / script timing |
 
 > Targets (e.g. ≥20% faster build, ≥15% smaller image) are tracked in the [metrics template](metrics-template.md) and the [README success criteria](../../README.md#success-criteria--targets).
