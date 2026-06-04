@@ -38,13 +38,13 @@ CI/CD and container workflows create recurring friction as projects grow. The co
 
 These are **placeholder estimates** based on initial observations. Exact values will be captured in T1.2–T1.4 and recorded in the [metrics template](docs/stories/metrics-template.md).
 
-| Metric | Estimated current state | Target (pilot) |
-|--------|-------------------------|----------------|
-| Pipeline duration (avg) | ~12 min | < 10 min (≥ 20% ↓) |
-| Final image size | ~450 MB | < 380 MB (≥ 15% ↓) |
-| Docker build time (CI) | ~5 min | < 4 min (≥ 20% ↓) |
-| Integration test startup | ~90 sec | < 60 sec |
-| Flaky / failed pipeline rate | ~5% | < 2% |
+| Metric | Estimated current state | Target (pilot, local) |
+|--------|-------------------------|------------------------|
+| Docker build time (local) | ~5 min | < 3.5 min (≥ 30% ↓) |
+| Final image size | ~450 MB | < 315 MB (≥ 30% ↓, multi-stage removes JDK) |
+| Build context size | ~200 MB (estimated) | < 100 MB (≥ 50% ↓, .dockerignore) |
+| Integration test startup (local, Testcontainers) | ~90 sec (Compose) | < 30 sec (isolated containers) |
+| Flaky / failed pipeline rate | ~5% | Determinism proven locally; CI rate unchanged until platform acts |
 | Developer feedback loop (local change → test green) | ~8 min | < 5 min |
 
 > These numbers will be **replaced with real data** once Story 1 is complete. They exist here to make the ambition visible.
@@ -53,9 +53,10 @@ These are **placeholder estimates** based on initial observations. Exact values 
 
 These translate the technical gains into terms stakeholders care about:
 
-- **Developer productivity:** if a developer hits the pipeline ~8×/day, a 3-min reduction = **~24 min saved per developer per day**. For a team of 5, that's **~2 hours/day** back into delivery.
-- **CI cost:** fewer runner minutes per pipeline × number of daily pipelines = direct infrastructure cost reduction (quantify against Drone runner capacity once baseline is captured).
-- **Security posture:** fewer flaky failures = faster, more reliable deployments = security patches applied sooner. In a border-security context, delayed patches carry real risk.
+- **Developer productivity:** multi-stage builds + Testcontainers locally = ~3 min saved per build cycle. A developer hitting this ~8×/day = **~24 min saved per developer per day**. For a team of 5, that's **~2 hours/day** back into delivery.
+- **Image size → transfer & storage:** 30% smaller image = faster pulls in every environment (dev/SIT/bVal/prod), less registry storage, faster rollout.
+- **CI cost (with platform action):** once RepoSync enables BuildKit + remote cache, the same local gains apply in CI. The pilot provides the **evidence** to justify the change request.
+- **Security posture:** smaller runtime image (no JDK/Maven) = reduced attack surface. Deterministic tests = fewer false-positive pipeline failures = security patches deployed without delay. In a border-security context, a delayed patch carries real risk.
 
 ## Approach — how we tackle it
 
@@ -134,17 +135,30 @@ The pilot optimises the **CI pipeline** (build time, test setup, Docker image). 
 
 ### Success criteria & targets
 
-Targets are **proposed** and confirmed against the real baseline in Story 1.
+Targets are **proposed** and confirmed against the real baseline in Story 1. They are split into what the pilot can prove independently vs what requires platform coordination.
 
-| Success criterion | Target | Measured |
-|-------------------|--------|----------|
-| Pilot repo baselined | All baseline metrics captured | Once, in Story 1 |
-| Build optimisation measured | **≥ 20%** reduction in Docker build time | Before vs after (T2.4) |
-| Image size reduced | **≥ 15%** smaller final image | Before vs after (T2.4) |
-| Pipeline duration improved | **≥ 20%** reduction (stretch; depends on cache infra) | Per-pipeline avg over last N runs |
-| Testcontainers validated | ≥ 1 dependency running + compared to Compose | Before vs after (T3.3) |
-| Integration test reliability | No new flakiness; isolation improved | Across pilot test runs |
-| Ownership documented | Every item classified CST vs platform/ETO | Once, in Story 5 |
+**CST-local targets (achievable within the pilot):**
+
+| Success criterion | Target | Measured | How |
+|-------------------|--------|----------|-----|
+| Pilot repo baselined | All baseline metrics captured | Once, in Story 1 | Drone UI + local scripts |
+| Docker build time (local) | **≥ 30%** reduction | Before vs after (T2.4) | `scripts/measure-baseline.sh` |
+| Final image size | **≥ 30%** smaller | Before vs after (T2.4) | `docker images` (multi-stage removes JDK + build tools) |
+| Build context size | **≥ 50%** smaller | Before vs after (T2.2) | `docker build` context log |
+| Testcontainers prototype | ≥ 1 dependency running locally + compared to Compose | T3.3 | Local run timing |
+| Integration test determinism | No shared state; isolated containers per run | T3.4 | Local repeatability test |
+| Compose services classified | All services mapped + CI vs local role assigned | T4.2 | Documentation |
+| Ownership documented | Every item classified CST vs RepoSync vs platform/ETO | Story 5 | Documentation |
+
+**Platform-dependent targets (require RepoSync / ETO action post-pilot):**
+
+| Success criterion | Target | Requires | Evidence the pilot produces |
+|-------------------|--------|----------|----------------------------|
+| CI build time reduction | **≥ 20%** | RepoSync: `DOCKER_BUILDKIT=1` in `.drone.star` | Local proof that multi-stage + cache mount delivers the gain |
+| CI pipeline duration | **≥ 20%** | RepoSync: remote cache + Testcontainers env vars | Compose service mapping + Testcontainers local comparison data |
+| Testcontainers in CI | Running in Drone pipeline | RepoSync: `DOCKER_HOST` + `RYUK_DISABLED` in Maven step | Working local prototype + feasibility assessment (T0.4) |
+
+> **Key message for stakeholders:** the pilot produces **evidence and a working local proof**. Converting that evidence into CI-level gains requires a small, well-defined RepoSync change — which Story 5 will formally request with data attached.
 
 **Measurement cadence:** build/image metrics on **every pilot build** (before/after pairs); pipeline duration as a **rolling average over the last N runs** (N agreed in T1.2); a **weekly** snapshot during the pilot to track trend. All numbers go into the [metrics template](docs/stories/metrics-template.md).
 

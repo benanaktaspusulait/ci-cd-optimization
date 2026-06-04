@@ -35,11 +35,11 @@ Capture every before/after measurement in the dedicated, fillable **[metrics tem
 
 | Metric | Target | Measurement method |
 |--------|--------|-------------------|
-| Pipeline duration (avg) | < 10 min (≥ 20% ↓) | Drone pipeline UI / API (last N runs) |
-| Docker build time (local / CI) | ≥ 20% ↓ | `time docker build` / Drone job duration |
-| Final image size | < 380 MB (≥ 15% ↓) | `docker images` / `docker.digital.homeoffice.gov.uk` registry |
-| Integration test startup | < 60 sec | Drone CI job log timestamps |
-| Flaky / failed pipeline rate | < 2% | Drone pipeline history |
+| Docker build time (local) | ≥ 30% ↓ | `scripts/measure-baseline.sh` / `time docker build` |
+| Final image size | ≥ 30% ↓ | `docker images` |
+| Build context size | ≥ 50% ↓ | Docker build context log output |
+| Integration test startup (local) | < 30 sec | Testcontainers startup logs |
 | Developer feedback loop | ≤ 5 min (change → test green) | Local stopwatch / script timing |
+| Pipeline duration (CI, post-platform) | ≥ 20% ↓ | Drone pipeline UI (after RepoSync change) |
 
 > Targets (e.g. ≥20% faster build, ≥15% smaller image) are tracked in the [metrics template](metrics-template.md) and the [README success criteria](../../README.md#success-criteria--targets).
