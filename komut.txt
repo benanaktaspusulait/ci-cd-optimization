@@ -1,0 +1,307 @@
+You are working on a documentation-only repository for a Container & CI/CD Optimisation pilot.
+
+Repository context:
+- This repository contains working proposal documentation for CI/CD and container optimisation improvements.
+- This is NOT an approved implementation plan.
+- This is NOT a final proposal.
+- This is NOT a big-bang rollout.
+- This is a structured working proposal intended to support review, prioritisation, ownership decisions, and potential pilot planning.
+
+Important business/context constraints:
+- The immediate pilot context is FDP / CST / Cerberus Delivery.
+- The ideas are not intended to be FDP-only, but the first validation should remain small and local where possible.
+- Work that is contained within CST should be agreed with Thomas Reddy and Cerberus Delivery stakeholders.
+- CI/CD tooling is managed by ACP. Any tooling improvements deployed in ACP are subject to ACP prioritisation.
+- DSA ETO / Enabling / CIT prioritisation sits with Ezhil’s role and depends on alignment with DSA Tech Strategy.
+- Current DSA focus is moving to Core Cloud and Data Platform.
+- Therefore, any platform/tooling-level improvement must be clearly separated from CST-local pilot work.
+
+Technical context:
+- Some adaptor repositories use a centrally managed Drone Starlark pipeline file, `.drone.star`.
+- `.drone.star` is controlled centrally via RepoSync.
+- Local changes to `.drone.star` in adaptor repositories will be overwritten.
+- This means pipeline-level changes must not be treated as local repo changes.
+- Drone pipeline uses Kubernetes pipeline type.
+- A Docker-in-Docker service is used.
+- Docker Compose is heavily used in the current CI flow for Kafka/Redis, aggregators, command adaptor, pre-integration and integration tests.
+- Some Testcontainers-related configuration already appears in the Drone pipeline in one Maven step using `TESTCONTAINERS_RYUK_DISABLED=true`, so Testcontainers compatibility with Drone/DIND must be assessed carefully.
+- BuildKit remote cache or DIND image changes would likely require ACP/platform involvement.
+- Dockerfile layering, `.dockerignore`, local build measurement, Docker Compose usage review, and local Testcontainers prototypes can potentially be CST-local pilot activities.
+
+Your task:
+Update the repository documentation to make the structure more accurate, safer, and governance-aware.
+
+Do NOT write code for application logic.
+Do NOT create implementation scripts except documentation helper examples if already present.
+Focus on Markdown documentation structure and content.
+
+Required changes:
+
+1. Update the main README.md
+   - Keep it as the main entry point.
+   - Make it clear this is a working proposal, not an approved implementation plan.
+   - Add a clear note near the top:
+     "The backlog below is a candidate structure only. Individual tickets should not be created until priority, ownership and target board are agreed."
+   - Rename the proposed epic from:
+     "EPIC: Pilot Container & CI/CD Optimisation Improvements for FDP"
+     to:
+     "EPIC: Container & CI/CD Optimisation Pilot — FDP Initial Scope"
+   - Add an "Immediate Pilot Scope" section.
+   - Add a "Not in Initial Pilot Scope" section.
+   - Add an "Ownership and Prioritisation Boundaries" section.
+   - Add a "Drone / RepoSync Pipeline Constraints" section.
+   - Add "Assumptions", "Decision Points", "Open Questions", "Pilot Success Metrics", "Recommended First Local Changes", and "Do Not Do Yet" sections.
+   - Ensure the tone remains cautious, collaborative, and pilot-first.
+
+2. Immediate Pilot Scope section must include:
+   - Baseline measurement
+   - Pilot repository/service selection
+   - Dockerfile/build context review
+   - `.dockerignore` validation
+   - One small Dockerfile layering experiment
+   - One small local Testcontainers pilot
+   - Docker Compose usage review
+   - CST-local vs ACP/ETO ownership assessment
+
+3. Not in Initial Pilot Scope section must include:
+   - Organisation-wide base image rollout
+   - BuildKit remote cache rollout
+   - Pre-built test image rollout
+   - Ephemeral environment implementation
+   - Full platform transformation programme
+   - Organisation-wide CI/CD template rollout
+   - Shared Testcontainers library implementation
+   - Drone/RepoSync pipeline changes unless agreed through the right ownership route
+
+4. Ownership and Prioritisation Boundaries section must define three categories:
+
+   A. CST / Cerberus Delivery scoped items
+   Explain:
+   These may be validated locally within CST/Cerberus Delivery, subject to agreement with Thomas Reddy and relevant Cerberus Delivery stakeholders.
+   Examples:
+   - Baseline measurement
+   - Dockerfile review
+   - `.dockerignore` validation
+   - Docker Compose usage review
+   - Local Dockerfile layering experiment
+   - Local Testcontainers prototype
+
+   B. ACP-owned CI/CD tooling items
+   Explain:
+   These touch CI/CD tooling or platform capabilities managed by ACP and would require ACP prioritisation.
+   Examples:
+   - Drone runner changes
+   - DIND image changes
+   - BuildKit remote cache
+   - CI cache infrastructure
+   - Pipeline tooling changes
+   - Drone/RepoSync pipeline changes
+
+   C. DSA ETO / Enabling / CIT items
+   Explain:
+   These may require wider DSA ETO/Enabling prioritisation and should be assessed against DSA Tech Strategy, Core Cloud and Data Platform direction.
+   Examples:
+   - Shared engineering templates
+   - Reusable platform patterns
+   - Shared Testcontainers helper libraries
+   - Future platform enablement capabilities
+   - Cross-project adoption model
+
+5. Drone / RepoSync Pipeline Constraints section must include:
+   - Some adaptor repositories use centrally managed `.drone.star`.
+   - `.drone.star` is generated or controlled via RepoSync.
+   - Local changes to `.drone.star` should not be made because they may be overwritten.
+   - The pipeline uses Drone Kubernetes pipelines.
+   - DIND is used as a Docker service.
+   - Docker Compose is used heavily in current CI integration flow.
+   - Testcontainers feasibility in CI depends on Drone runner, DIND, Docker access, Ryuk behaviour, and security constraints.
+   - BuildKit/cache feasibility depends on DIND image capability, registry support, ACP/platform guidance, and RepoSync changes.
+   - Therefore, Drone/RepoSync assessment should be added before any implementation tickets that touch pipeline behaviour.
+
+6. Add a new Story 0 before the existing stories:
+   Title:
+   "STORY: Assess current Drone / RepoSync pipeline constraints"
+
+   Description:
+   "Assess the centrally managed Drone/RepoSync pipeline structure before proposing or implementing any pipeline-level changes."
+
+   Goal:
+   "Understand which optimisation ideas can be validated locally and which require RepoSync, ACP, platform or ETO involvement."
+
+   Success Criteria:
+   - `.drone.star` ownership and RepoSync control are documented
+   - Current CI steps are mapped
+   - DIND and Docker Compose usage are documented
+   - Testcontainers CI feasibility questions are captured
+   - BuildKit/cache feasibility questions are captured
+   - Local vs central change boundaries are identified
+
+   Tasks under Story 0:
+   - TASK: Review centrally managed `.drone.star` pipeline structure
+   - TASK: Identify local vs RepoSync-controlled pipeline change boundaries
+   - TASK: Map current CI steps, DIND usage and Docker Compose commands
+   - TASK: Assess Testcontainers feasibility in Drone Kubernetes runner
+   - TASK: Assess BuildKit/cache feasibility in current Drone/DIND setup
+
+   For each task, include:
+   - Description
+   - Scope
+   - Success Criteria
+
+7. Update the backlog structure summary:
+   It should now be:
+   - Story 0 — Drone / RepoSync Pipeline Assessment
+   - Story 1 — Baseline Measurement & Candidate Selection
+   - Story 2 — Dockerfile and Build Optimisation Pilot
+   - Story 3 — Testcontainers Integration Testing Pilot
+   - Story 4 — Docker Compose Usage Review
+   - Story 5 — CST-local vs ACP/ETO Ownership Assessment
+
+8. Update any wording that says "platform/ETO" to "ACP/ETO" where CI/CD tooling ownership is specifically being discussed.
+   Keep "platform-style" wording only for future reusable engineering patterns, not immediate tooling changes.
+
+9. Add a note under Docker Base Image Strategy:
+   "The initial pilot may identify where shared base images would help, but creating and maintaining organisation-level base images would require appropriate platform/shared engineering ownership, lifecycle management and compatibility guarantees."
+
+10. Add a note under BuildKit Remote Cache:
+   "BuildKit remote cache is included as a technical recommendation only. Actual implementation depends on CI runner capability, DIND image support, registry support, security constraints, RepoSync changes and ACP guidance."
+
+11. Add a note under Testcontainers Strategy:
+   "Testcontainers should first be validated locally and then assessed against Drone Kubernetes runner/DIND constraints before being proposed for CI usage. Reusable containers should not be assumed suitable for CI."
+
+12. Add a note under Docker Compose Role Change:
+   "Docker Compose should not be removed without first mapping current CI and local debugging usage. The goal is to reduce unnecessary CI orchestration where appropriate, not to remove useful local debugging workflows."
+
+13. Add a Related Future Area section:
+   Title:
+   "Related Future Area: Deployment and Release Safety"
+
+   Explain that a separate Cerberus deployment KT highlighted related release engineering areas, but these are outside the initial Container & CI/CD pilot.
+
+   Include observations:
+   - Deployment may be managed through service/Helm repositories rather than individual service repositories.
+   - Feature activation may depend on feature flags and environment-specific value files.
+   - Deployment success does not necessarily mean feature activation or functional validation.
+   - Current validation may focus on deployment/pod readiness, while functional validation may sit with dev teams, Playwright/Cypress and QAT.
+   - Automatic rollback may not be built into deployment scripts.
+   - Manual Helm rollback may be possible but should be documented.
+   - Environment parity between pre-prod/prod-like environments should be understood.
+   - Runbook repositories may contain additional approved release steps.
+
+   Keep this explicitly outside the initial pilot scope.
+   Label it as future release engineering / platform opportunity only.
+
+14. Update "Future Platform Opportunities" section:
+   Add a disclaimer:
+   "These opportunities are subject to ACP / DSA ETO prioritisation and alignment with DSA Tech Strategy, Core Cloud and Data Platform direction."
+   Make clear they are not part of the immediate pilot.
+
+15. Add Assumptions section:
+   Include:
+   - The first pilot will use one selected repository/service.
+   - Baseline metrics will be captured before implementation changes.
+   - Any platform-impacting work will be reviewed with relevant ACP/ETO stakeholders.
+   - Docker Compose will not be removed without understanding current CI and local debugging usage.
+   - Testcontainers will be piloted locally with one dependency first before wider migration is considered.
+   - Projected benefits will not be treated as guaranteed until measured.
+   - Drone/RepoSync constraints must be understood before pipeline-level changes are proposed.
+
+16. Add Decision Points section:
+   Include:
+   - Which repository/service should be used as the pilot?
+   - Which metrics should be captured as the baseline?
+   - Which Dockerfile/build optimisation should be tested first?
+   - Which integration dependency should be used for the first Testcontainers pilot?
+   - Which items can stay within CST/Cerberus Delivery?
+   - Which items require ACP ownership?
+   - Which items require DSA ETO/Enabling/CIT prioritisation?
+   - What success criteria must be met before considering wider adoption?
+
+17. Add Open Questions section:
+   Include:
+   - Which FDP/Cerberus repository/service is the best pilot candidate?
+   - Do we have reliable access to current pipeline timing data?
+   - Which integration dependency is safest for the first Testcontainers pilot?
+   - Can Testcontainers run in the current Drone Kubernetes/DIND setup?
+   - Does the current DIND image support BuildKit/buildx?
+   - Is there an existing platform-owned base image strategy?
+   - Which team owns shared base image lifecycle if this progresses?
+   - Should any items be raised on the ACP/ETO/platform board instead of CST?
+   - Are MR/pull request pipelines currently running full CI or only a minimal pipeline?
+   - Is Docker Compose doing duplicate work with Maven build/test steps?
+
+18. Add Pilot Success Metrics section:
+   Include:
+   - Pipeline duration before/after
+   - Docker build duration before/after
+   - Docker image size before/after
+   - Integration test setup time before/after
+   - Integration test runtime before/after
+   - Number of services required in Docker Compose for CI before/after
+   - Developer setup steps before/after
+   - Observed flaky/environment-related failures before/after if available
+   - Clear identification of CST-local vs ACP/ETO-owned follow-up items
+
+19. Add Recommended First Local Changes section:
+   Include:
+   - Add or validate `.dockerignore`
+   - Capture current Docker build timing
+   - Review Dockerfile layer ordering
+   - Propose one Dockerfile cache optimisation
+   - Measure local build before/after
+   - Map current Docker Compose service usage
+   - Identify one candidate integration test for Testcontainers
+   - Avoid combining Dockerfile optimisation and Testcontainers changes in the same PR
+
+20. Add Do Not Do Yet section:
+   Include:
+   - Do not start organisation-wide rollout
+   - Do not replace all Docker Compose usage
+   - Do not build shared base images without ownership agreed
+   - Do not enable BuildKit remote cache without ACP/platform review
+   - Do not implement ephemeral environments
+   - Do not create a shared Testcontainers library before pilot proves value
+   - Do not open all candidate tasks as delivery tickets before ownership is agreed
+   - Do not edit `.drone.star` locally if it is RepoSync-controlled
+
+21. Ensure the documentation style:
+   - Clear Markdown
+   - Short paragraphs
+   - Use headings and bullet points
+   - Avoid overclaiming benefits
+   - Use "may", "could", "pilot", "validate", "assess" rather than "will definitely"
+   - Keep tone professional, cautious, collaborative, and stakeholder-friendly
+
+22. Optional restructuring:
+   If README.md becomes too long, create:
+   - docs/01-pilot-scope.md
+   - docs/02-backlog-structure.md
+   - docs/03-detailed-ticket-breakdown.md
+   - docs/04-drone-reposync-constraints.md
+   - docs/05-technical-recommendations.md
+   - docs/06-future-platform-opportunities.md
+   - docs/07-release-safety-notes.md
+   - adr/ADR-001-pilot-first-approach.md
+   - adr/ADR-002-keep-docker-compose-for-local-debugging.md
+   - adr/ADR-003-testcontainers-pilot-before-wider-adoption.md
+   - adr/ADR-004-separate-cst-local-and-acp-eto-owned-work.md
+   - examples/Dockerfile.optimised.example
+   - examples/dockerignore.example
+   - examples/testcontainers-kafka-example.java
+   - examples/drone-pipeline-notes.md
+
+   If restructuring, keep README.md short and make it the entry point linking to the detailed documents.
+
+23. After changes, provide a summary:
+   - Files changed
+   - Sections added
+   - Any assumptions made
+   - Any follow-up questions
+   - Whether README was kept as a single document or split into docs
+
+Important:
+Do not remove existing useful content unless it conflicts with the updated governance and scope boundaries.
+Do not make the proposal sound approved.
+Do not make the pilot sound larger than intended.
+Do not imply ACP/ETO have agreed to anything.
+Do not imply BuildKit, shared base images, or Testcontainers in CI are already feasible.
