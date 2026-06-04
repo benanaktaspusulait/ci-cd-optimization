@@ -86,7 +86,7 @@ feature branch  ──MR──>  develop  ──(stabilise)──>  main
 - **On MR open / update**, Drone CI runs the pipeline (if configured for MR events — confirm in T1.1).
 - **Merge to `develop`** when: pipeline green, acceptance criteria met, [Definition of Done](docs/stories/DEFINITION-OF-DONE.md) satisfied, one review approved.
 - **Promote `develop` → `main`** at a milestone, once the pilot increment is stable.
-- **On merge**, the status board entry for the task moves to `Done` and the result is noted.
+- **On merge**, the [status board](docs/stories/STATUS-BOARD.md) entry for the task moves to `Done` and the result is noted.
 
 ---
 

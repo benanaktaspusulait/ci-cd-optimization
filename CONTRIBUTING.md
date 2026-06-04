@@ -7,17 +7,21 @@ How this backlog is organised and how to work with it. [← Back to overview](RE
 ## Structure
 
 ```text
-README.md                  → Epic hub: audience, background, stack, success targets, status board
+README.md                  → entry point: purpose, key constraint, success targets, story map
 CONTRIBUTING.md            → this guide
 PROJECT-PLAN.md            → timeline, milestones, risk register, branching/CI flow, test strategy
 SECURITY.md                → secret management, scanning policy, policy-as-code
 docs/
+  PROJECT-CONTEXT.md       → background, current state, business impact, technology stack
+  PIPELINE-CONTEXT.md      → Drone/RepoSync constraint and CI vs deploy boundary
+  SCOPE-AND-GUARDRAILS.md  → pilot scope, assumptions, open questions, deferred work
   adr/                     → Architecture Decision Records (why behind key choices)
     README.md              → ADR index + how to add one
     template.md            → ADR template
     NNNN-*.md              → individual decisions
   stories/
     INDEX.md               → one-page list of every story + task title
+    STATUS-BOARD.md        → live task status and issue links
     DEFINITION-OF-DONE.md  → shared DoD + conventions (links to metrics template)
     metrics-template.md    → fillable before/after metrics sheet
     tech-notes.md          → technical reference (base images, BuildKit, security)
@@ -52,11 +56,11 @@ Every task file follows the same shape:
 - **Status:** `Not started` · `In progress` · `Blocked` · `Done`
 - **IDs:** stories `S1…S6`, tasks `T<story>.<n>` (e.g. `T3.3`)
 
-> The README status board is the only live progress tracker. Any status values in story/task files are planning snapshots and should not be maintained separately.
+> The [status board](docs/stories/STATUS-BOARD.md) is the only live progress tracker. Any status values in story/task files are planning snapshots and should not be maintained separately.
 
 ## Working a task
 
-1. Set the task **Status** to `In progress` on the [status board](README.md#status-board).
+1. Set the task **Status** to `In progress` on the [status board](docs/stories/STATUS-BOARD.md).
 2. Do the work within the task's **scope**.
 3. Capture any measurement in the [metrics template](docs/stories/metrics-template.md).
 4. Tick the task's **acceptance criteria**.
@@ -64,7 +68,7 @@ Every task file follows the same shape:
 6. If the task settles a significant choice, record an [ADR](docs/adr/README.md).
 7. Set **Status** to `Done` (or `Blocked`, with a note on what's blocking).
 
-> The [status board](README.md#status-board) is the single source of truth for progress. Update it there, not in individual files.
+> The [status board](docs/stories/STATUS-BOARD.md) is the single source of truth for progress. Update it there, not in individual files.
 
 ## Raising tickets
 

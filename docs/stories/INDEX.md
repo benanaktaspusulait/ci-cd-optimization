@@ -3,9 +3,9 @@
 A single-page outline of the whole backlog: every story and its task titles with initial planning info.
 For full detail, follow the links. [← Back to overview](../../README.md)
 
-**Related:** [Project plan](../../PROJECT-PLAN.md) · [Security](../../SECURITY.md) · [ADRs](../adr/README.md) · [Metrics](metrics-template.md) · [Definition of Done](DEFINITION-OF-DONE.md) · [Future considerations](FUTURE-CONSIDERATIONS.md)
+**Related:** [Status board](STATUS-BOARD.md) · [Project plan](../../PROJECT-PLAN.md) · [Security](../../SECURITY.md) · [ADRs](../adr/README.md) · [Metrics](metrics-template.md) · [Definition of Done](DEFINITION-OF-DONE.md) · [Future considerations](FUTURE-CONSIDERATIONS.md)
 
-> Live progress is tracked only in the README status board; status values here are initial backlog snapshots.
+> Live progress is tracked only in the [status board](STATUS-BOARD.md); status values here are initial backlog snapshots.
 
 ---
 

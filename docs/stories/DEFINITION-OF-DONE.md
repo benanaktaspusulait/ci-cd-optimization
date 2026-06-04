@@ -8,7 +8,7 @@ A task is only "Done" when all of the following are true.
 - [ ] Output (findings, change, or decision) is written down in a shareable form
 - [ ] Any assumptions or open questions are recorded
 - [ ] Result is reviewed by at least one other person
-- [ ] Task status is updated on the [status board](../../README.md#status-board)
+- [ ] Task status is updated on the [status board](STATUS-BOARD.md)
 
 ### Tasks that produce a measurement
 - [ ] Metric is captured using the shared [metrics template](metrics-template.md)
@@ -42,4 +42,4 @@ Capture every before/after measurement in the dedicated, fillable **[metrics tem
 | Developer feedback loop | ≤ 5 min (change → test green) | Local stopwatch / script timing |
 | Pipeline duration (CI, post-platform) | ≥ 20% ↓ | Drone pipeline UI (after RepoSync change) |
 
-> Targets are tracked in the [metrics template](metrics-template.md) and the [README success criteria](../../README.md#success-criteria--targets). Keep local pilot targets separate from post-platform CI targets.
+> Targets are tracked in the [metrics template](metrics-template.md) and the [README success targets summary](../../README.md#success-targets-summary). Keep local pilot targets separate from post-platform CI targets.
