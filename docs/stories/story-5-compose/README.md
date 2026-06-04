@@ -6,6 +6,8 @@
 ## Goal
 Clarify which Compose services are truly needed for CI integration tests versus local debugging, and recommend a reduced/clearer role.
 
+> **Note:** Docker Compose should not be removed without first mapping current CI and local debugging usage. The goal is to reduce unnecessary CI orchestration where appropriate, not to remove useful local debugging workflows.
+
 ## Why
 Compose files tend to grow and serve mixed purposes, dragging extra services into every CI run. Separating "needed for CI" from "useful for local debugging" reduces CI overhead without removing tools developers rely on locally.
 

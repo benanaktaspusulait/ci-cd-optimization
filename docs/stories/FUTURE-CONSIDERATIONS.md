@@ -138,7 +138,7 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 **Expected impact:** Eliminates network variability from builds; protects against upstream outages (Docker Hub rate limits, Maven Central downtime).
 
-**When:** When multiple teams hit download latency or rate-limit issues. Platform/ETO owned.
+**When:** When multiple teams hit download latency or rate-limit issues. ACP / DSA ETO owned.
 
 
 ### Release pipeline automation (Gareth's project)

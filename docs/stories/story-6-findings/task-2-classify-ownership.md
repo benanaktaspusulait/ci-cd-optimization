@@ -17,29 +17,26 @@
 | **Status** | Not started |
 
 ## Why
-Some improvements are safe to own inside CST; others touch shared infrastructure and need ACP/ETO. Classification without a board/owner recommendation is incomplete — both must happen together so follow-up work lands in the right place immediately.
-
-For this pilot, split ACP/ETO follow-ups into **RepoSync/platform** items (`.drone.star`, DIND, central Drone templates) and **wider ETO/platform** items (org standards, shared base images, remote cache infrastructure).
+Some improvements are safe to own inside CST/Cerberus Delivery; others touch CI tooling (ACP) or wider platform patterns (DSA ETO/Enabling/CIT). Classification without a board/owner recommendation is incomplete — both must happen together.
 
 ## Goal
-Classify each optimisation item as CST-local or ACP/ETO, and for each item recommend which board/owner should carry it forward. Where an item is not CST-local, distinguish whether it belongs to RepoSync/platform or wider ETO/platform.
+Classify each optimisation item into the three ownership categories and recommend which board/owner should carry it forward.
 
 ## Scope
 **Classify** each item:
-- Likely **CST-local**: baseline measurement, Dockerfile review, `.dockerignore`, local layering experiment, Testcontainers pilot, Compose review.
-- Likely **RepoSync/platform**: `.drone.star` step changes, DIND environment, BuildKit enablement, Testcontainers CI environment variables, shared Drone templates.
-- Likely **wider ACP/ETO**: org base images, BuildKit remote cache infrastructure, shared Testcontainers helpers, security-scanning standards, ephemeral environments.
+- **CST / Cerberus Delivery**: baseline measurement, Dockerfile review, `.dockerignore`, local layering experiment, Testcontainers local prototype, Compose review. Subject to agreement with Thomas Reddy.
+- **ACP (CI/CD tooling)**: `.drone.star` / RepoSync changes, DIND environment, BuildKit enablement, Testcontainers CI environment variables, CI cache infrastructure. Requires ACP prioritisation.
+- **DSA ETO / Enabling / CIT**: org base images, shared engineering templates, reusable Testcontainers libraries, cross-project adoption model, remote cache infrastructure. Subject to DSA Tech Strategy alignment.
 
 **Recommend** for each item one of:
-- CST board
-- RepoSync / platform board
-- ETO / platform board
-- shared visibility only
-- further discussion needed
+- CST / Cerberus Delivery board
+- ACP board
+- DSA ETO / Enabling board
+- Shared visibility only
+- Further discussion needed
 
 ## Acceptance criteria
-- [ ] Each item is classified CST-local vs ACP/ETO with short rationale
-- [ ] Platform/ETO items distinguish RepoSync/platform ownership from wider ETO/platform ownership
+- [ ] Each item is classified into CST, ACP, or DSA ETO/Enabling with short rationale
 - [ ] Each item is mapped to a suggested owner/board
 - [ ] No wider-impact item is progressed without appropriate visibility
 - [ ] Assumptions are documented

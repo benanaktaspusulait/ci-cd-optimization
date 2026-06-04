@@ -1,10 +1,10 @@
-# Story 6 — Findings, Ownership & Recommendations
+# Story 6 — CST-local vs ACP/ETO Ownership Assessment
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
 **Depends on:** Stories 3, 4, 5 · **Parallel with:** —
 
 ## Goal
-Consolidate the pilot evidence, decide CST-local vs RepoSync/platform vs wider ETO ownership for each item, and share recommendations with stakeholders.
+Consolidate the pilot evidence, classify each item into the three ownership categories (CST/Cerberus Delivery, ACP, DSA ETO/Enabling/CIT), and share recommendations with stakeholders.
 
 ## Why
 A pilot is only valuable if it ends in a clear decision. This story turns scattered results into one narrative, assigns ownership, and routes follow-up work to the right board — so good patterns are adopted deliberately, not by accident.
