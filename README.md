@@ -35,7 +35,7 @@ A small, measurable pilot on **one** representative repository:
 3. Optimise Docker build inputs and layering.
 4. Pilot Testcontainers for one integration dependency.
 5. Rationalise Docker Compose usage without breaking local workflows.
-6. Consolidate findings and classify ownership as CST-local, RepoSync/platform, or wider ETO.
+6. Consolidate findings and classify ownership as CST-local, ACP-owned, or DSA ETO/Enabling.
 
 The pilot produces evidence and recommendations. It does **not** approve an org-wide rollout, remove all Compose usage, or build shared platform capabilities by itself.
 
@@ -45,9 +45,50 @@ The pilot produces evidence and recommendations. It does **not** approve an org-
 
 FDP adaptor repositories use a centrally managed `.drone.star` pipeline deployed via **RepoSync**. Local pipeline edits are overwritten.
 
-That means repository-local work can cover Dockerfiles, `.dockerignore`, Maven profiles, tests, examples and measurement. Pipeline-level changes such as DIND image changes, BuildKit enablement, Testcontainers CI environment variables, remote cache and shared templates need RepoSync/platform/ETO coordination.
+That means repository-local work can cover Dockerfiles, `.dockerignore`, Maven profiles, tests, examples and measurement. Pipeline-level changes such as DIND image changes, BuildKit enablement, Testcontainers CI environment variables, remote cache and shared templates require ACP/RepoSync coordination.
 
 Story 1 exists to make that boundary explicit before the rest of the pilot proceeds. Full detail lives in [Pipeline context](docs/PIPELINE-CONTEXT.md).
+
+---
+
+## Ownership and Prioritisation Boundaries
+
+Not all improvement ideas can be progressed through the same route. Three distinct ownership categories apply:
+
+**A. CST / Cerberus Delivery scoped items**
+
+These may be validated locally within CST/Cerberus Delivery, subject to agreement with Thomas Reddy and relevant Cerberus Delivery stakeholders.
+
+- Baseline measurement
+- Dockerfile review and `.dockerignore` validation
+- Docker Compose usage review
+- Local Dockerfile layering experiment
+- Local Testcontainers prototype
+- Ownership classification and recommendations
+
+**B. ACP-owned CI/CD tooling items**
+
+These touch CI/CD tooling or pipeline capabilities managed by ACP and would require ACP prioritisation.
+
+- Drone runner changes
+- DIND image changes
+- BuildKit remote cache infrastructure
+- CI cache infrastructure
+- Pipeline tooling changes (`.drone.star` / RepoSync)
+- Testcontainers environment variables in Drone steps
+
+**C. DSA ETO / Enabling / CIT items**
+
+These may require wider DSA ETO/Enabling prioritisation and should be assessed against DSA Tech Strategy, Core Cloud and Data Platform direction.
+
+- Shared engineering templates
+- Reusable platform patterns
+- Shared Testcontainers helper libraries
+- Future platform enablement capabilities
+- Cross-project adoption model
+- Organisation-maintained base images
+
+> **Note:** The current DSA focus is moving to Core Cloud and Data Platform. Any platform/tooling-level improvement must be clearly separated from CST-local pilot work and aligned with that direction.
 
 ---
 
@@ -66,15 +107,15 @@ Targets are proposed and confirmed against the real baseline in Story 2. Detaile
 | Testcontainers prototype | ≥ 1 dependency running locally and compared to Compose | Story 4 |
 | Integration test determinism | No shared state; isolated containers per run | Story 4 repeatability evidence |
 | Compose services classified | All services mapped with CI vs local role | Story 5 |
-| Ownership documented | CST-local vs RepoSync/platform vs wider ETO | Story 6 |
+| Ownership documented | CST-local vs ACP vs DSA ETO/Enabling classified | Story 6 |
 
 **Platform-dependent targets after the pilot:**
 
 | Success criterion | Target | Requires |
 |-------------------|--------|----------|
-| CI build time reduction | **≥ 20%** | RepoSync BuildKit enablement |
-| CI pipeline duration | **≥ 20%** | Remote cache + Testcontainers CI support |
-| Testcontainers in CI | Running in Drone pipeline | RepoSync Maven step environment changes |
+| CI build time reduction | **≥ 20%** | ACP/RepoSync: BuildKit enablement in `.drone.star` |
+| CI pipeline duration | **≥ 20%** | ACP: remote cache + Testcontainers CI support |
+| Testcontainers in CI | Running in Drone pipeline | ACP/RepoSync: Maven step environment changes |
 
 ---
 
@@ -87,7 +128,7 @@ Targets are proposed and confirmed against the real baseline in Story 2. Detaile
 | 3 | [Docker Build Optimisation](docs/stories/story-3-build/README.md) | 4 | 2 | 4 |
 | 4 | [Testcontainers Pilot](docs/stories/story-4-testcontainers/README.md) | 4 | 2 | 3 |
 | 5 | [Docker Compose Rationalisation](docs/stories/story-5-compose/README.md) | 3 | 4 | — |
-| 6 | [Findings, Ownership & Recommendations](docs/stories/story-6-findings/README.md) | 3 | 3, 4, 5 | — |
+| 6 | [CST-local vs ACP/ETO Ownership Assessment](docs/stories/story-6-findings/README.md) | 3 | 3, 4, 5 | — |
 
 ```text
 Story 1 (pipeline assessment, gate)

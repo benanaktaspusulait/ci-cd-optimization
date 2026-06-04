@@ -6,7 +6,7 @@
 ## Goal
 Apply one or more practical Dockerfile / build-context improvements and prove their impact with before/after numbers.
 
-> **Drone constraint:** Multi-stage builds and `.dockerignore` work locally and in any Docker environment. BuildKit cache mounts work locally but are ephemeral in CI (DIND resets per build). Remote registry cache requires platform/ETO action (see T1.5). Focus local-first.
+> **Drone constraint:** Multi-stage builds and `.dockerignore` work locally and in any Docker environment. BuildKit cache mounts work locally but are ephemeral in CI (DIND resets per build). Remote registry cache requires ACP/ETO action (see T1.5). Focus local-first.
 
 ## Why
 Build time and image size are recurring sources of friction. Small, well-targeted changes (layer ordering, `.dockerignore`, cache mounts, multi-stage) often deliver disproportionate gains without changing application behaviour.

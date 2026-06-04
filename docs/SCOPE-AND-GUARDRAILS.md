@@ -63,7 +63,7 @@ This is the negative scope / guardrail list. These items may be valid later, but
 
 - The first pilot will use **one** selected repository/service.
 - Baseline metrics will be captured **before** any implementation changes.
-- Any platform-impacting work will be reviewed with relevant platform/ETO stakeholders.
+- Any platform-impacting work will be reviewed with relevant ACP/ETO stakeholders.
 - Docker Compose will not be removed without understanding current CI and local debugging usage.
 - Testcontainers will be piloted with one dependency first before wider migration is considered.
 - Projected benefits will not be treated as guaranteed until measured.

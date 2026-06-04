@@ -84,7 +84,7 @@ This is a **RepoSync-controlled change** (environment variable in `.drone.star`)
 
 ### Remote registry cache (`--cache-from` / `--cache-to`)
 
-**Requires platform/ETO:**
+**Requires ACP/ETO:**
 - Registry namespace for cache layers (e.g. `docker.digital.homeoffice.gov.uk/dacc-aws/fdp-cache`)
 - Write permissions for the Drone pipeline to push cache
 - Retention/eviction policy for cache layers
@@ -103,7 +103,7 @@ This is **post-pilot** — classify in Story 6 as RepoSync/platform or wider ETO
 | BuildKit cache mounts | ✅ (persistent) | ⚠️ (ephemeral per build) |
 | Testcontainers tests | ✅ | ❓ (needs T1.4 confirmation) |
 | Maven `-P testcontainers` profile | ✅ | ❓ (needs RepoSync change to skip compose) |
-| Remote registry cache | ❌ | ❌ (needs platform/ETO) |
+| Remote registry cache | ❌ | ❌ (needs ACP/ETO) |
 
 ---
 

@@ -2,7 +2,7 @@
 
 - **Status:** Proposed
 - **Date:** 2026-06-03
-- **Deciders:** CST + platform/ETO (RepoSync pipeline owner)
+- **Deciders:** CST + ACP/ETO (RepoSync pipeline owner)
 - **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md) · [ADR-0004 — BuildKit](0004-buildkit-cache-and-layering.md) · [PROJECT-PLAN.md — R3](../../PROJECT-PLAN.md) · [T1.4](../stories/story-1-pipeline-assessment/task-4-testcontainers-feasibility.md) · [Drone considerations](../../examples/ci/drone-considerations.md)
 
 ## Context
@@ -57,6 +57,6 @@ The final decision is documented in T1.4 findings and carried into Story 4 and S
 | Option | Pros | Cons | Why not chosen (default) |
 |--------|------|------|--------------------------|
 | Docker-in-Docker (`--privileged`) | Widely documented; fully isolated daemon | `--privileged` = security risk on shared runners; slow startup | Acceptable only on a dedicated runner tag |
-| Docker socket mount | No `--privileged` on job; reuses host daemon | Grants root-equivalent host access | Preferred if security posture allows; confirm with platform/ETO |
+| Docker socket mount | No `--privileged` on job; reuses host daemon | Grants root-equivalent host access | Preferred if security posture allows; confirm with ACP/ETO |
 | Rootless Docker / Sysbox | Secure; no host privilege escalation | Requires specific kernel/runner setup | Assess in T1.4; not assumed available |
 | No Docker in CI (fallback) | No privilege concerns | No Testcontainers in CI; Compose remains | Valid fallback per ADR-0002 — not ideal but acceptable |

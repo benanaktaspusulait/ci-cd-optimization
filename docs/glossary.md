@@ -8,7 +8,8 @@ Key terms and abbreviations used across this project. [← Back to overview](../
 |------|---------------------|
 | **FDP** | The product/team context this pilot runs in. "FDP" is the pilot scope — one representative repository owned by this team is selected in T2.1. |
 | **CST** | The local development team that can own and directly validate repo-local changes (Dockerfiles, test code, Maven profiles, docs/config). Changes classified as "CST-local" in Story 6 do not require platform approval. |
-| **ETO** | Engineering/Technology Operations — the wider platform/infrastructure org. Owns shared infrastructure: base images, CI/CD templates, registry, remote cache, security gates. Also referred to as "platform" or "platform/ETO" throughout this repo. |
+| **ETO** | DSA ETO / Enabling / CIT — the wider engineering/platform org. Owns shared infrastructure: base images, CI/CD templates, registry, security gates. Prioritisation sits with Ezhil's role and depends on alignment with DSA Tech Strategy. |
+| **ACP** | Application Container Platform — manages CI/CD tooling (Drone, runners, DIND images, RepoSync). Pipeline-level changes require ACP prioritisation. |
 | **MR** | Merge Request — the GitLab equivalent of a Pull Request. All pilot changes require an MR into `develop`. |
 | **MMA Helm repo** | The central "service repo" that deploys all FDP services to Kubernetes via Helm. It has its own Drone pipeline for Helm packaging, linting, templating, and deploying. Separate from the adaptor CI pipeline. |
 | **Service repo** | See MMA Helm repo — the single repository responsible for deploying all service charts. |

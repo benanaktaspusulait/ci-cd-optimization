@@ -49,7 +49,7 @@ Specifics:
   - T4.2: assess CI suitability early — if the runner cannot provide Docker, document it and treat Testcontainers as local-only.
   - If CI is unsuitable: Compose remains in CI for integration tests ([ADR-0003](0003-reduce-compose-in-ci.md) fallback).
   - If successful: expand to more dependencies in post-pilot phase.
-  - Route runner-mode decision to platform/ETO via [ADR-0005](0005-ci-runner-docker-mode.md).
+  - Route runner-mode decision to ACP/ETO via [ADR-0005](0005-ci-runner-docker-mode.md).
 
 ## Alternatives considered
 

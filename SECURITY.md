@@ -2,7 +2,7 @@
 
 Concrete security practices for the pilot. Turns the high-level notes in [tech-notes](docs/stories/tech-notes.md#security--compliance) into an actionable plan. [← Back to overview](README.md)
 
-> **Scope:** practices the pilot will apply or assess. Items needing org-wide infrastructure (shared scanners, signing infra) are flagged as **platform/ETO** and routed via Story 6.
+> **Scope:** practices the pilot will apply or assess. Items needing org-wide infrastructure (shared scanners, signing infra) are flagged as **ACP/ETO** and routed via Story 6.
 
 ---
 
@@ -42,7 +42,7 @@ docker buildx build --secret id=maven_settings,src=$HOME/.m2/settings.xml .
 | SBOM generation | **Syft** (SPDX/CycloneDX) | On image build | Artefact attached to build | Required artefact |
 | Base image freshness | scheduled rebuild + scan | Weekly | Report-only / warn | Flag outdated/EOL base images |
 
-> Tool **choice** is CST-local for the pilot. A shared, org-wide scanning **standard / gate** is **platform/ETO** — classify in Story 6.
+> Tool **choice** is CST-local for the pilot. A shared, org-wide scanning **standard / gate** is **ACP/ETO** — classify in Story 6.
 > The template CI starts in report-only mode to avoid blocking before baseline data exists. Promote the target gates only after Story 2 captures the baseline and stakeholders agree the thresholds.
 
 **Severity policy (target gate, after promotion)**
@@ -62,7 +62,7 @@ Container/image rules to enforce automatically rather than by review.
 | No unpinned base/job images | Base images and CI job images pinned to a version (digest for critical) | hadolint rule + CI grep/lint |
 | No secrets in image | Built image contains no secret material | secret scan of built image |
 | Healthcheck present | Long-running images define a healthcheck | hadolint / policy check |
-| Approved base images | Use sanctioned base images only | policy check against allowlist *(platform/ETO)* |
+| Approved base images | Use sanctioned base images only | policy check against allowlist *(ACP/ETO)* |
 
 **Enforcement approach**
 - Start with **hadolint** for Dockerfile rules (fast, local + CI).
@@ -72,10 +72,10 @@ Container/image rules to enforce automatically rather than by review.
 
 ---
 
-## 4. Supply-chain hardening (assessed, mostly platform/ETO)
+## 4. Supply-chain hardening (assessed, mostly ACP/ETO)
 
 - **Digest pinning** for critical base images (`FROM image@sha256:…`).
-- **Image signing / provenance** (e.g. cosign) — assess feasibility, likely platform/ETO.
+- **Image signing / provenance** (e.g. cosign) — assess feasibility, likely ACP/ETO.
 - **Scheduled base-image rebuilds** to pick up patches.
 - **Deprecated-image policy** so EOL bases are flagged and removed.
 

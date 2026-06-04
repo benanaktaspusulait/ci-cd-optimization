@@ -2,6 +2,8 @@
 
 Items that are **out of scope for the pilot** but should be addressed if the patterns move to production. These are not tasks — they are a decision backlog for the next phase. [← Back to overview](../../README.md)
 
+> **Disclaimer:** These opportunities are subject to ACP / DSA ETO prioritisation and alignment with DSA Tech Strategy, Core Cloud and Data Platform direction. They are not part of the immediate pilot.
+
 > **When to revisit:** after Story 6 is complete and stakeholders decide to progress beyond the pilot.
 
 ---
@@ -48,7 +50,7 @@ When writing the Story 6 consolidated findings, reference this list and recommen
 
 ## Post-pilot architecture decisions (candidates)
 
-These are decisions that will need to be made if the pilot succeeds and the team moves to production. They are **not pilot scope** — they require platform/ETO involvement. Record them as formal ADRs when the decision point arrives.
+These are decisions that will need to be made if the pilot succeeds and the team moves to production. They are **not pilot scope** — they require ACP/ETO involvement. Record them as formal ADRs when the decision point arrives.
 
 ### Base image strategy
 
@@ -57,13 +59,13 @@ These are decisions that will need to be made if the pilot succeeds and the team
 **Proposed pattern:** A four-layer hierarchy: `base-os → base-runtime → base-build → application`. Application Dockerfiles use versioned, digest-pinned `base-runtime` and `base-build` images rather than direct upstream references.
 
 **Why post-pilot:**
-- Requires platform/ETO to build, publish, scan, and maintain the base layers.
+- Requires ACP/ETO to build, publish, scan, and maintain the base layers.
 - Needs a rebuild cadence, deprecation policy, and notification process.
-- CST can validate the pattern on one repo; ownership and infrastructure are platform/ETO.
+- CST can validate the pattern on one repo; ownership and infrastructure are ACP/ETO.
 
 **Consequences if adopted:**
 - (+) CVE patches propagate centrally; smaller images; simpler Dockerfiles; central compliance.
-- (−) Teams lose direct control of runtime env; operational burden on platform/ETO.
+- (−) Teams lose direct control of runtime env; operational burden on ACP/ETO.
 
 ### BuildKit remote cache infrastructure
 
@@ -74,7 +76,7 @@ These are decisions that will need to be made if the pilot succeeds and the team
 - Security: cache images excluded from production promotion paths.
 
 **Why post-pilot:**
-- CST cannot provision the cache namespace without platform/ETO approval.
+- CST cannot provision the cache namespace without ACP/ETO approval.
 - The pipeline duration target (≥20% reduction) may not be fully achievable without remote cache.
 - CST can implement local cache mounts (partial win) in the pilot; remote cache is the next step.
 
@@ -86,7 +88,7 @@ These are decisions that will need to be made if the pilot succeeds and the team
 
 ## Post-pilot technical opportunities
 
-These are concrete next steps that build on the pilot's findings. They do not require platform/ETO infrastructure — CST could pursue them independently.
+These are concrete next steps that build on the pilot's findings. They do not require ACP/ETO infrastructure — CST could pursue them independently.
 
 ### Selective test execution
 
@@ -126,7 +128,7 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 **Expected impact:** Faster feedback on behaviour changes; QA can verify without waiting for a shared staging deploy.
 
-**When:** After the pipeline is fast and reliable (pilot goals achieved); requires platform/ETO infrastructure for dynamic namespaces.
+**When:** After the pipeline is fast and reliable (pilot goals achieved); requires ACP/ETO infrastructure for dynamic namespaces.
 
 ### Dependency proxy / artifact cache
 
@@ -146,3 +148,33 @@ These are concrete next steps that build on the pilot's findings. They do not re
 **Coordination:** The CI optimisation pilot and the release automation project are complementary but separate. The pilot improves **build + test speed**; the release automation improves **deploy + release management**. Findings from Story 6 should be shared with Gareth's project to avoid conflicting changes to the pipeline or Helm chart structure.
 
 **When:** After Story 6 findings are shared — include Gareth as a stakeholder.
+
+
+---
+
+## Related Future Area: Deployment and Release Safety
+
+A separate Cerberus deployment KT highlighted related release engineering areas. These are **outside the initial Container & CI/CD pilot scope** but are noted here as future opportunities.
+
+**Observations from KT sessions:**
+
+- Deployment is managed through the MMA service/Helm repository rather than individual service repositories.
+- Feature activation depends on feature flags and environment-specific Helm value files.
+- Deployment success does not necessarily mean feature activation or functional validation.
+- Current validation focuses on deployment/pod readiness; functional validation sits with dev teams (Playwright/Cypress) and QAT.
+- Automatic rollback is not built into deployment scripts — only manual `helm rollback` is available.
+- Manual Helm rollback is possible but not documented as a standard operating procedure.
+- Environment parity between pre-prod (bVal) and production should be understood and verified.
+- Runbook repositories contain additional approved release steps.
+- A release automation project (Gareth Andrews) is in progress to reduce manual service chart management.
+
+**Why this is separate from the pilot:**
+
+The CI/CD optimisation pilot focuses on **build and test** (faster builds, smaller images, deterministic tests). Deployment and release safety focuses on **deploy and operate** (rollback, feature activation, environment parity). They are complementary but have different owners, different timelines, and different risk profiles.
+
+**Recommended next steps (post-pilot):**
+
+- Document the manual rollback procedure as a runbook.
+- Assess whether automated rollback (Helm hooks or pipeline step) should be added to the deploy pipeline.
+- Coordinate with Gareth's release automation project to avoid conflicting changes.
+- Clarify environment parity expectations between bVal and production.

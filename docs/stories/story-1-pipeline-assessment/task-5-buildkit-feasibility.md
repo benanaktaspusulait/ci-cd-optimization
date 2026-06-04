@@ -34,7 +34,7 @@ Investigate:
 Likely outcomes:
 - **Multi-stage builds:** almost certainly work (standard Docker feature, no special DIND requirement)
 - **Local cache mounts:** work per-build but lost between CI runs (still useful for local dev)
-- **Remote registry cache:** likely requires platform/ETO (registry namespace + permissions + .drone.star env vars)
+- **Remote registry cache:** likely requires ACP/ETO (registry namespace + permissions + .drone.star env vars)
 
 ## Acceptance criteria
 - [ ] BuildKit availability in DIND is confirmed or denied

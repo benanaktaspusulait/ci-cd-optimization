@@ -5,7 +5,7 @@
 - **Deciders:** Pilot team
 - **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0003 — Compose role](0003-reduce-compose-in-ci.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 3](../stories/story-3-build/README.md) · [tech notes](../stories/tech-notes.md#buildkit-remote-cache) · [Drone considerations](../../examples/ci/drone-considerations.md)
 
-> **Drone constraint:** Multi-stage builds work in any Docker environment. BuildKit cache mounts work locally but are ephemeral in Drone DIND (lost between builds). Remote registry cache requires a `.drone.star` (RepoSync) change + platform/ETO registry namespace — this is post-pilot.
+> **Drone constraint:** Multi-stage builds work in any Docker environment. BuildKit cache mounts work locally but are ephemeral in Drone DIND (lost between builds). Remote registry cache requires a `.drone.star` (RepoSync) change + ACP/ETO registry namespace — this is post-pilot.
 
 ## Context
 
@@ -21,7 +21,7 @@ The consequence: builds are slow (~5 min CI), images are unnecessarily large, an
 BuildKit (Docker's modern build backend) supports:
 - **Cache mounts** (`--mount=type=cache`): persist the Maven repository across local builds without baking it into a layer.
 - **Multi-stage builds:** separate "resolve dependencies" → "compile" → "runtime" into distinct stages. Only the final runtime stage ships to production.
-- **Registry remote cache** (`--cache-from`/`--cache-to`): store cache layers in the container registry so CI runners can reuse them across jobs (requires platform/ETO infrastructure).
+- **Registry remote cache** (`--cache-from`/`--cache-to`): store cache layers in the container registry so CI runners can reuse them across jobs (requires ACP/ETO infrastructure).
 
 ## Decision
 
@@ -34,7 +34,7 @@ We will restructure the pilot Dockerfile using BuildKit features:
 
 2. **BuildKit cache mounts** for the Maven local repository (`/root/.m2`), enabled for local builds immediately.
 
-3. **Registry remote cache** (branch-aware: `--cache-from` main + current branch): documented in [tech-notes](../stories/tech-notes.md) and [drone-considerations](../../examples/ci/drone-considerations.md), but requires a RepoSync `.drone.star` change + platform/ETO registry namespace. This is a post-pilot item (see [FUTURE-CONSIDERATIONS](../stories/FUTURE-CONSIDERATIONS.md)).
+3. **Registry remote cache** (branch-aware: `--cache-from` main + current branch): documented in [tech-notes](../stories/tech-notes.md) and [drone-considerations](../../examples/ci/drone-considerations.md), but requires a RepoSync `.drone.star` change + ACP/ETO registry namespace. This is a post-pilot item (see [FUTURE-CONSIDERATIONS](../stories/FUTURE-CONSIDERATIONS.md)).
 
 4. **Clean build must always work:** a `--no-cache` build must succeed, so cache is an optimisation, never a hard dependency (guards risk R6).
 
@@ -66,7 +66,7 @@ ENTRYPOINT ["java", "-jar", "/app/app.jar"]
   - Improved security posture: runtime image has reduced attack surface (no compiler, no Maven).
 
 - **Negative / trade-offs:**
-  - Registry remote cache requires platform/ETO infrastructure (storage, permissions, retention policy) — deferred to post-pilot.
+  - Registry remote cache requires ACP/ETO infrastructure (storage, permissions, retention policy) — deferred to post-pilot.
   - Multi-stage Dockerfiles are slightly more complex to read for developers unfamiliar with the pattern.
   - Cache mounts are BuildKit-specific — if BuildKit is disabled, the Dockerfile still works but without the cache benefit.
   - Risk R6: a corrupt or stale cache could theoretically produce an incorrect image — mitigated by the "clean build must work" rule and T3.4 verification.
@@ -74,8 +74,8 @@ ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 - **Follow-ups:**
   - T3.3: apply one layering change at a time and measure (not a full rewrite at once).
   - T3.4: compare before/after locally and in CI; verify a `--no-cache` build still succeeds.
-  - Story 6 / T6.2: route remote-cache infra requirement to platform/ETO.
-  - Post-pilot: platform/ETO provisions cache namespace; request RepoSync change to add `--cache-from`/`--cache-to` to the Drone build step.
+  - Story 6 / T6.2: route remote-cache infra requirement to ACP/ETO.
+  - Post-pilot: ACP/ETO provisions cache namespace; request RepoSync change to add `--cache-from`/`--cache-to` to the Drone build step.
 
 ## Alternatives considered
 
