@@ -1,48 +1,56 @@
-# ADR-0005: Choose CI runner Docker execution mode for Testcontainers
+# ADR-0005: CI runner Docker execution mode (Drone Kubernetes + DIND)
 
 - **Status:** Proposed
 - **Date:** 2026-06-03
-- **Deciders:** CST + platform/ETO (runner configuration)
-- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md) · [ADR-0004 — BuildKit](0004-buildkit-cache-and-layering.md) · [PROJECT-PLAN.md — R3](../../PROJECT-PLAN.md) · [T3.2](../stories/story-3-testcontainers/task-2-implement-setup.md)
+- **Deciders:** CST + platform/ETO (RepoSync pipeline owner)
+- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md) · [ADR-0004 — BuildKit](0004-buildkit-cache-and-layering.md) · [PROJECT-PLAN.md — R3](../../PROJECT-PLAN.md) · [T0.4](../stories/story-0-pipeline-assessment/task-4-testcontainers-feasibility.md) · [Drone considerations](../../examples/ci/drone-considerations.md)
 
 ## Context
 
-Testcontainers requires a Docker daemon to start containers during tests. GitLab CI runners can provide Docker access in three ways, each with different security, performance, and operational trade-offs:
+The FDP CI pipeline runs on **Drone with Kubernetes runner**. Docker access is provided via a **Docker-in-Docker (DIND) service** named `docker`, accessible at `tcp://docker:2375`.
 
-1. **Docker-in-Docker (DinD):** A separate `docker:dind` service container runs a Docker daemon. Tests communicate with it via `DOCKER_HOST=tcp://docker:2375`. Requires `--privileged` on the service, which is a significant security concern on shared runners.
+The pipeline is defined in `.drone.star` (Starlark) and **centrally managed via RepoSync** — local changes to the pipeline config are overwritten.
 
-2. **Docker socket mount:** The host's `/var/run/docker.sock` is bind-mounted into the job container. Testcontainers connects to the host daemon directly. No `--privileged` required on the job container, but grants the container root-equivalent access to the host Docker daemon — effectively root on the host.
+Key observations from the current `.drone.star`:
+1. A DIND service is added to every pipeline that needs Docker.
+2. Steps that need Docker set `DOCKER_HOST=tcp://docker:2375`.
+3. The ECR pipeline's Maven step already sets `TESTCONTAINERS_RYUK_DISABLED=true` — indicating prior Testcontainers exploration.
+4. The main CI pipeline's `mvn clean install` step does **not** currently have `DOCKER_HOST` set.
 
-3. **Rootless Docker / Sysbox:** A rootless Docker daemon runs inside the job container without `--privileged`. More secure but requires specific runner/kernel configuration and may not be available on the organisation's current runner fleet.
+For Testcontainers to work in CI:
+- The Maven test step needs `DOCKER_HOST=tcp://docker:2375` (to reach DIND).
+- Ryuk must be disabled (`TESTCONTAINERS_RYUK_DISABLED=true`) — Ryuk cannot reliably connect to the Drone DIND daemon.
+- Pre-flight checks should be skipped (`TESTCONTAINERS_CHECKS_DISABLE=true`).
 
-The choice is **not a CST-local decision** — it depends on how platform/ETO has configured the GitLab CI runner fleet. T3.2 must assess which mode is available and document the finding. Until that assessment is complete, this ADR captures the decision framework rather than a final choice.
+These are **environment variable changes in `.drone.star`** — controlled by RepoSync, not the adaptor repo.
 
 ## Decision
 
-We will assess the available Docker execution modes in T3.2 and select the most secure option that supports Testcontainers:
+The current Drone setup provides DIND. We will assess its suitability for Testcontainers in T0.4 and select the appropriate execution model:
 
-- **Preferred:** Docker socket mount (if the runner fleet already exposes it and the security posture is acceptable).
-- **Acceptable:** DinD with `--privileged`, restricted to a dedicated runner tag (e.g. `privileged`) — not on general-purpose runners.
-- **Fallback (per ADR-0002):** If neither mode is available or acceptable in CI, Testcontainers runs **locally only**; Docker Compose remains in CI.
+- **Preferred (if feasible):** Add `DOCKER_HOST`, `TESTCONTAINERS_RYUK_DISABLED=true`, and `TESTCONTAINERS_CHECKS_DISABLE=true` to the Maven step in `.drone.star` via a RepoSync change request. Testcontainers then runs inside the existing CI pipeline.
+- **Fallback (per ADR-0002):** If the RepoSync change is not approved or DIND connectivity doesn't work, Testcontainers runs **locally only**; Docker Compose remains in CI.
 
-The final choice is documented in T3.2 findings and carried into T3.4 and T5.2. The repository `.gitlab-ci.yml` uses DinD only as a replace-before-use template default; it must not be run on a shared runner until the runner tag and privilege model are approved.
+The final decision is documented in T0.4 findings and carried into Story 3 and Story 5.
 
 ## Consequences
 
 - **Positive:**
-  - Explicit, documented decision that can be reviewed by security/platform teams.
-  - Fallback path (local-only Testcontainers) is pre-agreed, so T3.2 does not block if CI mode is unavailable.
+  - Uses the existing DIND service — no new infrastructure required.
+  - Ephemeral Kubernetes pods mean containers die with the pipeline (no orphan cleanup needed even without Ryuk).
+  - Prior art exists (`TESTCONTAINERS_RYUK_DISABLED=true` in ECR pipeline) — precedent for the change.
 
 - **Negative / trade-offs:**
-  - Socket mount: broad Docker daemon access from within CI job; acceptable only if runners are not shared with untrusted workloads.
-  - DinD + `--privileged`: security risk on shared runners; requires a dedicated runner tag.
-  - Rootless: operational setup cost; not guaranteed to be available.
+  - Requires a RepoSync change request — not CST-local.
+  - Ryuk disabled means no automatic cleanup mid-pipeline (acceptable because pods are ephemeral).
+  - DIND adds network hop latency for container operations (may be slower than host Docker).
+  - If `DOCKER_HOST` is not set in the Maven step, Testcontainers defaults to looking for a local socket (which doesn't exist in the pod).
 
 - **Follow-ups:**
-  - T3.2: confirm which mode is available on the pilot runner; document the method used.
-  - T3.2: replace the placeholder `.gitlab-ci.yml` runner tag (`docker-privileged-tbd`) with the approved runner tag or switch the template to socket/rootless mode.
-  - T5.2: classify as CST-local (config change to `.gitlab-ci.yml`) or platform/ETO (runner reconfiguration).
-  - If platform/ETO action is needed: raise as a separate ticket with this ADR attached.
+  - T0.4: confirm DIND connectivity from Maven step.
+  - If feasible: submit RepoSync change request with env vars.
+  - T5.2: classify as RepoSync/platform-owned change.
+  - Document the workaround for the team (env vars needed in CI vs local).
 
 ## Alternatives considered
 

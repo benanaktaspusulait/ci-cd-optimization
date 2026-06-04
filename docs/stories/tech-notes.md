@@ -7,7 +7,7 @@ Decisions behind these notes are recorded as [ADRs](../adr/README.md); security 
 `base-os → base-runtime → base-build → application`. Benefits: standard runtime, shared layers, central patching, easier compliance. Needs: versioned tags, ownership, deprecation policy, scheduled rebuilds, scanning. _(Likely platform/ETO owned — classify in Story 5.)_
 
 ### BuildKit remote cache · [ADR-0004](../adr/0004-buildkit-cache-and-layering.md)
-CI runners often lose local cache between jobs. Use a branch-aware registry cache:
+CI runners (Drone Kubernetes pods) are ephemeral — no persistent local cache between builds. Use a branch-aware registry cache:
 ```bash
 docker buildx build \
   --cache-from=type=registry,ref=$REGISTRY_IMAGE/cache:main \

@@ -6,6 +6,8 @@
 ## Goal
 Prove whether Testcontainers can replace part of the docker-compose integration setup for one dependency, with better isolation and determinism.
 
+> **Drone constraint:** CI feasibility depends on Story 0 findings (T0.4). The Drone pipeline uses DIND with `DOCKER_HOST=tcp://docker:2375`. Testcontainers may need `TESTCONTAINERS_RYUK_DISABLED=true` (already present in ECR pipeline). If CI is not feasible, this story stays **local-only** — still valuable for proving the pattern.
+
 ## Why
 Full docker-compose setups can be slow to start, share hidden state, and cause flaky, environment-dependent failures. Testcontainers offers isolated, deterministic, per-test environments. The stronger value here is reliability and local/CI consistency — not only speed.
 

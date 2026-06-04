@@ -9,6 +9,16 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 
 ---
 
+### [Story 0 — Pipeline Assessment (Drone/RepoSync)](story-0-pipeline-assessment/README.md)
+
+| ID | Task | Est | Assignee | Status | Due |
+|----|------|:---:|----------|--------|-----|
+| T0.1 | [Review .drone.star pipeline structure](story-0-pipeline-assessment/task-1-review-drone-star.md) | M | _TBD_ | Not started | Week 1 |
+| T0.2 | [Identify local vs RepoSync boundaries](story-0-pipeline-assessment/task-2-local-vs-central.md) | S | _TBD_ | Not started | Week 1 |
+| T0.3 | [Map CI steps, DIND and Compose usage](story-0-pipeline-assessment/task-3-map-ci-steps.md) | M | _TBD_ | Not started | Week 1 |
+| T0.4 | [Assess Testcontainers feasibility in Drone](story-0-pipeline-assessment/task-4-testcontainers-feasibility.md) | M | _TBD_ | Not started | Week 1 |
+| T0.5 | [Assess BuildKit/cache feasibility](story-0-pipeline-assessment/task-5-buildkit-feasibility.md) | S | _TBD_ | Not started | Week 1 |
+
 ### [Story 1 — Baseline & Pilot Scope](story-1-baseline/README.md)
 
 | ID | Task | Est | Assignee | Status | Due |

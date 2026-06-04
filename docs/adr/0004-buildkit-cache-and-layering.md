@@ -3,7 +3,9 @@
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** Pilot team
-- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0003 — Compose role](0003-reduce-compose-in-ci.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 2](../stories/story-2-build/README.md) · [tech notes](../stories/tech-notes.md#buildkit-remote-cache)
+- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0003 — Compose role](0003-reduce-compose-in-ci.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 2](../stories/story-2-build/README.md) · [tech notes](../stories/tech-notes.md#buildkit-remote-cache) · [Drone considerations](../../examples/ci/drone-considerations.md)
+
+> **Drone constraint:** Multi-stage builds work in any Docker environment. BuildKit cache mounts work locally but are ephemeral in Drone DIND (lost between builds). Remote registry cache requires a `.drone.star` (RepoSync) change + platform/ETO registry namespace — this is post-pilot.
 
 ## Context
 

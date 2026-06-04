@@ -98,15 +98,15 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 **When:** After Story 3 (Testcontainers) proves which tests are truly independent and isolated.
 
-### GitLab CI include template
+### Reusable Drone pipeline templates (via RepoSync)
 
-**What:** Extract the pilot's `.gitlab-ci.yml` pattern (BuildKit build, scan, Testcontainers, metrics) into a reusable template that other FDP repos can `include:`.
+**What:** Extract the pilot's optimised patterns (BuildKit build, Testcontainers env vars, Trivy scan) into reusable functions within the central `.drone.star` that other FDP adaptors can inherit via RepoSync.
 
-**How:** GitLab CI supports `include: project` and `include: remote`. Place the template in a shared repo; consuming repos override only their variables (registry path, image tag).
+**How:** The `.drone.star` already uses Starlark functions (`add_pipeline_step`, etc.). New functions like `add_testcontainers_step()` or `add_buildkit_build()` could encapsulate the optimised patterns. All repos receiving RepoSync would inherit them automatically.
 
-**Expected impact:** Eliminates copy-paste drift across repos; a fix in the template propagates to all consumers. Reduces onboarding effort for new services.
+**Expected impact:** Eliminates copy-paste drift; a fix in the template propagates to all adaptors on next sync. Reduces onboarding effort for new services.
 
-**When:** After pilot findings are shared (Story 5) and at least one other repo wants to adopt the pattern.
+**When:** After pilot findings are shared (Story 5) and the RepoSync team agrees to adopt the patterns. Requires central ownership.
 
 ### Contract testing (Pact)
 

@@ -28,8 +28,12 @@ Consolidate:
 - build optimisation results (Story 2)
 - Testcontainers comparison (Story 3)
 - Docker Compose review (Story 4)
+- Pipeline assessment findings (Story 0) — local vs RepoSync boundaries
 
-Present as a clear before → after / observations narrative.
+Present as a clear before → after / observations narrative. Explicitly classify each item as:
+- CST-local (repo changes, no RepoSync involvement)
+- RepoSync/platform (`.drone.star` changes, DIND config, registry)
+- ETO/wider (base images, shared templates, org-wide standards)
 
 ## Acceptance criteria
 - [ ] A single consolidated findings summary exists

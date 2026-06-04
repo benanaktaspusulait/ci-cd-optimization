@@ -67,17 +67,35 @@ A small, measurable pilot on **one** representative repository:
 4. **Rationalise Docker Compose** — keep it for local debugging, reduce its role in CI.
 5. **Consolidate findings** and classify each pattern as CST-local vs platform/ETO.
 
+## Drone / RepoSync — core constraint
+
+The FDP adaptor repositories use a **centrally managed `.drone.star`** pipeline (Starlark), deployed via **RepoSync**. Local changes to the pipeline config are overwritten.
+
+This means:
+- **Pipeline-level changes** (stage ordering, DIND image, BuildKit enabling, Testcontainers environment) **cannot be made locally** — they require RepoSync / platform / ETO coordination.
+- **Repository-level changes** (Dockerfile, `.dockerignore`, Maven profiles, test code) **can be made locally** within the pilot scope.
+- The CI pipeline uses a **Kubernetes runner** with a **Docker-in-Docker service** (`DOCKER_HOST=tcp://docker:2375`).
+- Docker Compose is the current **CI integration test orchestration** method (Kafka, Redis, Schema Registry, aggregators, command adaptor all started via compose).
+- `TESTCONTAINERS_RYUK_DISABLED=true` already appears in one Maven step (ECR pipeline) — indicating prior Testcontainers exploration and a known Drone/Ryuk compatibility constraint.
+- Pull request events appear to trigger only a minimal/blank pipeline — to be confirmed in Story 0.
+
+**Consequence for the pilot:** Story 0 (Pipeline Assessment) must be completed first to establish what is locally feasible vs what requires central discussion.
+
+---
+
 ## Technology stack
 
 | Area | Tooling |
 |------|---------|
-| Containers | Docker, BuildKit / `docker buildx`, multi-stage builds |
-| CI/CD | **GitLab CI** (`.gitlab-ci.yml`) |
-| Registry | GitLab Container Registry |
-| Integration testing | Testcontainers (Java); existing Docker Compose for comparison |
+| Containers | Docker, BuildKit / `docker buildx` (feasibility TBC), multi-stage builds |
+| CI/CD | **Drone CI** (Kubernetes runner, `.drone.star` via RepoSync — centrally managed) |
+| Source hosting | GitLab (`gitlab.digital.homeoffice.gov.uk`) |
+| Registry | `docker.digital.homeoffice.gov.uk` (internal), ECR, Artifactory |
+| Integration testing | Testcontainers (Java, pilot); existing Docker Compose + DIND for comparison |
 | Build / deps | Maven (`mvnw`), Maven cache mounts |
-| Candidate test deps | Redis, Kafka, Schema Registry, LocalStack |
-| Security | Trivy / Snyk (scanning), SBOM (Syft), secret mounts — see [SECURITY.md](SECURITY.md) |
+| Candidate test deps | Redis, Kafka, Schema Registry, LocalStack (IAM) |
+| Tracing | OpenTelemetry + Jaeger |
+| Security | Trivy (scanning in pipeline), SBOM (Syft), secret mounts, Drone secrets — see [SECURITY.md](SECURITY.md) |
 
 ---
 
@@ -109,17 +127,19 @@ Targets are **proposed** and confirmed against the real baseline in Story 1.
 
 | # | Story | Tasks | Depends on | Parallel with |
 |---|-------|:-----:|------------|----------------|
-| 1 | [Baseline & Pilot Scope](docs/stories/story-1-baseline/README.md) | 4 | — | — |
+| 0 | [Pipeline Assessment (Drone/RepoSync)](docs/stories/story-0-pipeline-assessment/README.md) | 5 | — | — |
+| 1 | [Baseline & Pilot Scope](docs/stories/story-1-baseline/README.md) | 4 | 0 | — |
 | 2 | [Docker Build Optimisation](docs/stories/story-2-build/README.md) | 4 | 1 | 3 |
 | 3 | [Testcontainers Pilot](docs/stories/story-3-testcontainers/README.md) | 4 | 1 | 2 |
 | 4 | [Docker Compose Rationalisation](docs/stories/story-4-compose/README.md) | 3 | 3 | — |
 | 5 | [Findings, Ownership & Recommendations](docs/stories/story-5-findings/README.md) | 3 | 2, 3, 4 | — |
 
 ```text
-Story 1 (baseline, gate)
-   ├──> Story 2 ─┐
-   └──> Story 3 ─┼──> Story 4
-                 └──> Story 5
+Story 0 (pipeline assessment, gate)
+   └──> Story 1 (baseline, gate)
+           ├──> Story 2 ─┐
+           └──> Story 3 ─┼──> Story 4
+                         └──> Story 5
 ```
 
 📋 [**Full backlog index**](docs/stories/INDEX.md) — all stories and task titles on one page.
@@ -139,6 +159,12 @@ Estimates: `S` ≤0.5d · `M` 0.5–1d · `L` 1–2d. Priority: MoSCoW.
 
 | ID | Item | Est | Priority | Status | Owner | Issue |
 |----|------|:---:|:--------:|--------|-------|-------|
+| **S0** | **Pipeline Assessment (Drone/RepoSync)** | — | Must | Not started | _TBD_ | — |
+| T0.1 | Review .drone.star pipeline structure | M | Must | Not started | _TBD_ | — |
+| T0.2 | Identify local vs RepoSync boundaries | S | Must | Not started | _TBD_ | — |
+| T0.3 | Map CI steps, DIND and Compose usage | M | Must | Not started | _TBD_ | — |
+| T0.4 | Assess Testcontainers feasibility in Drone | M | Must | Not started | _TBD_ | — |
+| T0.5 | Assess BuildKit/cache feasibility | S | Should | Not started | _TBD_ | — |
 | **S1** | **Baseline & Pilot Scope** | — | Must | Not started | _TBD_ | — |
 | T1.1 | Select pilot repository/service | S | Must | Not started | _TBD_ | — |
 | T1.2 | Capture CI/CD pipeline baseline | M | Must | Not started | _TBD_ | — |
@@ -201,25 +227,31 @@ Open the rest once the baseline and a first build review are underway.
 
 The initial pilot should remain small and measurable.
 
-**Included in the first pilot:**
-- Baseline measurement (pipeline, build, image, integration tests)
+**CST-local (can do in the repo without RepoSync changes):**
+- Baseline measurement (pipeline timing from Drone UI, Docker build locally)
 - Pilot repository/service selection
 - Dockerfile / build context review
 - `.dockerignore` validation
-- One small Dockerfile layering experiment
-- One small Testcontainers pilot (one dependency)
-- Docker Compose usage review
+- Dockerfile layering experiment (local build)
+- Local Testcontainers prototype (runs on developer machine)
+- Docker Compose service mapping and classification
 - CST-local vs platform/ETO ownership assessment
-- Security scan (Trivy — non-blocking report)
-- CI observability (pipeline metrics collection)
+
+**Requires central/platform coordination (RepoSync / ETO):**
+- Drone pipeline step changes (`.drone.star`)
+- CI-level Testcontainers execution (DIND env vars, Ryuk config)
+- BuildKit / `docker buildx` enabling in Drone DIND
+- Remote cache infrastructure (registry namespace, permissions)
+- DIND image changes
+- Shared base image adoption across adaptors
 
 **Not in initial pilot scope** (unless separately agreed):
 - Organisation-wide base image rollout
-- BuildKit remote cache rollout (requires platform/ETO infrastructure)
+- BuildKit remote cache rollout
 - Pre-built test image rollout
 - Ephemeral environment implementation
 - Full platform transformation programme
-- Organisation-wide CI/CD template rollout
+- Organisation-wide Drone pipeline template changes
 - Shared Testcontainers library implementation
 - Replacing all Docker Compose usage
 
@@ -254,13 +286,17 @@ Before creating detailed implementation tickets, the following decisions should 
 ## Open questions
 
 - Which FDP repository/service is the best pilot candidate?
-- Do we have reliable access to current pipeline timing data (GitLab CI analytics)?
+- Do we have reliable access to current pipeline timing data (Drone UI / API)?
 - Which integration dependency is safest for the first Testcontainers pilot (Redis? Kafka?)?
-- Are current CI runners capable of supporting Docker-in-Docker or socket mount for Testcontainers?
+- Does the Drone DIND service support Docker access from Maven test step (`DOCKER_HOST`)?
+- Can Testcontainers run in the main CI `mvn clean install` step, or does it need a separate Drone step?
+- Is `TESTCONTAINERS_RYUK_DISABLED=true` sufficient, or does Ryuk need an alternative cleanup strategy?
+- Does the current DIND image support BuildKit / `docker buildx`?
+- Who owns the RepoSync source for `.drone.star`? What is the change request process?
 - Is there an existing platform-owned base image strategy?
-- Which team should own shared base image lifecycle if this progresses?
-- Should any items be raised on the ETO/platform board instead of CST?
-- What is the approval process for using `--privileged` runners?
+- What is the approval process for DIND / privileged runner changes?
+- Does the MR (pull_request) event really run only a blank pipeline? If so, how do developers get CI feedback on MRs?
+- Is there potential duplicate Maven work between the `mvn clean install` step and the `integration-tests` compose container?
 
 ---
 
@@ -283,11 +319,13 @@ The first local changes should be small and low-risk:
 
 Do not start with:
 
+- **Editing `.drone.star` locally** — it is overwritten by RepoSync; changes must go through the central source
 - Organisation-wide rollout
 - Replacing all Docker Compose usage
 - Building shared base images without platform ownership
-- Enabling BuildKit remote cache without CI/platform review
+- Enabling BuildKit remote cache without Drone/DIND/platform review
 - Implementing ephemeral environments
 - Creating a shared Testcontainers library before the first pilot proves value
 - Opening all candidate tasks as delivery tickets before ownership is agreed
 - Changing anything on `main` branch of the pilot repo without baseline captured first
+- Assuming CI-level Testcontainers works without completing Story 0 (pipeline feasibility)

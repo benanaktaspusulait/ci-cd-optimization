@@ -43,11 +43,14 @@ Copy, adapt, and rename as needed when applying to the pilot repository.
 | [docker-compose.yml](docker/docker-compose.yml) | Infrastructure services only (mirrors real RepoSync-controlled compose, without FDP app services) |
 | [.dockerignore](docker/.dockerignore) | Lean build context for Java/Maven multi-module project |
 
-### CI/CD (GitLab)
+### CI/CD (GitLab — illustrative only)
+
+> **Note:** The real FDP CI uses **Drone** (`.drone.star` via RepoSync), not GitLab CI. These snippets show how integration tests *would* look in a GitLab CI context. For Drone, see [drone-considerations.md](ci/drone-considerations.md).
 
 | File | What it shows |
 |------|---------------|
-| [gitlab-ci-integration-test.yml](ci/gitlab-ci-integration-test.yml) | Two jobs: Testcontainers mode (`-P testcontainers`) + Compose fallback (`-P ci-cmd`) for comparison |
+| [gitlab-ci-integration-test.yml](ci/gitlab-ci-integration-test.yml) | Two jobs: Testcontainers mode (`-P testcontainers`) + Compose fallback (`-P ci-cmd`) — illustrative |
+| [drone-considerations.md](ci/drone-considerations.md) | How Testcontainers/BuildKit would work in the real Drone pipeline |
 
 ## How to apply
 

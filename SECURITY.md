@@ -10,7 +10,7 @@ Concrete security practices for the pilot. Turns the high-level notes in [tech-n
 
 | Concern | Approach |
 |---------|----------|
-| CI secrets (registry creds, tokens) | Store in **GitLab CI/CD variables** (masked/protected) — never in the repo |
+| CI secrets (registry creds, tokens) | Store in **Drone secrets** (per-repo or organisation-level) — never in the repo. Drone encrypts secrets and injects them as environment variables at runtime. |
 | Build-time secrets (e.g. Maven `settings.xml`) | Pass via **BuildKit secret mounts**, not `ARG`/`ENV` or `COPY` (see pattern below) |
 | App runtime secrets | Injected at deploy time via the platform secret manager (e.g. **HashiCorp Vault** / cloud secret manager) — out of pilot scope to implement, in scope to document |
 | Preventing leaks | `.dockerignore` excludes `.env`, key files; secret scanning in CI (see §2) |

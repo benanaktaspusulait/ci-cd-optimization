@@ -40,6 +40,7 @@ Probability (P) and Impact (I): Low / Med / High.
 | R5 | Optimisations turn out to be platform/ETO-owned, not CST-local | Med | Med | Classify ownership early (Story 5) before wider changes | Hand item to platform/ETO board with findings attached |
 | R6 | Build cache change produces inconsistent/incorrect images | Low | High | Verify image runs after each change (see test strategy) | Disable cache mount; rebuild from clean context |
 | A1 | Assumption: one representative repo is enough to validate the ideas | — | Med | State scope limits in the final summary | Recommend a second repo before any rollout |
+| R7 | RepoSync overwrites local pipeline changes — pilot cannot modify `.drone.star` | Med | High | Complete Story 0 to identify boundaries; only propose changes that are repo-local or explicitly request RepoSync modification | Keep pipeline changes as recommendations in Story 5; do not assume they will be applied during the pilot |
 
 ---
 
