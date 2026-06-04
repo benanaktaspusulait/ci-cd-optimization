@@ -81,6 +81,32 @@ This means:
 
 **Consequence for the pilot:** Story 0 (Pipeline Assessment) must be completed first to establish what is locally feasible vs what requires central discussion.
 
+### Pipeline landscape
+
+There are **two separate pipelines** in the FDP ecosystem — the pilot targets only the first:
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│ CI PIPELINE (per-adaptor repo, .drone.star via RepoSync)    │  ← PILOT SCOPE
+│                                                             │
+│ clone → Docker/DIND → Maven build + test → Docker Compose   │
+│ (Kafka, Redis, Schema Registry, aggregators, cmd-adaptor)   │
+│ → Integration tests → Trivy scan → Sonar scan              │
+└─────────────────────────────────────────────────────────────┘
+        │ produces: Docker image + Helm chart (Artifactory)
+        ▼
+┌─────────────────────────────────────────────────────────────┐
+│ DEPLOY PIPELINE (MMA service repo, separate Drone pipeline) │  ← NOT IN PILOT SCOPE
+│                                                             │
+│ Helm package → lint → template → mass diff → upload         │
+│ → deploy to Kubernetes (dev → SIT → bVal → prod)           │
+│ Release day: Thursday. QAT approves at SIT gate.            │
+│ Rollback: manual only (helm rollback). No automation.       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+The pilot optimises the **CI pipeline** (build time, test setup, Docker image). Deploy pipeline improvements (rollback automation, release flow) are captured in [FUTURE-CONSIDERATIONS](docs/stories/FUTURE-CONSIDERATIONS.md).
+
 ---
 
 ## Technology stack
@@ -89,13 +115,14 @@ This means:
 |------|---------|
 | Containers | Docker, BuildKit / `docker buildx` (feasibility TBC), multi-stage builds |
 | CI/CD | **Drone CI** (Kubernetes runner, `.drone.star` via RepoSync — centrally managed) |
+| Deploy | **Helm** (MMA service repo) → Kubernetes; environments: dev → SIT → bVal → prod |
 | Source hosting | GitLab (`gitlab.digital.homeoffice.gov.uk`) |
-| Registry | `docker.digital.homeoffice.gov.uk` (internal), ECR, Artifactory |
+| Registry / artifacts | `docker.digital.homeoffice.gov.uk`, ECR, **Artifactory** (Helm charts + Maven) |
 | Integration testing | Testcontainers (Java, pilot); existing Docker Compose + DIND for comparison |
 | Build / deps | Maven (`mvnw`), Maven cache mounts |
 | Candidate test deps | Redis, Kafka, Schema Registry, LocalStack (IAM) |
 | Tracing | OpenTelemetry + Jaeger |
-| Security | Trivy (scanning in pipeline), SBOM (Syft), secret mounts, Drone secrets — see [SECURITY.md](SECURITY.md) |
+| Security | Trivy (scanning in pipeline), Sonar (code quality), SBOM (Syft), Drone secrets — see [SECURITY.md](SECURITY.md) |
 
 ---
 

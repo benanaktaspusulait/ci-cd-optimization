@@ -6,6 +6,8 @@
 ## Goal
 Understand the centrally managed Drone pipeline structure, establish what can be changed locally vs what requires RepoSync/platform coordination, and assess feasibility of Testcontainers and BuildKit in the current CI setup.
 
+> **Scope boundary:** this story assesses the **CI pipeline** (per-adaptor repo, `.drone.star`). The **deploy pipeline** (MMA service repo → Helm → Kubernetes) is a separate concern and is documented as context but not optimised by this pilot.
+
 ## Why
 The FDP adaptor pipelines are generated from a `.drone.star` file managed via RepoSync. Local changes are overwritten. Without understanding these boundaries first, the pilot risks proposing changes that cannot be implemented locally or that conflict with the central pipeline governance.
 

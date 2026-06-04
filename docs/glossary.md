@@ -10,6 +10,16 @@ Key terms and abbreviations used across this project. [← Back to overview](../
 | **CST** | The local development team that can own and directly validate changes (Dockerfiles, test code, CI steps). Changes classified as "CST-local" in Story 5 do not require platform approval. |
 | **ETO** | Engineering/Technology Operations — the wider platform/infrastructure org. Owns shared infrastructure: base images, CI/CD templates, registry, remote cache, security gates. Also referred to as "platform" or "platform/ETO" throughout this repo. |
 | **MR** | Merge Request — the GitLab equivalent of a Pull Request. All pilot changes require an MR into `develop`. |
+| **MMA Helm repo** | The central "service repo" that deploys all FDP services to Kubernetes via Helm. It has its own Drone pipeline for Helm packaging, linting, templating, and deploying. Separate from the adaptor CI pipeline. |
+| **Service repo** | See MMA Helm repo — the single repository responsible for deploying all service charts. |
+| **Helm** | Kubernetes package manager. FDP services are packaged as Helm charts, uploaded to Artifactory, and deployed via the service repo pipeline. |
+| **Artifactory** | JFrog Artifactory — hosts Maven artefacts and Helm charts. The tag pipeline uploads built charts here; the service repo pulls them for deploy. |
+| **SIT** | System Integration Testing environment. QAT must approve a deployment at this stage before it progresses to bVal/prod. |
+| **bVal** | Business Validation environment — sits between SIT and prod. Has more data than prod in some cases. |
+| **QAT** | Quality Assurance Testing — the team that approves deployments at the SIT gate before promotion to higher environments. |
+| **Feature flag** | Controlled via Helm values files. Even if a service is deployed, specific features can be enabled/disabled per environment without redeployment. |
+| **Tools pod** | A Kubernetes pod in the deployment namespace with AWS secrets and other environment variables baked in. Used for running operational commands. |
+| **PNR room** | Physical secure room required for accessing PNR (Passenger Name Record) data or prod environments. Screen sharing restrictions apply. |
 | **CI** | Continuous Integration — automated build and test pipeline triggered on every commit/MR. Here: **Drone CI** (Kubernetes runner, `.drone.star` config). |
 | **Drone** | The CI/CD system used by FDP. Runs pipelines on Kubernetes pods. Pipeline config is written in Starlark (`.drone.star`) and centrally managed via RepoSync. |
 | **RepoSync** | A central mechanism that synchronises shared files (including `.drone.star`, docker-compose templates) into adaptor repositories. Local changes to synced files are **overwritten** on the next sync. Pipeline changes must be made in the RepoSync source repo. |

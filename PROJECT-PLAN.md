@@ -41,12 +41,39 @@ Probability (P) and Impact (I): Low / Med / High.
 | R6 | Build cache change produces inconsistent/incorrect images | Low | High | Verify image runs after each change (see test strategy) | Disable cache mount; rebuild from clean context |
 | A1 | Assumption: one representative repo is enough to validate the ideas | — | Med | State scope limits in the final summary | Recommend a second repo before any rollout |
 | R7 | RepoSync overwrites local pipeline changes — pilot cannot modify `.drone.star` | Med | High | Complete Story 0 to identify boundaries; only propose changes that are repo-local or explicitly request RepoSync modification | Keep pipeline changes as recommendations in Story 5; do not assume they will be applied during the pilot |
+| R8 | Deploy pipeline (Helm/service repo) confused with CI pipeline | Low | Med | Clearly document the boundary (see Pipeline Landscape above); pilot scope is CI only | If deploy improvements surface, route them to FUTURE-CONSIDERATIONS, not the pilot backlog |
 
 ---
 
 ## Branching & CI flow
 
-How a task moves from work-in-progress to merged.
+### Pipeline landscape
+
+The FDP ecosystem has two separate pipelines:
+
+1. **CI pipeline** (per-adaptor repo, `.drone.star` via RepoSync) — build, test, scan, produce image + Helm chart. **This is what the pilot optimises.**
+2. **Deploy pipeline** (MMA service repo, separate Drone pipeline) — Helm package, lint, template, diff, upload, deploy to Kubernetes. **Not in pilot scope.**
+
+### Release flow
+
+```text
+feature/MMA-XXXXX → develop → release/X.Y.Z → tag (vX.Y.Z) → tag pipeline → Artifactory
+                                                                                    │
+                                              MMA service repo deploy pipeline ◄────┘
+                                              dev → SIT (QAT approval) → bVal → prod
+```
+
+- **Feature branch:** created from Jira ticket, developed, MR into `develop`
+- **Release branch:** cut from `develop` when sprint is ready (e.g. `release/5.9.0`)
+- **Tag:** developer creates tag on release branch → triggers tag pipeline (Maven build + test + Trivy + Sonar + Helm package + Artifactory upload)
+- **Deploy:** service repo picks up the new chart version and deploys via Helm to Kubernetes
+- **Environments:** dev → SIT (QAT must approve) → bVal → prod
+- **Release day:** Thursday
+- **Rollback:** no automation — manual `helm rollback` only
+
+### Pilot branching
+
+How a pilot task moves from work-in-progress to merged:
 
 ```text
 feature branch  ──MR──>  develop  ──(stabilise)──>  main

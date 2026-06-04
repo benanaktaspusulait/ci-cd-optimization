@@ -12,7 +12,7 @@ Items that are **out of scope for the pilot** but should be addressed if the pat
 
 | # | Category | What's needed | Why it matters | Likely owner | Board | Next action |
 |---|----------|---------------|----------------|--------------|-------|-------------|
-| F1 | **Rollback strategy** | Define how to revert to the previous image/config when a new build causes issues. Options: re-deploy previous image tag, or automated canary with auto-rollback. | Without rollback, a bad deploy stays live until someone manually intervenes. | CST + platform |
+| F1 | **Rollback strategy** | Define how to revert to the previous image/config when a new build causes issues. Options: re-deploy previous image tag, or automated canary with auto-rollback. **KT confirmed: no automated rollback exists today — only manual `helm rollback`.** | Without rollback, a bad deploy stays live until someone manually intervenes. | CST + platform |
 | F2 | **Monitoring & alerting** | Track pipeline health metrics (queue time, failure rate, stage duration trend) and alert the team when thresholds breach. Drone API + external dashboards (Grafana). | Degradation goes unnoticed until someone manually checks. | CST (setup) / platform (infra) |
 | F3 | **Artifact management** | Define where images are stored (`docker.digital.homeoffice.gov.uk`, ECR, Artifactory), retention/expiry policy (e.g. keep last N tags per branch, expire untagged after 30 days), and cleanup automation. | Unmanaged registries grow indefinitely; stale images consume storage and create confusion. | Platform |
 | F4 | **Environment strategy** | Clarify the promotion path: dev → staging → prod. Same pipeline with environment-specific variables? Manual promote gate? Drone promotion pipelines + protected branches. | Pilot assumes one environment; production needs clear separation and gates. | CST + platform |
@@ -137,3 +137,12 @@ These are concrete next steps that build on the pilot's findings. They do not re
 **Expected impact:** Eliminates network variability from builds; protects against upstream outages (Docker Hub rate limits, Maven Central downtime).
 
 **When:** When multiple teams hit download latency or rate-limit issues. Platform/ETO owned.
+
+
+### Release pipeline automation (Gareth's project)
+
+**What:** An automation project is already in progress (led by Gareth) that aims to eliminate manual service chart management and automate release-branch → tag → deploy flows.
+
+**Coordination:** The CI optimisation pilot and the release automation project are complementary but separate. The pilot improves **build + test speed**; the release automation improves **deploy + release management**. Findings from Story 5 should be shared with Gareth's project to avoid conflicting changes to the pipeline or Helm chart structure.
+
+**When:** After Story 5 findings are shared — include Gareth as a stakeholder.

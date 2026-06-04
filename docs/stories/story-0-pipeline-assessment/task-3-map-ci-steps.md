@@ -30,6 +30,7 @@ For the CI pipeline (`ci_pipeline` in `.drone.star`), document each step:
 - Wait/health-check mechanisms
 - Estimated or measured duration (from Drone UI)
 - Potential duplicate work (e.g. `mvn clean install` + compose `integration-tests` container both running Maven)
+- **CI pipeline vs deploy pipeline boundary** — clearly separate what the adaptor repo's CI does vs what the MMA service repo's deploy pipeline does (pilot scope is CI only)
 
 Expected pipeline map:
 ```
