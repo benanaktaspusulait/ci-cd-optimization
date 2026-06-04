@@ -1,0 +1,3556 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>uk.gov.ho.dacc.fdp</groupId>
+        <artifactId>fdp-cmd-adaptor-dvla</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>cmd-adaptor-dvla</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams-test-utils</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.ho.dacc.fdp</groupId>
+            <artifactId>cmd-adaptor-dvla-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.ho.dacc.fdp</groupId>
+            <artifactId>cmd-adaptor-dvla-test-common</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.ho.dacc.fdp</groupId>
+            <artifactId>fdp-cmd-adaptor-mapping-template-lib</artifactId>
+            <version>${mapping.lib.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-logging</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.opentelemetry.javaagent</groupId>
+            <artifactId>opentelemetry-javaagent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <filtering>true</filtering>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <finalName>${project.name}</finalName>
+                    <classifier>exec</classifier>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>uk.gov.ho.dacc.fdp</groupId>
+                <artifactId>fdp-cmd-adaptor-mapping-generator</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>avro-mapping</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/target/generated-sources</outputDirectory>
+                            <configFileName>mappings/ConfigFileConfig.json</configFileName>
+                            <outputPackage>uk.gov.ho.dacc.fdp</outputPackage>
+                            <inputClass>uk.gov.ho.dsa.cdl.dvla.trailer.registration.StreamIngestRecord</inputClass>
+                            <runLogInputClass>uk.gov.ho.dacc.fdp.runlog.DvlaTrailerRegistrationRunlogInput
+                            </runLogInputClass>
+                            <outputClassMapping>{
+                                "Party":"uk.gov.ho.dacc.pole.party.PartyRecord",
+                                "Object":"uk.gov.ho.dacc.pole.object.ObjectRecord"
+<!--                                "Location":"uk.gov.ho.dacc.pole.location.LocationRecord,"-->
+<!--                                "Event":"uk.gov.ho.dacc.pole.location.EventRecord,"-->
+<!--                                "Service":"uk.gov.ho.dacc.pole.location.ServiceRecord"-->
+                                }
+                            </outputClassMapping>
+                            <removeAttributeBody>true</removeAttributeBody>
+                            <removeAttributeBody>true</removeAttributeBody>
+                            <removeAttributeBodyPrefix>body</removeAttributeBodyPrefix>
+                            <generateTransformersBuilders>true</generateTransformersBuilders>
+                            <generateRunlog>true</generateRunlog>
+                            <generateService>true</generateService>
+                            <generateLookupClasses>false</generateLookupClasses>
+                            <useCloners>true</useCloners>
+                            <useStreamContextData>true</useStreamContextData>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>uk.gov.ho.dacc.fdp</groupId>
+                        <artifactId>fdp-cmd-adaptor-mapping-template-lib</artifactId>
+                        <version>${mapping.lib.version}</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>uk.gov.ho.dacc.fdp</groupId>
+                        <artifactId>fdp-cmd-adaptor-dvla-mapping</artifactId>
+                        <version>${mapping.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <id>rename-file</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>rename</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>target/lib/opentelemetry-javaagent-${opentelemetry.version}.jar</sourceFile>
+                            <destinationFile>target/dependencies/opentelemetry-javaagent.jar</destinationFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
+</project>
+---
+#############################################################################
+# WARNING: This file is controlled via RepoSync, any changes made in the
+# command adaptor repository will be overwritten by the RepoSync process.
+# See https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync
+#
+# Overriding of configured variables can be placed in a file called ".env"
+# in the same directory as this file.  See
+# <https://gitlab.digital.homeoffice.gov.uk/dacc-aws/fdp-cmd-adaptor-pnr/-/blob/develop/cmd-adaptor-pnr-integration-tests/src/test/resources/docker-compose/.env>
+# for an example.
+#############################################################################
+version: '3'
+
+services:
+  aggregate-event:
+    image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-event:${CORE_TAG}"
+    command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9014 -Dcom.sun.management.jmxremote.rmi.port=9014 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-event.jar"
+    container_name: aggregate-event
+    depends_on:
+      - kafka
+      - schema-registry
+      - redis
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - LOG_LEVEL=INFO
+      - FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+      - FDP_KAFKA_STREAM_THREADS=1
+      - FDP_KAFKA_BROKER=kafka:29092
+      - FDP_APP_KAFKA_TOPIC_SUFFIX=0
+      - FDP_APP_REDIS_NODES=redis:6379
+      - FDP_APP_JAEGER_HOST=jaeger
+      - FDP_APP_JAEGER_PORT=4317
+      - FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+      - FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_SERVICE_NAME=event-aggregate
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+    ports:
+      - 7104:7104
+      - 9014:9014
+    platform: linux/amd64
+    restart: always
+
+  aggregate-location:
+    image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-location:${CORE_TAG}"
+    command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9013 -Dcom.sun.management.jmxremote.rmi.port=9013 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-location.jar"
+    container_name: aggregate-location
+    depends_on:
+      - kafka
+      - schema-registry
+      - redis
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - LOG_LEVEL=INFO
+      - FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+      - FDP_KAFKA_STREAM_THREADS=1
+      - FDP_KAFKA_BROKER=kafka:29092
+      - FDP_APP_KAFKA_TOPIC_SUFFIX=0
+      - FDP_APP_REDIS_NODES=redis:6379
+      - FDP_APP_JAEGER_HOST=jaeger
+      - FDP_APP_JAEGER_PORT=4317
+      - FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+      - FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_SERVICE_NAME=location-aggregate
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+    ports:
+      - 7103:7103
+      - 9013:9013
+    platform: linux/amd64
+    restart: always
+
+  aggregate-matching:
+    image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-matching:${CORE_TAG}"
+    command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9016 -Dcom.sun.management.jmxremote.rmi.port=9016 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-matching.jar"
+    container_name: aggregate-matching
+    depends_on:
+      - kafka
+      - schema-registry
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - FDP_APP_KAFKA_TOPIC_SUFFIX=0
+      - FDP_APP_MATCHING_AGGREGATE_TARGET=${FDP_APP_MATCHING_AGGREGATE_TARGET-BOTH}
+      - FDP_APP_MATCHING_TYPES_TO_FILTER=${FDP_APP_MATCHING_TYPES_TO_FILTER-}
+      - LOG_LEVEL=INFO
+      - FDP_APP_REDIS_NODES=redis:6379
+      - FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+      - FDP_KAFKA_STREAM_THREADS=1
+      - FDP_KAFKA_BROKER=kafka:29092
+      # The following ENVs are required by PNR and APIDQ (any repo using fdp-apps v13 aggregate-matching). See PM-69684
+      - FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+      - FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+      - FDP_APP_MATCHING_SUBTYPES_TO_PRESERVE=${FDP_APP_MATCHING_SUBTYPES_TO_PRESERVE-}
+      - FDP_APP_JAEGER_HOST=jaeger
+      - FDP_APP_JAEGER_PORT=4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_SERVICE_NAME=matching-aggregate
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+    ports:
+      - 7106:7106
+      - 9016:9016
+    platform: linux/amd64
+    restart: always
+
+  aggregate-object:
+    image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-object:${CORE_TAG}"
+    command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9012 -Dcom.sun.management.jmxremote.rmi.port=9012 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-object.jar"
+    container_name: aggregate-object
+    depends_on:
+      - kafka
+      - schema-registry
+      - redis
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - LOG_LEVEL=INFO
+      - FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+      - FDP_KAFKA_STREAM_THREADS=1
+      - FDP_KAFKA_BROKER=kafka:29092
+      - FDP_APP_KAFKA_TOPIC_SUFFIX=0
+      - FDP_APP_REDIS_NODES=redis:6379
+      - FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+      - FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+      - FDP_APP_JAEGER_HOST=jaeger
+      - FDP_APP_JAEGER_PORT=4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_SERVICE_NAME=object-aggregate
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+    ports:
+      - 7102:7102
+      - 9012:9012
+    platform: linux/amd64
+    restart: always
+
+  aggregate-party:
+    image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-party:${CORE_TAG}"
+    command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.rmi.port=9011 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-party.jar"
+    container_name: aggregate-party
+    depends_on:
+      - kafka
+      - schema-registry
+      - redis
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - LOG_LEVEL=INFO
+      - FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+      - FDP_KAFKA_STREAM_THREADS=1
+      - FDP_KAFKA_BROKER=kafka:29092
+      - FDP_APP_KAFKA_TOPIC_SUFFIX=0
+      - FDP_APP_REDIS_NODES=redis:6379
+      - FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+      - FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+      - FDP_APP_JAEGER_HOST=jaeger
+      - FDP_APP_JAEGER_PORT=4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_SERVICE_NAME=party-aggregate
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+    ports:
+      - 7101:7101
+      - 9011:9011
+    platform: linux/amd64
+    restart: always
+
+  aggregate-service:
+    image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-service:${CORE_TAG}"
+    command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9015 -Dcom.sun.management.jmxremote.rmi.port=9015 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-service.jar"
+    container_name: aggregate-service
+    depends_on:
+      - kafka
+      - schema-registry
+      - redis
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - LOG_LEVEL=INFO
+      - FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+      - FDP_KAFKA_STREAM_THREADS=1
+      - FDP_KAFKA_BROKER=kafka:29092
+      - FDP_APP_KAFKA_TOPIC_SUFFIX=0
+      - FDP_APP_REDIS_NODES=redis:6379
+      - FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+      - FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+      - FDP_APP_JAEGER_HOST=jaeger
+      - FDP_APP_JAEGER_PORT=4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_SERVICE_NAME=service-aggregate
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+    ports:
+      - 7105:7105
+      - 9015:9015
+    platform: linux/amd64
+    restart: always
+
+  aggregate-v1id-v2id:
+    image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-v1id-v2id:${CORE_TAG}"
+    command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9018 -Dcom.sun.management.jmxremote.rmi.port=9018 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-v1id-v2id.jar"
+    container_name: aggregate-v1id-v2id
+    depends_on:
+      - kafka
+      - schema-registry
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - LOG_LEVEL=INFO
+      - FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+      - FDP_KAFKA_STREAM_THREADS=1
+      - FDP_KAFKA_BROKER=kafka:29092
+      - FDP_APP_KAFKA_TOPIC_SUFFIX=0
+      - FDP_APP_REDIS_NODES=redis:6379
+      - FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+      - FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+      - FDP_APP_KAFKA_TOPIC_SUFFIX=0
+      - FDP_APP_JAEGER_HOST=jaeger
+      - FDP_APP_JAEGER_PORT=4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_SERVICE_NAME=v1id-v2id-aggregate
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+    ports:
+      - 7108:7108
+      - 9018:9018
+    platform: linux/amd64
+    restart: always
+
+  command-adaptor:
+    build: ../../../../../cmd-adaptor-dvla
+    container_name: command-adaptor
+    environment:
+      FDP_APP_KAFKA_TOPIC_SUFFIX: 0
+      WAIT_CHECK: "${WAIT_CHECK-}"
+      ADAPTOR_NAME: "dvla"
+      SPRING_PROFILES_ACTIVE: "docker"
+      ARTIFACTORY_USERNAME: "${ARTIFACTORY_USERNAME-}"
+      ARTIFACTORY_PASSWORD: "${ARTIFACTORY_PASSWORD-}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+      OTEL_SERVICE_NAME: "cmd_adaptor_dvla"
+      OTEL_TRACES_EXPORTER: "otlp"
+      OTEL_METRICS_EXPORTER: "none"
+      OTEL_LOGS_EXPORTER: "none"
+      OTEL_INSTRUMENTATION_COMMON_EXPERIMENTAL_CONTROLLER_TELEMETRY_ENABLED : "false"
+      OTEL_INSTRUMENTATION_COMMON_EXPERIMENTAL_VIEW_TELEMETRY_ENABLED : "false"
+      OTEL_INSTRUMENTATION_HTTP_URL_CONNECTION_ENABLED : "false"
+      OTEL_INSTRUMENTATION_OKHTTP_ENABLED : "false"
+      OTEL_INSTRUMENTATION_TOMCAT_ENABLED : "false"
+      OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED : "true"
+      OTEL_INSTRUMENTATION_SERVLET_ENABLED : "true"
+    restart: always
+    ports:
+      - 7112:7112
+      - 8077:8077
+
+  integration-tests:
+    container_name: integration-tests
+    entrypoint: mvn -Pci-snapshot install
+    environment:
+      FDP_APP_KAFKA_TOPIC_SUFFIX: 0
+      WAIT_CHECK: "${WAIT_CHECK-}"
+      ADAPTOR_NAME: "dvla"
+      SPRING_PROFILES_ACTIVE: "docker"
+      ARTIFACTORY_USERNAME: "${ARTIFACTORY_USERNAME-}"
+      ARTIFACTORY_PASSWORD: "${ARTIFACTORY_PASSWORD-}"
+    image: quay.io/ukhomeofficedigital/ileap-java17-mvn:1.3
+    volumes:
+      - "../../../../..:/app"
+    working_dir: /app
+
+  jaeger:
+    container_name: jaeger
+    environment:
+      COLLECTOR_OTLP_ENABLED: true
+    hostname: jaeger
+    image: jaegertracing/all-in-one:1.65.0
+    ports:
+      - 4317:4317
+      - 4318:4318
+      - 14250:14250
+      - 16686:16686
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 14269"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    platform: linux/amd64
+    restart: always
+
+  kafdrop:
+    container_name: kafdrop
+    depends_on:
+      - kafka
+      - schema-registry
+    environment:
+      CMD_ARGS: "--message.format=AVRO --schemaregistry.connect=http://schema-registry:8081 --topic.createEnabled=false --topic.deleteEnabled=false"
+      KAFKA_BROKERCONNECT: kafka:29092
+    hostname: kafdrop
+    image: obsidiandynamics/kafdrop:3.30.0
+    ports:
+      - 9000:9000
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:9000/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    platform: linux/amd64
+    restart: always
+
+  kafka:
+    # PM-71719: MSK deployed 3.5.1 equates to cp-kafka 7.5.5
+    # https://docs.confluent.io/platform/7.6/installation/versions-interoperability.html
+    image: confluentinc/cp-kafka:7.5.5
+    container_name: kafka
+    hostname: kafka
+    depends_on:
+      - zookeeper
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      # "`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-
+      # An important note about accessing Kafka from clients on other machines:
+      # -----------------------------------------------------------------------
+      #
+      # The config used here exposes port 9092 for _external_ connections to the broker
+      # i.e. those from _outside_ the docker network. This could be from the host machine
+      # running docker, or maybe further afield if you've got a more complicated setup.
+      # If the latter is true, you will need to change the value 'localhost' in
+      # KAFKA_ADVERTISED_LISTENERS to one that is resolvable to the docker host from those
+      # remote clients
+      #
+      # For connections _internal_ to the docker network, such as from other services
+      # and components, use kafka:29092.
+      #
+      # See https://rmoff.net/2018/08/02/kafka-listeners-explained/ for details
+      # "`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-
+      #
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG4J_LOGGERS: "kafka=WARN,\
+        kafka.producer.async.DefaultEventHandler=WARN,\
+        kafka.request.logger=WARN,\
+        kafka.controller=WARN,\
+        kafka.log.LogCleaner=WARN,\
+        state.change.logger=WARN,\
+        kafka.authorizer.logger=WARN"
+    platform: linux/amd64
+    restart: always
+
+  kafka-topic-extract:
+    user: "${DOCKER_USER}"
+    build: kafka-topic-extract
+    container_name: kafka-topic-extract
+    environment:
+      ADAPTOR_NAME: "dvla"
+      FDP_APP_KAFKA_TOPIC_SUFFIX: 0
+      KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+      LOG_LEVEL: INFO
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+    volumes:
+      - "${HOME}/Downloads:/mnt/downloads"
+
+  kafka-rest:
+    # PM-71719: MSK deployed 3.5.1 equates to cp-kafka 7.5.5
+    # https://docs.confluent.io/platform/7.6/installation/versions-interoperability.html
+    image: confluentinc/cp-kafka-rest:7.5.5
+    container_name: kafka-rest
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+      KAFKA_REST_HOST_NAME: kafka-rest
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "8082"]
+      interval: 1s
+      timeout: 1s
+      retries: 30
+    ports:
+      - 8082:8082
+    platform: linux/amd64
+    restart: always
+
+  localstack:
+    container_name: "localstack"
+    environment:
+      LOCALSTACK_DEBUG: 1
+      LOCALSTACK_SERVICES: "iam"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:4566/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    image: localstack/localstack:0.12.18
+    ports:
+      - "127.0.0.1:4566:4566"
+    platform: linux/amd64
+    restart: always
+
+  pre-integration-test:
+    # This container should be started as part of the Maven
+    # pre-integration-test stage of the cycle.
+    build: pre-integration-test
+    environment:
+      FDP_APP_KAFKA_TOPIC_SUFFIX: 0
+      WAIT_CHECK: "${WAIT_CHECK-}"
+      ADAPTOR_NAME: "dvla"
+      SPRING_PROFILES_ACTIVE: "docker"
+      ARTIFACTORY_USERNAME: "${ARTIFACTORY_USERNAME-}"
+      ARTIFACTORY_PASSWORD: "${ARTIFACTORY_PASSWORD-}"
+    container_name: pre-integration-test
+    depends_on:
+      - kafdrop
+      - redis
+      - jaeger
+
+  schema-registry:
+    # PM-71719: MSK deployed 3.5.1 equates to cp-kafka 7.5.5
+    # https://docs.confluent.io/platform/7.6/installation/versions-interoperability.html
+    image: confluentinc/cp-schema-registry:7.5.5
+    container_name: schema-registry
+    ports:
+      - 8081:8081
+    depends_on:
+      - zookeeper
+      - kafka
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+      SCHEMA_REGISTRY_KAFKASTORE_SSL_ENABLED_PROTOCOLS: PLAINTEXT
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8081/subjects"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    platform: linux/amd64
+    restart: always
+
+  redis:
+    container_name: redis
+    image: redis:5.0.6
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - 6379:6379
+    platform: linux/amd64
+    restart: always
+
+  wait4localstack:
+    command: "/usr/local/bin/wait4localstack -e http://localstack:4566/health"
+    container_name: wait4localstack
+    depends_on:
+      - localstack
+    image: "locp/wait4localstack:0.2.0"
+    platform: linux/amd64
+
+  zookeeper:
+    # PM-71719: MSK deployed 3.5.1 equates to cp-kafka 7.5.5
+    # https://docs.confluent.io/platform/7.6/installation/versions-interoperability.html
+    image: confluentinc/cp-zookeeper:7.5.5
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "2181"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - 2181:2181
+    platform: linux/amd64
+    restart: always
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>uk.gov.ho.dacc.fdp</groupId>
+    <artifactId>fdp-cmd-adaptor-dvla</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>fdp-cmd-adaptor-dvla</name>
+    <description>FDP Command Adaptor application and integration tests</description>
+
+    <modules>
+        <module>cmd-adaptor-dvla-common</module>
+        <module>cmd-adaptor-dvla-test-common</module>
+        <module>cmd-adaptor-dvla</module>
+        <module>cmd-adaptor-dvla-integration-tests</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>17</java.version>
+        <spring-boot-maven-plugin.version>3.5.9</spring-boot-maven-plugin.version> <!-- must match spring version in fdp-bom -->
+        <maven-failsafe-plugin.version>3.5.5</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+        <fdp-cmd-adaptor-test-common.version>2.2.0</fdp-cmd-adaptor-test-common.version>
+        <fdp-commons.version>5.1.2</fdp-commons.version>
+        <fdp-bom.version>3.2.11</fdp-bom.version>
+        <opentelemetry.version>1.30.0</opentelemetry.version> <!-- must match that in fdp-bom - for use in dockerfile-->
+        <cdlz-avro-schemas.version>1.2.0</cdlz-avro-schemas.version>
+        <mapping.version>1.1.2</mapping.version>
+        <mapping.lib.version>3.2.0</mapping.lib.version>
+        <mapping.plugin.version>3.4.0</mapping.plugin.version>
+        <aggregator-core.version>10.3.0</aggregator-core.version>
+        <jacoco.version>0.8.14</jacoco.version>
+        <skip.integration.tests>true</skip.integration.tests>
+        <skip.integration.tests.docker-compose>true</skip.integration.tests.docker-compose>
+        <changelog.version>2.2.11</changelog.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.amashchenko.maven.plugin</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
+                <version>1.21.0</version>
+                <configuration>
+                    <gitFlowConfig>
+                        <productionBranch>main</productionBranch>
+                        <developmentBranch>develop</developmentBranch>
+                    </gitFlowConfig>
+                    <!-- Stop the appending madness of feature branch names. -->
+                    <skipFeatureVersion>true</skipFeatureVersion>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>se.bjurr.gitchangelog</groupId>
+                <artifactId>git-changelog-maven-plugin</artifactId>
+                <version>${changelog.version}</version>
+                <inherited>false</inherited>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.openjdk.nashorn</groupId>
+                        <artifactId>nashorn-core</artifactId>
+                        <version>15.7</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>GenerateGitChangelog</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>git-changelog</goal>
+                        </goals>
+                        <configuration>
+                            <templateFile>changelog.mustache</templateFile>
+                            <ignoreCommitsIfMessageMatches>^Update versions for release.*|^Update for next development version.*|^(?i)update changelog.*|^Merge tag.*|^(?i)reposync.*|^\*\*reposync.*|^Merge branch.*|^WIP.*|^\[WIP\].*</ignoreCommitsIfMessageMatches>
+                            <file>CHANGELOG.md</file>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>uk.gov.ho.dacc.fdp</groupId>
+                <artifactId>fdp-bom</artifactId>
+                <version>${fdp-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.ho.dacc.fdp</groupId>
+            <artifactId>fdp-commons</artifactId>
+            <version>${fdp-commons.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.ho.dsa.cdl.schemas</groupId>
+            <artifactId>dvla-trailer-registration</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.ho.dsa.cdl.schemas</groupId>
+            <artifactId>dvla-trailer-disposal</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.ho.dacc.fdp</groupId>
+            <artifactId>fdp-cmd-adaptor-test-common</artifactId>
+            <version>${fdp-cmd-adaptor-test-common.version}</version>
+        </dependency>
+    </dependencies>
+
+
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
+</project>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>uk.gov.ho.dacc.fdp</groupId>
+        <artifactId>fdp-cmd-adaptor-dvla</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>cmd-adaptor-dvla-integration-tests</artifactId>
+
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <skip.containers>true</skip.containers>
+                <skip.aggregators>true</skip.aggregators>
+                <skip.integration.tests>true</skip.integration.tests>
+                <cucumber.options></cucumber.options>
+            </properties>
+        </profile>
+        <profile>
+            <id>local-int-cmd</id>
+            <properties>
+                <skip.containers>false</skip.containers>
+                <skip.aggregators>true</skip.aggregators>
+                <skip.integration.tests>false</skip.integration.tests>
+                <cucumber.options>--tags not @snapshot</cucumber.options>
+                <kafka.bootstrap.server.host>localhost</kafka.bootstrap.server.host>
+                <kafka.bootstrap.server.port>9092</kafka.bootstrap.server.port>
+                <kafka.schemaregistry.server.host>localhost</kafka.schemaregistry.server.host>
+                <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+                <fdp.app.kafka.topic.suffix>0</fdp.app.kafka.topic.suffix>
+            </properties>
+        </profile>
+        <profile>
+            <id>local-int-snapshot</id>
+            <properties>
+                <skip.containers>false</skip.containers>
+                <skip.aggregators>false</skip.aggregators>
+                <skip.integration.tests>false</skip.integration.tests>
+                <kafka.bootstrap.server.host>localhost</kafka.bootstrap.server.host>
+                <kafka.bootstrap.server.port>9092</kafka.bootstrap.server.port>
+                <kafka.schemaregistry.server.host>localhost</kafka.schemaregistry.server.host>
+                <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+                <fdp.app.kafka.topic.suffix>0</fdp.app.kafka.topic.suffix>
+            </properties>
+        </profile>
+        <profile>
+            <!-- To be used on 6point6 GitHub Workflow -->
+            <id>ci-cmd</id>
+            <properties>
+                <skip.containers>true</skip.containers>
+                <skip.aggregators>true</skip.aggregators>
+                <skip.integration.tests>false</skip.integration.tests>
+                <cucumber.options>--tags not @snapshot</cucumber.options>
+                <kafka.bootstrap.server.host>kafka</kafka.bootstrap.server.host>
+                <kafka.bootstrap.server.port>29092</kafka.bootstrap.server.port>
+                <kafka.schemaregistry.server.host>schema-registry</kafka.schemaregistry.server.host>
+                <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+                <fdp.app.kafka.topic.suffix>0</fdp.app.kafka.topic.suffix>
+            </properties>
+        </profile>
+        <profile>
+            <!-- To be used on HO ACP GitLab/Drone -->
+            <id>ci-snapshot</id>
+            <properties>
+                <skip.containers>true</skip.containers>
+                <skip.aggregators>true</skip.aggregators>
+                <skip.integration.tests>false</skip.integration.tests>
+                <kafka.bootstrap.server.host>kafka</kafka.bootstrap.server.host>
+                <kafka.bootstrap.server.port>29092</kafka.bootstrap.server.port>
+                <kafka.schemaregistry.server.host>schema-registry</kafka.schemaregistry.server.host>
+                <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+                <fdp.app.kafka.topic.suffix>0</fdp.app.kafka.topic.suffix>
+            </properties>
+        </profile>
+        <profile>
+            <!-- To be used on the deployment to the dacc-dde-dev K8s namespaces -->
+            <id>k8s-dacc-dde-dev</id>
+            <properties>
+                <skip.containers>true</skip.containers>
+                <skip.aggregators>true</skip.aggregators>
+                <skip.integration.tests>false</skip.integration.tests>
+                <kafka.bootstrap.server.host>dacc-dde-kafka</kafka.bootstrap.server.host>
+                <kafka.bootstrap.server.port>9092</kafka.bootstrap.server.port>
+                <kafka.schemaregistry.server.host>dacc-dde-schema-registry</kafka.schemaregistry.server.host>
+                <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+                <fdp.app.kafka.topic.suffix>dvla</fdp.app.kafka.topic.suffix>
+            </properties>
+        </profile>
+        <profile>
+            <!-- To be used on the deployment to the dacc-dde-test K8s namespaces -->
+            <id>k8s-dacc-dde-test</id>
+            <properties>
+                <skip.containers>true</skip.containers>
+                <skip.aggregators>true</skip.aggregators>
+                <skip.integration.tests>false</skip.integration.tests>
+                <kafka.bootstrap.server.host>dacc-dde-kafka</kafka.bootstrap.server.host>
+                <kafka.bootstrap.server.port>9092</kafka.bootstrap.server.port>
+                <kafka.schemaregistry.server.host>dacc-dde-schema-registry</kafka.schemaregistry.server.host>
+                <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+                <fdp.app.kafka.topic.suffix>dvla</fdp.app.kafka.topic.suffix>
+            </properties>
+        </profile>
+        <profile>
+            <!-- To be used on the deployment to the dacc-fdp-dev K8s namespaces -->
+            <id>k8s-dacc-fdp-dev</id>
+            <properties>
+                <skip.containers>true</skip.containers>
+                <skip.aggregators>true</skip.aggregators>
+                <skip.integration.tests>false</skip.integration.tests>
+                <kafka.bootstrap.server.host>fdp-kafka-svc.dacc-fdp-dev.svc.cluster.local</kafka.bootstrap.server.host>
+                <kafka.bootstrap.server.port>9092</kafka.bootstrap.server.port>
+                <kafka.schemaregistry.server.host>fdp-schema-registry-svc.dacc-fdp-dev.svc.cluster.local</kafka.schemaregistry.server.host>
+                <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+                <fdp.app.kafka.topic.suffix>dvla</fdp.app.kafka.topic.suffix>
+            </properties>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.gov.ho.dacc.fdp</groupId>
+            <artifactId>cmd-adaptor-dvla-test-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-expressions</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*E2ETest</exclude>
+                    </excludes>
+                    <skip>${skip.integration.tests}</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>${maven-failsafe-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>execute-integration-tests</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <mapping.version>${mapping.version}</mapping.version>
+                                <cucumber.options>${cucumber.options}</cucumber.options>
+                            </systemPropertyVariables>
+                            <excludes>
+                                <exclude>none</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/*E2ETest</include>
+                            </includes>
+                            <skip>${skip.integration.tests}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.dkanejs.maven.plugins</groupId>
+                <artifactId>docker-compose-maven-plugin</artifactId>
+                <version>4.0.0</version>
+                <executions>
+                    <execution>
+                        <id>startup-stage-1</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>up</goal>
+                        </goals>
+                        <configuration>
+                            <build>true</build>
+                            <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                            </composeFile>
+                            <detachedMode>false</detachedMode>
+                            <envVars>
+                                <ADAPTOR_NAME>dvla</ADAPTOR_NAME>
+                                <FDP_APP_KAFKA_TOPIC_SUFFIX>0</FDP_APP_KAFKA_TOPIC_SUFFIX>
+                                <WAIT_CHECK>redis_kafka</WAIT_CHECK>
+                            </envVars>
+                            <services>
+                                <service>pre-integration-test</service>
+                            </services>
+                            <skip>${skip.containers}</skip>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>start-aggregators</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>up</goal>
+                        </goals>
+                        <configuration>
+                            <build>true</build>
+                            <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                            </composeFile>
+                            <detachedMode>true</detachedMode>
+                            <envVars>
+                                <ADAPTOR_NAME>dvla</ADAPTOR_NAME>
+                                <STARTUP_STAGE>3</STARTUP_STAGE>
+                                <CORE_TAG>${aggregator-core.version}</CORE_TAG>
+                            </envVars>
+                            <services>
+                                <service>aggregate-party</service>
+                                <service>aggregate-object</service>
+                                <service>aggregate-location</service>
+                                <service>aggregate-event</service>
+                                <service>aggregate-service</service>
+                                <service>aggregate-matching</service>
+                                <service>aggregate-v1id-v2id</service>
+                            </services>
+                            <skip>${skip.aggregators}</skip>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>ensure-aggregators-are-ready</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>up</goal>
+                        </goals>
+                        <configuration>
+                            <build>true</build>
+                            <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                            </composeFile>
+                            <detachedMode>false</detachedMode>
+                            <envVars>
+                                <ADAPTOR_NAME>dvla</ADAPTOR_NAME>
+                                <FDP_APP_KAFKA_TOPIC_SUFFIX>0</FDP_APP_KAFKA_TOPIC_SUFFIX>
+                                <WAIT_CHECK>aggregators</WAIT_CHECK>
+                            </envVars>
+                            <services>
+                                <service>pre-integration-test</service>
+                            </services>
+                            <skip>${skip.aggregators}</skip>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>start-command-adaptor</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>up</goal>
+                        </goals>
+                        <configuration>
+                            <build>true</build>
+                            <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                            </composeFile>
+                            <detachedMode>true</detachedMode>
+                            <envVars>
+                                <ADAPTOR_NAME>dvla</ADAPTOR_NAME>
+                            </envVars>
+                            <services>
+                                <service>command-adaptor</service>
+                            </services>
+                            <skip>${skip.containers}</skip>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>ensure-cmd-adaptor-is-ready</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>up</goal>
+                        </goals>
+                        <configuration>
+                            <build>true</build>
+                            <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                            </composeFile>
+                            <detachedMode>false</detachedMode>
+                            <envVars>
+                                <ADAPTOR_NAME>dvla</ADAPTOR_NAME>
+                                <FDP_APP_KAFKA_TOPIC_SUFFIX>0</FDP_APP_KAFKA_TOPIC_SUFFIX>
+                                <WAIT_CHECK>command_adaptor</WAIT_CHECK>
+                            </envVars>
+                            <services>
+                                <service>pre-integration-test</service>
+                            </services>
+                            <skip>${skip.containers}</skip>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>post-integration-test</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>down</goal>
+                        </goals>
+                        <configuration>
+                            <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                            </composeFile>
+                            <skip>${skip.containers}</skip>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>down</goal>
+                        </goals>
+                        <configuration>
+                            <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                            </composeFile>
+                            <skip>${skip.containers}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
+</project>
+#############################################################################
+# DO NOT EDIT LOCALLY!!!!!!!
+#
+# WARNING: This file is controlled centrally, any changes made in the command
+# adaptor repository will be overwritten by the RepoSync process.  See
+# https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync
+# DO NOT EDIT LOCALLY!!!!!!!
+#############################################################################
+FROM amazoncorretto:17
+
+COPY ./target/cmd-adaptor-dvla-exec.jar /local
+COPY ./target/dependencies/opentelemetry-javaagent.jar /local/opentelemetry-javaagent.jar
+
+WORKDIR /tmp
+
+RUN yum install -y \
+        shadow-utils \
+        unzip \
+    && yum update -y ca-certificates cpio curl cyrus-sasl-lib expat glib2 libcurl libdb libssh2 libdb-utils libnghttp2 libpng libtasn1 libxml2 ncurses ncurses-base ncurses-libs nss nss-util nss-softokn nspr openldap openssl-libs python python-libs sqlite xz-libs yum zlib \
+    && yum erase -y vim-data \
+    && yum clean all \
+    && rm -rf /var/cache/yum \
+    && curl --silent --output /tmp/envconsul.zip https://releases.hashicorp.com/envconsul/0.13.1/envconsul_0.13.1_linux_amd64.zip \
+    && unzip envconsul.zip \
+    && rm -f envconsul.zip \
+    && mv envconsul /usr/local/bin/envconsul \
+    && chown root:root /usr/local/bin/envconsul \
+    && chmod 0755 /usr/local/bin/envconsul \
+    && adduser \
+      -u 1000 \
+      -U \
+      -m \
+      -s /bin/bash \
+      fdpuser \
+    && chmod 0755 /local/cmd-adaptor-dvla-exec.jar \
+    && chown fdpuser:fdpuser /local/cmd-adaptor-dvla-exec.jar \
+    && chmod 0755 /local/opentelemetry-javaagent.jar \
+    && chown fdpuser:fdpuser /local/opentelemetry-javaagent.jar
+
+# Run Application as non-root
+WORKDIR /home/fdpuser
+USER fdpuser
+
+CMD ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8077", "-javaagent:/local/opentelemetry-javaagent.jar", "-Dcom.sun.management.jmxremote", "-Dcom.sun.management.jmxremote.port=9012", "-Dcom.sun.management.jmxremote.rmi.port=9012", "-Dcom.sun.management.jmxremote.authenticate=false", "-Dcom.sun.management.jmxremote.local.only=false", "-Dcom.sun.management.jmxremote.ssl=false", "-Djava.rmi.server.hostname=localhost", "-jar", "/local/cmd-adaptor-dvla-exec.jar"]
+{{ $endOfYamlDoc := "---" }}
+{{- if and (ne .ADAPTOR_NAME "pcdp") (ne .ADAPTOR_NAME "crs") }}
+  {{/*
+  This block of code is for feed with single adaptor deployment.  
+  Feed - PCDP and CRS will be deployed with 2 adaptors -
+  1. to attach to the original CDLZ MSK cluster to be able to access to joins topics.  
+  2. to connect to the new MSK cluster in CDLZ exclusively to connect to R36 data for PCDP and CRS data to CRS.
+  */}}
+{{if eq .FDP_FEED_NAME "ctp"}}
+  {{/*
+  This block of code is to deploy a Kube Service in front of the CTP adaptor
+  in order to expose its internal API and to provide a suitable netpol.
+  */}}
+#############################################################################
+# WARNING: This file is controlled via RepoSync, any changes made in the
+# command adaptor repository will be overwritten by the RepoSync process.
+# See https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync
+#############################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: fdp-cmd-adaptor-ctp
+spec:
+  selector:
+    app: fdp-app
+    pipeline_name: fdp-ctp
+    service_name: fdp-ctp
+  type: ClusterIP
+  ports:
+    - name: fdp-cmd-adaptor-ctp
+      port: 7112
+      targetPort: 7112
+{{ $endOfYamlDoc }}
+# This policy allows Unadjusted command adaptors to communicate with
+# each other.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ctp-adaptor-comms
+spec:
+  podSelector:
+    matchLabels:
+      service_name: fdp-ctp
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            service_name: fdp-ctp
+{{end}}
+{{ $endOfYamlDoc }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    pipeline_name: fdp-{{ .FDP_FEED_NAME }}
+    app: fdp-app
+{{if eq .FDP_FEED_NAME "ctp"}}
+    service_name: fdp-ctp
+{{end}}
+  {{if eq .ADAPTOR_NAME "placi"}}
+  name: fdp-cmd-adaptor-{{ .ADAPTOR_NAME }}-{{ .FEED_NAME }}
+  {{else}}
+  name: fdp-cmd-adaptor-{{ .ADAPTOR_NAME }}
+  {{end}}
+  {{if .WORKING_HOURS}}
+  annotations:
+    downscaler/uptime: {{ .WORKING_HOURS }}
+  {{end}}
+spec:
+  replicas: {{ .FDP_CMD_ADAPTOR_REPLICAS }}
+  selector:
+    matchLabels:
+      app: fdp-app
+      pipeline_name: fdp-{{ .ADAPTOR_NAME }}
+{{if eq .FDP_FEED_NAME "ctp"}}
+      service_name: fdp-ctp
+{{end}}
+  template:
+    metadata:
+      labels:
+        app: fdp-app
+        pipeline_name: fdp-{{ .ADAPTOR_NAME }}
+{{if eq .FDP_FEED_NAME "ctp"}}
+        service_name: fdp-ctp
+{{end}}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "7112"
+  {{if eq .FDP_FEED_NAME "api"}}
+        prometheus.io/path: "/cmd-adaptor-api-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/prometheus"
+  {{else if eq .ADAPTOR_NAME "roro-tsv-test"}}
+        prometheus.io/path: "/cmd-adaptor-roro-tsv-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/prometheus"
+  {{else if eq .ADAPTOR_NAME "roro-xml-test"}}
+        prometheus.io/path: "/cmd-adaptor-roro-xml-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/prometheus"
+  {{else}}
+        prometheus.io/path: "/cmd-adaptor-{{ .ADAPTOR_NAME }}-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/prometheus"
+  {{end}}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      imagePullSecrets:
+        - name: "{{ .ARTIFACTORY_SECRET_NAME }}"
+      volumes:
+        - name: app-msk-app-keystore
+          secret:
+            secretName: app-msk-app-keystore
+            defaultMode: 256
+        - name: "{{ .FDP_APP_CDL_MSK_SECRET_NAME }}"
+          secret:
+            secretName: "{{ .FDP_APP_CDL_MSK_SECRET_NAME }}"
+            defaultMode: 256
+      containers:
+      - name: "fdp-cmd-adaptor-{{ .ADAPTOR_NAME }}"
+{{if eq .FDP_FEED_NAME "ctp"}}
+        ports:
+          - containerPort: 7112
+            name: http
+{{end}}
+        env:
+          - name: ADAPTOR_NAME
+            value: "{{ .ADAPTOR_NAME }}"
+          - name: ENVIRONMENT
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: ENVIRONMENT
+  {{if .FDP_APP_CDL_KAFKA_GROUP_ID}}
+          - name: FDP_APP_CDL_KAFKA_GROUP_ID
+            value: {{ .FDP_APP_CDL_KAFKA_GROUP_ID }}
+  {{end}}
+          - name: FDP_APP_MSK_APP_KEYSTORE_PATH
+            value: "/home/fdpuser/fdp-msk/app-msk-app.jks"
+          - name: FDP_APP_CDL_MSK_KEYSTORE_PATH
+            value: "{{ .FDP_APP_CDL_MSK_KEYSTORE_PATH }}"
+          - name: FDP_APP_MSK_APP_KEYSTORE_PASS
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: FDP_APP_MSK_APP_KEYSTORE_PASS
+          - name: FDP_APP_CDL_MSK_KEYSTORE_PASS
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "{{ .FDP_APP_CDL_MSK_KEYSTORE_PASS_KEY_NAME }}"
+          - name: FDP_APP_CDL_KAFKA_BROKER
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "{{ .FDP_APP_CDL_KAFKA_BROKER_KEY_NAME }}"
+          - name: FDP_APP_CDL_KAFKA_SCHEMA_REGISTRY_URL
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "{{ .FDP_APP_CDL_KAFKA_SCHEMA_REGISTRY_URL_KEY_NAME }}"
+          - name: FDP_APP_REDIS_NODES
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "{{ .FDP_APP_REDIS_NODES_KEY_NAME }}"
+  {{if eq .ADAPTOR_NAME "bitd"}}
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_1
+            value: "{{ .FDP_CMD_ADAPTOR_INCOMING_TOPIC_1 }}"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_2
+            value: "{{ .FDP_CMD_ADAPTOR_INCOMING_TOPIC_2 }}"
+  {{else if eq .ADAPTOR_NAME "brp"}}
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IC
+            value: "{{ .FDP_CMD_ADAPTOR_INCOMING_TOPIC_IC }}"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_OS
+            value: "{{ .FDP_CMD_ADAPTOR_INCOMING_TOPIC_OS }}"
+  {{else if eq .ADAPTOR_NAME "cop"}}
+          - name: FDP_CMD_ADAPTOR_STREAM_CASHEABSILVER_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_CERBERUSFEEDBACKGOLD_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_CERBERUSOUTCOMESGOLD_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_CONSIGNMENTDETAILSEABSILVER_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_FIREARMSEABSILVER_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_ITEMSEABSILVER_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_JOURNEYEABSILVER_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_NEGATIVEEABSILVER_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_PEOPLEEABSILVER_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_RECORDBORDEREVENTSILVER_RUN
+            value: "true"
+  {{else if eq .ADAPTOR_NAME "crs"}}
+          - name: FDP_CMD_ADAPTOR_RETRY_DELAY_MULTIPLIER
+            value: "{{ .FDP_CMD_ADAPTOR_RETRY_DELAY_MULTIPLIER }}"
+          - name: FDP_CMD_ADAPTOR_MAX_RETRY_DELAY_TIME
+            value: "{{ .FDP_CMD_ADAPTOR_MAX_RETRY_DELAY_TIME }}"
+  {{else if eq .ADAPTOR_NAME "ctp"}}
+          - name: FDP_APP_CDL_KAFKA_GROUP_ID
+            value: "{{ .FDP_APP_CDL_KAFKA_GROUP_ID }}"
+          - name: FDP_APP_CDL_KAFKA_LOOKUP_GROUP_ID
+            value: "{{ .FDP_APP_CDL_KAFKA_LOOKUP_GROUP_ID }}"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC
+            value: "{{ .FDP_CMD_ADAPTOR_INCOMING_TOPIC }}"
+          - name: FDP_CMD_ADAPTOR_LOOKUP_INCOMING_TOPIC
+            value: "{{ .FDP_CMD_ADAPTOR_LOOKUP_INCOMING_TOPIC }}"
+          - name: FDP_CMD_ADAPTOR_TOPIC
+            value: "{{ .FDP_CMD_ADAPTOR_TOPIC }}"
+          - name: FDP_CMD_ADAPTOR_LOOKUP_TOPIC
+            value: "{{ .FDP_CMD_ADAPTOR_LOOKUP_TOPIC }}"
+          - name: FDP_CMD_ADAPTOR_SUSPENSE_GARBAGE_TOPIC
+            value: "{{ .FDP_CMD_ADAPTOR_SUSPENSE_GARBAGE_TOPIC }}"
+          - name: FDP_APP_CTP_RETRY_DELAY_TIME
+            value: "{{ .FDP_APP_CTP_RETRY_DELAY_TIME }}"
+          - name: FDP_APP_CTP_RETRY_PUNCTUATE_INTERVAL
+            value: "{{ .FDP_APP_CTP_RETRY_PUNCTUATE_INTERVAL }}"
+          - name: FDP_APP_CTP_NOT_A_PRODUCT_NAME
+            value: "{{ .FDP_APP_CTP_NOT_A_PRODUCT_NAME }}"
+          - name: MY_POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+  {{else if eq .ADAPTOR_NAME "iabs"}}
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_APPLIC
+            value: "{{ .FDP_CMD_ADAPTOR_INCOMING_TOPIC_APPLIC }}"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_BIOG
+            value: "{{ .FDP_CMD_ADAPTOR_INCOMING_TOPIC_BIOG }}"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DOCS
+            value: "{{ .FDP_CMD_ADAPTOR_INCOMING_TOPIC_DOCS }}"
+  {{else if eq .ADAPTOR_NAME "placi"}}
+          - name: FEED_NAME
+            value: "{{ .FEED_NAME }}"
+          - name: FDP_CMD_ADAPTOR_STREAM_RWANDAIR_RUN
+            value: "{{ .FDP_CMD_ADAPTOR_STREAM_RWANDAIR_RUN }}"
+          - name: FDP_CMD_ADAPTOR_STREAM_SAUDIA_RUN
+            value: "{{ .FDP_CMD_ADAPTOR_STREAM_SAUDIA_RUN }}"
+  {{else if eq .ADAPTOR_NAME "predict"}}
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC
+            value: "{{ .FDP_CMD_ADAPTOR_INCOMING_TOPIC }}"
+          - name: FDP_CMD_ADAPTOR_LOGICAL_COUNTER
+            value: "{{ .FDP_CMD_ADAPTOR_LOGICAL_COUNTER }}"
+          - name: FDP_CMD_ADAPTOR_SEPARATOR
+            value: "{{ .FDP_CMD_ADAPTOR_SEPARATOR }}"
+  {{else if eq .ADAPTOR_NAME "pronto"}}
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC
+            value: "{{ .FDP_CMD_ADAPTOR_INCOMING_TOPIC }}"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_ENTRY
+            value: landing-146
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_FORM_BASEVISIT
+            value: landing-147
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_FORM_ENCOUNTER
+            value: landing-148
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_FORM_FINGERPRINT
+            value: landing-149
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_FORM_UKVIBF
+            value: landing-535
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SEARCHSTAMP_PERSONCHECK
+            value: landing-150
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_ADDITIONALADDRESS
+            value: landing-151
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_ARREST
+            value: landing-152
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_CASHSEIZURE
+            value: landing-153
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_COMPLIANT
+            value: landing-154
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_CONTACTDETAILS
+            value: landing-155
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_ENTRYPREMISES
+            value: landing-156
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_EXTENDEDPERSON
+            value: landing-157
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_ILLEGALWORKEMPLOYEE
+            value: landing-158
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_ILLEGALWORKEMPLOYER
+            value: landing-159
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_INTERVIEW
+            value: landing-160
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_METHODENTRY
+            value: landing-161
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_MITIGATINGCIRCUMSTANC
+            value: landing-162
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_OPERATION
+            value: landing-163
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_PROPERTYSEARCH
+            value: landing-164
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_RENTLANDLORD
+            value: landing-165
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_RENTTENANT
+            value: landing-166
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_SEARCHSUBJECT
+            value: landing-167
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_SERVED
+            value: landing-168
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_USEOFFORCE
+            value: landing-169
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DDFORM_SR_VOLDEP
+            value: landing-170
+  {{else}}
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC
+            value: "{{ .FDP_CMD_ADAPTOR_INCOMING_TOPIC }}"
+  {{end}}
+          - name: FDP_KAFKA_BROKER
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "{{ .FDP_KAFKA_BROKER_KEY_NAME }}"
+          - name: FDP_KAFKA_SCHEMA_REGISTRY_URL
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: FDP_KAFKA_SCHEMA_REGISTRY_URL
+          - name: FDP_KAFKA_STREAM_THREADS
+            value: "{{ .FDP_KAFKA_STREAM_THREADS }}"
+          - name: LOG_LEVEL
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: LOG_LEVEL
+          - name: FDP_KAFKA_SESSION_TIMEOUT_MS
+            value: "{{ .FDP_KAFKA_SESSION_TIMEOUT_MS }}"
+          - name: FDP_KAFKA_POLL_INTERVAL_MS
+            value: "{{ .FDP_KAFKA_POLL_INTERVAL_MS }}"
+          - name: FDP_KAFKA_MAX_POLL_RECORDS
+            value: "{{ .FDP_KAFKA_MAX_POLL_RECORDS }}"
+          - name: FDP_KAFKA_REBALANCE_TIMEOUT_MS
+            value: "{{ .FDP_KAFKA_REBALANCE_TIMEOUT_MS }}"
+          - name: FDP_KAFKA_MAX_REQUEST_SIZE
+            value: "{{ .FDP_KAFKA_MAX_REQUEST_SIZE }}"
+          - name: FDP_KAFKA_TASK_TIMEOUT_MS
+            value: "{{ .FDP_KAFKA_TASK_TIMEOUT_MS }}"
+          - name: SPRING_PROFILES_ACTIVE
+            value: "{{ .SPRING_PROFILES_ACTIVE }}"
+          - name: FDP_APP_KAFKA_TOPIC_SUFFIX
+            value: {{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}
+        image: {{ .IMAGE_URL }}
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+  {{if eq .FDP_FEED_NAME "api"}}
+            path: /cmd-adaptor-api-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/liveness
+  {{else if eq .ADAPTOR_NAME "roro-tsv-test"}}
+            path: /cmd-adaptor-roro-tsv-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/liveness
+  {{else if eq .ADAPTOR_NAME "roro-xml-test"}}
+            path: /cmd-adaptor-roro-xml-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/liveness
+  {{else}}
+            path: /cmd-adaptor-{{ .ADAPTOR_NAME }}-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/liveness
+  {{end}}
+            port: 7112
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+  {{if eq .FDP_FEED_NAME "api"}}
+            path: /cmd-adaptor-api-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/readiness
+  {{else if eq .ADAPTOR_NAME "roro-tsv-test"}}
+            path: /cmd-adaptor-roro-tsv-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/readiness
+  {{else if eq .ADAPTOR_NAME "roro-xml-test"}}
+            path: /cmd-adaptor-roro-xml-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/readiness
+  {{else}}
+            path: /cmd-adaptor-{{ .ADAPTOR_NAME }}-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/readiness
+  {{end}}
+            port: 7112
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: "{{ .FDP_CMD_ADAPTOR_CPU_MAX }}"
+            memory: "{{ .FDP_CMD_ADAPTOR_MEMORY_MAX }}"
+          requests:
+            cpu: "{{ .FDP_CMD_ADAPTOR_CPU_MIN }}"
+            memory: "{{ .FDP_CMD_ADAPTOR_MEMORY_MIN }}"
+        volumeMounts:
+          - mountPath: "/home/fdpuser/fdp-msk/"
+            name: app-msk-app-keystore
+            readOnly: true
+          - mountPath: "{{ .FDP_APP_CDL_MSK_SECRET_MOUNT_PATH }}"
+            name: "{{ .FDP_APP_CDL_MSK_SECRET_NAME }}"
+            readOnly: true
+        securityContext:
+          runAsUser: 1000
+      - name: fdp-jaeger-agent
+        image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/dacc/jaegertracing/jaeger-agent:stable
+        args: [ "--reporter.grpc.host-port=dns:///fdp-jaeger-collector-svc.{{ .JAEGER_NAMESPACE }}.svc.cluster.local:14250","--reporter.type=grpc","--processor.zipkin-compact.server-queue-size={{ .FDP_SPANS_QUEUE_SIZE }}" ]
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+        resources:
+          limits:
+            memory: {{ .FDP_JAEGER_MEMORY_MAX }}
+            cpu: {{ .FDP_JAEGER_CPU_MAX }}
+          requests:
+            memory: {{ .FDP_JAEGER_MEMORY_MIN }}
+            cpu: {{ .FDP_JAEGER_CPU_MIN }}
+  {{/* End of the template for any non-PCDP adaptor. */}}
+{{else}}
+{{/*
+   This block is specifically for deploying two PCDP/CRS adaptors.  
+   The two adaptors are joins and "r36" for PCDP/"crs" for CRS ( -> Adaptor2).
+   Both are deployed with the identical config with the exception of the 
+   feature switches which will be switched on or off depending on the adaptor type.
+   */}}
+
+  {{range split "joins,adaptor2" ","}}
+  {{/* Iterate over a list containing "joins" and adaptor2 -> "r36"/"crs" elements. */}}
+{{ $endOfYamlDoc }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    pipeline_name: fdp-{{ $.FDP_FEED_NAME }}
+    app: fdp-app
+  {{if and (eq . "joins") (eq $.FDP_FEED_NAME "pcdp")}}
+  name: fdp-cmd-adaptor-{{ $.ADAPTOR_NAME }}-{{ . }}
+  {{else if and (ne . "joins") (eq $.FDP_FEED_NAME "pcdp")}}
+  name: fdp-cmd-adaptor-{{ $.ADAPTOR_NAME }}-r36
+  {{else if and (eq . "joins") (eq $.FDP_FEED_NAME "crs")}}
+  name: fdp-cmd-adaptor-{{ $.ADAPTOR_NAME }}-crs{{ . }}
+  {{else if and (ne . "joins") (eq $.FDP_FEED_NAME "crs")}}
+  name: fdp-cmd-adaptor-{{ $.ADAPTOR_NAME }}-{{ $.FDP_FEED_NAME }}
+  {{end}}
+  {{if $.WORKING_HOURS}}
+  annotations:
+    downscaler/uptime: {{ $.WORKING_HOURS }}
+  {{end}}
+spec:
+  replicas: {{ $.FDP_CMD_ADAPTOR_REPLICAS }}
+  selector:
+    matchLabels:
+      app: fdp-app
+      pipeline_name: fdp-{{ $.ADAPTOR_NAME }}
+  template:
+    metadata:
+      labels:
+        app: fdp-app
+        pipeline_name: fdp-{{ $.ADAPTOR_NAME }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "7112"
+        prometheus.io/path: "/cmd-adaptor-{{ $.ADAPTOR_NAME }}-{{ $.FDP_APP_KAFKA_TOPIC_SUFFIX }}/prometheus"
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      imagePullSecrets:
+        - name: "{{ $.ARTIFACTORY_SECRET_NAME }}"
+      volumes:
+        - name: app-msk-app-keystore
+          secret:
+            secretName: app-msk-app-keystore
+            defaultMode: 256
+        - name: "fdp-app-cdl-msk-keystore"
+          secret:
+      {{if eq . "joins"}}
+      {{/* Volumes for joins adaptor. */}}
+            secretName: "fdp-app-cdl-msk-keystore"
+      {{else}}
+      {{/* Volumes for r36/crs adaptor. */}}
+            secretName: "fdp-dbstream-cdl-msk-keystore"
+      {{end}}
+            defaultMode: 256
+      containers:
+      - name: "fdp-cmd-adaptor-{{ $.ADAPTOR_NAME }}"
+        env:
+      {{if and (eq . "joins") (eq $.FDP_FEED_NAME "pcdp") }}
+      {{/* Feed PCDP - Feature switches for joins adaptor. */}}
+          - name: FDP_CMD_ADAPTOR_STREAM_ADDRESS_JOIN_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_ARTEFACT_JOIN_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_ATLAS_ARTEFACT_IDENTITY_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_CID_ARTEFACT_IDENTITY_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_CRS_INGEST_JOIN_ADDRESS_RUN
+            value: "true"
+      {{else if and (ne . "joins") (eq $.FDP_FEED_NAME "pcdp") }}
+      {{/* Feature switches for r36 adaptor. */}}
+          - name: FDP_CMD_ADAPTOR_STREAM_ADDRESS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_ALL_EVENT_ATTRIBUTE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_ASSOCIATION_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_ARTEFACT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_BIOGRAPHIC_SET_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_BIOMETRIC_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_CONDITION_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_CID_CRS_ALL_EVENT_ATTRIBUTE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_ELECTRONIC_ADDRESS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IDENTITY_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IDENTITY_CONSOLIDATED_PERSON_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_BAIL_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_BARRIER_ACTION_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_BORDER_CASEWORK_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CHALLENGE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_CHARTER_FLIGHTS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_CHIEF_CASEWORKING_UNIT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_CLOSE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_CORE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_DECISION_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_DETENTION_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_ELECTRONIC_MONITORING_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_ENFORCE_ACTIVITY_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_MANAGE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_MARRIAGE_REFERRAL_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_MOVEMENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_OFFENCE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_REPORTING_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_RETURNS_REMOVAL_NOTICES_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_TRAVEL_DOCUMENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_TRAVEL_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_VOLUNTARY_RETURN_EXPENSE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_IE_VOLUNTARY_RETURN_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_INDIVIDUAL_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_INVOLVEMENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_INVOLVEMENT_ADDRESS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_ORGANISATION_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_PERSON_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_REFERENCE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_SERVICE_DELIVERY_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_ASYLUM_CLAIM_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_ASYLUM_SUPPORT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_BRITISH_NATIONAL_OVERSEAS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_CARD_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_CORE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_ELECTRONIC_TRAVEL_AUTHORISATION_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_DESTITUTE_DOMESTIC_VIOLENCE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_ENDORSEMENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_EUS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_EXCLUSION_ORDER_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_EXEMPT_DIPLOMAT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_FAMILY_HUMAN_RIGHTS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_FAMILY_REUNION_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_FEE_WAIVER_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_FRONTIER_WORKER_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_FURTHER_LEAVE_TO_REMAIN_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_FURTHER_SUBMISSIONS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_GRADUATE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_HIGH_POTENTIAL_INDIVIDUAL_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_HOME_OFFICE_TRAVEL_DOCUMENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CID_INGEST_ADDRESS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CID_INGEST_APPEALS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CID_INGEST_ARRIVALS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CID_INGEST_BARRIERS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CID_INGEST_CASES_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CID_INGEST_DOCUMENTS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CID_INGEST_EVENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CID_INGEST_PERSON_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CID_INGEST_NOTES_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CID_INGEST_REMOVAL_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CID_INGEST_RESTRICTION_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CID_INGEST_SPECIAL_CONDITIONS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CRS_INGEST_EVENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_CROSS_DOMAIN_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_DENORMALISED_EVENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_DOCUMENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_REPEATED_ATTRIBUTE_EVENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_RIS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_V4_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IE_V5_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_IMA_LEAVE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_INTERNATIONAL_SPORTSPERSON_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_LOSS_OF_STATUS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_NATIONALITY_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_NO_TIME_LIMIT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_PAYMENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_RESETTLEMENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_RESTRICTED_LEAVE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_SCALE_UP_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_SETTLEMENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_STATELESS_LEAVE_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_STUDY_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_TEMPORARY_WORKER_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_THIRD_COUNTRY_UNIT_IN_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_THIRD_COUNTRY_UNIT_OUT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_TRANSFER_OF_REFUGEE_STATUS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_UKRAINE_SCHEME_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_WINDRUSH_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_WORK_AGE_ASSESSMENT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_WORK_NON_SPONSORED_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_UKVI_WORK_RUN
+            value: "true"
+      {{else if and (eq . "joins") (eq $.FDP_FEED_NAME "crs") }}
+      {{/* Feed CRS - Feature switches for join adaptor. */}}
+          - name: FDP_CMD_ADAPTOR_STREAM_ADDRESSAPPLICATION_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_ADDRESSSPONSOR_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_APPLICATION_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_APPLICATIONDEPENDANT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_APPLICATIONEVENTNOTES_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_APPLICATIONMINOR_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_APPLICATIONSPONSOR_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_BIODETAILS_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_GROUPAPPLICATIONAPPLICATIONNAMEDPERSON_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_LINKEDAPPLICATION_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_NAMEDPERSON_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_PASSPORT_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_RELATEDPERSON_RUN
+            value: "true"
+          - name: FDP_CMD_ADAPTOR_STREAM_SPONSOR_RUN
+            value: "true"
+      {{else if and (ne . "joins") (eq $.FDP_FEED_NAME "crs") }}
+      {{/* Feed CRS - Feature switches for CRS data adaptor. */}}
+          - name: FDP_CMD_ADAPTOR_STREAM_GROUPAPPLICATION_RUN
+            value: "true"            
+      {{end}}
+          - name: ADAPTOR_NAME
+            value: "{{ $.ADAPTOR_NAME }}"
+          - name: ENVIRONMENT
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: ENVIRONMENT
+  {{if $.FDP_APP_CDL_KAFKA_GROUP_ID}}
+          - name: FDP_APP_CDL_KAFKA_GROUP_ID
+            value: {{ $.FDP_APP_CDL_KAFKA_GROUP_ID }}
+  {{end}}
+          - name: FDP_APP_MSK_APP_KEYSTORE_PATH
+            value: "/home/fdpuser/fdp-msk/app-msk-app.jks"
+          - name: FDP_APP_MSK_APP_KEYSTORE_PASS
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: FDP_APP_MSK_APP_KEYSTORE_PASS
+
+      {{if eq . "joins"}}
+      {{/* CDLZ Connection parameters for joins. */}}
+          - name: FDP_APP_CDL_MSK_KEYSTORE_PASS
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "{{ $.FDP_APP_CDL_MSK_KEYSTORE_PASS_KEY_NAME }}"
+          - name: FDP_APP_CDL_KAFKA_BROKER
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "{{ $.FDP_APP_CDL_KAFKA_BROKER_KEY_NAME }}"
+          - name: FDP_APP_CDL_KAFKA_SCHEMA_REGISTRY_URL
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "{{ $.FDP_APP_CDL_KAFKA_SCHEMA_REGISTRY_URL_KEY_NAME }}"
+          - name: FDP_APP_CDL_MSK_KEYSTORE_PATH
+            value: "{{ $.FDP_APP_CDL_MSK_KEYSTORE_PATH }}"
+      {{else}}
+      {{/* CDLZ MSK connection parameters for r36 adaptor. */}}
+          - name: FDP_APP_CDL_MSK_KEYSTORE_PASS
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "FDP_DBSTREAM_CDL_MSK_KEYSTORE_PASS"
+          - name: FDP_APP_CDL_KAFKA_BROKER
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "FDP_DBSTREAM_CDL_KAFKA_BROKER"
+          - name: FDP_APP_CDL_KAFKA_SCHEMA_REGISTRY_URL
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "FDP_DBSTREAM_CDL_KAFKA_SCHEMA_REGISTRY_URL"
+          - name: FDP_APP_CDL_MSK_KEYSTORE_PATH
+            value: "/home/fdpuser/fdp-app-cdl-msk/fdp-dbstream-cdl-msk.jks"
+      {{end}}
+
+          - name: FDP_APP_REDIS_NODES
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "{{ $.FDP_APP_REDIS_NODES_KEY_NAME }}"
+          - name: FDP_APP_REDIS_AUTH_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "{{ $.FDP_APP_REDIS_AUTH_TOKEN_KEY_NAME }}"
+      {{if eq $.FDP_FEED_NAME "pcdp" }}
+      {{/* Feed PCDP */}}
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_ADDRESS
+            value: "input-pcdpr36.pmi_r36.address"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_ADDRESS_JOIN
+            value: "landing-839"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_ALL_EVENT_ATTRIBUTE
+            value: "input-pcdpr36.pmi_r36.all_event_attribute"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_ARTEFACT
+            value: "input-pcdpr36.pmi_r36.artefact"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_ARTEFACT_JOIN
+            value: "landing-838"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_ATLAS_ARTEFACT_IDENTITY
+            value: "landing-864"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_BIOMETRIC
+            value: "input-pcdpr36.pmi_r36.biometric"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_BIOGRAPHIC_SET
+            value: "input-pcdpr36.pmi_r36.biographic_set"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_CID_ARTEFACT_IDENTITY
+            value: "landing-863"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_CID_CRS_ALL_EVENT_ATTRIBUTE
+            value: "input-pcdpr36.pmi_r36.cid_crs_all_event_attribute"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_ASSOCIATION
+            value: "input-pcdpr36.pmi_r36.association"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_CONDITION
+            value: "input-pcdpr36.pmi_r36.condition"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_CRS_INGEST_JOIN_ADDRESS
+            value: "landing-865"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_ELECTRONIC_ADDRESS
+            value: "input-pcdpr36.pmi_r36.involvement_electronic_address"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IDENTITY
+            value: "input-pcdpr36.pmi_r36.identity"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IDENTITY_CONSOLIDATED_PERSON
+            value: "input-pcdpr36.pmi_r36.identity_consolidated_person"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_BAIL
+            value: "input-pcdpr36.pmi_r36.ie_bail_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_BARRIER_ACTION
+            value: "input-pcdpr36.pmi_r36.ie_barrier_action_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_BORDER_CASEWORK
+            value: "input-pcdpr36.pmi_r36.ie_border_casework_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_CHARTER_FLIGHTS
+            value: "input-pcdpr36.pmi_r36.ie_charter_flights_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_CHIEF_CASEWORKING_UNIT
+            value: "input-pcdpr36.pmi_r36.ie_chief_caseworking_unit_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_CLOSE
+            value: "input-pcdpr36.pmi_r36.ie_close_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_CORE
+            value: "input-pcdpr36.pmi_r36.ie_core_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_DECISION
+            value: "input-pcdpr36.pmi_r36.ie_decision_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_DETENTION
+            value: "input-pcdpr36.pmi_r36.ie_detention_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_ELECTRONIC_MONITORING
+            value: "input-pcdpr36.pmi_r36.ie_electronic_monitoring_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_ENFORCE_ACTIVITY
+            value: "input-pcdpr36.pmi_r36.ie_enforce_activity_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_MARRIAGE_REFERRAL
+            value: "input-pcdpr36.pmi_r36.ie_marriage_referral_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_MOVEMENT
+            value: "input-pcdpr36.pmi_r36.ie_movement_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_OFFENCE
+            value: "input-pcdpr36.pmi_r36.ie_offence_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_REPORTING
+            value: "input-pcdpr36.pmi_r36.ie_reporting_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_RETURNS_REMOVAL_NOTICES
+            value: "input-pcdpr36.pmi_r36.ie_returns_removal_notices_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_TRAVEL
+            value: "input-pcdpr36.pmi_r36.ie_travel_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_TRAVEL_DOCUMENT
+            value: "input-pcdpr36.pmi_r36.ie_travel_document_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_VOLUNTARY_RETURN
+            value: "input-pcdpr36.pmi_r36.ie_voluntary_return_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_IE_VOLUNTARY_RETURN_EXPENSE
+            value: "input-pcdpr36.pmi_r36.ie_voluntary_return_expense_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_INDIVIDUAL
+            value: "input-pcdpr36.pmi_r36.individual"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_INVOLVEMENT
+            value: "input-pcdpr36.pmi_r36.involvement"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_INVOLVEMENT_ADDRESS
+            value: "input-pcdpr36.pmi_r36.involvement_address"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_ORGANISATION
+            value: "input-pcdpr36.pmi_r36.organisation"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_PERSON
+            value: "input-pcdpr36.pmi_r36.person"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_REFERENCE
+            value: "input-pcdpr36.pmi_r36.reference"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_SERVICE_DELIVERY
+            value: "input-pcdpr36.pmi_r36.service_delivery"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_ASYLUM_CLAIM
+            value: "input-pcdpr36.pmi_r36.ukvi_asylum_claim_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_ASYLUM_SUPPORT
+            value: "input-pcdpr36.pmi_r36.ukvi_asylum_support_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_BRITISH_NATIONAL_OVERSEAS
+            value: "input-pcdpr36.pmi_r36.ukvi_british_national_overseas_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_CARD
+            value: "input-pcdpr36.pmi_r36.ukvi_card_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_CORE
+            value: "input-pcdpr36.pmi_r36.ukvi_core_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_DESTITUTE_DOMESTIC_VIOLENCE
+            value: "input-pcdpr36.pmi_r36.ukvi_destitute_domestic_violence_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_ENDORSEMENT
+            value: "input-pcdpr36.pmi_r36.ukvi_endorsement_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_ELECTRONIC_TRAVEL_AUTHORISATION
+            value: "input-pcdpr36.pmi_r36.ukvi_electronic_travel_authorisation_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_EUS
+            value: "input-pcdpr36.pmi_r36.ukvi_eus_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_EXCLUSION_ORDER
+            value: "input-pcdpr36.pmi_r36.ukvi_exclusion_order_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_EXEMPT_DIPLOMAT
+            value: "input-pcdpr36.pmi_r36.ukvi_exempt_diplomat_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_FAMILY_HUMAN_RIGHTS
+            value: "input-pcdpr36.pmi_r36.ukvi_family_human_rights_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_FAMILY_REUNION
+            value: "input-pcdpr36.pmi_r36.ukvi_family_reunion_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_FEE_WAIVER
+            value: "input-pcdpr36.pmi_r36.ukvi_fee_waiver_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_FRONTIER_WORKER
+            value: "input-pcdpr36.pmi_r36.ukvi_frontier_worker_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_FURTHER_LEAVE_TO_REMAIN
+            value: "input-pcdpr36.pmi_r36.ukvi_further_leave_to_remain_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_FURTHER_SUBMISSIONS
+            value: "input-pcdpr36.pmi_r36.ukvi_further_submissions_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_GRADUATE
+            value: "input-pcdpr36.pmi_r36.ukvi_graduate_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_HIGH_POTENTIAL_INDIVIDUAL_EVENT
+            value: "input-pcdpr36.pmi_r36.ukvi_high_potential_individual_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_HOME_OFFICE_TRAVEL_DOCUMENT_EVENT
+            value: "input-pcdpr36.pmi_r36.ukvi_home_office_travel_document_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CHALLENGE
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_challenge_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CID_INGEST_ADDRESS
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cid_ingest_address_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CID_INGEST_APPEALS
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cid_ingest_appeals_judicial_review_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CID_INGEST_ARRIVALS
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cid_ingest_arrivals_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CID_INGEST_BARRIERS
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cid_ingest_barriers_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CID_INGEST_CASES
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cid_ingest_cases_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CID_INGEST_DOCUMENTS
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cid_ingest_documents_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CID_INGEST_EVENT
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cid_ingest_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CID_INGEST_PERSON
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cid_ingest_person_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CID_INGEST_NOTES
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cid_ingest_notes_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CID_INGEST_REMOVAL
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cid_ingest_removal_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CID_INGEST_RESTRICTION
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cid_ingest_restriction_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CID_INGEST_SPECIAL_CONDITIONS
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cid_ingest_special_conditions_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CROSS_DOMAIN
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cross_domain_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CRS_INGEST_EVENT
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_crs_ingest_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_CROSS_DOMAIN
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_cross_domain_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_DENORMALISED_EVENT
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_denormalised_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_DOCUMENT
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_document_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_MANAGE
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_manage_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_RIS
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_ris_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_REPEATED_ATTRIBUTE_EVENT
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_repeated_attribute_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_V4
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_v4_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IE_V5
+            value: "input-pcdpr36.pmi_r36.ukvi_ie_v5_event"
+          - name : FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_IMA_LEAVE
+            value: "input-pcdpr36.pmi_r36.ukvi_ima_leave_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_INTERNATIONAL_SPORTSPERSON
+            value: "input-pcdpr36.pmi_r36.ukvi_international_sportsperson_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_LOSS_OF_STATUS
+            value: "input-pcdpr36.pmi_r36.ukvi_loss_of_status_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_NATIONALITY
+            value: "input-pcdpr36.pmi_r36.ukvi_nationality_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_NO_TIME_LIMIT
+            value: "input-pcdpr36.pmi_r36.ukvi_no_time_limit_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_PAYMENT
+            value: "input-pcdpr36.pmi_r36.ukvi_payment_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_RESETTLEMENT
+            value: "input-pcdpr36.pmi_r36.ukvi_resettlement_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_RESTRICTED_LEAVE
+            value: "input-pcdpr36.pmi_r36.ukvi_restricted_leave_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_SCALE_UP
+            value: "input-pcdpr36.pmi_r36.ukvi_scale_up_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_SETTLEMENT
+            value: "input-pcdpr36.pmi_r36.ukvi_settlement_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_STATELESS_LEAVE
+            value: "input-pcdpr36.pmi_r36.ukvi_stateless_leave_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_STUDY
+            value: "input-pcdpr36.pmi_r36.ukvi_study_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_TEMPORARY_WORKER
+            value: "input-pcdpr36.pmi_r36.ukvi_temporary_worker_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_THIRD_COUNTRY_UNIT_IN
+            value: "input-pcdpr36.pmi_r36.ukvi_third_country_unit_in_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_THIRD_COUNTRY_UNIT_OUT
+            value: "input-pcdpr36.pmi_r36.ukvi_third_country_unit_out_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_TRANSFER_OF_REFUGEE_STATUS
+            value: "input-pcdpr36.pmi_r36.ukvi_transfer_of_refugee_status_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_UKRAINE_SCHEME_EVENT
+            value: "input-pcdpr36.pmi_r36.ukvi_ukraine_scheme_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_WINDRUSH
+            value: "input-pcdpr36.pmi_r36.ukvi_windrush_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_WORK
+            value: "input-pcdpr36.pmi_r36.ukvi_work_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_WORK_AGE_ASSESSMENT
+            value: "input-pcdpr36.pmi_r36.ukvi_age_assessment_event"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_UKVI_WORK_NON_SPONSORED
+            value: "input-pcdpr36.pmi_r36.ukvi_work_non_sponsored_event"
+      {{else if eq $.FDP_FEED_NAME "crs" }}
+      {{/* Feed CRS */}}
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_ADDRESSAPPLICATION
+            value: "landing-766"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_ADDRESSSPONSOR
+            value: "landing-765"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_APPLICATION
+            value: "landing-911"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_APPLICATIONDEPENDANT
+            value: "landing-916"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_APPLICATIONEVENTNOTES
+            value: "landing-770"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_APPLICATIONMINOR
+            value: "landing-768"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_APPLICATIONSPONSOR
+            value: "landing-879"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_BIODETAILS
+            value: "landing-910"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_GROUPAPPLICATION
+            value: "input-crsv2.crs_v2.groupapplication"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_GROUPAPPLICATIONAPPLICATIONNAMEDPERSON
+            value: "landing-909"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_LINKEDAPPLICATION
+            value: "landing-866"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_NAMEDPERSON
+            value: "landing-913"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_PASSPORT
+            value: "landing-914"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_RELATEDPERSON
+            value: "landing-769"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_SPONSOR
+            value: "landing-915"
+      {{else if eq $.FDP_FEED_NAME "dvla" }}
+      {{/* Feed DVLA */}}
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_REGISTRATION
+            value: "landing-dvla-trailer-registration_0"
+          - name: FDP_CMD_ADAPTOR_INCOMING_TOPIC_DISPOSAL
+            value: "landing-dvla-trailer-disposal_0"
+      {{end}}
+          - name: FDP_KAFKA_BROKER
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: "{{ $.FDP_KAFKA_BROKER_KEY_NAME }}"
+          - name: FDP_KAFKA_SCHEMA_REGISTRY_URL
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: FDP_KAFKA_SCHEMA_REGISTRY_URL
+          - name: FDP_KAFKA_STREAM_THREADS
+            value: "{{ $.FDP_KAFKA_STREAM_THREADS }}"
+          - name: FDP_KAFKA_SESSION_TIMEOUT_MS
+            value: "{{ $.FDP_KAFKA_SESSION_TIMEOUT_MS }}"
+          - name: FDP_KAFKA_POLL_INTERVAL_MS
+            value: "{{ $.FDP_KAFKA_POLL_INTERVAL_MS }}"
+          - name: FDP_KAFKA_MAX_POLL_RECORDS
+            value: "{{ $.FDP_KAFKA_MAX_POLL_RECORDS }}"
+          - name: FDP_KAFKA_REBALANCE_TIMEOUT_MS
+            value: "{{ $.FDP_KAFKA_REBALANCE_TIMEOUT_MS }}"
+          - name: FDP_KAFKA_MAX_REQUEST_SIZE
+            value: "{{ $.FDP_KAFKA_MAX_REQUEST_SIZE }}"
+          - name: FDP_KAFKA_TASK_TIMEOUT_MS
+            value: "{{ $.FDP_KAFKA_TASK_TIMEOUT_MS }}"
+          - name: LOG_LEVEL
+            valueFrom:
+              secretKeyRef:
+                name: environment
+                key: LOG_LEVEL
+          - name: SPRING_PROFILES_ACTIVE
+            value: "{{ $.SPRING_PROFILES_ACTIVE }}"
+          - name: FDP_APP_KAFKA_TOPIC_SUFFIX
+            value: {{ $.FDP_APP_KAFKA_TOPIC_SUFFIX }}
+        image: {{ $.IMAGE_URL }}
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /cmd-adaptor-{{ $.ADAPTOR_NAME }}-{{ $.FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/liveness
+            port: 7112
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /cmd-adaptor-{{ $.ADAPTOR_NAME }}-{{ $.FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/readiness
+            port: 7112
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: "{{ $.FDP_CMD_ADAPTOR_CPU_MAX }}"
+            memory: "{{ $.FDP_CMD_ADAPTOR_MEMORY_MAX }}"
+          requests:
+            cpu: "{{ $.FDP_CMD_ADAPTOR_CPU_MIN }}"
+            memory: "{{ $.FDP_CMD_ADAPTOR_MEMORY_MIN }}"
+        volumeMounts:
+          - mountPath: "/home/fdpuser/fdp-msk/"
+            name: app-msk-app-keystore
+            readOnly: true
+          - mountPath: "/home/fdpuser/fdp-app-cdl-msk/"
+            name: "fdp-app-cdl-msk-keystore"
+            readOnly: true
+        securityContext:
+          runAsUser: 1000
+      - name: fdp-jaeger-agent
+        image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/dacc/jaegertracing/jaeger-agent:stable
+        args: [ "--reporter.grpc.host-port=dns:///fdp-jaeger-collector-svc.{{ $.JAEGER_NAMESPACE }}.svc.cluster.local:14250","--reporter.type=grpc","--processor.zipkin-compact.server-queue-size={{ $.FDP_SPANS_QUEUE_SIZE }}" ]
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+        resources:
+          limits:
+            memory: {{ $.FDP_JAEGER_MEMORY_MAX }}
+            cpu: {{ $.FDP_JAEGER_CPU_MAX }}
+          requests:
+            memory: {{ $.FDP_JAEGER_MEMORY_MIN }}
+            cpu: {{ $.FDP_JAEGER_CPU_MIN }}
+  {{end}}
+{{end}}
+---
+#############################################################################
+# WARNING: This file is controlled via RepoSync, any changes made in the
+# command adaptor repository will be overwritten by the RepoSync process.
+# See https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync
+#############################################################################
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: "{{ .ADAPTOR_NAME }}"
+  name: "{{ .ADAPTOR_NAME }}-e2e-test"
+spec:
+  template:
+    metadata:
+      labels:
+        app: fdp-app
+        pipeline-name: "{{ .ADAPTOR_NAME }}-e2e-test"
+    spec:
+      containers:
+      - name: {{ .ADAPTOR_NAME }}-e2e-test
+        env:
+          - name: ADAPTOR_NAME
+            value: "{{ .ADAPTOR_NAME }}"
+          - name: ARTIFACTORY_USERNAME
+            value: "{{ .ARTIFACTORY_USERNAME }}"
+          - name: ARTIFACTORY_PASSWORD
+            value: "{{ .ARTIFACTORY_PASSWORD }}"
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .FAILSAFE_REPORT_S3_BUCKET }}"
+                key: access_key_id
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .FAILSAFE_REPORT_S3_BUCKET }}"
+                key: secret_access_key
+          - name: KMS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .FAILSAFE_REPORT_S3_BUCKET }}
+                key: kms_key_id
+          - name: KUBE_NAMESPACE
+            value: "{{ .KUBE_NAMESPACE }}"
+          - name: S3_BUCKET
+            value: "{{ .FAILSAFE_REPORT_S3_BUCKET }}"
+        image: {{ .E2E_TEST_IMAGE_URL }}
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "2048Mi"
+          requests:
+            memory: "1024Mi"
+      restartPolicy: Never
+      securityContext:
+        runAsUser: 1000
+      imagePullSecrets:
+        - name: "{{ .ARTIFACTORY_SECRET_NAME }}"
+  backoffLimit: 1
+---
+#############################################################################
+# WARNING: This file is controlled via RepoSync, any changes made in the
+# command adaptor repository will be overwritten by the RepoSync process.
+# See https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync
+#############################################################################
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fdp-aggregate-matching-{{ .FDP_FEED_NAME }}
+  namespace: {{ .KUBE_NAMESPACE }}
+  labels:
+    pipeline_name: fdp-{{ .FDP_FEED_NAME }}
+    app: fdp-app
+{{if .WORKING_HOURS}}
+  annotations:
+    downscaler/uptime: {{ .WORKING_HOURS }}
+{{end}}
+spec:
+  replicas: {{ .FDP_AGGREGATE_MATCHING_REPLICAS }}
+  serviceName: fdp-aggregate-matching-{{ .FDP_FEED_NAME }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      name: fdp-aggregate-matching-{{ .FDP_FEED_NAME }}
+  template:
+    metadata:
+      labels:
+        name: fdp-aggregate-matching-{{ .FDP_FEED_NAME }}
+        service: fdp-aggregate-matching-{{ .FDP_FEED_NAME }}-svc
+        pipeline_name: fdp-{{ .FDP_FEED_NAME }}
+        app: fdp-app
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "7106"
+        prometheus.io/path: "/aggregate-matching-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/prometheus"
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsNonRoot: true
+        fsGroup: 1000
+      imagePullSecrets:
+        - name: "{{ .ARTIFACTORY_SECRET_NAME }}"
+      volumes:
+        - name: fdp-aggregate-matching-{{ .FDP_FEED_NAME }}-state-vol
+        - name: app-msk-app-keystore
+          secret:
+            secretName: app-msk-app-keystore
+            defaultMode: 256
+      containers:
+        - name: fdp-aggregate-matching-{{ .FDP_FEED_NAME }}
+          command: ["java", "-jar", "/home/fdpuser/aggregate-matching.jar"]
+          image: docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-matching:{{ .CORE_TAG }}
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          resources:
+            limits:
+              memory: {{ .FDP_AGGREGATE_MATCHING_MEMORY_MAX }}
+              cpu: {{ .FDP_AGGREGATE_MATCHING_CPU_MAX }}
+            requests:
+              memory: {{ .FDP_AGGREGATE_MATCHING_MEMORY_MIN }}
+              cpu: {{ .FDP_AGGREGATE_MATCHING_CPU_MIN }}
+          livenessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /aggregate-matching-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/liveness
+              port: 7106
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /aggregate-matching-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/readiness
+              port: 7106
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - mountPath: "/home/fdpuser/fdp-msk/"
+              name: app-msk-app-keystore
+              readOnly: true
+            - mountPath: "/home/fdpuser/persistent/"
+              name: fdp-aggregate-matching-{{ .FDP_FEED_NAME }}-state-vol
+          env:
+            - name: FDP_APP_KAFKA_SESSION_TIMEOUT_MS
+              value: "{{ .FDP_APP_KAFKA_SESSION_TIMEOUT_MS }}"
+            - name: _JAVA_OPTIONS
+              value: "-Xms{{ .FDP_AGGREGATE_MATCHING_JAVA_MEMORY_MIN }} -Xmx{{ .FDP_AGGREGATE_MATCHING_JAVA_MEMORY_MAX }}"
+            - name: SPRING_PROFILES_ACTIVE
+              value: "{{ .SPRING_PROFILES_ACTIVE }}"
+            - name: FDP_KAFKA_STREAM_THREADS
+              value: "{{ .FDP_KAFKA_STREAM_THREADS }}"
+            - name: FDP_AGG_EVENT_LOG_DIR
+              value: "/home/fdpuser/persistent/logs/"
+            - name: FDP_AGG_STATE_DIR
+              value: "/home/fdpuser/persistent/state/"
+            - name: ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: ENVIRONMENT
+            - name: LOG_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: LOG_LEVEL
+            - name: FDP_APP_KAFKA_TOPIC_SUFFIX
+              value: {{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}
+            - name: FDP_APP_ADAPTOR_SHORT_NAME
+              value: {{ .FDP_APP_MATCHING_NAME }}
+            - name: FDP_APP_MATCHING_AGGREGATE_TARGET
+              value: {{ .FDP_APP_MATCHING_AGGREGATE_TARGET }}
+            - name: FDP_APP_REDIS_NODES
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: "{{ .FDP_APP_REDIS_NODES_KEY_NAME }}"
+            - name: FDP_APP_REDIS_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: "{{ .FDP_APP_REDIS_AUTH_TOKEN_KEY_NAME }}"
+            - name: FDP_KAFKA_BROKER
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: "{{ .FDP_KAFKA_BROKER_KEY_NAME }}"
+            - name: FDP_KAFKA_SCHEMA_REGISTRY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_KAFKA_SCHEMA_REGISTRY_URL
+            - name: FDP_APP_WASH_ADDRESS_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_ADDRESS_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_ADDRESS_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_ADDRESS_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_ADDRESS_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_ADDRESS_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_ADDRESS_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_ADDRESS_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_ADDRESS_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_ADDRESS_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_ADDRESS_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_ADDRESS_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_ADDRESS_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_ADDRESS_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_ADDRESS_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_ADDRESS_WASH_CONFIG_ID }}"
+            - name: FDP_APP_WASH_CONTACT_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_CONTACT_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_CONTACT_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_CONTACT_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_CONTACT_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_CONTACT_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_CONTACT_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_CONTACT_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_CONTACT_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_CONTACT_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_CONTACT_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_CONTACT_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_CONTACT_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_CONTACT_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_CONTACT_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_CONTACT_WASH_CONFIG_ID }}"
+            - name: FDP_APP_WASH_OBJECT_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_OBJECT_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_OBJECT_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_OBJECT_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_OBJECT_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_OBJECT_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_OBJECT_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_OBJECT_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_OBJECT_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_OBJECT_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_OBJECT_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_OBJECT_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_OBJECT_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_OBJECT_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_OBJECT_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_OBJECT_WASH_CONFIG_ID }}"
+            - name: FDP_APP_WASH_ORGANISATION_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_ORGANISATION_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_ORGANISATION_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_ORGANISATION_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_ORGANISATION_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_ORGANISATION_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_ORGANISATION_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_ORGANISATION_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_ORGANISATION_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_ORGANISATION_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_ORGANISATION_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_ORGANISATION_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_ORGANISATION_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_ORGANISATION_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_ORGANISATION_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_ORGANISATION_WASH_CONFIG_ID }}"
+            - name: FDP_APP_WASH_PERSON_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_PERSON_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_PERSON_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_PERSON_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_PERSON_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_PERSON_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_PERSON_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_PERSON_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_PERSON_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_PERSON_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_PERSON_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_PERSON_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_PERSON_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_PERSON_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_PERSON_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_PERSON_WASH_CONFIG_ID }}"
+            - name: FDP_APP_WASH_TRANSPORT_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_TRANSPORT_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_TRANSPORT_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_TRANSPORT_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_TRANSPORT_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_TRANSPORT_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_TRANSPORT_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_TRANSPORT_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_TRANSPORT_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_TRANSPORT_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_TRANSPORT_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_TRANSPORT_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_TRANSPORT_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_TRANSPORT_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_TRANSPORT_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_TRANSPORT_WASH_CONFIG_ID }}"
+            - name: FDP_APP_WASH_VIRTUAL_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_VIRTUAL_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_VIRTUAL_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_VIRTUAL_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_VIRTUAL_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_VIRTUAL_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_VIRTUAL_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_VIRTUAL_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_VIRTUAL_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_VIRTUAL_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_VIRTUAL_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_VIRTUAL_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_VIRTUAL_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_VIRTUAL_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_VIRTUAL_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_VIRTUAL_WASH_CONFIG_ID }}"
+{{if .FDP_APP_MATCHING_TYPES_TO_FILTER}}
+            - name: FDP_APP_MATCHING_TYPES_TO_FILTER
+              value: "{{ .FDP_APP_MATCHING_TYPES_TO_FILTER }}"
+{{end}}
+        - name: fdp-jaeger-agent
+          image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/dacc/jaegertracing/jaeger-agent:stable
+          args: [ "--reporter.grpc.host-port=dns:///fdp-jaeger-collector-svc.{{ .JAEGER_NAMESPACE }}.svc.cluster.local:14250","--reporter.type=grpc","--processor.zipkin-compact.server-queue-size={{ .FDP_SPANS_QUEUE_SIZE }}" ]
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          resources:
+            limits:
+              memory: {{ .FDP_JAEGER_MEMORY_MAX }}
+              cpu: {{ .FDP_JAEGER_CPU_MAX }}
+            requests:
+              memory: {{ .FDP_JAEGER_MEMORY_MIN }}
+              cpu: {{ .FDP_JAEGER_CPU_MIN }}
+
+  volumeClaimTemplates:
+    - metadata:
+        name: fdp-aggregate-matching-{{ .FDP_FEED_NAME }}-state-vol
+        annotations:
+          volume.beta.kubernetes.io/storage-class: {{ .FDP_STATE_VOLUME_TYPE }}
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .FDP_STATE_VOLUME_SIZE }}
+---
+#############################################################################
+# WARNING: This file is controlled via RepoSync, any changes made in the
+# command adaptor repository will be overwritten by the RepoSync process.
+# See https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync
+#############################################################################
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fdp-aggregate-{{ .FDP_AGGREGATOR_TYPE }}-{{ .FDP_FEED_NAME }}
+  namespace: {{ .KUBE_NAMESPACE }}
+  labels:
+    pipeline_name: fdp-{{ .FDP_FEED_NAME }}
+    app: fdp-app
+{{if .WORKING_HOURS}}
+  annotations:
+    downscaler/uptime: {{ .WORKING_HOURS }}
+{{end}}
+spec:
+  replicas: {{ .FDP_AGGREGATE_REPLICAS }}
+  serviceName: fdp-aggregate-{{ .FDP_AGGREGATOR_TYPE }}-{{ .FDP_FEED_NAME }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      name: fdp-aggregate-{{ .FDP_AGGREGATOR_TYPE }}-{{ .FDP_FEED_NAME }}
+  template:
+    metadata:
+      labels:
+        name: fdp-aggregate-{{ .FDP_AGGREGATOR_TYPE }}-{{ .FDP_FEED_NAME }}
+        service: fdp-aggregate-{{ .FDP_AGGREGATOR_TYPE }}-{{ .FDP_FEED_NAME }}-svc
+        pipeline_name: fdp-{{ .FDP_FEED_NAME }}
+        app: fdp-app
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ .FDP_AGGREGATOR_PORT }}"
+        prometheus.io/path: "/aggregate-{{ .FDP_AGGREGATOR_TYPE }}-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/prometheus"
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsNonRoot: true
+        fsGroup: 1000
+      imagePullSecrets:
+        - name: "{{ .ARTIFACTORY_SECRET_NAME }}"
+      volumes:
+        - name: fdp-aggregate-{{ .FDP_AGGREGATOR_TYPE }}-{{ .FDP_FEED_NAME }}-state-vol
+        - name: app-msk-app-keystore
+          secret:
+            secretName: app-msk-app-keystore
+            defaultMode: 256
+      containers:
+        - name: fdp-aggregate-{{ .FDP_AGGREGATOR_TYPE }}-{{ .FDP_FEED_NAME }}
+          command: ["java", "-jar", "/home/fdpuser/aggregate-{{ .FDP_AGGREGATOR_TYPE }}.jar"]
+          image: docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-{{ .FDP_AGGREGATOR_TYPE }}:{{ .CORE_TAG }}
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          resources:
+            limits:
+              memory: {{ .FDP_AGGREGATE_MEMORY_MAX }}
+              cpu: {{ .FDP_AGGREGATE_CPU_MAX }}
+            requests:
+              memory: {{ .FDP_AGGREGATE_MEMORY_MIN }}
+              cpu: {{ .FDP_AGGREGATE_CPU_MIN }}
+          livenessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /aggregate-{{ .FDP_AGGREGATOR_TYPE }}-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/liveness
+              port: {{ .FDP_AGGREGATOR_PORT }}
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /aggregate-{{ .FDP_AGGREGATOR_TYPE }}-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}/health/readiness
+              port: {{ .FDP_AGGREGATOR_PORT }}
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - mountPath: "/home/fdpuser/fdp-msk/"
+              name: app-msk-app-keystore
+              readOnly: true
+            - mountPath: "/home/fdpuser/persistent/"
+              name: fdp-aggregate-{{ .FDP_AGGREGATOR_TYPE }}-{{ .FDP_FEED_NAME }}-state-vol
+          env:
+            - name: FDP_APP_KAFKA_SESSION_TIMEOUT_MS
+              value: "{{ .FDP_APP_KAFKA_SESSION_TIMEOUT_MS }}"
+            - name: _JAVA_OPTIONS
+              value: "-Xms{{ .FDP_AGGREGATE_JAVA_MEMORY_MIN }} -Xmx{{ .FDP_AGGREGATE_JAVA_MEMORY_MAX }}"
+            - name: SPRING_PROFILES_ACTIVE
+              value: "{{ .SPRING_PROFILES_ACTIVE }}"
+            - name: FDP_KAFKA_STREAM_THREADS
+              value: "{{ .FDP_KAFKA_STREAM_THREADS }}"
+            - name: FDP_AGG_{{ .FDP_AGGREGATOR_TYPE }}_LOG_DIR
+              value: "/home/fdpuser/persistent/logs/"
+            - name: FDP_AGG_STATE_DIR
+              value: "/home/fdpuser/persistent/state/"
+            - name: FDP_APP_GRPC_PARTY_ENDPOINT
+              value: "fdp-aggregate-party-{{ .FDP_FEED_NAME }}:9101"
+            - name: FDP_APP_GRPC_OBJECT_ENDPOINT
+              value: "fdp-aggregate-object-{{ .FDP_FEED_NAME }}:9101"
+            - name: FDP_APP_GRPC_LOCATION_ENDPOINT
+              value: "fdp-aggregate-location-{{ .FDP_FEED_NAME }}:9101"
+            - name: FDP_APP_GRPC_EVENT_ENDPOINT
+              value: "fdp-aggregate-event-{{ .FDP_FEED_NAME }}:9101"
+            - name: FDP_APP_GRPC_SERVICE_ENDPOINT
+              value: "fdp-aggregate-service-{{ .FDP_FEED_NAME }}:9101"
+            - name: ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: ENVIRONMENT
+            - name: LOG_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: LOG_LEVEL
+            - name: FDP_APP_KAFKA_TOPIC_SUFFIX
+              value: {{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}
+            - name: FDP_APP_ADAPTOR_SHORT_NAME
+              value: {{ .FDP_FEED_NAME }}
+            - name: FDP_APP_REDIS_NODES
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: "{{ .FDP_APP_REDIS_NODES_KEY_NAME }}"
+            - name: FDP_KAFKA_BROKER
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: "{{ .FDP_KAFKA_BROKER_KEY_NAME }}"
+            - name: FDP_KAFKA_SCHEMA_REGISTRY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_KAFKA_SCHEMA_REGISTRY_URL
+            - name: FDP_APP_WASH_ADDRESS_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_ADDRESS_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_ADDRESS_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_ADDRESS_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_ADDRESS_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_ADDRESS_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_ADDRESS_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_ADDRESS_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_ADDRESS_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_ADDRESS_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_ADDRESS_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_ADDRESS_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_ADDRESS_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_ADDRESS_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_ADDRESS_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_ADDRESS_WASH_CONFIG_ID }}"
+            - name: FDP_APP_WASH_CONTACT_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_CONTACT_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_CONTACT_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_CONTACT_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_CONTACT_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_CONTACT_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_CONTACT_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_CONTACT_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_CONTACT_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_CONTACT_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_CONTACT_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_CONTACT_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_CONTACT_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_CONTACT_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_CONTACT_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_CONTACT_WASH_CONFIG_ID }}"
+            - name: FDP_APP_WASH_OBJECT_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_OBJECT_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_OBJECT_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_OBJECT_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_OBJECT_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_OBJECT_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_OBJECT_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_OBJECT_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_OBJECT_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_OBJECT_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_OBJECT_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_OBJECT_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_OBJECT_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_OBJECT_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_OBJECT_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_OBJECT_WASH_CONFIG_ID }}"
+            - name: FDP_APP_WASH_ORGANISATION_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_ORGANISATION_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_ORGANISATION_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_ORGANISATION_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_ORGANISATION_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_ORGANISATION_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_ORGANISATION_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_ORGANISATION_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_ORGANISATION_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_ORGANISATION_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_ORGANISATION_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_ORGANISATION_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_ORGANISATION_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_ORGANISATION_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_ORGANISATION_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_ORGANISATION_WASH_CONFIG_ID }}"
+            - name: FDP_APP_WASH_PERSON_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_PERSON_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_PERSON_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_PERSON_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_PERSON_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_PERSON_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_PERSON_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_PERSON_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_PERSON_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_PERSON_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_PERSON_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_PERSON_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_PERSON_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_PERSON_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_PERSON_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_PERSON_WASH_CONFIG_ID }}"
+            - name: FDP_APP_WASH_TRANSPORT_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_TRANSPORT_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_TRANSPORT_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_TRANSPORT_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_TRANSPORT_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_TRANSPORT_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_TRANSPORT_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_TRANSPORT_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_TRANSPORT_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_TRANSPORT_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_TRANSPORT_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_TRANSPORT_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_TRANSPORT_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_TRANSPORT_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_TRANSPORT_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_TRANSPORT_WASH_CONFIG_ID }}"
+            - name: FDP_APP_WASH_VIRTUAL_ENABLE_COMPARISON_DETAIL
+              value: "{{ .FDP_APP_WASH_VIRTUAL_ENABLE_COMPARISON_DETAIL }}"
+            - name: FDP_APP_WASH_VIRTUAL_ENTITY_TYPE
+              value: "{{ .FDP_APP_WASH_VIRTUAL_ENTITY_TYPE }}"
+            - name: FDP_APP_WASH_VIRTUAL_MAX_RESULTS
+              value: "{{ .FDP_APP_WASH_VIRTUAL_MAX_RESULTS }}"
+            - name: FDP_APP_WASH_VIRTUAL_OUTPUT_WITH_MATCHED_DATA
+              value: "{{ .FDP_APP_WASH_VIRTUAL_OUTPUT_WITH_MATCHED_DATA }}"
+            - name: FDP_APP_WASH_VIRTUAL_POLE_SOURCES
+              value: "{{ .FDP_APP_WASH_VIRTUAL_POLE_SOURCES }}"
+            - name: FDP_APP_WASH_VIRTUAL_SOURCE_THRESHOLD
+              value: "{{ .FDP_APP_WASH_VIRTUAL_SOURCE_THRESHOLD }}"
+            - name: FDP_APP_WASH_VIRTUAL_SEARCH_TYPE
+              value: "{{ .FDP_APP_WASH_VIRTUAL_SEARCH_TYPE }}"
+            - name: FDP_APP_WASH_VIRTUAL_WASH_CONFIG_ID
+              value: "{{ .FDP_APP_WASH_VIRTUAL_WASH_CONFIG_ID }}"
+        - name: fdp-jaeger-agent
+          image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/dacc/jaegertracing/jaeger-agent:stable
+          args: [ "--reporter.grpc.host-port=dns:///fdp-jaeger-collector-svc.{{ .JAEGER_NAMESPACE }}.svc.cluster.local:14250","--reporter.type=grpc","--processor.zipkin-compact.server-queue-size={{ .FDP_SPANS_QUEUE_SIZE }}" ]
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          resources:
+            limits:
+              memory: {{ .FDP_JAEGER_MEMORY_MAX }}
+              cpu: {{ .FDP_JAEGER_CPU_MAX }}
+            requests:
+              memory: {{ .FDP_JAEGER_MEMORY_MIN }}
+              cpu: {{ .FDP_JAEGER_CPU_MIN }}
+
+
+  volumeClaimTemplates:
+    - metadata:
+        name: fdp-aggregate-{{ .FDP_AGGREGATOR_TYPE }}-{{ .FDP_FEED_NAME }}-state-vol
+        annotations:
+          volume.beta.kubernetes.io/storage-class: {{ .FDP_STATE_VOLUME_TYPE }}
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .FDP_STATE_VOLUME_SIZE }}
+---
+#############################################################################
+# WARNING: This file is controlled via RepoSync, any changes made in the
+# command adaptor repository will be overwritten by the RepoSync process.
+# See https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync
+#############################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fdp-kces-service-{{ .FDP_FEED_NAME }}
+  namespace:  {{ .KUBE_NAMESPACE }}
+  labels:
+    pipeline_name: fdp-kces-{{ .FDP_FEED_NAME }}
+    app: fdp-kces
+spec:
+  replicas: {{ .FDP_KC_ES_COUNT }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      name: fdp-kces-service-{{ .FDP_FEED_NAME }}
+  template:
+    metadata:
+      labels:
+        name: fdp-kces-service-{{ .FDP_FEED_NAME }}
+        service: fdp-kces-svc
+        pipeline_name: fdp-kces-{{ .FDP_FEED_NAME }}
+        app: fdp-kces
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsNonRoot: true
+        fsGroup: 1000
+      imagePullSecrets:
+        - name: "{{ .ARTIFACTORY_SECRET_NAME }}"
+      volumes:
+        - name: app-msk-app-keystore
+          secret:
+            secretName: app-msk-app-keystore
+            defaultMode: 256
+      containers:
+        - name: fdp-kafka-connect-elasticsearch-cdm
+          image: docker.digital.homeoffice.gov.uk/dacc-aws/fdp-kafkaconnect-elasticsearch:{{ .KC_ES_TAG }}
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          resources:
+            limits:
+              memory: {{ .FDP_KAFKA_CONNECT_MEMORY }}
+              cpu: {{ .FDP_KAFKA_CONNECT_CPU }}
+            requests:
+              memory: {{ .FDP_KAFKA_CONNECT_MEMORY }}
+              cpu: {{ .FDP_KAFKA_CONNECT_CPU }}
+          volumeMounts:
+            - mountPath: "/home/fdpuser/fdp-msk/"
+              name: app-msk-app-keystore
+              readOnly: true
+          ports:
+            - name: fdp-svc-prt
+              containerPort: 8083
+          env:
+            - name: LOG_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: LOG_LEVEL
+            - name: ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: ENVIRONMENT
+            - name: FDP_KAFKA_BROKER
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: "{{ .FDP_KAFKA_BROKER_KEY_NAME }}"
+            - name: FDP_KAFKA_SCHEMA_REGISTRY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_KAFKA_SCHEMA_REGISTRY_URL
+            - name: KAFKA_HEAP_OPTS
+              value: "-Xms1800m -Xmx1800m"
+            - name: FDP_APP_MSK_TOPIC_NAMES
+              value: "fdp_service_cmd_{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}"
+            - name: FDP_APP_MSK_APP_KEYSTORE_PATH
+              value: "/home/fdpuser/fdp-msk/app-msk-app.jks"
+            - name: FDP_APP_MSK_APP_KEYSTORE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_APP_MSK_APP_KEYSTORE_PASS
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTIC_SEARCH_AWS_SECRET_ACCESS_KEY
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTIC_SEARCH_AWS_ACCESS_KEY_ID
+            - name: FDP_ELASTICSEARCH_CONNECTION_URL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTICSEARCH_CONNECTION_URL
+            - name: FDP_APP_KAFKA_LOG_LEVEL
+              value: "ERROR"
+            - name: FDP_APP_MSK_TASKS_MAX
+              value: "1"
+            - name: FDP_MESSAGE_TYPE
+              value: "AVRO"
+            - name: FDP_GROUP_SUFFIX
+              value: "elasticsearch-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}"
+            - name: FDP_KAFKA_CONNECT_REST_API_PORT
+              value: "8083"
+        - name: fdp-kafka-connect-elasticsearch-event
+          image: docker.digital.homeoffice.gov.uk/dacc-aws/fdp-kafkaconnect-elasticsearch:{{ .KC_ES_TAG }}
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          resources:
+            limits:
+              memory: {{ .FDP_KAFKA_CONNECT_MEMORY }}
+              cpu: {{ .FDP_KAFKA_CONNECT_CPU }}
+            requests:
+              memory: {{ .FDP_KAFKA_CONNECT_MEMORY }}
+              cpu: {{ .FDP_KAFKA_CONNECT_CPU }}
+          volumeMounts:
+            - mountPath: "/home/fdpuser/fdp-msk/"
+              name: app-msk-app-keystore
+              readOnly: true
+          ports:
+            - name: fdp-svc-prt
+              containerPort: 8084
+          env:
+            - name: LOG_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: LOG_LEVEL
+            - name: ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: ENVIRONMENT
+            - name: FDP_KAFKA_BROKER
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: "{{ .FDP_KAFKA_BROKER_KEY_NAME }}"
+            - name: FDP_KAFKA_SCHEMA_REGISTRY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_KAFKA_SCHEMA_REGISTRY_URL
+            - name: KAFKA_HEAP_OPTS
+              value: "-Xms1800m -Xmx1800m"
+            - name: FDP_APP_MSK_TOPIC_NAMES
+              value: "fdp_service_event_{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}"
+            - name: FDP_APP_MSK_APP_KEYSTORE_PATH
+              value: "/home/fdpuser/fdp-msk/app-msk-app.jks"
+            - name: FDP_APP_MSK_APP_KEYSTORE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_APP_MSK_APP_KEYSTORE_PASS
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTIC_SEARCH_AWS_SECRET_ACCESS_KEY
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTIC_SEARCH_AWS_ACCESS_KEY_ID
+            - name: FDP_ELASTICSEARCH_CONNECTION_URL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTICSEARCH_CONNECTION_URL
+            - name: FDP_APP_KAFKA_LOG_LEVEL
+              value: "ERROR"
+            - name: FDP_APP_MSK_TASKS_MAX
+              value: "1"
+            - name: FDP_MESSAGE_TYPE
+              value: "AVRO"
+            - name: FDP_GROUP_SUFFIX
+              value: "elasticsearch-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}"
+            - name: FDP_KAFKA_CONNECT_REST_API_PORT
+              value: "8084"
+        - name: fdp-kafka-connect-elasticsearch-snapshot-{{ .FDP_FEED_NAME }}
+          image: docker.digital.homeoffice.gov.uk/dacc-aws/fdp-kafkaconnect-elasticsearch:{{ .KC_ES_TAG }}
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          resources:
+            limits:
+              memory: {{ .FDP_KAFKA_CONNECT_MEMORY }}
+              cpu: {{ .FDP_KAFKA_CONNECT_CPU }}
+            requests:
+              memory: {{ .FDP_KAFKA_CONNECT_MEMORY }}
+              cpu: {{ .FDP_KAFKA_CONNECT_CPU }}
+          volumeMounts:
+            - mountPath: "/home/fdpuser/fdp-msk/"
+              name: app-msk-app-keystore
+              readOnly: true
+          ports:
+            - name: fdp-svc-prt
+              containerPort: 8085
+          env:
+            - name: LOG_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: LOG_LEVEL
+            - name: ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: ENVIRONMENT
+            - name: FDP_KAFKA_BROKER
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: "{{ .FDP_KAFKA_BROKER_KEY_NAME }}"
+            - name: FDP_KAFKA_SCHEMA_REGISTRY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_KAFKA_SCHEMA_REGISTRY_URL
+            - name: KAFKA_HEAP_OPTS
+              value: "-Xms1800m -Xmx1800m"
+            - name: FDP_APP_MSK_TOPIC_NAMES
+              value: "fdp_service_snapshot_{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}"
+            - name: FDP_APP_MSK_APP_KEYSTORE_PATH
+              value: "/home/fdpuser/fdp-msk/app-msk-app.jks"
+            - name: FDP_APP_MSK_APP_KEYSTORE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_APP_MSK_APP_KEYSTORE_PASS
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTIC_SEARCH_AWS_SECRET_ACCESS_KEY
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTIC_SEARCH_AWS_ACCESS_KEY_ID
+            - name: FDP_ELASTICSEARCH_CONNECTION_URL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTICSEARCH_CONNECTION_URL
+            - name: FDP_APP_KAFKA_LOG_LEVEL
+              value: "ERROR"
+            - name: FDP_APP_MSK_TASKS_MAX
+              value: "1"
+            - name: FDP_MESSAGE_TYPE
+              value: "AVRO"
+            - name: FDP_GROUP_SUFFIX
+              value: "elasticsearch-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}"
+            - name: FDP_KAFKA_CONNECT_REST_API_PORT
+              value: "8085"
+        - name: fdp-kafka-connect-elasticsearch-late-arriving-{{ .FDP_FEED_NAME }}
+          image: docker.digital.homeoffice.gov.uk/dacc-aws/fdp-kafkaconnect-elasticsearch:{{ .KC_ES_TAG }}
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          resources:
+            limits:
+              memory: {{ .FDP_KAFKA_CONNECT_MEMORY }}
+              cpu: {{ .FDP_KAFKA_CONNECT_CPU }}
+            requests:
+              memory: {{ .FDP_KAFKA_CONNECT_MEMORY }}
+              cpu: {{ .FDP_KAFKA_CONNECT_CPU }}
+          volumeMounts:
+            - mountPath: "/home/fdpuser/fdp-msk/"
+              name: app-msk-app-keystore
+              readOnly: true
+          ports:
+            - name: fdp-svc-prt
+              containerPort: 8086
+          env:
+            - name: LOG_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: LOG_LEVEL
+            - name: ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: ENVIRONMENT
+            - name: FDP_KAFKA_BROKER
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: "{{ .FDP_KAFKA_BROKER_KEY_NAME }}"
+            - name: FDP_KAFKA_SCHEMA_REGISTRY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_KAFKA_SCHEMA_REGISTRY_URL
+            - name: KAFKA_HEAP_OPTS
+              value: "-Xms1800m -Xmx1800m"
+            - name: FDP_APP_MSK_TOPIC_NAMES
+              value: "fdp_service_suspense_late_arriving_{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}"
+            - name: FDP_APP_MSK_APP_KEYSTORE_PATH
+              value: "/home/fdpuser/fdp-msk/app-msk-app.jks"
+            - name: FDP_APP_MSK_APP_KEYSTORE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_APP_MSK_APP_KEYSTORE_PASS
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTIC_SEARCH_AWS_SECRET_ACCESS_KEY
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTIC_SEARCH_AWS_ACCESS_KEY_ID
+            - name: FDP_ELASTICSEARCH_CONNECTION_URL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTICSEARCH_CONNECTION_URL
+            - name: FDP_APP_KAFKA_LOG_LEVEL
+              value: "ERROR"
+            - name: FDP_APP_MSK_TASKS_MAX
+              value: "1"
+            - name: FDP_MESSAGE_TYPE
+              value: "AVRO"
+            - name: FDP_GROUP_SUFFIX
+              value: "elasticsearch-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}"
+            - name: FDP_KAFKA_CONNECT_REST_API_PORT
+              value: "8086"
+        - name: fdp-kafka-connect-elasticsearch-suspense-no-change
+          image: docker.digital.homeoffice.gov.uk/dacc-aws/fdp-kafkaconnect-elasticsearch:{{ .KC_ES_TAG }}
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          resources:
+            limits:
+              memory: {{ .FDP_KAFKA_CONNECT_MEMORY }}
+              cpu: {{ .FDP_KAFKA_CONNECT_CPU }}
+            requests:
+              memory: {{ .FDP_KAFKA_CONNECT_MEMORY }}
+              cpu: {{ .FDP_KAFKA_CONNECT_CPU }}
+          volumeMounts:
+            - mountPath: "/home/fdpuser/fdp-msk/"
+              name: app-msk-app-keystore
+              readOnly: true
+          ports:
+            - name: fdp-svc-prt
+              containerPort: 8087
+          env:
+            - name: LOG_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: LOG_LEVEL
+            - name: ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: ENVIRONMENT
+            - name: FDP_KAFKA_BROKER
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: "{{ .FDP_KAFKA_BROKER_KEY_NAME }}"
+            - name: FDP_KAFKA_SCHEMA_REGISTRY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_KAFKA_SCHEMA_REGISTRY_URL
+            - name: KAFKA_HEAP_OPTS
+              value: "-Xms1800m -Xmx1800m"
+            - name: FDP_APP_MSK_TOPIC_NAMES
+              value: "fdp_service_suspense_no_change_{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}"
+            - name: FDP_APP_MSK_APP_KEYSTORE_PATH
+              value: "/home/fdpuser/fdp-msk/app-msk-app.jks"
+            - name: FDP_APP_MSK_APP_KEYSTORE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_APP_MSK_APP_KEYSTORE_PASS
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTIC_SEARCH_AWS_SECRET_ACCESS_KEY
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTIC_SEARCH_AWS_ACCESS_KEY_ID
+            - name: FDP_ELASTICSEARCH_CONNECTION_URL
+              valueFrom:
+                secretKeyRef:
+                  name: environment
+                  key: FDP_ELASTICSEARCH_CONNECTION_URL
+            - name: FDP_APP_KAFKA_LOG_LEVEL
+              value: "ERROR"
+            - name: FDP_APP_MSK_TASKS_MAX
+              value: "1"
+            - name: FDP_MESSAGE_TYPE
+              value: "AVRO"
+            - name: FDP_GROUP_SUFFIX
+              value: "elasticsearch-{{ .FDP_APP_KAFKA_TOPIC_SUFFIX }}"
+            - name: FDP_KAFKA_CONNECT_REST_API_PORT
+              value: "8087"
