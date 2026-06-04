@@ -1,20 +1,28 @@
 <!--
-    Maven dependencies for Testcontainers + Cucumber + Spring Boot integration tests.
+    Maven dependencies for Testcontainers + Cucumber integration tests.
+    Based on the real FDP pom.xml structure.
 
-    Add these to the pilot repository's pom.xml under <dependencies>.
-    All are test-scoped — they don't ship in production.
+    The FDP project uses:
+    - fdp-bom (manages Spring Boot, Kafka, Cucumber versions)
+    - cucumber-junit (JUnit 4 vintage runner — existing pattern)
+    - cucumber-java + cucumber-spring (step definitions + Spring DI)
+    - junit-vintage-engine (runs JUnit 4 tests under JUnit 5 platform)
+    - cucumber-junit-platform-engine (JUnit 5 native alternative)
+
+    To add Testcontainers, add ONLY the following to the integration-tests module pom.xml.
+    Everything else (Cucumber, Spring Boot Test, etc.) already exists.
 
     Reference: ADR-0002, Story 3, T3.2
 -->
 
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-<!-- Testcontainers BOM — manages versions for all testcontainers modules      -->
+<!-- ADD TO <dependencyManagement> in the PARENT pom.xml                        -->
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 <!--
-    Add this in <dependencyManagement>:
-
     <dependencyManagement>
         <dependencies>
+            ... existing fdp-bom import ...
+
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
@@ -27,124 +35,79 @@
 -->
 
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-<!-- Core Testcontainers                                                        -->
+<!-- ADD TO <dependencies> in cmd-adaptor-dvla-integration-tests/pom.xml        -->
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
-<!-- Core library — container lifecycle, networking, wait strategies -->
+<!-- Core Testcontainers — container lifecycle, networking, wait strategies -->
 <dependency>
     <groupId>org.testcontainers</groupId>
     <artifactId>testcontainers</artifactId>
     <scope>test</scope>
 </dependency>
 
-<!-- JUnit 5 integration — @Testcontainers, @Container annotations -->
+<!-- JUnit 5 integration — @Testcontainers annotation support -->
 <dependency>
     <groupId>org.testcontainers</groupId>
     <artifactId>junit-jupiter</artifactId>
     <scope>test</scope>
 </dependency>
 
-<!-- ═══════════════════════════════════════════════════════════════════════════ -->
-<!-- Testcontainers modules — one per service                                   -->
-<!-- ═══════════════════════════════════════════════════════════════════════════ -->
-
-<!-- Kafka module — provides KafkaContainer with KRaft or Zookeeper mode -->
+<!-- Kafka module — provides KafkaContainer with Zookeeper/KRaft support -->
 <dependency>
     <groupId>org.testcontainers</groupId>
     <artifactId>kafka</artifactId>
     <scope>test</scope>
 </dependency>
 
-<!-- LocalStack module — AWS service emulation (S3, SQS, SNS, DynamoDB, etc.) -->
-<dependency>
-    <groupId>org.testcontainers</groupId>
-    <artifactId>localstack</artifactId>
-    <scope>test</scope>
-</dependency>
-
 <!--
-    Redis — no dedicated Testcontainers module needed.
-    Use GenericContainer with the redis image (see RedisContainerConfig.java).
+    Redis — no dedicated module needed.
+    Use GenericContainer with redis:5.0.6 image (see RedisContainerConfig.java).
 -->
 
-<!-- ═══════════════════════════════════════════════════════════════════════════ -->
-<!-- Spring Boot Test                                                            -->
-<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!--
+    LocalStack — only if tests need AWS service emulation (currently only IAM).
+    Uncomment if needed:
 
-<!-- Spring Boot Test — @SpringBootTest, @DynamicPropertySource -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-test</artifactId>
-    <scope>test</scope>
-</dependency>
-
-<!-- Spring Kafka Test — embedded broker utilities (optional, if using @EmbeddedKafka fallback) -->
-<dependency>
-    <groupId>org.springframework.kafka</groupId>
-    <artifactId>spring-kafka-test</artifactId>
-    <scope>test</scope>
-</dependency>
-
-<!-- ═══════════════════════════════════════════════════════════════════════════ -->
-<!-- Cucumber                                                                    -->
-<!-- ═══════════════════════════════════════════════════════════════════════════ -->
-
-<!-- Cucumber BOM — add to <dependencyManagement>:
     <dependency>
-        <groupId>io.cucumber</groupId>
-        <artifactId>cucumber-bom</artifactId>
-        <version>7.18.0</version>
-        <type>pom</type>
-        <scope>import</scope>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>localstack</artifactId>
+        <scope>test</scope>
     </dependency>
 -->
 
-<!-- Cucumber Java — step definition annotations (@Given, @When, @Then) -->
-<dependency>
-    <groupId>io.cucumber</groupId>
-    <artifactId>cucumber-java</artifactId>
-    <scope>test</scope>
-</dependency>
-
-<!-- Cucumber Spring — injects Spring beans into step definitions -->
-<dependency>
-    <groupId>io.cucumber</groupId>
-    <artifactId>cucumber-spring</artifactId>
-    <scope>test</scope>
-</dependency>
-
-<!-- Cucumber JUnit Platform Engine — runs Cucumber via JUnit 5 (@Suite) -->
-<dependency>
-    <groupId>io.cucumber</groupId>
-    <artifactId>cucumber-junit-platform-engine</artifactId>
-    <scope>test</scope>
-</dependency>
-
-<!-- JUnit Platform Suite — @Suite, @SelectClasspathResource annotations -->
-<dependency>
-    <groupId>org.junit.platform</groupId>
-    <artifactId>junit-platform-suite</artifactId>
-    <scope>test</scope>
-</dependency>
-
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-<!-- AWS SDK (for LocalStack integration tests)                                 -->
+<!-- ALREADY EXISTS in the FDP project (no changes needed for these)             -->
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-
-<!-- Only needed if tests interact with AWS services via LocalStack -->
-<dependency>
-    <groupId>software.amazon.awssdk</groupId>
-    <artifactId>bom</artifactId>
-    <version>2.25.60</version>
-    <type>pom</type>
-    <scope>import</scope>
-</dependency>
-
-<!-- Example: S3 client for LocalStack tests -->
 <!--
-<dependency>
-    <groupId>software.amazon.awssdk</groupId>
-    <artifactId>s3</artifactId>
-    <scope>test</scope>
-</dependency>
+    These are already in the integration-tests pom.xml:
+    - io.cucumber:cucumber-java (step definitions)
+    - io.cucumber:cucumber-junit (JUnit 4 runner)
+    - io.cucumber:cucumber-spring (Spring DI in steps)
+    - io.cucumber:cucumber-junit-platform-engine (JUnit 5)
+    - org.junit.vintage:junit-vintage-engine (JUnit 4 compat)
+    - org.junit.jupiter:junit-jupiter (JUnit 5)
+    - org.springframework.boot:spring-boot-starter-test (Spring Boot Test)
+    - org.apache.kafka:kafka-streams-test-utils (Kafka Streams testing)
+
+    No changes needed for the above — they already work with Testcontainers.
+-->
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- MAVEN PROFILE CHANGE (cmd-adaptor-dvla-integration-tests/pom.xml)           -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!--
+    Add a new profile for Testcontainers-based integration tests:
+
+    <profile>
+        <id>testcontainers</id>
+        <properties>
+            <skip.containers>true</skip.containers>
+            <skip.aggregators>true</skip.aggregators>
+            <skip.integration.tests>false</skip.integration.tests>
+            <!-- Ports are dynamic — set by @DynamicPropertySource in CucumberSpringConfig -->
+        </properties>
+    </profile>
+
+    Usage: ./mvnw verify -pl cmd-adaptor-dvla-integration-tests -P testcontainers
+    This skips docker-compose-maven-plugin entirely and lets Testcontainers manage infra.
 -->

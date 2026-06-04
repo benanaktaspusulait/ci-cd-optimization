@@ -1,93 +1,57 @@
-package com.example.pilot.integration;
+package uk.gov.ho.dacc.fdp.integration;
 
 import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.utility.DockerImageName;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.sqs.SqsClient;
 
-import static org.testcontainers.containers.localstack.LocalStackContainer.Service.*;
+import static org.testcontainers.containers.localstack.LocalStackContainer.Service.IAM;
 
 /**
- * Testcontainers configuration for LocalStack (AWS service emulation).
+ * Testcontainers configuration for LocalStack.
  *
- * LocalStack emulates AWS services locally — the application talks to it using the
- * real AWS SDK, just pointed at a different endpoint. This means integration tests
- * exercise the actual AWS SDK code paths without needing a real AWS account.
+ * Matches the real FDP docker-compose: localstack/localstack:0.12.18
+ * Currently only IAM is enabled in the real setup (LOCALSTACK_SERVICES=iam).
  *
- * Services enabled in this example:
- * - S3 (object storage)
- * - SQS (message queues)
- * - SNS (pub/sub notifications)
- * - DynamoDB (NoSQL database)
+ * NOTE: The FDP docker-compose uses a very old LocalStack version (0.12.18).
+ * Testcontainers' LocalStackContainer module works best with LocalStack 1.x+.
+ * For the pilot, two options:
+ *   1. Use GenericContainer with the exact old image (0.12.18) — matches prod exactly
+ *   2. Use LocalStackContainer with a newer version — better API, same IAM behaviour
  *
- * How it works:
- * - LocalStackContainer starts a single container exposing all enabled services on one port (4566).
- * - The container provides endpoint override URLs and dummy credentials.
- * - Spring properties (or AWS SDK client config) are pointed at the container endpoint.
- * - Tests use the real SDK — same code as production, different endpoint.
+ * This example shows option 2 (recommended for the pilot) with a note about option 1.
  *
- * Why LocalStack over mocking:
- * - Mocking the SDK hides bugs in serialisation, pagination, error handling, and IAM logic.
- * - LocalStack exercises the real SDK + HTTP stack — catches issues mocking would miss.
- * - Startup is fast (~5 seconds for the services above).
- *
- * Related: ADR-0002, CucumberSpringConfig.java, T3.1, T3.2
+ * Related: ADR-0002, T3.1 (if LocalStack is chosen as the Testcontainers candidate)
  */
 public class LocalStackContainerConfig {
 
+    // Option 2: Use a modern LocalStack version (better Testcontainers integration)
     private static final DockerImageName LOCALSTACK_IMAGE =
             DockerImageName.parse("localstack/localstack:3.5");
 
-    /**
-     * LocalStack container with S3, SQS, SNS, and DynamoDB enabled.
-     * Add more services as needed: KINESIS, LAMBDA, etc.
-     */
     public static final LocalStackContainer LOCALSTACK = new LocalStackContainer(LOCALSTACK_IMAGE)
-            .withServices(S3, SQS, SNS, DYNAMODB)
-            .withEnv("DEFAULT_REGION", "eu-west-2");
+            .withServices(IAM);
 
     static {
         LOCALSTACK.start();
     }
 
-    // ── Helper methods for creating AWS SDK clients pointed at LocalStack ────
-
     /**
-     * Returns AWS credentials for LocalStack (dummy — LocalStack accepts anything).
+     * Returns the LocalStack endpoint URL for AWS SDK client configuration.
      */
-    public static StaticCredentialsProvider localStackCredentials() {
-        return StaticCredentialsProvider.create(
-                AwsBasicCredentials.create(
-                        LOCALSTACK.getAccessKey(),
-                        LOCALSTACK.getSecretKey()
-                )
-        );
+    public static String getEndpoint() {
+        return LOCALSTACK.getEndpoint().toString();
     }
 
-    /**
-     * Example: create an S3 client pointed at LocalStack.
-     * Use this pattern for any AWS service client in tests.
+    /*
+     * Option 1 (exact version match with production):
+     * If the team requires exact version parity, use GenericContainer instead:
+     *
+     *   private static final GenericContainer<?> LOCALSTACK = new GenericContainer<>(
+     *       DockerImageName.parse("localstack/localstack:0.12.18"))
+     *       .withExposedPorts(4566)
+     *       .withEnv("LOCALSTACK_SERVICES", "iam")
+     *       .withEnv("LOCALSTACK_DEBUG", "1")
+     *       .waitingFor(Wait.forHttp("/health").forStatusCode(200));
+     *
+     * Then access via: "http://" + LOCALSTACK.getHost() + ":" + LOCALSTACK.getMappedPort(4566)
      */
-    public static S3Client s3Client() {
-        return S3Client.builder()
-                .endpointOverride(LOCALSTACK.getEndpointOverride(S3))
-                .region(Region.EU_WEST_2)
-                .credentialsProvider(localStackCredentials())
-                .forcePathStyle(true)   // Required for LocalStack S3
-                .build();
-    }
-
-    /**
-     * Example: create an SQS client pointed at LocalStack.
-     */
-    public static SqsClient sqsClient() {
-        return SqsClient.builder()
-                .endpointOverride(LOCALSTACK.getEndpointOverride(SQS))
-                .region(Region.EU_WEST_2)
-                .credentialsProvider(localStackCredentials())
-                .build();
-    }
 }

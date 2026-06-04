@@ -1,35 +1,48 @@
-package com.example.pilot.integration;
+package uk.gov.ho.dacc.fdp.integration;
 
-import org.junit.platform.suite.api.ConfigurationParameter;
-import org.junit.platform.suite.api.IncludeEngines;
-import org.junit.platform.suite.api.SelectClasspathResource;
-import org.junit.platform.suite.api.Suite;
-
-import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
-import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
 
 /**
  * Entry point for Cucumber integration tests running with Testcontainers.
  *
- * This class:
- * - Uses JUnit 5 Platform Suite to discover Cucumber features.
- * - Points Cucumber at the glue package where step definitions + Spring config live.
- * - Triggers Spring Boot test context (via CucumberSpringConfig) which starts Testcontainers.
+ * NOTE: The existing FDP project uses cucumber-junit (JUnit 4 @RunWith style).
+ * This is maintained here for compatibility with the existing test infrastructure.
+ * Migration to JUnit 5 Platform Suite (@Suite) is a separate, optional step.
  *
- * How it works:
- * 1. JUnit 5 picks up this @Suite class.
- * 2. Cucumber engine scans "features/" on the classpath for .feature files.
- * 3. Step definitions in the glue package are instantiated via Spring.
- * 4. CucumberSpringConfig starts Testcontainers before the first step runs.
- * 5. Each scenario gets an isolated, deterministic environment.
+ * How to run:
+ *   ./mvnw verify -pl cmd-adaptor-dvla-integration-tests -P testcontainers
  *
- * Related: ADR-0002, Story 3, CucumberSpringConfig.java
+ * What happens:
+ * 1. Maven Failsafe picks up this class (matches *E2ETest / *IT pattern)
+ * 2. @RunWith(Cucumber.class) launches the Cucumber engine
+ * 3. Cucumber scans 'features' on the classpath for .feature files
+ * 4. Step definitions in 'uk.gov.ho.dacc.fdp.integration' are loaded via Spring
+ * 5. CucumberSpringConfig starts Testcontainers (Kafka, Redis, SchemaRegistry)
+ * 6. @DynamicPropertySource injects dynamic ports into Spring properties
+ * 7. Tests run against isolated, deterministic containers
+ * 8. Containers are cleaned up on JVM exit (Testcontainers Ryuk)
+ *
+ * Differences from existing RunCucumberIntegrationTest:
+ * - No docker-compose-maven-plugin needed (skip.containers=true in profile)
+ * - No pre-integration-test wait container
+ * - No fixed ports (9092, 8081, 6379) — all dynamic
+ * - Same Cucumber features, same step definitions, different infrastructure
+ *
+ * Related: ADR-0002, CucumberSpringConfig.java, Story 3
  */
-@Suite
-@IncludeEngines("cucumber")
-@SelectClasspathResource("features")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example.pilot.integration")
-@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty, json:target/cucumber-report.json")
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features = "classpath:features",
+        glue = "uk.gov.ho.dacc.fdp.integration",
+        plugin = {
+                "pretty",
+                "json:target/cucumber-report.json",
+                "junit:target/cucumber-junit-report.xml"
+        },
+        tags = "not @snapshot"  // Same exclusion as ci-cmd profile
+)
 public class TestcontainersBaseIT {
-    // No body — configuration only. Cucumber discovers features and steps via annotations above.
+    // No body — Cucumber discovers features and steps via annotations above.
 }

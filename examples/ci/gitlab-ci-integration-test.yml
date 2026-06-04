@@ -1,45 +1,51 @@
-# GitLab CI integration test stage — Testcontainers mode
+# GitLab CI integration test stage — Testcontainers mode for FDP
 #
-# This snippet shows how to run Spring Boot + Cucumber + Testcontainers integration tests
-# in GitLab CI using Docker-in-Docker (DinD).
+# This replaces the docker-compose-maven-plugin approach in CI.
+# Instead of Maven starting docker-compose, Testcontainers manages infrastructure
+# programmatically from within the test JVM.
+#
+# Current CI approach (docker-compose-maven-plugin):
+#   1. Maven pre-integration-test: docker-compose up (zookeeper, kafka, redis, schema-registry)
+#   2. Wait container checks health
+#   3. Aggregators start
+#   4. Command adaptor builds + starts
+#   5. Cucumber tests run (mvn verify -P ci-cmd)
+#   6. Maven post-integration-test: docker-compose down
+#
+# Proposed CI approach (Testcontainers):
+#   1. Maven verify -P testcontainers (docker-compose-maven-plugin skipped)
+#   2. Testcontainers starts kafka + redis + schema-registry inside test JVM
+#   3. @DynamicPropertySource wires dynamic ports
+#   4. Cucumber tests run (same features, same steps)
+#   5. Containers auto-cleaned by Ryuk
 #
 # Prerequisites:
-#   - Runner tagged 'docker-privileged' (or equivalent) — see ADR-0005
-#   - Docker-in-Docker service enabled
-#   - Testcontainers configured to use the DinD daemon (DOCKER_HOST)
-#
-# How Testcontainers finds Docker in CI:
-#   - DOCKER_HOST=tcp://docker:2375 tells Testcontainers where the daemon is.
-#   - TESTCONTAINERS_RYUK_DISABLED=true — Ryuk cannot connect in some DinD setups.
-#   - TESTCONTAINERS_CHECKS_DISABLE=true — skip pre-flight checks that may fail in DinD.
+#   - Runner with Docker access (DinD or socket mount) — see ADR-0005
+#   - quay.io/ukhomeofficedigital/ileap-java17-mvn:1.3 (existing FDP CI image)
 #
 # Reference: ADR-0002, ADR-0005, Story 3, T3.2
 
 # ─── Integration test with Testcontainers ────────────────────────────────────
 integration-test-testcontainers:
   stage: integration-test
-  image: eclipse-temurin:17-jdk
+  image: quay.io/ukhomeofficedigital/ileap-java17-mvn:1.3
   tags:
-    - docker-privileged   # TODO: confirm runner tag with platform/ETO (ADR-0005)
+    - docker-privileged   # TODO: confirm with platform/ETO (ADR-0005)
   services:
     - name: docker:24-dind
       alias: docker
-      command: ["--tls=false"]   # DinD without TLS for simplicity in test environments
+      command: ["--tls=false"]
   variables:
-    # Tell Testcontainers where the Docker daemon is.
     DOCKER_HOST: "tcp://docker:2375"
     DOCKER_TLS_CERTDIR: ""
-    # Testcontainers CI-specific settings.
     TESTCONTAINERS_RYUK_DISABLED: "true"
     TESTCONTAINERS_CHECKS_DISABLE: "true"
-    # Maven settings.
     MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   cache:
     key: "$CI_COMMIT_REF_SLUG-maven"
     paths:
       - .m2/repository
   before_script:
-    # Verify Docker connectivity before running tests.
     - |
       echo "Waiting for Docker daemon..."
       for i in $(seq 1 30); do
@@ -49,56 +55,56 @@ integration-test-testcontainers:
     - docker info
   script:
     - ITEST_START=$(date +%s)
-    # Run only integration tests (Failsafe plugin, *IT.java pattern).
-    # Cucumber features are picked up via TestcontainersBaseIT.java.
-    - ./mvnw -B verify -Dskip.unit.tests=true -Dspring.profiles.active=integration-test
+    # Run integration tests with Testcontainers profile (skips docker-compose-maven-plugin)
+    - ./mvnw -B verify -pl cmd-adaptor-dvla-integration-tests -P testcontainers
     - ITEST_END=$(date +%s)
-    - echo "Integration test duration $(( ITEST_END - ITEST_START ))s" | tee itest-metrics.txt
+    - echo "Integration test duration $(( ITEST_END - ITEST_START ))s" | tee itest-testcontainers-metrics.txt
   artifacts:
     reports:
-      junit: target/failsafe-reports/TEST-*.xml
+      junit: cmd-adaptor-dvla-integration-tests/target/failsafe-reports/TEST-*.xml
     paths:
-      - itest-metrics.txt
-      - target/cucumber-report.json
+      - itest-testcontainers-metrics.txt
+      - cmd-adaptor-dvla-integration-tests/target/cucumber-report.json
     expire_in: 7 days
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH == "develop"'
 
 # ─── Integration test with Docker Compose (current/fallback) ─────────────────
-# Keep this job as the fallback until T3.2 confirms Testcontainers works in CI.
-# Once confirmed, this job can be removed or kept for E2E-style testing.
+# Kept as fallback until T3.2 confirms Testcontainers works reliably in CI.
+# This mirrors the existing ci-cmd profile.
 integration-test-compose:
   stage: integration-test
-  image: eclipse-temurin:17-jdk
+  image: quay.io/ukhomeofficedigital/ileap-java17-mvn:1.3
   services:
     - name: docker:24-dind
       alias: docker
+      command: ["--tls=false"]
   variables:
     DOCKER_HOST: "tcp://docker:2375"
     DOCKER_TLS_CERTDIR: ""
     MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+    FDP_APP_KAFKA_TOPIC_SUFFIX: "0"
+    ADAPTOR_NAME: "dvla"
+    SPRING_PROFILES_ACTIVE: "docker"
   cache:
     key: "$CI_COMMIT_REF_SLUG-maven"
     paths:
       - .m2/repository
   before_script:
     - docker info
-    - docker compose -f docker-compose.yml up -d --wait
   script:
     - ITEST_START=$(date +%s)
-    - ./mvnw -B verify -Dskip.unit.tests=true
+    # Existing approach: docker-compose-maven-plugin handles compose up/down
+    - ./mvnw -B verify -pl cmd-adaptor-dvla-integration-tests -P ci-cmd
     - ITEST_END=$(date +%s)
     - echo "Integration test (compose) duration $(( ITEST_END - ITEST_START ))s" | tee itest-compose-metrics.txt
-  after_script:
-    - docker compose -f docker-compose.yml down -v
   artifacts:
     reports:
-      junit: target/failsafe-reports/TEST-*.xml
+      junit: cmd-adaptor-dvla-integration-tests/target/failsafe-reports/TEST-*.xml
     paths:
       - itest-compose-metrics.txt
     expire_in: 7 days
   rules:
-    # Run Compose variant only on develop until Testcontainers is validated.
     - if: '$CI_COMMIT_BRANCH == "develop"'
-  when: manual   # Manual trigger — used for comparison (T3.3), not every pipeline
+  when: manual   # Manual trigger — run for T3.3 comparison

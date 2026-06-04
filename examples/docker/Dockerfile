@@ -1,93 +1,103 @@
-# syntax=docker/dockerfile:1
+# Optimised Dockerfile for FDP Command Adaptor (Spring Boot / Maven)
 #
-# Optimised multi-stage Dockerfile for a Spring Boot / Maven application.
-# Reference: ADR-0004, Story 2, docs/stories/tech-notes.md
+# CURRENT STATE (from live repo):
+#   - Single stage: amazoncorretto:17
+#   - yum install + update in one RUN
+#   - Copies pre-built JAR + OpenTelemetry agent
+#   - No layer separation for dependencies
+#   - Includes envconsul (HashiCorp Vault integration)
+#   - Runs as non-root (fdpuser) ✓
 #
-# Structure:
-#   Stage 1 (deps)    — resolve Maven dependencies (cached separately from source)
-#   Stage 2 (build)   — compile the application
-#   Stage 3 (runtime) — minimal JRE-only image for production
+# OPTIMISED VERSION (below):
+#   - Multi-stage: separate dependency resolution from build from runtime
+#   - BuildKit cache mounts for Maven local repo
+#   - Smaller runtime image (corretto:17-alpine or corretto:17 slim)
+#   - Dependencies cached independently of source changes
+#   - OpenTelemetry agent downloaded once, cached in its own layer
+#   - Envconsul stays (required for Vault secret injection at runtime)
 #
-# Key optimisations:
-#   1. Dependency metadata (pom.xml) is copied BEFORE source code.
-#      → Source changes don't invalidate the dependency layer.
-#   2. BuildKit cache mount persists the Maven local repo across builds.
-#      → Local rebuilds skip dependency downloads entirely.
-#   3. Runtime stage uses JRE-only image — no JDK, no Maven, no source.
-#      → Smaller image (~180 MB vs ~450 MB), reduced attack surface.
-#   4. Non-root user in runtime stage (SECURITY.md compliance).
+# Reference: ADR-0004, Story 2, T2.3
 #
-# Usage:
-#   Local (with cache):
-#     DOCKER_BUILDKIT=1 docker build -t my-app .
-#
-#   CI (without remote cache — until platform/ETO provisions it):
-#     docker buildx build --tag $REGISTRY_IMAGE:$CI_COMMIT_SHA --push .
-#
-#   CI (with remote cache — post-pilot):
-#     docker buildx build \
-#       --cache-from=type=registry,ref=$CACHE_IMAGE:main \
-#       --cache-from=type=registry,ref=$CACHE_IMAGE:$CI_COMMIT_REF_SLUG \
-#       --cache-to=type=registry,ref=$CACHE_IMAGE:$CI_COMMIT_REF_SLUG,mode=max \
-#       --tag $REGISTRY_IMAGE:$CI_COMMIT_SHA --push .
-
 # ══════════════════════════════════════════════════════════════════════════════
 # Stage 1: Resolve dependencies
 # ══════════════════════════════════════════════════════════════════════════════
-# Only pom.xml and Maven wrapper are copied here. This layer ONLY rebuilds
-# when dependency metadata changes — not when you edit a .java file.
-FROM eclipse-temurin:17-jdk-jammy AS deps
+FROM amazoncorretto:17 AS deps
 
 WORKDIR /app
 
-# Copy dependency metadata only.
+# Copy only dependency metadata — this layer rebuilds ONLY when pom.xml changes.
 COPY pom.xml ./
+COPY cmd-adaptor-dvla/pom.xml cmd-adaptor-dvla/
+COPY cmd-adaptor-dvla-common/pom.xml cmd-adaptor-dvla-common/
+COPY cmd-adaptor-dvla-test-common/pom.xml cmd-adaptor-dvla-test-common/
+COPY cmd-adaptor-dvla-integration-tests/pom.xml cmd-adaptor-dvla-integration-tests/
+
+# Maven wrapper
 COPY .mvn .mvn
 COPY mvnw ./
 RUN chmod +x mvnw
 
-# Resolve all dependencies (download to local repo).
-# --mount=type=cache: persists /root/.m2 across builds (local only; lost in CI without remote cache).
-# -B: batch mode (no interactive prompts, cleaner logs).
-# dependency:go-offline: downloads everything without compiling.
+# Resolve all dependencies. Cache mount keeps .m2 across builds.
 RUN --mount=type=cache,target=/root/.m2/repository \
-    ./mvnw -B dependency:go-offline -DskipTests
+    ./mvnw -B dependency:go-offline -pl cmd-adaptor-dvla -am -DskipTests
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Stage 2: Compile the application
+# Stage 2: Build the application
 # ══════════════════════════════════════════════════════════════════════════════
-# Source code is copied here. This layer rebuilds on source changes,
-# but dependencies are already cached from Stage 1.
 FROM deps AS build
 
 # Copy source code (only now — after deps are resolved).
-COPY src ./src
+COPY cmd-adaptor-dvla/src cmd-adaptor-dvla/src
+COPY cmd-adaptor-dvla-common/src cmd-adaptor-dvla-common/src
 
-# Build the application JAR. Tests are skipped here — they run in a separate CI stage.
+# Build the application JAR. Tests skipped — they run in a separate CI stage.
 RUN --mount=type=cache,target=/root/.m2/repository \
-    ./mvnw -B package -DskipTests
+    ./mvnw -B package -pl cmd-adaptor-dvla -am -DskipTests \
+    && cp cmd-adaptor-dvla/target/cmd-adaptor-dvla-exec.jar /app/app.jar
+
+# Download OpenTelemetry agent (pinned version from fdp-bom).
+RUN --mount=type=cache,target=/root/.m2/repository \
+    ./mvnw -B dependency:copy \
+      -Dartifact=io.opentelemetry.javaagent:opentelemetry-javaagent:1.30.0:jar \
+      -DoutputDirectory=/app/agent
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Stage 3: Runtime image
 # ══════════════════════════════════════════════════════════════════════════════
-# JRE-only — no JDK, no Maven, no source code, no build artefacts.
-# This is what ships to production.
-FROM eclipse-temurin:17-jre-jammy AS runtime
+FROM amazoncorretto:17 AS runtime
 
-WORKDIR /app
+# Install envconsul (HashiCorp Vault integration — required for secret injection)
+RUN yum install -y shadow-utils unzip \
+    && curl --silent --output /tmp/envconsul.zip \
+       https://releases.hashicorp.com/envconsul/0.13.1/envconsul_0.13.1_linux_amd64.zip \
+    && unzip /tmp/envconsul.zip -d /usr/local/bin/ \
+    && rm -f /tmp/envconsul.zip \
+    && chmod 0755 /usr/local/bin/envconsul \
+    && yum clean all && rm -rf /var/cache/yum
 
-# Copy only the built JAR from the build stage.
-COPY --from=build /app/target/*.jar app.jar
+# Create non-root user
+RUN adduser -u 1000 -U -m -s /bin/bash fdpuser
 
-# Run as non-root (SECURITY.md: "Container must run as non-root USER").
-RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
-USER appuser
+WORKDIR /home/fdpuser
 
-# Expose the application port (adjust to match your app's server.port).
-EXPOSE 8080
+# Copy built JAR and OTel agent from build stage
+COPY --from=build --chown=fdpuser:fdpuser /app/app.jar ./cmd-adaptor-dvla-exec.jar
+COPY --from=build --chown=fdpuser:fdpuser /app/agent/opentelemetry-javaagent-1.30.0.jar ./opentelemetry-javaagent.jar
 
-# Health check for orchestrators (Docker, Kubernetes).
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD ["sh", "-c", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+USER fdpuser
 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+EXPOSE 7112 8077
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD ["sh", "-c", "curl -sf http://localhost:7112/actuator/health || exit 1"]
+
+CMD ["java", \
+     "-javaagent:/home/fdpuser/opentelemetry-javaagent.jar", \
+     "-Dcom.sun.management.jmxremote", \
+     "-Dcom.sun.management.jmxremote.port=9012", \
+     "-Dcom.sun.management.jmxremote.rmi.port=9012", \
+     "-Dcom.sun.management.jmxremote.authenticate=false", \
+     "-Dcom.sun.management.jmxremote.local.only=false", \
+     "-Dcom.sun.management.jmxremote.ssl=false", \
+     "-Djava.rmi.server.hostname=localhost", \
+     "-jar", "/home/fdpuser/cmd-adaptor-dvla-exec.jar"]

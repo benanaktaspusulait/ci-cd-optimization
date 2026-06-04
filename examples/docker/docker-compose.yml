@@ -1,77 +1,72 @@
-# docker-compose.yml — Base example for local development & integration tests
+# docker-compose.yml — FDP Integration Test Infrastructure
 #
-# This is a REFERENCE docker-compose showing all typical FDP dependencies.
-# In the pilot, Story 4 will map which of these are truly needed for CI vs local-only.
+# Based on the real FDP docker-compose (RepoSync-controlled).
+# This shows the INFRASTRUCTURE services only (not the FDP application services).
+# Application services (aggregate-*, command-adaptor) are excluded — they would
+# be built from source or pulled from the internal registry.
 #
-# Services included:
-#   - Redis (cache / session store)
-#   - Zookeeper (Kafka dependency)
-#   - Kafka (event streaming)
-#   - Schema Registry (Avro/JSON schema management for Kafka)
-#   - LocalStack (AWS service emulation: S3, SQS, SNS, DynamoDB, etc.)
+# Story 4 (T4.1–T4.2) will classify which of these are:
+#   - Required for CI integration tests
+#   - Useful for local debugging only
+#   - Candidates for Testcontainers replacement (Story 3)
 #
-# Usage:
-#   Start all:    docker compose up -d --wait
-#   Start one:    docker compose up redis -d
-#   Stop + clean: docker compose down -v
-#   Logs:         docker compose logs -f kafka
-#
-# Reference: Story 4, ADR-0003
+# Image versions pinned to match production MSK (3.5.1 = cp-kafka 7.5.5).
+# Reference: ADR-0003, Story 4
 
 services:
 
-  # ── Redis ──────────────────────────────────────────────────────────────────
-  redis:
-    image: redis:7.2-alpine
-    ports:
-      - "6379:6379"
-    command: ["redis-server", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru"]
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
-  # ── Zookeeper (required by Kafka) ─────────────────────────────────────────
+  # ── Zookeeper (Kafka dependency) ─────────────────────────────────────────
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.6.1
-    ports:
-      - "2181:2181"
+    # PM-71719: MSK deployed 3.5.1 equates to cp-kafka 7.5.5
+    image: confluentinc/cp-zookeeper:7.5.5
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     healthcheck:
-      test: ["CMD-SHELL", "echo ruok | nc localhost 2181 | grep imok"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD", "nc", "-vz", "localhost", "2181"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "2181:2181"
+    platform: linux/amd64
+    restart: always
 
-  # ── Kafka ──────────────────────────────────────────────────────────────────
+  # ── Kafka ────────────────────────────────────────────────────────────────
   kafka:
-    image: confluentinc/cp-kafka:7.6.1
+    # PM-71719: MSK deployed 3.5.1 equates to cp-kafka 7.5.5
+    image: confluentinc/cp-kafka:7.5.5
+    container_name: kafka
+    hostname: kafka
     depends_on:
       zookeeper:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     ports:
       - "9092:9092"
-      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-    healthcheck:
-      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
-      interval: 10s
-      timeout: 10s
-      retries: 10
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    platform: linux/amd64
+    restart: always
 
-  # ── Schema Registry ────────────────────────────────────────────────────────
+  # ── Schema Registry ──────────────────────────────────────────────────────
   schema-registry:
-    image: confluentinc/cp-schema-registry:7.6.1
+    # PM-71719: MSK deployed 3.5.1 equates to cp-kafka 7.5.5
+    image: confluentinc/cp-schema-registry:7.5.5
+    container_name: schema-registry
     depends_on:
       kafka:
         condition: service_healthy
@@ -79,27 +74,81 @@ services:
       - "8081:8081"
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:29092
-      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+      SCHEMA_REGISTRY_KAFKASTORE_SSL_ENABLED_PROTOCOLS: PLAINTEXT
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8081/subjects || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD", "curl", "--fail", "http://localhost:8081/subjects"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    platform: linux/amd64
+    restart: always
 
-  # ── LocalStack (AWS emulation) ─────────────────────────────────────────────
-  localstack:
-    image: localstack/localstack:3.5
-    ports:
-      - "4566:4566"         # All services on one port
-    environment:
-      SERVICES: s3,sqs,sns,dynamodb
-      DEFAULT_REGION: eu-west-2
-      EAGER_SERVICE_LOADING: 1
+  # ── Redis ────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:5.0.6
+    container_name: redis
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:4566/_localstack/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"   # Required for Lambda emulation (optional)
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "6379:6379"
+    platform: linux/amd64
+    restart: always
+
+  # ── LocalStack (AWS IAM emulation) ──────────────────────────────────────
+  localstack:
+    image: localstack/localstack:0.12.18
+    container_name: localstack
+    environment:
+      LOCALSTACK_DEBUG: 1
+      LOCALSTACK_SERVICES: "iam"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:4566/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "127.0.0.1:4566:4566"
+    platform: linux/amd64
+    restart: always
+
+  # ── Jaeger (OpenTelemetry tracing) ──────────────────────────────────────
+  # Used for local trace inspection. Likely NOT needed for CI integration tests.
+  jaeger:
+    image: jaegertracing/all-in-one:1.65.0
+    container_name: jaeger
+    hostname: jaeger
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 14269"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
+      - "16686:16686"   # Jaeger UI
+    platform: linux/amd64
+    restart: always
+
+  # ── Kafdrop (Kafka UI) ──────────────────────────────────────────────────
+  # Local debugging only — NOT needed for CI integration tests.
+  kafdrop:
+    image: obsidiandynamics/kafdrop:3.30.0
+    container_name: kafdrop
+    depends_on:
+      kafka:
+        condition: service_healthy
+      schema-registry:
+        condition: service_healthy
+    environment:
+      CMD_ARGS: "--message.format=AVRO --schemaregistry.connect=http://schema-registry:8081 --topic.createEnabled=false --topic.deleteEnabled=false"
+      KAFKA_BROKERCONNECT: kafka:29092
+    ports:
+      - "9000:9000"
+    platform: linux/amd64
+    restart: always

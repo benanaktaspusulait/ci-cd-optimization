@@ -1,4 +1,4 @@
-package com.example.pilot.integration;
+package uk.gov.ho.dacc.fdp.integration;
 
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -6,41 +6,45 @@ import org.testcontainers.utility.DockerImageName;
 /**
  * Testcontainers configuration for Redis.
  *
- * This is the simplest possible Testcontainers example — a single container,
- * one exposed port, no special configuration needed.
+ * Matches the real FDP docker-compose: redis:5.0.6
+ * Used by: aggregate-party, aggregate-object, aggregate-location, aggregate-event,
+ *          aggregate-service, aggregate-matching (FDP_APP_REDIS_NODES=redis:6379)
  *
- * Why Redis as a first pilot candidate (T3.1):
- * - Already used by integration tests (existing docker-compose service).
- * - Simple — no multi-node setup, no authentication in test mode.
- * - Fast to start (~2 seconds).
- * - Provides immediate value: if this works, the pattern is proven.
+ * Why Redis is the best first Testcontainers candidate (T3.1):
+ * - Simplest dependency — single container, no multi-node setup
+ * - Already used by multiple FDP services
+ * - Fast to start (~2 seconds)
+ * - No authentication in test mode
+ * - Proves the Testcontainers pattern with minimal risk
  *
- * How it works:
- * - The container is declared static — it starts once and is shared across all tests.
- * - Testcontainers assigns a random host port mapped to container port 6379.
- * - CucumberSpringConfig reads the dynamic port and injects it into Spring properties.
- * - The application connects to Redis using the injected host:port — no hardcoded ports.
+ * FDP-specific notes:
+ * - The FDP apps connect to Redis via FDP_APP_REDIS_NODES environment variable
+ * - In Testcontainers mode, Spring @DynamicPropertySource injects the dynamic host:port
+ * - No change to application code needed — only test configuration
  *
- * Reuse policy (ADR-0002):
- * - Local: reuse enabled via .testcontainers.properties → faster feedback loops.
- * - CI: reuse disabled (default) → clean, deterministic environment per pipeline run.
- *
- * Related: ADR-0002, CucumberSpringConfig.java, T3.2
+ * Related: ADR-0002, CucumberSpringConfig.java, T3.1, T3.2
  */
 public class RedisContainerConfig {
 
-    // Pin the version — never use :latest in tests. This ensures deterministic behaviour.
-    private static final DockerImageName REDIS_IMAGE = DockerImageName.parse("redis:7.2-alpine");
+    // Pin to the same version as production docker-compose
+    private static final DockerImageName REDIS_IMAGE = DockerImageName.parse("redis:5.0.6");
 
     /**
      * Shared Redis container — started once, reused across all scenarios.
      * Testcontainers Ryuk will clean it up when the JVM exits.
      */
     public static final GenericContainer<?> REDIS = new GenericContainer<>(REDIS_IMAGE)
-            .withExposedPorts(6379)
-            .withCommand("redis-server", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru");
+            .withExposedPorts(6379);
 
     static {
-        REDIS.start();  // Start eagerly so it's ready before Spring context initialises.
+        REDIS.start();
+    }
+
+    /**
+     * Returns the connection string in the format FDP apps expect (host:port).
+     * Use this for FDP_APP_REDIS_NODES or spring.data.redis.host/port injection.
+     */
+    public static String getRedisNodes() {
+        return REDIS.getHost() + ":" + REDIS.getMappedPort(6379);
     }
 }

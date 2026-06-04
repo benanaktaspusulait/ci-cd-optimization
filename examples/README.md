@@ -1,41 +1,60 @@
 # Examples
 
-Reference code samples for the pilot. These are **not production code** — they are annotated examples to illustrate the patterns proposed in the ADRs and stories.
+Reference code samples based on the **real FDP project structure**. These match the actual canlı ortam (fdp-cmd-adaptor-dvla, docker-compose via RepoSync, Maven multi-module).
 
 Copy, adapt, and rename as needed when applying to the pilot repository.
+
+## Real project context
+
+| Property | Value |
+|----------|-------|
+| Group ID | `uk.gov.ho.dacc.fdp` |
+| Artifact | `fdp-cmd-adaptor-dvla` |
+| Java | 17 (Amazon Corretto) |
+| Build | Maven multi-module (parent + 4 modules) |
+| Kafka | Confluent cp-kafka 7.5.5 (matches MSK 3.5.1 prod) |
+| Schema Registry | cp-schema-registry 7.5.5 |
+| Redis | 5.0.6 |
+| LocalStack | 0.12.18 (IAM only) |
+| Tracing | OpenTelemetry + Jaeger |
+| Registry | docker.digital.homeoffice.gov.uk |
+| CI runner image | quay.io/ukhomeofficedigital/ileap-java17-mvn:1.3 |
+| Test framework | Cucumber + JUnit 4 (vintage) + JUnit 5 Platform |
+| Integration test orchestration | docker-compose-maven-plugin (currently) |
 
 ## Contents
 
 ### Testcontainers + Cucumber + Spring Boot
 
-| File | What it shows | Related |
-|------|---------------|---------|
-| [pom-dependencies.xml](testcontainers/pom-dependencies.xml) | All Maven dependencies needed (Testcontainers, Cucumber, Spring Boot Test, AWS SDK) | T3.2 |
-| [TestcontainersBaseIT.java](testcontainers/TestcontainersBaseIT.java) | JUnit 5 + Cucumber entry point that triggers the full integration test suite | ADR-0002, Story 3 |
-| [CucumberSpringConfig.java](testcontainers/CucumberSpringConfig.java) | The glue: Cucumber ↔ Spring Boot ↔ Testcontainers, dynamic property injection | ADR-0002, T3.2 |
-| [RedisContainerConfig.java](testcontainers/RedisContainerConfig.java) | Simplest example: single Redis container with GenericContainer | ADR-0002, T3.2 |
-| [KafkaContainerConfig.java](testcontainers/KafkaContainerConfig.java) | Complex example: Zookeeper + Kafka + Schema Registry with shared network | ADR-0002, T3.2 |
-| [LocalStackContainerConfig.java](testcontainers/LocalStackContainerConfig.java) | AWS emulation: S3, SQS, SNS, DynamoDB via LocalStack + SDK client helpers | ADR-0002, T3.2 |
+| File | What it shows |
+|------|---------------|
+| [pom-dependencies.xml](testcontainers/pom-dependencies.xml) | What to add to the existing pom.xml (minimal — most deps already exist) |
+| [TestcontainersBaseIT.java](testcontainers/TestcontainersBaseIT.java) | Cucumber runner (JUnit 4 @RunWith style, matching existing FDP pattern) |
+| [CucumberSpringConfig.java](testcontainers/CucumberSpringConfig.java) | Spring Boot ↔ Testcontainers glue with FDP-specific properties (fdp.kafka.broker, fdp.app.redis.nodes, etc.) |
+| [RedisContainerConfig.java](testcontainers/RedisContainerConfig.java) | Redis 5.0.6 container (simplest candidate for T3.1) |
+| [KafkaContainerConfig.java](testcontainers/KafkaContainerConfig.java) | Zookeeper + Kafka + Schema Registry (cp-7.5.5, matching production MSK) |
+| [LocalStackContainerConfig.java](testcontainers/LocalStackContainerConfig.java) | LocalStack (IAM) — if chosen as candidate |
 
 ### Docker (build optimisation)
 
-| File | What it shows | Related |
-|------|---------------|---------|
-| [Dockerfile](docker/Dockerfile) | Optimised multi-stage build with BuildKit cache mounts (heavily annotated) | ADR-0004, Story 2 |
-| [.dockerignore](docker/.dockerignore) | Lean build context for Java/Maven (excludes IDE, docs, tests, secrets) | T2.2 |
-| [docker-compose.yml](docker/docker-compose.yml) | Base Compose file with all typical FDP services (Redis, Zookeeper, Kafka, Schema Registry, LocalStack) | Story 4, ADR-0003 |
+| File | What it shows |
+|------|---------------|
+| [Dockerfile](docker/Dockerfile) | Optimised multi-stage build (current single-stage amazoncorretto:17 → 3 stages with cache mounts) |
+| [docker-compose.yml](docker/docker-compose.yml) | Infrastructure services only (mirrors real RepoSync-controlled compose, without FDP app services) |
+| [.dockerignore](docker/.dockerignore) | Lean build context for Java/Maven multi-module project |
 
 ### CI/CD (GitLab)
 
-| File | What it shows | Related |
-|------|---------------|---------|
-| [gitlab-ci-integration-test.yml](ci/gitlab-ci-integration-test.yml) | Integration test stage: Testcontainers DinD mode + Compose fallback (both jobs) | ADR-0005, T3.2 |
+| File | What it shows |
+|------|---------------|
+| [gitlab-ci-integration-test.yml](ci/gitlab-ci-integration-test.yml) | Two jobs: Testcontainers mode (`-P testcontainers`) + Compose fallback (`-P ci-cmd`) for comparison |
 
-## How to use these examples
+## How to apply
 
-1. **Dependencies first** — add entries from `pom-dependencies.xml` to your `pom.xml`.
-2. **Container configs** — copy `*ContainerConfig.java` files, adjust image versions if needed.
-3. **Spring glue** — copy `CucumberSpringConfig.java`, add/remove `@DynamicPropertySource` blocks for the services you actually use.
-4. **Entry point** — copy `TestcontainersBaseIT.java`, adjust the `GLUE_PROPERTY_NAME` package.
-5. **Run locally** — `./mvnw verify -Dskip.unit.tests=true` should start containers and run Cucumber features.
-6. **Run in CI** — use the `gitlab-ci-integration-test.yml` snippet, confirm runner tag with platform/ETO.
+1. **Add Testcontainers BOM** to parent pom.xml `<dependencyManagement>` (see pom-dependencies.xml)
+2. **Add 3 dependencies** to `cmd-adaptor-dvla-integration-tests/pom.xml` (testcontainers, junit-jupiter, kafka)
+3. **Add `testcontainers` Maven profile** (skips docker-compose-maven-plugin)
+4. **Copy container configs** (RedisContainerConfig, KafkaContainerConfig) to `src/test/java/`
+5. **Copy CucumberSpringConfig** (or merge into existing Spring test config)
+6. **Run locally:** `./mvnw verify -pl cmd-adaptor-dvla-integration-tests -P testcontainers`
+7. **Compare (T3.3):** same tests, Testcontainers vs `-P ci-cmd`, measure timing
