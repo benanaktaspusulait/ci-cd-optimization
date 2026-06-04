@@ -1,503 +1,186 @@
-Evet toprağım, bu `.drone.star` içeriği tabloyu baya netleştirdi. Şimdi çok daha doğru konuşabiliriz.
 
-Kısa cevap: **Evet, Drone kullanıyorsunuz ama klasik `.drone.yml` değil; centrally managed `.drone.star` Starlark pipeline kullanıyorsunuz.** Bu bizim önerilerin bazılarını **daha doğru scope’a çekiyor**.
-
-Drone normalde repo içindeki pipeline config ile çalışıyor; step’ler container içinde koşuyor ve config repo tarafında tutuluyor. Drone’un pipeline config ve Docker/Kubernetes pipeline modelinde step’ler image + commands mantığıyla çalışıyor.  Ama sizde önemli fark şu: bu dosya **RepoSync ile merkezi yönetiliyor**, yani lokal değişiklikler overwrite ediliyor.
-
-***
-
-# En kritik sonuç
-
-Bu dosyaya göre bizim proposal’daki bazı işler **CST local pilot** olabilir, bazıları ise kesinlikle **central RepoSync / platform / ETO** işi.
-
-## En önemli bulgu
-
-Dosyanın başında açıkça yazıyor:
-
-```text
-DO NOT EDIT LOCALLY
-This file is controlled centrally
-any changes made in the command adaptor repository will be overwritten by RepoSync
-```
-
-Bu şu demek:
-
-> `.drone.star` üzerinde pipeline yapısal değişiklikleri lokal repo’da kalıcı olarak yapılamaz.
-
-Yani BuildKit cache, pipeline stage düzeni, Testcontainers için Drone runner ayarları gibi şeyler **lokal repo task’ı değil**, merkezi RepoSync / ETO / platform tarafıyla konuşulması gereken konular.
-
-***
-
-# Mevcut pipeline nasıl çalışıyor?
-
-Gönderdiğin script’e göre CI pipeline şu şekilde çalışıyor.
-
-## 1. Pipeline type: Kubernetes
-
-```python
-'type': 'kubernetes'
-```
-
-Yani Drone Kubernetes runner kullanıyor. Bu önemli çünkü pipeline step’leri Kubernetes üzerinde container/pod mantığıyla çalışıyor.
-
-## 2. DIND service kullanılıyor
-
-CI pipeline içinde:
-
-```python
-response = add_pipeline_service(
-    response,
-    {
-        'name': 'docker',
-        'image': DIND_IMAGE
-    }
-)
-```
-
-Yani Docker işlemleri için `docker` isimli DIND service ayağa kalkıyor.
-
-Birçok step’te de:
-
-```text
-DOCKER_HOST=tcp://docker:2375
-```
-
-kullanılıyor.
-
-Bu şu demek:
-
-> Docker Compose, Docker build ve potansiyel Testcontainers çalışmaları bu DIND service üzerinden konuşuyor.
-
-***
-
-# CI pipeline akışı
-
-Gönderdiğin `ci_pipeline(ctx)` fonksiyonuna göre ana CI akışı kabaca şu:
-
-```text
-CI
-├── RepoSync Version
-├── Retrieve Artifactory Secrets
-├── Wait for Docker
-├── Extract Adaptor Information
-├── Kafka & Redis
-├── Aggregators
-├── mvn clean install
-├── Command Adaptor
-├── Pre-Integration Tests
-├── Integration Tests
-├── Sonar Scan
-├── Scan with Trivy
-└── Slack notifications
-```
-
-Bu çok önemli çünkü bizim “heavy docker-compose setup” dediğimiz şey burada birebir var.
-
-***
-
-# Docker Compose nerede kullanılıyor?
-
-Birçok yerde:
-
-## Kafka & Redis step
-
-```bash
-docker-compose ... run --rm wait4localstack
-WAIT_CHECK="redis_kafka" docker-compose ... up pre-integration-test
-```
-
-## Aggregators step
-
-```bash
-docker-compose ... up -d aggregate-matching aggregate-event aggregate-location aggregate-object aggregate-party aggregate-service
-```
-
-## Command Adaptor step
-
-```bash
-WAIT_CHECK="command_adaptor" docker-compose ... up --build command-adaptor
-```
-
-## Integration Tests step
-
-```bash
-WAIT_CHECK="command_adaptor" docker-compose ... up pre-integration-test
-WAIT_CHECK="aggregators" docker-compose ... up pre-integration-test
-docker-compose ... ps
-docker-compose ... up --exit-code-from integration-tests integration-tests
-./bin/integration-test.sh
-```
-
-Bu bizim önerinin ana gerekçesini güçlendiriyor:
-
-> CI’da full docker-compose based integration test orchestration var.
-
-Yani “Docker zaten var” sorusunun cevabı burada daha net:
-
-```text
-Docker zaten var, ama CI içinde DIND + docker-compose ile ağır bir test orchestration yapısı kuruluyor.
-Öneri Docker kullanmak değil; bu kullanımı daha optimize, ölçülebilir ve gerektiğinde test-driven hale getirmek.
-```
-
-***
-
-# En büyük insight: Testcontainers zaten kısmen düşünülmüş olabilir
-
-`ecr_pipeline` içindeki Maven step’inde şu var:
-
-```python
-'TESTCONTAINERS_RYUK_DISABLED': 'true',
-# WORKAROUND: disabling testcontainers reaper processes not compatible with drone
-# https://java.testcontainers.org/features/configuration/#disabling-ryuk
-```
-
-Bu çok önemli.
-
-Bu şu anlama gelebilir:
-
-1. Projede veya pipeline’da daha önce Testcontainers ihtimali düşünülmüş.
-2. Drone + Testcontainers + Ryuk konusunda compatibility problemi biliniyor.
-3. CI’da Testcontainers çalıştırmak için `RYUK_DISABLED=true` workaround kullanılmış.
-4. Testcontainers feasibility tamamen sıfırdan konu değil; mevcut pipeline’da izleri var.
-
-Ama dikkat: Bu ayar `ecr_pipeline` içindeki `Maven` step’inde var; ana `ci_pipeline` içindeki `mvn clean install` step’inde aynı environment yok gibi görünüyor.
-
-Ana CI Maven step’i:
-
-```python
-{
-  'name': 'mvn clean install',
-  'image': MAVEN_JAVA17_IMAGE,
-  'commands': [
-    ...
-    'mvn clean install'
-  ]
-}
-```
-
-Burada `DOCKER_HOST` veya `TESTCONTAINERS_RYUK_DISABLED` görünmüyor.
-
-Dolayısıyla Testcontainers pilot için soru şu olmalı:
-
-```text
-Testcontainers ana CI pipeline’daki Maven/test step’inde mi çalışacak,
-yoksa ayrı bir Drone step içinde DIND access ile mi çalışacak?
-```
-
-***
-
-# Bu bizim backlog’u nasıl değiştirmeli?
-
-Bence README/backlog’a kesinlikle yeni bir story eklenmeli.
-
-## Yeni Story 0 önerisi
-
-```text
-STORY: Assess current Drone/RepoSync pipeline constraints
-```
-
-Bunu en başa koymak lazım. Çünkü `.drone.star` merkezi yönetiliyor ve her şeyin feasibility’sini bu belirliyor.
-
-### Task’lar
-
-```text
-TASK: Review centrally managed .drone.star pipeline structure
-TASK: Identify which pipeline changes are possible locally vs require RepoSync changes
-TASK: Map current CI steps, DIND usage and Docker Compose dependencies
-TASK: Assess Testcontainers feasibility in Drone Kubernetes runner
-TASK: Assess BuildKit/cache feasibility in current Drone/DIND setup
-```
-
-***
-
-# Güncellenmiş stratejik ayrım
-
-## CST-local denenebilir işler
-
-Bunlar hâlâ lokal ilerleyebilir:
-
-```text
-- Baseline measurement
-- Dockerfile review
-- .dockerignore validation
-- Dockerfile layer optimisation
-- Local Docker build timing
-- docker-compose service mapping
-- Identify Testcontainers candidate test
-- Local Testcontainers prototype
-```
-
-## Central / RepoSync / ETO gerektiren işler
-
-Bunlar artık daha net merkezi iş:
-
-```text
-- .drone.star pipeline changes
-- Drone step ordering changes
-- BuildKit remote cache integration
-- DIND image changes
-- Maven step environment changes
-- DOCKER_HOST/Testcontainers config in CI
-- Shared base image adoption across adaptors
-- Reusable Drone pipeline templates
-- RepoSync-controlled docker-compose template changes
-```
-
-***
-
-# BuildKit önerisi nasıl değişiyor?
-
-Önceden genel BuildKit cache önerisi yapmıştık. Şimdi bunu daha kontrollü söylemeliyiz.
-
-Çünkü image publish step’inde şu var:
-
-```bash
-docker build -t ... -f cmd-adaptor-.../Dockerfile ...
-docker push ...
-```
-
-Bu DIND image içinde çalışıyor.
-
-BuildKit kullanmak için muhtemelen şunlar gerekir:
-
-```text
-- DIND image BuildKit/buildx destekli mi?
-- Docker daemon BuildKit enabled mı?
-- Registry cache destekleniyor mu?
-- RepoSync .drone.star değiştirilebilir mi?
-- Security/secrets açısından uygun mu?
-```
-
-Yani BuildKit artık “hemen yapalım” değil:
-
-```text
-Investigate BuildKit feasibility in centrally managed Drone/DIND pipeline.
-```
-
-***
-
-# Testcontainers önerisi nasıl değişiyor?
-
-Testcontainers hâlâ mantıklı ama şu şekilde frame edilmeli:
-
-```text
-Testcontainers pilot should first be local, then CI feasibility should be checked against Drone Kubernetes runner + DIND + Ryuk constraints.
-```
-
-Mevcut pipeline’da `TESTCONTAINERS_RYUK_DISABLED=true` yorumu çok kritik. Bu yüzden README’ye şu not eklenmeli:
-
-```md
-The current Drone pipeline already includes a Testcontainers-related workaround in one Maven step by setting `TESTCONTAINERS_RYUK_DISABLED=true`. Any Testcontainers pilot should explicitly validate how this behaves in the main CI pipeline and whether Docker access via `DOCKER_HOST=tcp://docker:2375` is required.
-```
-
-Ama güvenlik açısından Ryuk disabled konusu da dikkatli ele alınmalı. Çünkü Ryuk container cleanup yapar; disabled olunca cleanup sorumluluğu daha önemli hale gelir.
-
-***
-
-# Docker Compose review daha da önemli hale geldi
-
-Çünkü pipeline içinde Docker Compose ana orchestration yöntemi.
-
-Özellikle şu services incelenmeli:
-
-```text
-Kafka & Redis
-Aggregators
-Command Adaptor
-Pre-Integration Tests
-Integration Tests
-```
-
-Sorular:
-
-```text
-- Hangi docker-compose service gerçekten integration test için required?
-- Aggregators step her test için şart mı?
-- Kafka & Redis ayrı step olarak başlatılmalı mı?
-- Command Adaptor detach step’i neden detach?
-- integration-tests container içinde mvn install tekrar yapıyor mu?
-- mvn clean install ile integration-tests container arasında duplicate iş var mı?
-```
-
-Bu son soru önemli olabilir. Çünkü compose dosyasında integration-tests container:
-
-```yaml
-entrypoint: mvn -Pci-snapshot install
-```
-
-çalıştırıyordu. Drone’da zaten ayrıca:
-
-```bash
-mvn clean install
-```
-
-var.
-
-Yani potansiyel duplicate Maven work olabilir. Bunu baseline’da ölçmek lazım.
-
-***
-
-# MR pipeline insight
-
-`main(ctx)` içinde:
-
-```python
-elif ctx.build.event == 'pull_request':
-    pipelines.append(blank_pipeline('GitLab MR'))
-```
-
-Bu sadece blank pipeline gibi görünüyor. `blank_pipeline` sadece `RepoSync Version` step’i ekliyor.
-
-Bu doğruysa, MR’da full CI çalışmıyor olabilir.
-
-Bu çok büyük bir finding olabilir.
-
-Ama emin olmadan şöyle yazmak lazım:
-
-```text
-The pull_request event appears to create only a blank "GitLab MR" pipeline. This should be confirmed, as it may mean the full CI workflow is mainly branch/push driven rather than MR driven.
-```
-
-Eğer doğruysa, PR feedback loop önerileri farklılaşır.
-
-***
-
-# README’ye eklenmesi gereken yeni bölüm
-
-Bence şunu ekle:
-
-```md
-## Drone / RepoSync Pipeline Considerations
-
-The selected adaptor repositories appear to use a centrally managed `.drone.star` pipeline generated via RepoSync.
-
-This means pipeline-level changes should not be made directly in the adaptor repository because local changes may be overwritten.
-
-The first pilot should therefore separate:
-
-- repository-local changes,
-- centrally managed RepoSync pipeline changes,
-- and wider platform/ETO-owned changes.
-
-Key observations:
-
-- The CI pipeline uses Drone Kubernetes pipelines.
-- A Docker-in-Docker service is used as `docker`.
-- Docker Compose is used heavily for Kafka/Redis, aggregators, command adaptor and integration test orchestration.
-- Docker image publishing is handled in separate ECR/Artifactory pipelines.
-- Some Testcontainers-related configuration already appears in the Maven step of the image publishing pipeline via `TESTCONTAINERS_RYUK_DISABLED=true`.
-- Pull request events appear to create a minimal/blank pipeline and should be confirmed.
-
-Key questions:
-
-- Which changes can be made safely in the adaptor repo?
-- Which changes must be made in the central RepoSync source?
-- Can Testcontainers run in the main CI pipeline using the current DIND setup?
-- Does the DIND image support BuildKit/buildx?
-- Is remote cache possible with the current registry and security model?
-```
-
-***
-
-# README’deki backlog nasıl güncellenmeli?
-
-Şu an 5 story vardı. Bence artık 6 story olmalı.
-
-## Yeni sıra
-
-```text
-Story 0 — Drone/RepoSync Pipeline Assessment
-Story 1 — Baseline Measurement & Candidate Selection
-Story 2 — Dockerfile and Build Optimisation Pilot
-Story 3 — Testcontainers Integration Testing Pilot
-Story 4 — Docker Compose Usage Review
-Story 5 — CST-local vs Platform/ETO Ownership Assessment
-```
-
-## Story 0 task’ları
-
-```text
-TASK: Review centrally managed .drone.star pipeline structure
-TASK: Identify local vs RepoSync-controlled pipeline change boundaries
-TASK: Map CI pipeline steps, DIND usage and Docker Compose commands
-TASK: Assess Testcontainers feasibility in Drone Kubernetes runner
-TASK: Assess BuildKit/cache feasibility in current Drone/DIND setup
-```
-
-***
-
-# Toplantı sonrası Thomas’a söyleyebileceğin şey
-
-Bence şöyle bir mesaj iyi olur:
-
-```text
-I had a closer look at the pipeline structure and it looks like the adaptor pipelines are generated from a centrally managed .drone.star via RepoSync.
-
-That means some of the optimisation ideas can still be validated locally, such as Dockerfile layering, .dockerignore and a local Testcontainers prototype, but pipeline-level changes would likely need RepoSync/platform/ETO visibility.
-
-I’ll update the proposed backlog to add an initial Drone/RepoSync pipeline assessment story before any implementation tickets are created.
-```
-
-Bu çok iyi durur. Çünkü yeni bilgiye göre proposal’ı refine ediyorsun.
-
-***
-
-# Çok önemli düzeltme
-
-Önceki README’de “Drone CI Consideration” ekleyelim demiştik. Artık “consideration” değil, **core constraint**.
-
-Şu cümle iyi:
-
-```text
-Drone/RepoSync is a core constraint for this pilot, not just an implementation detail.
-```
-
-Çünkü pipeline dosyası central controlled.
-
-***
-
-# Özet
-
-Bu `.drone.star` içeriği şunu gösteriyor:
-
-```text
-1. Pipeline Drone Kubernetes pipeline.
-2. Pipeline centrally controlled by RepoSync.
-3. Docker-in-Docker service kullanılıyor.
-4. Docker Compose CI integration test orchestration’ın merkezinde.
-5. Kafka/Redis, aggregators, command adaptor, pre-integration ve integration tests compose ile çalışıyor.
-6. Maven build ve compose-based integration flow arasında potansiyel duplicate iş olabilir.
-7. Testcontainers ile ilgili Ryuk disabled workaround zaten bir yerde var.
-8. BuildKit/cache gibi pipeline-level işler lokal değil, central/ETO gerektirir.
-9. MR pipeline minimal olabilir; confirmation lazım.
-```
-
-***
-
-# Stratejik sonuç
-
-Bizim proposal daha da güçlendi ama scope netleşti:
-
-```text
-Local pilot:
-- Baseline
-- Dockerfile review
-- .dockerignore
-- local layering experiment
-- local Testcontainers prototype
-- compose usage mapping
-
-Central/platform discussion:
-- RepoSync .drone.star changes
-- BuildKit remote cache
-- DIND image capability
-- CI Testcontainers execution
-- shared base images
-- reusable pipeline templates
-```
-
-Bu, Thomas’ın kaygısıyla birebir uyumlu:
-
-> “I don’t want to do something independently of those teams when they’re not aware.”
-
-Yani şimdi proposal çok daha sağlam hale geldi.
+Liam Moncur 0 minutes 6 seconds
+Yeah, so this is just not Katie. It feels weird seeing all this transfer. No, I don't think I could ever say that again. It has to be Katie.
+Liam Moncur 0 minutes 14 seconds
+Um...
+Liam Moncur 0 minutes 16 seconds
+This is to go over the deployment scripts used by the Cerberus, and then specifically gonna go because.
+Liam Moncur 0 minutes 24 seconds
+When we deploy things, we do use the service repo. I'm going to focus on the service repo specifically for this. The individual service charts do have their own drone pipeline for deploying, but that was previous, the previous way of working, when the dev environment
+Liam Moncur 0 minutes 43 seconds
+used to have all the individual services deployed as Helm charts, but that's not true anymore. Everything's now deployed by the service repo, so focus on that because the old ones, the service charts aren't really relevant. And to be honest, most of the stages are exactly the same, as far as I'm aware.
+Liam Moncur 1 minute 2 seconds
+The first I remember, anyway. Yeah, so what we'll be doing is focusing on the MMA Helm repo. So this is the repository where these deployment scripts live. So if you're going to be, I guess, kind of rule of thumb of this thing here is it's for deploying Helm charts. So if there's anything you want to add,
+Liam Moncur 1 minute 23 seconds
+like in the future to the drone pipeline, then this is where you would put it, basically, is where you would expect to put it. So yeah, just a summary, we're going to go over sort of in order of how it works. So Helm packaging, linting, templating, mass diff, and then the uploading and deployment.
+Liam Moncur 1 minute 42 seconds
+stuff. Like I already said, this isn't going to take an hour, so if you want to ask anything to go, feel free just to interrupt.
+Liam Moncur 1 minute 51 seconds
+I'm not very good at formal things, so I work better if you say things at me, if you think to think of anything right, so...
+Liam Moncur 2 minutes 1 second
+Yeah, so as I mentioned already,
+LM
+Liam Moncur
+23 minutes 24 seconds23:24
+Liam Moncur 23 minutes 24 seconds
+AA.
+Liam Moncur 23 minutes 28 seconds
+Yeah, it depends on the feature flag. Do you mean what about activation?
+BA
+Benan Aktas
+23 minutes 35 seconds23:35
+Benan Aktas 23 minutes 35 seconds
+Like the rules are very complicated, I think, so when you add a new rule or...
+Benan Aktas 23 minutes 43 seconds
+Leanne.
+LM
+Liam Moncur
+23 minutes 44 seconds23:44
+Liam Moncur 23 minutes 44 seconds
+That's all controlled by feature flag. So if you deploy it, like for example, the NFT, there must be a feature flag somewhere in here.
+Liam Moncur 23 minutes 55 seconds
+They have the value files will, so even if you deploy it, depending on the value files value, which is whether certain features will be enabled.
+Liam Moncur 24 minutes 4 seconds
+Don't have, anyway.
+Liam Moncur 24 minutes 7 seconds
+There's a feature flag, so it does it based on the various different.
+BA
+Benan Aktas
+24 minutes 9 seconds24:09
+Benan Aktas 24 minutes 9 seconds
+Freeman.
+Benan Aktas 24 minutes 11 seconds
+Okay.
+LM
+Liam Moncur
+24 minutes 12 seconds24:12
+Liam Moncur 24 minutes 12 seconds
+Settings, but the devs deal with that stuff; they decide what they what they do and don't need in each environment.
+BA
+Benan Aktas
+24 minutes 18 seconds24:18
+Benan Aktas 24 minutes 18 seconds
+Mm.
+Benan Aktas 24 minutes 19 seconds
+For example, with the plates something after then we have seen the green.
+Benan Aktas 24 minutes 24 seconds
+After then, is it enough, or is there any specific checks?
+LM
+Liam Moncur
+24 minutes 29 seconds24:29
+Liam Moncur 24 minutes 29 seconds
+So they have, I don't, they're supposed to be using Playwright as far as I understand, the dev teams for their stuff. But for sitting above QAT, you have to approve it. They have to say, I mean, from our point of view, yeah, we'll just cheque that the deployment worked, that the pods have started up.
+Liam Moncur 24 minutes 48 seconds
+So the dev team, I think they're starting to use Playwright. Certainly use Cypress, I think, the other one they use. So they'll do that to make sure they're happy with their changes. But then when it gets to sit, that's when we hand off to QAT and QAT will.
+Liam Moncur 25 minutes 4 seconds
+have to approve it before it goes any higher.
+BA
+Benan Aktas
+25 minutes 9 seconds25:09
+Benan Aktas 25 minutes 9 seconds
+Yeah, I think we didn't talk about the rollback scenarios. I mean, yeah.
+LM
+Liam Moncur
+25 minutes 15 seconds25:15
+Liam Moncur 25 minutes 15 seconds
+The rollbacks is not something they have built into the deployment. So when the deployment goes through, if it fails, it fails. They don't have a automatic like check, say, like they do have a monitoring steps that cheque to see if the, I'm trying to find an example of.
+Liam Moncur 25 minutes 33 seconds
+It would be helpful.
+BA
+Benan Aktas
+25 minutes 36 seconds25:36
+Benan Aktas 25 minutes 36 seconds
+Yeah, for example, the last time you have done rollback, what was the reason?
+LM
+Liam Moncur
+25 minutes 42 seconds25:42
+Liam Moncur 25 minutes 42 seconds
+They don't really. The last, the last, the last time they they had an issue and sit recently with 5A and they're just essentially going through and trying to fix it and fix forward. It doesn't, when the monetary step fails, it doesn't trigger a rollback step or anything like that.
+BA
+Benan Aktas
+25 minutes 43 seconds25:43
+Benan Aktas 25 minutes 43 seconds
+Yes.
+LM
+Liam Moncur
+25 minutes 58 seconds25:58
+Liam Moncur 25 minutes 58 seconds
+automatically. So there is, I, there isn't, so I would say there is no roll back. Oh, for goodness sake. Ignore these chart names. These are local stuff. I just kind of want to switch my context out. But if you do need to roll back from my point of view, you could always just do
+Liam Moncur 26 minutes 20 seconds
+I use like Helm History and I can just do Helm.
+Liam Moncur 26 minutes 24 seconds
+Go back database, ignore all this nonsense, this is my local stuff, and then that will roll back the.
+Liam Moncur 26 minutes 35 seconds
+Okay, well, I thought it might do something, but that's how you, that's how you do handle rollbacks in Helm, but there's no automation in the script to do it correctly.
+BA
+Benan Aktas
+26 minutes 43 seconds26:43
+Benan Aktas 26 minutes 43 seconds
+Okay.
+LM
+Liam Moncur
+26 minutes 45 seconds26:45
+Liam Moncur 26 minutes 45 seconds
+Not doing anything, don't know why.
+BA
+Benan Aktas
+26 minutes 45 seconds26:45
+Benan Aktas 26 minutes 45 seconds
+B.
+Benan Aktas 26 minutes 47 seconds
+And is there a big difference between periprod and product environment?
+LM
+Liam Moncur
+26 minutes 51 seconds26:51
+Liam Moncur 26 minutes 51 seconds
+I don't know. I I'm very, I'm very hands off when it comes to. I I don't I don't think I've ever logged in at any gotten any access to prod. I've got like read access, but that's it. I've never needed to, so I don't know. It's hard to answer, but in theory, there should be no difference, right?
+BA
+Benan Aktas
+26 minutes 53 seconds26:53
+Benan Aktas 26 minutes 53 seconds
+Yeah, it's important stuff.
+Benan Aktas 26 minutes 56 seconds
+Yeah.
+LM
+Liam Moncur
+27 minutes 11 seconds27:11
+Liam Moncur 27 minutes 11 seconds
+That's what it's set for.
+BA
+Benan Aktas
+27 minutes 11 seconds27:11
+Benan Aktas 27 minutes 11 seconds
+I think, yeah, when we get a book, I think this will be the most important thing.
+LM
+Liam Moncur
+27 minutes 16 seconds27:16
+Liam Moncur 27 minutes 16 seconds
+Yeah, yeah, B, I know B.Val's bigger than, like, they've got more data in B.Val than broad. That's one thing I do know, but yeah, they should be as close to broad as possible, I hope, but I have not really.
+Liam Moncur 27 minutes 28 seconds
+Whatever, I've never been part of the release, like any like actual release since I've been here. Amazingly. So.
+BA
+Benan Aktas
+27 minutes 33 seconds27:33
+Benan Aktas 27 minutes 33 seconds
+Yeah, yeah, these scripts are in GitLab already, so there should be some approved, like when we need to do some change after then, that will be a similar scenario code approving code review, I think.
+LM
+Liam Moncur
+27 minutes 51 seconds27:51
+Liam Moncur 27 minutes 51 seconds
+Yeah, so they, those, those are sort of what we've gone through is that the the sort of basic deployments, like just defined charts, but we also have like runbooks and stuff. There's runbook repo, which they also sometimes use when the idea behind this is that for B-val environment, this version, you need to run this alongside the...
+BA
+Benan Aktas
+27 minutes 53 seconds27:53
+Benan Aktas 27 minutes 53 seconds
+Yeah.
+LM
+Liam Moncur
+28 minutes 12 seconds28:12
+Liam Moncur 28 minutes 12 seconds
+Other releases you're doing, and again, these are supposed to be approved and before you can run commands in those environments, but again, I don't have any visibility, so I don't have experience with prod environments, prod deployments in this project, so...
+Liam Moncur 28 minutes 29 seconds
+I assume they use number.
+Liam Moncur 28 minutes 31 seconds
+But.
+
+Liam Moncur stopped transcription
