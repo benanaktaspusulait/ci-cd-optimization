@@ -23,3 +23,7 @@ metrics-output/
 
 # Local assistant/tooling state
 .claude/settings.local.json
+
+# MkDocs build output
+site/
+_build_docs/
