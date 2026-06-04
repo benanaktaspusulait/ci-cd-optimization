@@ -44,6 +44,8 @@ cat > "$BUILD_DIR/mkdocs.yml" << 'EOF'
 site_name: Container & CI/CD Optimisation Pilot
 site_description: FDP CI/CD optimisation pilot — planning, backlog, ADRs and examples
 docs_dir: content
+use_directory_urls: false
+site_url: ""
 
 theme:
   name: material
@@ -65,8 +67,9 @@ theme:
     - navigation.sections
     - navigation.expand
     - navigation.top
-    - search.suggest
     - content.code.copy
+
+plugins: []
 
 markdown_extensions:
   - tables
