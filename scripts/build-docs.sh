@@ -39,6 +39,27 @@ cp "$PROJECT_ROOT/docs/adr/"*.md "$CONTENT_DIR/adr/"
 cp -r "$PROJECT_ROOT/docs/stories" "$CONTENT_DIR/stories"
 cp -r "$PROJECT_ROOT/examples" "$CONTENT_DIR/examples"
 
+# Fix internal links: adjust paths so MkDocs can resolve them in the flattened structure.
+# In the flattened layout:
+#   - Root files (README, PROJECT-PLAN, etc.) are at CONTENT_DIR root
+#   - docs/ content is directly under CONTENT_DIR (no docs/ prefix)
+echo "[build-docs] Fixing internal links for flat structure..."
+find "$CONTENT_DIR" -name "*.md" -exec sed -i '' \
+  -e 's|(docs/stories/|(stories/|g' \
+  -e 's|(docs/adr/|(adr/|g' \
+  -e 's|(docs/PROJECT-CONTEXT.md)|(PROJECT-CONTEXT.md)|g' \
+  -e 's|(docs/PIPELINE-CONTEXT.md)|(PIPELINE-CONTEXT.md)|g' \
+  -e 's|(docs/SCOPE-AND-GUARDRAILS.md)|(SCOPE-AND-GUARDRAILS.md)|g' \
+  -e 's|(docs/glossary.md)|(glossary.md)|g' \
+  -e 's|\.\./\.\./\.\./README\.md|../../../index.md|g' \
+  -e 's|\.\./\.\./README\.md|../../index.md|g' \
+  -e 's|\.\./README\.md|../index.md|g' \
+  -e 's|(README\.md)|(index.md)|g' \
+  -e 's|\.\./\.\./PROJECT-PLAN\.md|../../PROJECT-PLAN.md|g' \
+  -e 's|\.\./\.\./SECURITY\.md|../../SECURITY.md|g' \
+  -e 's|\.\./\.\./CONTRIBUTING\.md|../../CONTRIBUTING.md|g' \
+  {} \;
+
 # Generate mkdocs.yml in BUILD_DIR (one level above content)
 cat > "$BUILD_DIR/mkdocs.yml" << 'EOF'
 site_name: Container & CI/CD Optimisation Pilot
