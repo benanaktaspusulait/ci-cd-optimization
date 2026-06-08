@@ -51,7 +51,7 @@ Every task file follows the same shape:
 
 ## Conventions
 
-- **Estimate (T-shirt):** `S` ≤0.5 day · `M` 0.5–1 day · `L` 1–2 days
+- **Estimate (story points):** use `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of effort
 - **Priority (MoSCoW):** `Must` · `Should` · `Could` · `Won't (this pilot)`
 - **Status:** `Not started` · `In progress` · `Blocked` · `Done`
 - **IDs:** stories `S1…S6`, tasks `T<story>.<n>` (e.g. `T3.3`)

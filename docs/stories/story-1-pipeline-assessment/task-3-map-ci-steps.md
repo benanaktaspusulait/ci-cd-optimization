@@ -8,7 +8,7 @@
 | **Type** | Research |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 1 — Drone/RepoSync Pipeline Assessment |
-| **Estimate** | M |
+| **Estimate** | 2 |
 | **Priority** | Must |
 | **Labels** | `drone`, `docker-compose`, `dind`, `mapping` |
 | **Sprint** | Week 1 |

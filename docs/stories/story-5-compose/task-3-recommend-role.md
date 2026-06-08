@@ -8,7 +8,7 @@
 | **Type** | Documentation |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 5 — Docker Compose Rationalisation |
-| **Estimate** | M |
+| **Estimate** | 2 |
 | **Priority** | Should |
 | **Labels** | `docker-compose`, `recommendation`, `rationalisation` |
 | **Sprint** | Week 4 |

@@ -8,7 +8,7 @@
 | **Type** | Research |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 2 — Baseline & Pilot Scope |
-| **Estimate** | M |
+| **Estimate** | 2 |
 | **Priority** | Must |
 | **Labels** | `baseline`, `pipeline`, `metrics` |
 | **Sprint** | Week 1 |

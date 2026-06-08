@@ -6,7 +6,7 @@ The Drone/RepoSync and CI/deploy boundary that shapes the pilot. [← Back to ov
 
 ## Drone / RepoSync Constraint
 
-The FDP adaptor repositories use a **centrally managed `.drone.star`** pipeline (Starlark), deployed via **RepoSync**. Local changes to the pipeline config are overwritten.
+The FDP adaptor repositories use a **centrally managed `.drone.star`** pipeline (Starlark), deployed via **RepoSync**. Local changes to the pipeline config are not durable because RepoSync owns the source of truth.
 
 This means:
 
@@ -17,7 +17,7 @@ This means:
 - `TESTCONTAINERS_RYUK_DISABLED=true` already appears in one Maven step (ECR pipeline) — indicating prior Testcontainers exploration and a known Drone/Ryuk compatibility constraint.
 - Pull request events appear to trigger only a minimal/blank pipeline — to be confirmed in Story 1.
 
-**Consequence for the pilot:** Story 1 (Pipeline Assessment) must be completed first to establish what is locally feasible vs what requires central discussion.
+**Consequence for the pilot:** Story 1 (Pipeline Assessment) must be completed first to establish what is locally feasible vs what requires central discussion. This is not a reason to avoid RepoSync-owned improvements; it means reusable changes should be shaped as ACP/RepoSync-ready recommendations or MRs.
 
 ---
 

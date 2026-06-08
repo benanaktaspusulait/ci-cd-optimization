@@ -18,8 +18,8 @@ Compose files tend to grow and serve mixed purposes, dragging extra services int
 - [ ] Reduced Compose role recommended with risk/impact
 
 ## Tasks
-| Task | Title | Est | Priority | Status |
+| Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
-| T5.1 | [Map services started by docker-compose](./task-1-map-services.md) | S | Must | Not started |
-| T5.2 | [Classify services & usage](./task-2-classify-usage.md) | M | Must | Not started |
-| T5.3 | [Recommend reduced Compose role](./task-3-recommend-role.md) | M | Should | Not started |
+| T5.1 | [Map services started by docker-compose](./task-1-map-services.md) | 1 | Must | Not started |
+| T5.2 | [Classify services & usage](./task-2-classify-usage.md) | 2 | Must | Not started |
+| T5.3 | [Recommend reduced Compose role](./task-3-recommend-role.md) | 2 | Should | Not started |

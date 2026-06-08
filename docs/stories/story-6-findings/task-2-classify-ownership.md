@@ -8,7 +8,7 @@
 | **Type** | Analysis |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 6 — Findings, Ownership & Recommendations |
-| **Estimate** | M |
+| **Estimate** | 2 |
 | **Priority** | Must |
 | **Labels** | `ownership`, `cst-vs-eto`, `classification`, `target-board` |
 | **Sprint** | Week 4 |
@@ -38,5 +38,6 @@ Classify each optimisation item into the three ownership categories and recommen
 ## Acceptance criteria
 - [ ] Each item is classified into CST, ACP, or DSA ETO/Enabling with short rationale
 - [ ] Each item is mapped to a suggested owner/board
+- [ ] ACP-owned items identify whether they should become RepoSync MR candidates
 - [ ] No wider-impact item is progressed without appropriate visibility
 - [ ] Assumptions are documented

@@ -8,7 +8,7 @@
 | **Type** | Analysis |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 3 — Docker Build Optimisation |
-| **Estimate** | M |
+| **Estimate** | 2 |
 | **Priority** | Must |
 | **Labels** | `docker`, `dockerfile`, `build-context` |
 | **Sprint** | Week 2 |

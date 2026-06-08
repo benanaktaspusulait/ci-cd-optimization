@@ -8,7 +8,7 @@
 | **Type** | Documentation |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 6 — Findings, Ownership & Recommendations |
-| **Estimate** | M |
+| **Estimate** | 2 |
 | **Priority** | Must |
 | **Labels** | `findings`, `summary`, `consolidation` |
 | **Sprint** | Week 4 |
@@ -35,7 +35,10 @@ Present as a clear before → after / observations narrative. Explicitly classif
 - RepoSync/platform (`.drone.star` changes, DIND config, registry)
 - ETO/wider (base images, shared templates, org-wide standards)
 
+Include a short target operating model recommendation: which parts should stay local to the pilot repo, which should be proposed for ACP/RepoSync distribution, and which are wider DSA ETO/Enabling considerations.
+
 ## Acceptance criteria
 - [ ] A single consolidated findings summary exists
 - [ ] It links back to the supporting story evidence
+- [ ] It includes a target operating model / RepoSync distribution recommendation
 - [ ] It is in a form suitable for sharing with stakeholders

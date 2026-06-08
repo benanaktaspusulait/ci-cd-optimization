@@ -18,9 +18,9 @@ Build time and image size are recurring sources of friction. Small, well-targete
 - [ ] Build time and image size compared before/after, with a keep/adjust recommendation
 
 ## Tasks
-| Task | Title | Est | Priority | Status |
+| Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
-| T3.1 | [Review current Dockerfile & build context](./task-1-review-dockerfile.md) | M | Must | Not started |
-| T3.2 | [Add or validate .dockerignore](./task-2-dockerignore.md) | S | Must | Not started |
-| T3.3 | [Apply Dockerfile layering / cache improvement](./task-3-layering-improvement.md) | M | Must | Not started |
-| T3.4 | [Measure local & CI build impact](./task-4-measure-impact.md) | M | Should | Not started |
+| T3.1 | [Review current Dockerfile & build context](./task-1-review-dockerfile.md) | 2 | Must | Not started |
+| T3.2 | [Add or validate .dockerignore](./task-2-dockerignore.md) | 1 | Must | Not started |
+| T3.3 | [Apply Dockerfile layering / cache improvement](./task-3-layering-improvement.md) | 2 | Must | Not started |
+| T3.4 | [Measure local & CI build impact](./task-4-measure-impact.md) | 2 | Should | Not started |

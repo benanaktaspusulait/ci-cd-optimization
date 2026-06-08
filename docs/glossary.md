@@ -23,7 +23,7 @@ Key terms and abbreviations used across this project. [← Back to overview](../
 | **PNR room** | Physical secure room required for accessing PNR (Passenger Name Record) data or prod environments. Screen sharing restrictions apply. |
 | **CI** | Continuous Integration — automated build and test pipeline triggered on every commit/MR. Here: **Drone CI** (Kubernetes runner, `.drone.star` config). |
 | **Drone** | The CI/CD system used by FDP. Runs pipelines on Kubernetes pods. Pipeline config is written in Starlark (`.drone.star`) and centrally managed via RepoSync. |
-| **RepoSync** | A central mechanism that synchronises shared files (including `.drone.star`, docker-compose templates) into adaptor repositories. Local changes to synced files are **overwritten** on the next sync. Pipeline changes must be made in the RepoSync source repo. |
+| **RepoSync** | A central mechanism that synchronises shared files (including `.drone.star`, docker-compose templates) into adaptor repositories. Local changes to synced files are **overwritten** on the next sync, so reusable pipeline changes should be made in the RepoSync source repo through the normal ACP/RepoSync process. |
 | **Starlark** | A Python-like configuration language used by Drone for pipeline definitions (`.drone.star`). More expressive than YAML — supports functions, loops, conditionals. |
 | **CD** | Continuous Delivery / Deployment — automated promotion of a verified build through environments. |
 | **BuildKit** | Docker's next-generation build subsystem (`DOCKER_BUILDKIT=1` / `docker buildx`). Enables parallel build stages, cache mounts (`--mount=type=cache`), and secret mounts (`--mount=type=secret`). |

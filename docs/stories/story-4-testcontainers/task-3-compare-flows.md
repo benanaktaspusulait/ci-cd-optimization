@@ -8,7 +8,7 @@
 | **Type** | Analysis |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 4 — Testcontainers Pilot |
-| **Estimate** | M |
+| **Estimate** | 2 |
 | **Priority** | Should |
 | **Labels** | `testcontainers`, `docker-compose`, `comparison` |
 | **Sprint** | Week 3 |

@@ -8,7 +8,7 @@ Operational plan for the Container & CI/CD Optimisation pilot: timeline, risk re
 
 ## Timeline (indicative)
 
-Sized from the story estimates (S ≤0.5d · M 0.5–1d · L 1–2d). Stories 3 and 4 run in parallel after the Story 1/2 gates.
+Sized from story point estimates (`1`, `2`, `3`, `5`; `1 SP` is roughly 1 day). Stories 3 and 4 run in parallel after the Story 1/2 gates.
 
 | Week | Focus | Stories / tasks | Exit criteria |
 |------|-------|-----------------|---------------|
@@ -40,7 +40,7 @@ Probability (P) and Impact (I): Low / Med / High.
 | R5 | Optimisations turn out to be RepoSync/platform-owned or wider ETO-owned, not CST-local | Med | Med | Classify ownership early (Story 6) before wider changes | Hand item to the RepoSync/platform or wider ETO board with findings attached |
 | R6 | Build cache change produces inconsistent/incorrect images | Low | High | Verify image runs after each change (see test strategy) | Disable cache mount; rebuild from clean context |
 | A1 | Assumption: one representative repo is enough to validate the ideas | — | Med | State scope limits in the final summary | Recommend a second repo before any rollout |
-| R7 | RepoSync overwrites local pipeline changes — pilot cannot modify `.drone.star` | Med | High | Complete Story 1 to identify boundaries; only propose changes that are repo-local or explicitly request RepoSync modification | Keep pipeline changes as recommendations in Story 6; do not assume they will be applied during the pilot |
+| R7 | Pipeline changes are RepoSync-owned, so local `.drone.star` edits are not durable | Med | High | Complete Story 1 to identify boundaries; shape reusable changes as ACP/RepoSync-ready recommendations or MRs | Keep pipeline changes out of local-only scope; route accepted patterns through normal ACP/RepoSync process |
 | R8 | Deploy pipeline (Helm/service repo) confused with CI pipeline | Low | Med | Clearly document the boundary (see Pipeline Landscape above); pilot scope is CI only | If deploy improvements surface, route them to FUTURE-CONSIDERATIONS, not the pilot backlog |
 
 ---

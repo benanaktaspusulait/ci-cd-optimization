@@ -9,7 +9,7 @@
 
 The FDP CI pipeline runs on **Drone with Kubernetes runner**. Docker access is provided via a **Docker-in-Docker (DIND) service** named `docker`, accessible at `tcp://docker:2375`.
 
-The pipeline is defined in `.drone.star` (Starlark) and **centrally managed via RepoSync** — local changes to the pipeline config are overwritten.
+The pipeline is defined in `.drone.star` (Starlark) and **centrally managed via RepoSync** — local changes to the pipeline config are not durable, so accepted reusable changes need to go through the normal ACP/RepoSync process.
 
 Key observations from the current `.drone.star`:
 1. A DIND service is added to every pipeline that needs Docker.

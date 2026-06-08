@@ -8,7 +8,7 @@
 | **Type** | Analysis |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 1 — Drone/RepoSync Pipeline Assessment |
-| **Estimate** | S |
+| **Estimate** | 1 |
 | **Priority** | Must |
 | **Labels** | `drone`, `reposync`, `ownership`, `boundaries` |
 | **Sprint** | Week 1 |
@@ -17,10 +17,10 @@
 | **Status** | Not started |
 
 ## Why
-RepoSync overwrites local pipeline changes. The pilot must know exactly which files/changes survive vs which are centrally controlled — otherwise effort is wasted on changes that get overwritten.
+RepoSync owns the central pipeline source of truth. The pilot must know exactly which files/changes are repo-local vs centrally controlled so local work stays realistic and reusable pipeline changes can be shaped for ACP/RepoSync.
 
 ## Goal
-Produce a clear table of what the pilot team can change locally and what requires a RepoSync/platform change request.
+Produce a clear table of what the pilot team can change locally and what should become an ACP/RepoSync change request or recommendation.
 
 ## Scope
 Classify:
@@ -32,4 +32,4 @@ Classify:
 - [ ] A clear "local vs central" classification exists
 - [ ] The RepoSync source repo and change request process are identified
 - [ ] The pilot team knows who to contact for central changes
-- [ ] Any files that appear local but are overwritten are flagged
+- [ ] Any centrally controlled files that appear local are flagged

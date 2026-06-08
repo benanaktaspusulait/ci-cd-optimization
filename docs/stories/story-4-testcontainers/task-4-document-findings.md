@@ -8,7 +8,7 @@
 | **Type** | Documentation |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 4 — Testcontainers Pilot |
-| **Estimate** | S |
+| **Estimate** | 1 |
 | **Priority** | Should |
 | **Labels** | `testcontainers`, `documentation`, `findings` |
 | **Sprint** | Week 3 |

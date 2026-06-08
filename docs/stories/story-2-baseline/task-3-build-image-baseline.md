@@ -8,7 +8,7 @@
 | **Type** | Research |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 2 — Baseline & Pilot Scope |
-| **Estimate** | S |
+| **Estimate** | 1 |
 | **Priority** | Must |
 | **Labels** | `baseline`, `docker`, `image-size` |
 | **Sprint** | Week 1 |

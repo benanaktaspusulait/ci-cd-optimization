@@ -18,9 +18,9 @@ Full docker-compose setups can be slow to start, share hidden state, and cause f
 - [ ] Findings, constraints and a continue/stop recommendation documented
 
 ## Tasks
-| Task | Title | Est | Priority | Status |
+| Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
-| T4.1 | [Select candidate dependency/test](./task-1-select-candidate.md) | S | Must | Not started |
-| T4.2 | [Implement Testcontainers setup](./task-2-implement-setup.md) | L | Must | Not started |
-| T4.3 | [Compare with docker-compose flow](./task-3-compare-flows.md) | M | Should | Not started |
-| T4.4 | [Document findings & constraints](./task-4-document-findings.md) | S | Should | Not started |
+| T4.1 | [Select candidate dependency/test](./task-1-select-candidate.md) | 1 | Must | Not started |
+| T4.2 | [Implement Testcontainers setup](./task-2-implement-setup.md) | 3 | Must | Not started |
+| T4.3 | [Compare with docker-compose flow](./task-3-compare-flows.md) | 2 | Should | Not started |
+| T4.4 | [Document findings & constraints](./task-4-document-findings.md) | 1 | Should | Not started |

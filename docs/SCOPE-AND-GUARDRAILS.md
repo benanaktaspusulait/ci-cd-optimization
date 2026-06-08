@@ -8,11 +8,12 @@ What the pilot may change, what needs central coordination, and what is delibera
 
 A small, measurable pilot on **one** representative repository:
 
-1. **Baseline** the current state so every change is provable.
-2. **Optimise the Docker build** (layering, `.dockerignore`, cache mounts) and measure the delta.
-3. **Pilot Testcontainers** for one integration dependency for better isolation/determinism.
-4. **Rationalise Docker Compose** — keep it for local debugging, reduce its role in CI.
-5. **Consolidate findings** and classify each pattern as CST-local, RepoSync/platform, or wider ETO.
+1. **Compare at least two candidate pipelines/repos** so portability is considered before selecting the pilot.
+2. **Baseline** the current state so every change is provable.
+3. **Optimise the Docker build** (layering, `.dockerignore`, cache mounts) and measure the delta.
+4. **Pilot Testcontainers** for one integration dependency for better isolation/determinism.
+5. **Rationalise Docker Compose** — keep it for local debugging, reduce its role in CI.
+6. **Consolidate findings** and classify each pattern as CST-local, ACP/RepoSync-owned, or wider ETO/Enabling.
 
 ---
 
@@ -23,7 +24,7 @@ The initial pilot should remain small and measurable.
 **CST-local (can do in the repo without RepoSync changes):**
 
 - Baseline measurement (pipeline timing from Drone UI, Docker build locally)
-- Pilot repository/service selection
+- Pilot repository/service selection after comparing at least two candidate pipelines/repos
 - Dockerfile / build context review
 - `.dockerignore` validation
 - Dockerfile layering experiment (local build)
@@ -46,7 +47,7 @@ The initial pilot should remain small and measurable.
 
 This is the negative scope / guardrail list. These items may be valid later, but they should not start before the pilot has evidence and ownership.
 
-- **Editing `.drone.star` locally** — it is overwritten by RepoSync; changes must go through the central source
+- Treating local `.drone.star` edits as durable pilot changes — reusable pipeline changes must go through ACP/RepoSync
 - Organisation-wide rollout
 - Replacing all Docker Compose usage
 - Building shared base images without platform ownership

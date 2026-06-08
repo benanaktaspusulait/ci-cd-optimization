@@ -31,11 +31,12 @@
 A small, measurable pilot on **one** representative repository:
 
 1. Assess the centrally managed Drone/RepoSync pipeline boundary.
-2. Capture baseline metrics before changing anything.
-3. Optimise Docker build inputs and layering.
-4. Pilot Testcontainers for one integration dependency.
-5. Rationalise Docker Compose usage without breaking local workflows.
-6. Consolidate findings and classify ownership as CST-local, ACP-owned, or DSA ETO/Enabling.
+2. Compare at least two candidate pipelines/repos for portability, then select one pilot target.
+3. Capture baseline metrics before changing anything.
+4. Optimise Docker build inputs and layering.
+5. Pilot Testcontainers for one integration dependency.
+6. Rationalise Docker Compose usage without breaking local workflows.
+7. Consolidate findings and classify ownership as CST-local, ACP-owned, or DSA ETO/Enabling.
 
 The pilot produces evidence and recommendations. It does **not** approve an org-wide rollout, remove all Compose usage, or build shared platform capabilities by itself.
 
@@ -43,9 +44,11 @@ The pilot produces evidence and recommendations. It does **not** approve an org-
 
 ## Core Constraint
 
-FDP adaptor repositories use a centrally managed `.drone.star` pipeline deployed via **RepoSync**. Local pipeline edits are overwritten.
+FDP adaptor repositories use a centrally managed `.drone.star` pipeline deployed via **RepoSync**. Local pipeline edits are not a durable delivery route because RepoSync owns the source of truth.
 
 That means repository-local work can cover Dockerfiles, `.dockerignore`, Maven profiles, tests, examples and measurement. Pipeline-level changes such as DIND image changes, BuildKit enablement, Testcontainers CI environment variables, remote cache and shared templates require ACP/RepoSync coordination.
+
+For reusable changes, the target route is an ACP/RepoSync MR so the pattern can be distributed to other pipelines through the normal process.
 
 Story 1 exists to make that boundary explicit before the rest of the pilot proceeds. Full detail lives in [Pipeline context](docs/PIPELINE-CONTEXT.md).
 

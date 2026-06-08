@@ -8,7 +8,7 @@
 | **Type** | Research |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 5 — Docker Compose Rationalisation |
-| **Estimate** | S |
+| **Estimate** | 1 |
 | **Priority** | Must |
 | **Labels** | `docker-compose`, `mapping`, `inventory` |
 | **Sprint** | Week 3 |

@@ -8,7 +8,7 @@
 | **Type** | Implementation |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 3 — Docker Build Optimisation |
-| **Estimate** | S |
+| **Estimate** | 1 |
 | **Priority** | Must |
 | **Labels** | `docker`, `dockerignore`, `build-context` |
 | **Sprint** | Week 2 |

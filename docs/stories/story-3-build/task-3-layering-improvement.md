@@ -8,7 +8,7 @@
 | **Type** | Implementation |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 3 — Docker Build Optimisation |
-| **Estimate** | M |
+| **Estimate** | 2 |
 | **Priority** | Must |
 | **Labels** | `docker`, `dockerfile`, `layering`, `cache` |
 | **Sprint** | Week 2 |

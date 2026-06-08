@@ -8,7 +8,7 @@
 | **Type** | Implementation |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 4 — Testcontainers Pilot |
-| **Estimate** | L |
+| **Estimate** | 3 |
 | **Priority** | Must |
 | **Labels** | `testcontainers`, `integration-test`, `implementation` |
 | **Sprint** | Week 2 |

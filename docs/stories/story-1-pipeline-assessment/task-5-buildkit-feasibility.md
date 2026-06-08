@@ -8,7 +8,7 @@
 | **Type** | Research |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 1 — Drone/RepoSync Pipeline Assessment |
-| **Estimate** | S |
+| **Estimate** | 1 |
 | **Priority** | Should |
 | **Labels** | `buildkit`, `drone`, `dind`, `cache`, `feasibility` |
 | **Sprint** | Week 1 |

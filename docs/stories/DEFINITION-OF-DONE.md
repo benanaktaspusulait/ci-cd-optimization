@@ -23,7 +23,7 @@ A task is only "Done" when all of the following are true.
 
 ## Conventions
 
-**Estimate (T-shirt size)** — `S` ≈ ≤0.5 day · `M` ≈ 0.5–1 day · `L` ≈ 1–2 days.
+**Estimate (story points)** — use `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of effort.
 **Priority (MoSCoW)** — `Must` · `Should` · `Could` · `Won't (this pilot)`.
 **Status** — `Not started` · `In progress` · `Blocked` · `Done`.
 
