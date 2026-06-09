@@ -1,50 +1,69 @@
-# Confluence Pages — Container & CI/CD Optimisation Pilot
+# Confluence Pages — README
 
-This folder contains Confluence-ready documentation following the [Confluence Documentation Standards](../standards.md).
+| Field | Value |
+|-------|-------|
+| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
+| **Status** | Draft |
+| **Last updated** | 2026-06-09 |
 
-## Purpose
+---
 
-These pages are designed for **copy-paste into Confluence** as a parent/child page structure. They provide the same content as the repository documentation but formatted for non-technical stakeholders, decision-makers, and wider engineering teams who do not have GitLab access.
+## What Is This Folder?
 
-## Page structure
+This folder contains **Confluence-ready pages** for the CI/CD Optimisation Pilot proposal. Each file is a self-contained page — all information is inline and no external documents are needed.
 
-```text
-Parent page: 00-parent-overview.md
-  ├── 01-proposal-matrix.md        → Value / Risk / Complexity / Effort / MoSCoW
-  ├── 02-phased-plan.md            → Phase 1–4 delivery approach
-  ├── 03-risks-and-daci.md         → Risk register + DACI decision areas
-  ├── 04-technical-details.md      → Dockerfile, Testcontainers, BuildKit, Compose
-  ├── 05-pipeline-and-drone.md     → Drone/RepoSync constraints, CI vs Deploy
-  ├── 06-deployment-and-release.md → Deploy pipeline, Helm, release flow (context only)
-  ├── 07-references.md             → Source links, ADRs, KT sessions, external docs
-  ├── 08-backlog-summary.md        → Story/task table (Jira-ready)
-  ├── 09-future-considerations.md  → Post-pilot roadmap
-  ├── 10-decisions-adr.md          → ADR records
-  ├── 11-project-plan-and-governance.md
-  ├── 12-working-agreements-and-metrics.md
-  ├── 13-security-plan.md
-  ├── 14-glossary.md
-  ├── 15-detailed-task-definitions.md
-  ├── 16-code-examples-and-templates.md
-  └── 17-source-content-coverage.md
-```
+---
 
-## How to use
+## How to Upload to Confluence
 
-1. Create a new parent page in Confluence with the content from `00-parent-overview.md`.
-2. Create child pages for each numbered file (01–17).
-3. Replace `TBC` items as decisions are made.
-4. Apply Confluence labels: `proposal`, `ci-cd`, `pilot`, `cerberus-delivery`.
-5. Set status to "Draft" until stakeholder review is complete.
+1. **Create the parent page** from `00-parent-overview.md` — this is the top-level page that all others sit beneath.
+2. **Create child pages** for files `01` through `11` — each becomes a child of the parent page.
+3. **Apply labels** to all pages: `proposal`, `ci-cd`, `pilot`, `cerberus-delivery`.
+4. **Set status** to **Draft** on all pages until stakeholder review is complete.
 
-## Relationship to repo docs
+### Upload Order
 
-These pages are a **Confluence-formatted view** of the same information in `docs/`, `examples/`, and the root README. The repo remains the source of truth for technical detail; Confluence is the collaboration and decision-making surface.
+Create pages in numerical order. The parent page (`00`) must exist first, then child pages can be created in any order beneath it.
 
-| Need | Use |
-|------|-----|
-| Detailed task definitions with metadata | `docs/stories/` (repo) |
-| ADR full text with alternatives table | `docs/adr/` (repo) |
-| Code examples | `examples/` (repo) |
-| Stakeholder overview + decision surface | This `confluence/` folder |
-| Confluence coverage check | `17-source-content-coverage.md` |
+---
+
+## Page Structure
+
+| File | Title | Purpose |
+|------|-------|---------|
+| `00-parent-overview.md` | Container & CI/CD Optimisation Pilot — FDP Initial Scope | Top-level parent page. Executive summary, context, objectives, scope, approach. |
+| `01-proposal-matrix.md` | Proposal Matrix | All proposals rated by Value, Risk, Complexity, Effort, and MoSCoW priority. |
+| `02-phased-plan.md` | Phased Plan | Phase 1–4 delivery approach with success criteria per phase. |
+| `03-risks-and-daci.md` | Risks and DACI | Risk register and decision areas requiring multi-stakeholder input. |
+| `04-technical-details.md` | Technical Details | Dockerfile, Testcontainers, BuildKit, Compose — full code examples inline. |
+| `05-pipeline-and-drone.md` | Pipeline & Drone Context | Drone/RepoSync constraints, CI vs Deploy pipeline, DIND details. |
+| `06-deployment-and-release.md` | Deployment & Release | Deploy pipeline context (outside pilot scope, documented for awareness). |
+| `07-backlog-detailed.md` | Backlog Detailed | 6 stories and 23 tasks with full acceptance criteria and details. |
+| `08-decisions-adr.md` | Architecture Decisions (ADRs) | 5 ADRs — context, decision, consequences, alternatives considered. |
+| `09-future-considerations.md` | Future Considerations | Post-pilot roadmap, production readiness gaps, technical opportunities. |
+| `10-glossary.md` | Glossary | All terminology, abbreviations, and environment clarification. |
+| `11-security-plan.md` | Security Plan | Secret handling, scanning policy, policy-as-code, supply-chain hardening. |
+
+---
+
+## Key Points
+
+- **Self-contained** — each page includes all necessary information inline. No other documents are needed to understand the content.
+- **Draft status** — all pages are marked as Draft pending stakeholder review and feedback.
+- **Consistent metadata** — each page has a metadata table at the top with parent page, status, and last-updated date.
+- **Feedback mechanism** — each page ends with a prompt for comments and questions.
+
+---
+
+## Labels to Apply
+
+When creating pages in Confluence, apply the following labels to all pages:
+
+- `proposal`
+- `ci-cd`
+- `pilot`
+- `cerberus-delivery`
+
+---
+
+*Feedback or questions? Contact the page owner or comment below.*
