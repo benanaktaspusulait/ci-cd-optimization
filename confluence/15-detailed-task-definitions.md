@@ -6,6 +6,7 @@
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 This page gives the full story and task intent — why, goal, scope and acceptance criteria — for every task. The short Jira-ready list is on the [Backlog Summary](08-backlog-summary.md) page.
 
