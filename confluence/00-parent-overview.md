@@ -165,7 +165,10 @@ Story 1 (pipeline assessment, gate)
 | Supporting Context | System context, ADR summary, KT sessions, optional technology references |
 | Backlog Summary | 6 stories + 23 tasks, story-point estimates, dependencies, ticket order |
 | Future Considerations | Post-pilot roadmap and architecture decision candidates |
-| Architecture Decisions (ADRs) | 5 ADRs — context, decision, consequences, alternatives, template |
+| Architecture Decisions (ADRs) | Index — 5 ADRs with status and template |
+| ADR — Pilot Approach | ADR-0001: Why a measured pilot, not rollout |
+| ADR — Testcontainers & Compose | ADR-0002 + ADR-0003: Integration test and Compose decisions |
+| ADR — BuildKit & CI Runner | ADR-0004 + ADR-0005: Build cache and CI Docker mode decisions |
 | Project Plan and Governance | Timeline, milestones, branching/CI flow, governance |
 | Working Agreements and Metrics | Status board rules, Definition of Done, metrics template |
 | Security Plan | Secret handling, scanning, policy-as-code, supply-chain |
