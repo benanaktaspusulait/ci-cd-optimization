@@ -6,6 +6,7 @@
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 This page maps the original source documentation to the Confluence page set. Its purpose is to confirm no meaningful content has been left behind.
 

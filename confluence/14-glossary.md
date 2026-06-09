@@ -6,6 +6,7 @@
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 Key terms and abbreviations used across the project.
 

@@ -55,8 +55,9 @@ Create pages in numerical order. The parent page (`00`) must exist first, then c
 
 - **Self-contained** — each page includes all necessary information inline. No other documents are needed to understand the content.
 - **Draft status** — all pages are marked as Draft pending stakeholder review and feedback.
-- **Consistent metadata** — each page has a metadata table at the top with parent page, status, and last-updated date.
+- **Consistent metadata** — each page has a metadata table at the top with parent page, status, labels, and last-updated date.
 - **Feedback mechanism** — each page ends with a prompt for comments and questions.
+- **Redirect pages** — files `07-backlog-detailed`, `08-decisions-adr`, `10-glossary`, and `11-security-plan` are redirect stubs pointing to their consolidated canonical pages. They exist to preserve links but all content lives in the canonical page.
 
 ---
 

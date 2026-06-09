@@ -163,6 +163,7 @@ Story 1 (pipeline assessment, gate)
 | [Glossary](14-glossary.md) | All terminology and environment clarification |
 | [Detailed Task Definitions](15-detailed-task-definitions.md) | Full per-task why, goal, scope, acceptance criteria |
 | [Code Examples and Templates](16-code-examples-and-templates.md) | Dockerfile, Compose, Testcontainers, CI templates |
+| [Source Content Coverage](17-source-content-coverage.md) | Coverage map confirming no content was left behind |
 
 ---
 

@@ -6,6 +6,7 @@
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 This page defines the security approach for container builds and CI/CD pipelines within the pilot scope. It covers secret management, image scanning, policy enforcement, and supply-chain hardening.
 

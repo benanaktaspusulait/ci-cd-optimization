@@ -6,6 +6,7 @@
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 > **Note:** This backlog is a **candidate structure only**. Individual tickets should not be created until priority, ownership and target board are agreed with Thomas Reddy and relevant Cerberus Delivery stakeholders.
 

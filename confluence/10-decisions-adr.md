@@ -6,6 +6,7 @@
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 > These decisions are **Proposed** — not yet approved. They document the reasoning behind the pilot's technical approach and will be reviewed with stakeholders as part of Story 6.
 

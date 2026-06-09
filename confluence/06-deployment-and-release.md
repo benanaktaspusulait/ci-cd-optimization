@@ -6,6 +6,7 @@
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 > **This page is context only.** Deployment and release improvements are outside the initial pilot scope. This information is documented for awareness and to inform future work.
 
