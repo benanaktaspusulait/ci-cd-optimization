@@ -15,11 +15,14 @@ This page is the index for full task definitions. Each child page below contains
 
 ## Task Definition Pages
 
-| Page | Stories | Tasks |
-|------|---------|:-----:|
-| Task Definitions — Story 1 & 2 | Pipeline Assessment + Baseline & Pilot Scope | T1.1–T1.5, T2.1–T2.4 |
-| Task Definitions — Story 3 & 4 | Docker Build Optimisation + Testcontainers Pilot | T3.1–T3.4, T4.1–T4.4 |
-| Task Definitions — Story 5 & 6 | Compose Rationalisation + Findings & Ownership | T5.1–T5.3, T6.1–T6.3 |
+| Page | Story | Tasks |
+|------|-------|:-----:|
+| Task Definitions — Story 1: Pipeline Assessment | 1 | T1.1–T1.5 |
+| Task Definitions — Story 2: Baseline & Pilot Scope | 2 | T2.1–T2.4 |
+| Task Definitions — Story 3: Docker Build Optimisation | 3 | T3.1–T3.4 |
+| Task Definitions — Story 4: Testcontainers Pilot | 4 | T4.1–T4.4 |
+| Task Definitions — Story 5: Docker Compose Rationalisation | 5 | T5.1–T5.3 |
+| Task Definitions — Story 6: Findings, Ownership & Recommendations | 6 | T6.1–T6.3 |
 
 ---
 
