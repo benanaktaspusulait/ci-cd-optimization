@@ -2,10 +2,11 @@
 
 | Field | Value |
 |-------|-------|
-| **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
+| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 This page carries the operational plan from the original project documentation: timeline, milestones, risks, branching and CI flow, release context, and verification strategy.
@@ -20,7 +21,7 @@ Sized from story point estimates (`1`, `2`, `3`, `5`; `1 SP` is roughly 1 day). 
 
 | Week | Focus | Stories / tasks | Exit criteria |
 |------|-------|-----------------|---------------|
-| **Week 1** | Pipeline assessment + baseline | Story 1 (T1.1-T1.5), Story 2 (T2.1-T2.4) | Pipeline boundaries known; pilot repo agreed; baseline metrics captured |
+| **Week 1** | Pipeline assessment + baseline | Story 1 (T1.1-T1.5), Story 2 (T2.1-T2.4) | Pipeline boundaries known; at least two candidates compared; one pilot repo agreed; baseline metrics captured |
 | **Week 2** | Build + Testcontainers (parallel) | Story 3 (T3.1-T3.3), Story 4 (T4.1-T4.2) | `.dockerignore` + one layering change applied; Testcontainers setup running locally |
 | **Week 3** | Measure + compare | Story 3 (T3.4), Story 4 (T4.3-T4.4), Story 5 (T5.1-T5.2) | Before/after build metrics; Testcontainers vs Compose comparison; Compose services mapped |
 | **Week 4** | Rationalise + consolidate | Story 5 (T5.3), Story 6 (T6.1-T6.3) | Compose recommendation; consolidated findings; ownership classified; findings shared |
@@ -42,7 +43,7 @@ Probability (P) and Impact (I): Low / Med / High.
 
 | # | Risk / assumption | P | I | Mitigation | Fallback plan |
 |---|-------------------|---|---|------------|---------------|
-| R1 | Pilot repo selection slips or stakeholders disagree | Med | High | Time-box selection to Week 1; agree criteria up front (T2.1) | Pick the repo with the slowest known pipeline by default |
+| R1 | Candidate comparison or pilot repo selection slips because stakeholders disagree | Med | High | Time-box selection to Week 1; agree criteria up front (T2.1) | Pick the repo with the slowest known pipeline by default |
 | R2 | Drone pipeline history lacks reliable timing data | Med | Med | Use last N pipeline runs from Drone UI; document method (T2.2) | Fall back to repeatable local measurements |
 | R3 | Drone Kubernetes runner / DIND limits Testcontainers | Med | High | Assess CI suitability early in T1.4; isolate as a separate finding | Keep docker-compose in CI; run Testcontainers locally only |
 | R4 | Reducing Compose services breaks a hidden local workflow | Low | Med | Change CI usage only; keep Compose for local debugging (Story 5) | Revert Compose change; document the dependency found |
@@ -72,7 +73,7 @@ feature/MMA-XXXXX -> develop -> release/X.Y.Z -> tag (vX.Y.Z) -> tag pipeline ->
                                               dev -> SIT (QAT approval) -> bVal -> prod
 ```
 
-- **Feature branch:** created from the agreed delivery ticket (Jira if that is the tracker; otherwise GitLab issue), developed, MR into `develop`.
+- **Feature branch:** created from the agreed Jira delivery ticket, developed, and merged into `develop` through the normal merge-request review process.
 - **Release branch:** cut from `develop` when sprint is ready, for example `release/5.9.0`.
 - **Tag:** developer creates tag on release branch, which triggers tag pipeline (Maven build + test + Trivy + Sonar + Helm package + Artifactory upload).
 - **Deploy:** service repo picks up the new chart version and deploys via Helm to Kubernetes.

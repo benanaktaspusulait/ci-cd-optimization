@@ -1,24 +1,26 @@
-# References
+# Supporting Context
 
 | Field | Value |
 |-------|-------|
-| **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
+| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 ---
 
-## Internal Repositories
+This page consolidates supporting context that readers may need while reviewing the pilot. It is self-contained: repository locations, external trackers, and historic planning documents are not required to understand the proposal.
 
-| Repository | Purpose | Access |
-|------------|---------|--------|
-| `fdp-cmd-adaptor-dvla` | Pilot candidate adaptor (DVLA trailer registration) | Requires GitLab access |
-| `dde-adaptor-reposync` | Central RepoSync source for `.drone.star` pipeline | Requires GitLab access |
-| `ci-cd-optimization` (this repo) | Pilot planning, templates, examples | TBC — to be confirmed with approved internal location |
-| MMA Helm service repo | Deploys all FDP services to Kubernetes | Requires GitLab access |
-| Runbook repository | Approved release steps for environments | Requires GitLab access |
+## System Context
+
+| Item | Purpose | Pilot relevance |
+|------|---------|-----------------|
+| `fdp-cmd-adaptor-dvla` | Candidate FDP command adaptor for DVLA trailer registration flows. | One possible pilot target; final selection happens in T2.1 after comparing at least two candidates. |
+| RepoSync-managed pipeline configuration | Central mechanism that manages shared `.drone.star` pipeline content for adaptor repositories. | Explains why local pipeline edits are not durable and why central pipeline changes require ACP coordination. |
+| MMA Helm service repository | Service deployment area for Helm packaging, linting, templating, diffing, and Kubernetes deployment. | Deployment context only; not changed by this CI/container pilot. |
+| Operational runbooks | Approved release and production-operation steps for the service estate. | Relevant for deployment awareness and future release-safety work, but outside the pilot implementation scope. |
 
 ---
 
@@ -32,7 +34,7 @@
 | ADR-0004 | BuildKit cache + multi-stage builds | Multi-stage local; remote cache post-pilot (ACP) |
 | ADR-0005 | CI runner Docker mode (Drone/DIND) | Assess DIND access; fallback = local-only Testcontainers |
 
-Full ADR text with alternatives and consequences is on the [Architecture Decisions (ADRs)](10-decisions-adr.md) page.
+Full ADR text with alternatives and consequences is captured on the Architecture Decisions (ADRs) page.
 
 ---
 
@@ -46,10 +48,12 @@ Full ADR text with alternatives and consequences is on the [Architecture Decisio
 
 ---
 
-## Technology Documentation
+## Optional Technology References
 
-| Topic | Source |
-|-------|--------|
+These are optional vendor or tool references for deeper reading. The pilot pages include the required context inline.
+
+| Topic | Reference |
+|-------|-----------|
 | Testcontainers | https://java.testcontainers.org/ |
 | Testcontainers Kafka module | https://java.testcontainers.org/modules/kafka/ |
 | Docker BuildKit | https://docs.docker.com/build/buildkit/ |
@@ -63,13 +67,13 @@ Full ADR text with alternatives and consequences is on the [Architecture Decisio
 
 ---
 
-## Related Confluence Pages
+## Review Topics to Confirm
 
-| Page | Status |
-|------|--------|
-| TODO: verify link — DSA Tech Strategy page | TBC |
-| TODO: verify link — ACP CI/CD tooling page | TBC |
-| TODO: verify link — Cerberus Delivery board | TBC |
+| Topic | Status |
+|-------|--------|
+| DSA Tech Strategy alignment for post-pilot platform work | TBC |
+| ACP CI/CD tooling ownership and prioritisation route | TBC |
+| Cerberus Delivery board and Jira issue ownership | TBC |
 
 ---
 

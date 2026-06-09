@@ -2,13 +2,14 @@
 
 | Field | Value |
 |-------|-------|
-| **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
+| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
-This page gives the full story and task intent — why, goal, scope and acceptance criteria — for every task. The short Jira-ready list is on the [Backlog Summary](08-backlog-summary.md) page.
+This page gives the full story and task intent — why, goal, scope and acceptance criteria — for every task. The Backlog Summary page contains the short Jira-ready list.
 
 ---
 
@@ -278,8 +279,8 @@ Likely outcomes:
 |-------|-------|
 | Selected repository | TBC |
 | Compared candidate(s) | TBC |
-| GitLab project URL | TBC |
-| GitLab environment | TBC |
+| Application project location | TBC |
+| Delivery / source-control environment | TBC |
 | Issue / board tracker | TBC |
 | Primary language / build tool | TBC |
 | Selection rationale | TBC |
@@ -431,7 +432,7 @@ Likely outcomes:
 
 ```gitignore
 .git
-.gitlab
+.ci
 target
 build
 .idea

@@ -2,10 +2,11 @@
 
 | Field | Value |
 |-------|-------|
-| **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
+| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 > **Note:** This backlog is a **candidate structure only**. Individual tickets should not be created until priority, ownership and target board are agreed with Thomas Reddy and relevant Cerberus Delivery stakeholders.
@@ -21,14 +22,14 @@
 | 3 | Docker Build Optimisation | 4 | 2 | 1–2 |
 | 4 | Testcontainers Pilot | 4 | 2 | 2 |
 | 5 | Docker Compose Rationalisation | 3 | 4 | 2–3 |
-| 6 | CST-local vs ACP/ETO Ownership Assessment | 3 | 3, 4, 5 | 3 |
+| 6 | Findings, Ownership and Recommendations | 3 | 3, 4, 5 | 3 |
 
 ```text
 Story 1 (pipeline assessment, gate)
    └──> Story 2 (baseline, gate)
            ├──> Story 3 (build) ──────┐
            └──> Story 4 (testcontainers) ─┼──> Story 5 (compose)
-                                          └──> Story 6 (ownership)
+                                          └──> Story 6 (findings/ownership)
 ```
 
 ---
@@ -64,7 +65,7 @@ Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of ef
 | T5.1 | Map services started by docker-compose | Research | 1 | Must | T4.4 | W3 | Not started |
 | T5.2 | Classify services & usage | Analysis | 2 | Must | T5.1 | W3 | Not started |
 | T5.3 | Recommend reduced Compose role | Documentation | 2 | Should | T4.4, T5.2 | W4 | Not started |
-| **S6** | **Findings, Ownership & Recommendations** | Story | — | Must | S3, S4, S5 | W4 | Not started |
+| **S6** | **Findings, Ownership and Recommendations** | Story | — | Must | S3, S4, S5 | W4 | Not started |
 | T6.1 | Consolidate pilot findings | Documentation | 2 | Must | T3.4, T4.4, T5.3 | W4 | Not started |
 | T6.2 | Classify ownership & recommend target board | Analysis | 2 | Must | T6.1 | W4 | Not started |
 | T6.3 | Share findings with stakeholders | Documentation | 1 | Should | T6.2 | W4 | Not started |
@@ -152,9 +153,9 @@ Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of ef
 
 ---
 
-### Story 6 — CST-local vs ACP/ETO Ownership Assessment
+### Story 6 — Findings, Ownership and Recommendations
 
-**Goal:** Consolidate evidence, classify each item into three ownership categories (CST / ACP / DSA ETO), recommend target operating model.
+**Goal:** Consolidate evidence, classify each item into three ownership categories (CST / ACP / DSA ETO), and recommend the target operating model.
 
 **Why:** A pilot is only valuable if it ends in a clear decision. This routes follow-up work to the right board.
 

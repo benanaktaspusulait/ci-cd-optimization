@@ -2,10 +2,11 @@
 
 | Field | Value |
 |-------|-------|
-| **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
+| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 ---
@@ -145,7 +146,7 @@ Environment variables to add to the Maven step in .drone.star:
 
 ## MR Pipeline Behaviour
 
-The `.drone.star` `pull_request` event appears to create a minimal/blank pipeline (`blank_pipeline('GitLab MR')`). This should be confirmed in Story 1 (T1.1).
+The `.drone.star` `pull_request` event appears to create a minimal/blank pipeline (`blank_pipeline('merge request')`). This should be confirmed in Story 1 (T1.1).
 
 If true, developers do not get full CI feedback on merge requests — only on branch pushes and tags. This is relevant for the "developer feedback loop" target and may indicate an area where pipeline improvement could have significant developer-experience impact.
 

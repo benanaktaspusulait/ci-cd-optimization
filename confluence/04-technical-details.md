@@ -2,10 +2,11 @@
 
 | Field | Value |
 |-------|-------|
-| **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
+| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 > This page contains deep technical content for engineers. Non-technical readers should refer to the parent overview and proposal matrix.
@@ -161,10 +162,10 @@ The integration test `docker-compose.yml` (RepoSync-controlled) starts these ser
 | kafka | confluentinc/cp-kafka | 7.5.5 | Event streaming (matches MSK 3.5.1 prod) | Yes |
 | schema-registry | confluentinc/cp-schema-registry | 7.5.5 | Avro schema management | Yes |
 | redis | redis | 5.0.6 | Cache / state store | Yes |
-| localstack | localstack/localstack | 0.12.18 | AWS IAM emulation | Maybe |
+| localstack | localstack/localstack | 0.12.18 | AWS IAM emulation | TBC |
 | jaeger | jaegertracing/all-in-one | 1.65.0 | OpenTelemetry trace UI | No (local debug) |
 | kafdrop | obsidiandynamics/kafdrop | 3.30.0 | Kafka UI | No (local debug) |
-| kafka-rest | confluentinc/cp-kafka-rest | 7.5.5 | REST API for Kafka | Maybe |
+| kafka-rest | confluentinc/cp-kafka-rest | 7.5.5 | REST API for Kafka | TBC |
 | aggregate-party | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
 | aggregate-object | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
 | aggregate-location | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |

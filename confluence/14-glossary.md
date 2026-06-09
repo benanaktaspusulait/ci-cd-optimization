@@ -2,10 +2,11 @@
 
 | Field | Value |
 |-------|-------|
-| **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
+| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 Key terms and abbreviations used across the project.
@@ -20,7 +21,7 @@ Key terms and abbreviations used across the project.
 | **ACP** | Application Container Platform — manages CI/CD tooling (Drone, runners, DIND images, RepoSync). Pipeline-level changes require ACP prioritisation. |
 | **CIT** | Cloud Infrastructure & Tooling — referenced in the context of DSA ETO / Enabling. Concerned with cross-cutting infrastructure and tooling standards. |
 | **ECR** | Amazon Elastic Container Registry — one of the container image registries used for storing built Docker images. |
-| **MR** | Merge Request — the GitLab equivalent of a Pull Request. All pilot changes require an MR into `develop`. |
+| **MR** | Merge Request — the normal source-control review mechanism for merging a feature branch into `develop`. |
 | **MMA Helm repo** | The central service repo that deploys all FDP services to Kubernetes via Helm. It has its own Drone pipeline for Helm packaging, linting, templating, and deploying. Separate from the adaptor CI pipeline. |
 | **Service repo** | See MMA Helm repo — the single repository responsible for deploying all service charts. |
 | **Helm** | Kubernetes package manager. FDP services are packaged as Helm charts, uploaded to Artifactory, and deployed via the service repo pipeline. |
@@ -51,12 +52,12 @@ Key terms and abbreviations used across the project.
 
 | Question | Answer |
 |----------|--------|
-| Source code hosting | **GitLab** (`gitlab.digital.homeoffice.gov.uk`) — self-hosted |
+| Source code hosting | Internal source-control platform |
 | CI/CD system | **Drone** (Kubernetes runner, DIND service) |
 | Pipeline config | `.drone.star` (Starlark) — centrally managed via **RepoSync** |
 | Container registries | `docker.digital.homeoffice.gov.uk`, ECR, Artifactory (Docker) |
 | Artifact repository | **Artifactory** (Maven dependencies + Helm charts) |
-| RepoSync source repo | `https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync` |
+| RepoSync configuration source | ACP/RepoSync-managed central configuration; exact location is confirmed during Story 1. |
 | Docker access in CI | DIND sidecar at `tcp://docker:2375` (unencrypted, pod-internal) |
 | Deployment mechanism | Helm charts via MMA Helm repo → SIT → bVal → Production |
 | Environment promotion | SIT → bVal → Production (manual promotion) |

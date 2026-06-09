@@ -2,10 +2,11 @@
 
 | Field | Value |
 |-------|-------|
-| **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
+| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 This page consolidates the contributing guide, live status rules, Definition of Done, and metrics template.
@@ -26,7 +27,7 @@ This proposal is organised as a set of Confluence pages beneath a single parent 
 - **Detailed Task Definitions** — full why, goal, scope and acceptance criteria for every task.
 - **Architecture Decisions (ADRs)** — significant decisions with context and consequences.
 - **Technical Details** and **Code Examples and Templates** — Dockerfile, Compose, Testcontainers and CI examples.
-- **Glossary** and **References** — terminology and supporting context.
+- **Glossary** and **Supporting Context** — terminology and supporting context.
 
 **Decisions** are recorded as ADRs. **Plan and risks** live in the Project Plan. **Security** lives in the Security Plan.
 
@@ -72,7 +73,7 @@ Every task follows the same shape:
 
 ## Raising Tickets
 
-Confirm the delivery tracker before ticket creation. If the pilot repo is GitLab-hosted, use GitLab issues for task links and GitLab MRs for source review. If Jira is the delivery tracker, link the Jira ticket in the `Issue` column and still use GitLab MRs for code changes.
+Use Jira for pilot task tracking unless the delivery owner confirms a different tracker. Link the Jira ticket in the `Issue` column. Source changes should still go through the normal merge-request review process for the selected repository.
 
 Route cross-team follow-ups to the CST, RepoSync/platform, or wider ETO board in Story 6.
 
@@ -88,7 +89,7 @@ Single source of truth for pilot task progress.
 
 Update the **Status** column as work moves. Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of effort. Priority uses MoSCoW.
 
-**Tickets:** Confirm the delivery tracker before ticket creation and record the final choice in T2.1 once the pilot repo is selected. For GitLab-hosted repos, use GitLab issues for task links and GitLab MRs for source review. If Jira is the delivery tracker, link Jira tickets in the Issue column.
+**Tickets:** Use Jira for task links unless the delivery owner confirms a different tracker. Record the final tracker choice in T2.1 once the pilot repo is selected. Source changes should still go through the normal merge-request review process for the selected repository.
 
 **Issue creation order:** Epic -> S1 -> T1.1 -> T1.2 -> S2 -> T2.1.
 
@@ -119,9 +120,9 @@ Update the **Status** column as work moves. Estimates use story points: `1`, `2`
 | T5.1 | Map services started by docker-compose | 1 | Must | Not started | TBC | — |
 | T5.2 | Classify services & usage | 2 | Must | Not started | TBC | — |
 | T5.3 | Recommend reduced Compose role | 2 | Should | Not started | TBC | — |
-| **S6** | **Findings, Ownership & Recommendations** | — | Must | Not started | TBC | — |
+| **S6** | **Findings, Ownership and Recommendations** | — | Must | Not started | TBC | — |
 | T6.1 | Consolidate pilot findings | 2 | Must | Not started | TBC | — |
-| T6.2 | Classify ownership & recommend target board | 2 | Must | Not started | TBC | — |
+| T6.2 | Classify ownership and recommend target board | 2 | Must | Not started | TBC | — |
 | T6.3 | Share findings with stakeholders | 1 | Should | Not started | TBC | — |
 
 ### Ticket-Creation Order

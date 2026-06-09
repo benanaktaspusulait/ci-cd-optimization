@@ -2,10 +2,11 @@
 
 | Field | Value |
 |-------|-------|
-| **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
+| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 > This is a ~4-week part-time pilot, not a full-time programme. Adjust per team capacity.
@@ -16,7 +17,7 @@
 
 | Week | Focus | Stories | Exit criteria |
 |------|-------|---------|---------------|
-| **Week 1** | Assess + baseline | Story 1 (T1.1–T1.5), Story 2 (T2.1–T2.4) | Pipeline boundaries understood; pilot repo selected; baseline captured |
+| **Week 1** | Assess + baseline | Story 1 (T1.1–T1.5), Story 2 (T2.1–T2.4) | Pipeline boundaries understood; at least two candidates compared; one pilot repo selected; baseline captured |
 | **Week 2** | Quick wins + prototype | Story 3 (T3.1–T3.3), Story 4 (T4.1–T4.2) | `.dockerignore` + multi-stage applied; Testcontainers running locally |
 | **Week 3** | Measure + compare | Story 3 (T3.4), Story 4 (T4.3–T4.4), Story 5 (T5.1–T5.2) | Before/after data; Testcontainers vs Compose comparison; Compose mapped |
 | **Week 4** | Rationalise + share | Story 5 (T5.3), Story 6 (T6.1–T6.3) | Compose recommendation; findings consolidated; ownership classified; shared |
@@ -36,7 +37,7 @@
 
 **Candidate changes:**
 - Assess Drone/RepoSync pipeline structure and local vs central boundaries.
-- Select pilot repository and capture baseline metrics (build time, image size, pipeline duration, integration test timing).
+- Compare at least two candidate repositories/pipelines for portability, select one pilot repository, and capture baseline metrics (build time, image size, pipeline duration, integration test timing).
 - Add or validate `.dockerignore` (reduces build context by ≥ 50%).
 - Review and document current Dockerfile structure (layer ordering, base image, cache invalidation risks).
 - Apply multi-stage Dockerfile (separate deps → build → runtime).
@@ -55,7 +56,7 @@
 - [ ] Clean (no-cache) build still succeeds.
 
 **Risks / dependencies:**
-- Pilot repo selection may slip if stakeholders disagree → mitigation: time-box to Week 1.
+- Candidate comparison or pilot repo selection may slip if stakeholders disagree → mitigation: time-box to Week 1.
 - Multi-stage build may require Maven wrapper path adjustments → mitigation: test locally first.
 - Pipeline assessment may reveal constraints that limit later phases → mitigation: this is expected and acceptable; document as findings.
 

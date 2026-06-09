@@ -1,46 +1,32 @@
-# Confluence Pages — README
+# Confluence Upload Instructions
 
 | Field | Value |
 |-------|-------|
 | **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Last reviewed** | 2026-06-09 |
 
 ---
 
-## What Is This Folder?
+## What Is the Upload Set?
 
-This folder contains **Confluence-ready pages** for the CI/CD Optimisation Pilot proposal. Each file is a self-contained page — all information is inline and no external documents are needed.
+The `confluence/` folder contains the Confluence-ready pages for the CI/CD Optimisation Pilot proposal. Each page is self-contained for Confluence readers.
 
 ---
 
 ## How to Upload to Confluence
 
 1. **Create the parent page** from `00-parent-overview.md` — this is the top-level page that all others sit beneath.
-2. **Create child pages** from the 16 canonical files listed in the Page Structure table below (01–16).
+2. **Create child pages** from the 16 files listed in the Page Structure table below (01–16).
 3. **Apply labels** to all pages: `proposal`, `ci-cd`, `pilot`, `cerberus-delivery`.
 4. **Set status** to **Draft** on all pages until stakeholder review is complete.
-5. **Do NOT upload** files marked `internal, do-not-publish` (see below).
 
 ### Upload Order
 
 Create pages in numerical order. The parent page (`00`) must exist first, then child pages can be created in any order beneath it.
 
-### Do NOT Upload (internal reference files)
-
-The following files have `internal, do-not-publish` labels and exist only as repository reference. They must NOT be uploaded to Confluence:
-
-| File | Reason |
-|------|--------|
-| `07-backlog-detailed.md` | Content consolidated into `08-backlog-summary` + `15-detailed-task-definitions` |
-| `08-decisions-adr.md` | Content consolidated into `10-decisions-adr` |
-| `10-glossary.md` | Content consolidated into `14-glossary` |
-| `11-security-plan.md` | Content consolidated into `13-security-plan` |
-| `17-source-content-coverage.md` | Internal coverage check, not stakeholder content |
-
----
-
-## Page Structure (Canonical — Upload These)
+## Page Structure
 
 | File | Title | Purpose |
 |------|-------|---------|
@@ -51,7 +37,7 @@ The following files have `internal, do-not-publish` labels and exist only as rep
 | `04-technical-details.md` | Technical Details | Dockerfile, Testcontainers, BuildKit, Compose — full code examples inline. |
 | `05-pipeline-and-drone.md` | Pipeline & Drone Context | Drone/RepoSync constraints, CI vs Deploy pipeline, DIND details. |
 | `06-deployment-and-release.md` | Deployment & Release | Deploy pipeline context (outside pilot scope, documented for awareness). |
-| `07-references.md` | References | Repositories, ADR summary, KT sessions, and technology documentation. |
+| `07-supporting-context.md` | Supporting Context | System context, ADR summary, KT sessions, and optional technology references. |
 | `08-backlog-summary.md` | Backlog Summary | 6 stories and 23 tasks, story-point estimates, dependencies, and ticket creation order. |
 | `09-future-considerations.md` | Future Considerations | Post-pilot roadmap, production readiness gaps, technical opportunities. |
 | `10-decisions-adr.md` | Architecture Decisions (ADRs) | 5 ADRs — context, decision, consequences, alternatives, and template. |
@@ -70,7 +56,7 @@ The following files have `internal, do-not-publish` labels and exist only as rep
 - **Draft status** — all pages are marked as Draft pending stakeholder review and feedback.
 - **Consistent metadata** — each page has a metadata table at the top with parent page, status, labels, and last-updated date.
 - **Feedback mechanism** — each page ends with a prompt for comments and questions.
-- **Internal stubs** — five files (`07-backlog-detailed`, `08-decisions-adr`, `10-glossary`, `11-security-plan`, `17-source-content-coverage`) are marked `internal, do-not-publish`. They contain valid reference content but should NOT be uploaded to Confluence — their content lives in the canonical pages listed above.
+- **Clean upload folder** — uploadable pages live in `confluence/`; retained working/archive material lives outside that folder.
 
 ---
 

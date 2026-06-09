@@ -3,9 +3,11 @@
 | Field | Value |
 |-------|-------|
 | **Owner** | TBC (CST / Cerberus Delivery) |
+| **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Created** | 2026-06-09 |
 | **Last updated** | 2026-06-09 |
+| **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 ---
@@ -76,14 +78,15 @@ CI/CD and container workflows create recurring friction:
 
 ## Approach
 
-A small, measurable pilot on **one** representative repository:
+A small, measurable pilot on **one** representative repository, selected after comparing at least **two** candidate repositories/pipelines for portability:
 
 1. Assess Drone/RepoSync pipeline constraints (what can be changed locally).
-2. Capture baseline metrics before any change.
-3. Apply local Docker build optimisations and measure the impact.
-4. Prototype Testcontainers locally for one integration dependency.
-5. Map Compose usage and recommend a reduced CI role.
-6. Consolidate findings and classify ownership (CST / ACP / DSA ETO).
+2. Compare at least two candidate repositories/pipelines and select one pilot target.
+3. Capture baseline metrics before any change.
+4. Apply local Docker build optimisations and measure the impact.
+5. Prototype Testcontainers locally for one integration dependency.
+6. Map Compose usage and recommend a reduced CI role.
+7. Consolidate findings and classify ownership (CST / ACP / DSA ETO).
 
 Evidence-first: every change is proved with before/after numbers. No change is assumed beneficial until measured.
 
@@ -135,14 +138,14 @@ Evidence-first: every change is proved with before/after numbers. No change is a
 | 3 | Docker Build Optimisation | 4 | 2 | 1–2 |
 | 4 | Testcontainers Pilot | 4 | 2 | 2 |
 | 5 | Docker Compose Rationalisation | 3 | 4 | 2–3 |
-| 6 | CST-local vs ACP/ETO Ownership Assessment | 3 | 3, 4, 5 | 3 |
+| 6 | Findings, Ownership and Recommendations | 3 | 3, 4, 5 | 3 |
 
 ```text
 Story 1 (pipeline assessment, gate)
    └──> Story 2 (baseline, gate)
            ├──> Story 3 (build) ──────┐
            └──> Story 4 (testcontainers) ─┼──> Story 5 (compose)
-                                          └──> Story 6 (ownership)
+                                          └──> Story 6 (findings/ownership)
 ```
 
 ---
@@ -151,22 +154,22 @@ Story 1 (pipeline assessment, gate)
 
 | Page | Purpose |
 |------|---------|
-| [Proposal Matrix](01-proposal-matrix.md) | All proposals rated by Value, Risk, Complexity, Effort, MoSCoW |
-| [Phased Plan](02-phased-plan.md) | Phase 1–4 delivery approach with success criteria |
-| [Risks and DACI](03-risks-and-daci.md) | Risk register + decision areas requiring multi-stakeholder input |
-| [Technical Details](04-technical-details.md) | Dockerfile, Testcontainers, BuildKit, Compose — full code examples |
-| [Pipeline & Drone Context](05-pipeline-and-drone.md) | Drone/RepoSync constraints, CI vs Deploy pipeline |
-| [Deployment & Release](06-deployment-and-release.md) | Deploy pipeline context (outside pilot scope) |
-| [References](07-references.md) | Repositories, ADR summary, KT sessions, technology documentation |
-| [Backlog Summary](08-backlog-summary.md) | 6 stories + 23 tasks, story-point estimates, dependencies, ticket order |
-| [Future Considerations](09-future-considerations.md) | Post-pilot roadmap and architecture decision candidates |
-| [Architecture Decisions (ADRs)](10-decisions-adr.md) | 5 ADRs — context, decision, consequences, alternatives, template |
-| [Project Plan and Governance](11-project-plan-and-governance.md) | Timeline, milestones, branching/CI flow, governance |
-| [Working Agreements and Metrics](12-working-agreements-and-metrics.md) | Status board rules, Definition of Done, metrics template |
-| [Security Plan](13-security-plan.md) | Secret handling, scanning, policy-as-code, supply-chain |
-| [Glossary](14-glossary.md) | All terminology and environment clarification |
-| [Detailed Task Definitions](15-detailed-task-definitions.md) | Full per-task why, goal, scope, acceptance criteria |
-| [Code Examples and Templates](16-code-examples-and-templates.md) | Dockerfile, Compose, Testcontainers, CI templates |
+| Proposal Matrix | All proposals rated by Value, Risk, Complexity, Effort, MoSCoW |
+| Phased Plan | Phase 1–4 delivery approach with success criteria |
+| Risks and DACI | Risk register + decision areas requiring multi-stakeholder input |
+| Technical Details | Dockerfile, Testcontainers, BuildKit, Compose — full code examples |
+| Pipeline & Drone Context | Drone/RepoSync constraints, CI vs Deploy pipeline |
+| Deployment & Release | Deploy pipeline context (outside pilot scope) |
+| Supporting Context | System context, ADR summary, KT sessions, optional technology references |
+| Backlog Summary | 6 stories + 23 tasks, story-point estimates, dependencies, ticket order |
+| Future Considerations | Post-pilot roadmap and architecture decision candidates |
+| Architecture Decisions (ADRs) | 5 ADRs — context, decision, consequences, alternatives, template |
+| Project Plan and Governance | Timeline, milestones, branching/CI flow, governance |
+| Working Agreements and Metrics | Status board rules, Definition of Done, metrics template |
+| Security Plan | Secret handling, scanning, policy-as-code, supply-chain |
+| Glossary | All terminology and environment clarification |
+| Detailed Task Definitions | Full per-task why, goal, scope, acceptance criteria |
+| Code Examples and Templates | Dockerfile, Compose, Testcontainers, CI templates |
 
 ---
 
@@ -175,12 +178,14 @@ Story 1 (pipeline assessment, gate)
 Open items to resolve during review and delivery:
 
 - Final pilot repository and compared candidate repositories.
-- Board links for specific tickets (GitLab issues or Jira).
+- Jira ticket links and target board ownership for specific tickets.
 - Page owners beyond "Created by: Benan Aktas".
 - KT session dates and related Confluence links.
 - Exact baseline metric values from Story 2.
 - ACP/ETO acceptance and dates for post-pilot items.
 - Calendar dates for the 4-week plan (currently relative weeks).
+
+These items are acceptable while the page is in Draft status. They must be assigned or resolved before the page moves to In Review or Approved.
 
 ---
 

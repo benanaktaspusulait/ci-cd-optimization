@@ -2,10 +2,11 @@
 
 | Field | Value |
 |-------|-------|
-| **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
+| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
+| **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 This page provides the copy/adapt examples and the key snippets needed to understand them. All code is inline below — no other files are needed.
@@ -60,9 +61,9 @@ This page provides the copy/adapt examples and the key snippets needed to unders
 | Example | What it shows |
 |---------|---------------|
 | Drone considerations | How Testcontainers/BuildKit would work in the real Drone pipeline |
-| GitLab CI integration-test job | Illustrative GitLab CI equivalent with Testcontainers mode and Compose fallback |
+| Generic CI integration-test job | Tool-agnostic equivalent with Testcontainers mode and Compose fallback |
 
-> The real FDP CI uses **Drone** (`.drone.star` via RepoSync), not GitLab CI. GitLab CI snippets are illustrative only.
+> The real FDP CI uses **Drone** (`.drone.star` via RepoSync). Generic CI snippets are illustrative only.
 
 ---
 
@@ -352,9 +353,9 @@ Usage:
 
 ---
 
-## GitLab CI Illustration
+## Generic CI Illustration
 
-The GitLab CI example shows the same idea in a non-Drone form:
+The generic CI example shows the same idea in a non-Drone form:
 
 - `integration-test-testcontainers`: runs `./mvnw -B verify -pl cmd-adaptor-dvla-integration-tests -P testcontainers`.
 - `integration-test-compose`: fallback job using `-P ci-cmd`.
@@ -362,7 +363,7 @@ The GitLab CI example shows the same idea in a non-Drone form:
 - Docker access is provided by `docker:24-dind`.
 - Runner tag and privileged Docker posture must be confirmed with ACP/ETO if used anywhere outside illustration.
 
-This is illustrative only. Real implementation path for FDP is Drone/RepoSync.
+This is illustrative only. The real implementation path for FDP is Drone/RepoSync.
 
 ---
 
