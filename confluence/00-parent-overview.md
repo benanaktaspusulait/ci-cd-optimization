@@ -157,7 +157,9 @@ Story 1 (pipeline assessment, gate)
 | Proposal Matrix | All proposals rated by Value, Risk, Complexity, Effort, MoSCoW |
 | Phased Plan | Phase 1–4 delivery approach with success criteria |
 | Risks and DACI | Risk register + decision areas requiring multi-stakeholder input |
-| Technical Details | Dockerfile, Testcontainers, BuildKit, Compose — full code examples |
+| Technical Details | Index — Docker build and Testcontainers technical content |
+| Technical Details — Docker Build | Dockerfile, .dockerignore, Compose, BuildKit, base image |
+| Technical Details — Testcontainers | Container configs, Spring/Cucumber integration, Maven, CI feasibility |
 | Pipeline & Drone Context | Drone/RepoSync constraints, CI vs Deploy pipeline |
 | Deployment & Release | Deploy pipeline context (outside pilot scope) |
 | Supporting Context | System context, ADR summary, KT sessions, optional technology references |
