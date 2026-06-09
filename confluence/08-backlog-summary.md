@@ -34,37 +34,39 @@ Story 1 (pipeline assessment, gate)
 
 ## Full Task List (Jira-ready)
 
-| ID | Title | Type | Est | Priority | Owner | Sprint | Status |
-|----|-------|------|:---:|:--------:|-------|:------:|--------|
+Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of effort.
+
+| ID | Title | Type | SP | Priority | Owner | Sprint | Status |
+|----|-------|------|:--:|:--------:|-------|:------:|--------|
 | **S1** | **Pipeline Assessment** | Story | — | Must | TBC | W1 | Not started |
-| T1.1 | Review .drone.star pipeline structure | Research | M | Must | TBC | W1 | Not started |
-| T1.2 | Identify local vs RepoSync boundaries | Analysis | S | Must | TBC | W1 | Not started |
-| T1.3 | Map CI steps, DIND and Compose usage | Research | M | Must | TBC | W1 | Not started |
-| T1.4 | Assess Testcontainers feasibility in Drone | Research | M | Must | TBC | W1 | Not started |
-| T1.5 | Assess BuildKit/cache feasibility | Research | S | Should | TBC | W1 | Not started |
+| T1.1 | Review .drone.star pipeline structure | Research | 2 | Must | TBC | W1 | Not started |
+| T1.2 | Identify local vs RepoSync boundaries | Analysis | 1 | Must | TBC | W1 | Not started |
+| T1.3 | Map CI steps, DIND and Compose usage | Research | 2 | Must | TBC | W1 | Not started |
+| T1.4 | Assess Testcontainers feasibility in Drone | Research | 2 | Must | TBC | W1 | Not started |
+| T1.5 | Assess BuildKit/cache feasibility | Research | 1 | Should | TBC | W1 | Not started |
 | **S2** | **Baseline & Pilot Scope** | Story | — | Must | TBC | W1 | Not started |
-| T2.1 | Select pilot repository/service | Research | S | Must | TBC | W1 | Not started |
-| T2.2 | Capture CI/CD pipeline baseline | Research | M | Must | TBC | W1 | Not started |
-| T2.3 | Capture Docker build & image-size baseline | Research | S | Must | TBC | W1 | Not started |
-| T2.4 | Capture integration-test baseline | Research | M | Must | TBC | W1 | Not started |
+| T2.1 | Compare candidate pipelines and select pilot repo | Research | 1 | Must | TBC | W1 | Not started |
+| T2.2 | Capture CI/CD pipeline baseline | Research | 2 | Must | TBC | W1 | Not started |
+| T2.3 | Capture Docker build & image-size baseline | Research | 1 | Must | TBC | W1 | Not started |
+| T2.4 | Capture integration-test baseline | Research | 2 | Must | TBC | W1 | Not started |
 | **S3** | **Docker Build Optimisation** | Story | — | Must | TBC | W2 | Not started |
-| T3.1 | Review current Dockerfile & build context | Analysis | M | Must | TBC | W2 | Not started |
-| T3.2 | Add or validate .dockerignore | Implementation | S | Must | TBC | W2 | Not started |
-| T3.3 | Apply Dockerfile layering / cache improvement | Implementation | M | Must | TBC | W2 | Not started |
-| T3.4 | Measure local & CI build impact | Analysis | M | Should | TBC | W3 | Not started |
+| T3.1 | Review current Dockerfile & build context | Analysis | 2 | Must | TBC | W2 | Not started |
+| T3.2 | Add or validate .dockerignore | Implementation | 1 | Must | TBC | W2 | Not started |
+| T3.3 | Apply Dockerfile layering / cache improvement | Implementation | 2 | Must | TBC | W2 | Not started |
+| T3.4 | Measure local & CI build impact | Analysis | 2 | Should | TBC | W3 | Not started |
 | **S4** | **Testcontainers Pilot** | Story | — | Must | TBC | W2 | Not started |
-| T4.1 | Select candidate dependency/test | Research | S | Must | TBC | W2 | Not started |
-| T4.2 | Implement Testcontainers setup | Implementation | L | Must | TBC | W2 | Not started |
-| T4.3 | Compare with docker-compose flow | Analysis | M | Should | TBC | W3 | Not started |
-| T4.4 | Document findings & constraints | Documentation | S | Should | TBC | W3 | Not started |
+| T4.1 | Select candidate dependency/test | Research | 1 | Must | TBC | W2 | Not started |
+| T4.2 | Implement Testcontainers setup | Implementation | 3 | Must | TBC | W2 | Not started |
+| T4.3 | Compare with docker-compose flow | Analysis | 2 | Should | TBC | W3 | Not started |
+| T4.4 | Document findings & constraints | Documentation | 1 | Should | TBC | W3 | Not started |
 | **S5** | **Docker Compose Rationalisation** | Story | — | Should | TBC | W3 | Not started |
-| T5.1 | Map services started by docker-compose | Research | S | Must | TBC | W3 | Not started |
-| T5.2 | Classify services & usage | Analysis | M | Must | TBC | W3 | Not started |
-| T5.3 | Recommend reduced Compose role | Documentation | M | Should | TBC | W4 | Not started |
-| **S6** | **CST-local vs ACP/ETO Ownership Assessment** | Story | — | Must | TBC | W4 | Not started |
-| T6.1 | Consolidate pilot findings | Documentation | M | Must | TBC | W4 | Not started |
-| T6.2 | Classify ownership & recommend target board | Analysis | M | Must | TBC | W4 | Not started |
-| T6.3 | Share findings with stakeholders | Documentation | S | Should | TBC | W4 | Not started |
+| T5.1 | Map services started by docker-compose | Research | 1 | Must | TBC | W3 | Not started |
+| T5.2 | Classify services & usage | Analysis | 2 | Must | TBC | W3 | Not started |
+| T5.3 | Recommend reduced Compose role | Documentation | 2 | Should | TBC | W4 | Not started |
+| **S6** | **Findings, Ownership & Recommendations** | Story | — | Must | TBC | W4 | Not started |
+| T6.1 | Consolidate pilot findings | Documentation | 2 | Must | TBC | W4 | Not started |
+| T6.2 | Classify ownership & recommend target board | Analysis | 2 | Must | TBC | W4 | Not started |
+| T6.3 | Share findings with stakeholders | Documentation | 1 | Should | TBC | W4 | Not started |
 
 ---
 
@@ -177,10 +179,10 @@ Open the rest once pipeline boundaries are understood and baseline is underway.
 
 ## Estimates
 
-- **S** (Small): ≤ 0.5 day
-- **M** (Medium): 0.5–1 day
-- **L** (Large): 1–2 days
-- **Total estimated effort:** ~15 working days (part-time over 4 weeks)
+- Story/task estimates use story points: `1`, `2`, `3`, or `5`.
+- `1 SP` is roughly 1 day of effort.
+- Total estimated task effort: 35 SP, planned part-time over roughly 4 weeks.
+- Story-level estimates are intentionally left open until ticket ownership and delivery board are agreed.
 
 ---
 

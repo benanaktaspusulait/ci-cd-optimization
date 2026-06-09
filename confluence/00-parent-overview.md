@@ -75,11 +75,12 @@ CI/CD and container workflows create recurring friction:
 A small, measurable pilot on **one** representative repository:
 
 1. Assess Drone/RepoSync pipeline constraints (what can be changed locally).
-2. Capture baseline metrics before any change.
-3. Apply local Docker build optimisations and measure the impact.
-4. Prototype Testcontainers locally for one integration dependency.
-5. Map Compose usage and recommend a reduced CI role.
-6. Consolidate findings and classify ownership (CST / ACP / DSA ETO).
+2. Compare at least two candidate pipelines/repositories for portability, then select one pilot target.
+3. Capture baseline metrics before any change.
+4. Apply local Docker build optimisations and measure the impact.
+5. Prototype Testcontainers locally for one integration dependency.
+6. Map Compose usage and recommend a reduced CI role.
+7. Consolidate findings and classify ownership (CST / ACP / DSA ETO).
 
 Evidence-first: every change is proved with before/after numbers. No change is assumed beneficial until measured.
 
@@ -122,6 +123,13 @@ Evidence-first: every change is proved with before/after numbers. No change is a
 | [Backlog Summary](08-backlog-summary.md) | Story/task list with details (Jira-ready) |
 | [Future Considerations](09-future-considerations.md) | Post-pilot roadmap, architecture decision candidates |
 | [Architecture Decisions](10-decisions-adr.md) | ADR full text — context, decision, consequences, alternatives |
+| [Project Plan and Governance](11-project-plan-and-governance.md) | Timeline, milestones, branching, release flow, verification strategy |
+| [Working Agreements and Metrics](12-working-agreements-and-metrics.md) | Contributing guide, live status rules, Definition of Done, metrics template |
+| [Security Plan](13-security-plan.md) | Secret handling, scanning policy, policy-as-code, supply-chain hardening |
+| [Glossary](14-glossary.md) | Terms, acronyms, environment clarification |
+| [Detailed Task Definitions](15-detailed-task-definitions.md) | Full story/task why, goal, scope and acceptance criteria |
+| [Code Examples and Templates](16-code-examples-and-templates.md) | Example catalogue and application notes |
+| [Source Content Coverage](17-source-content-coverage.md) | Mapping from original repo documents to Confluence pages |
 
 ---
 

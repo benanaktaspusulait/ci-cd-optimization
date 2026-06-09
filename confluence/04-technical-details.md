@@ -162,7 +162,7 @@ The integration test docker-compose starts:
 | kafka | cp-kafka:7.5.5 | Event streaming | Yes |
 | schema-registry | cp-schema-registry:7.5.5 | Avro schema management | Yes |
 | redis | redis:5.0.6 | Cache / state store | Yes |
-| localstack | localstack:0.12.18 | IAM emulation | Maybe |
+| localstack | localstack:0.12.18 | IAM emulation | TBC |
 | jaeger | jaegertracing/all-in-one:1.65.0 | Trace UI | No (local debug) |
 | kafdrop | obsidiandynamics/kafdrop:3.30.0 | Kafka UI | No (local debug) |
 | aggregate-party/object/location/event/service/matching/v1id-v2id | Internal FDP images | Stream processors | For snapshot tests only |
@@ -224,6 +224,8 @@ Working examples exist in the repository under `examples/`:
 - `examples/testcontainers/` — RedisContainerConfig, KafkaContainerConfig, CucumberSpringConfig, pom-dependencies
 - `examples/docker/` — optimised Dockerfile, .dockerignore, docker-compose
 - `examples/ci/` — Drone considerations, GitLab CI illustrative snippet
+
+For the Confluence-converted catalogue and application notes, see [Code Examples and Templates](16-code-examples-and-templates.md).
 
 ---
 

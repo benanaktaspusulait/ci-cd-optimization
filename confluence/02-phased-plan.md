@@ -15,7 +15,7 @@
 
 **Candidate changes:**
 - Assess Drone/RepoSync pipeline structure and local vs central boundaries.
-- Select pilot repository and capture baseline metrics (build time, image size, pipeline duration, integration test timing).
+- Compare at least two candidate pipelines/repositories, select one pilot repository, and capture baseline metrics (build time, image size, pipeline duration, integration test timing).
 - Add or validate `.dockerignore` (reduces build context by ≥ 50%).
 - Review and document current Dockerfile structure.
 - Apply multi-stage Dockerfile (separate deps → build → runtime).

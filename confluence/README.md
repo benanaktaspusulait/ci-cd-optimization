@@ -17,13 +17,22 @@ Parent page: 00-parent-overview.md
   ├── 05-pipeline-and-drone.md     → Drone/RepoSync constraints, CI vs Deploy
   ├── 06-deployment-and-release.md → Deploy pipeline, Helm, release flow (context only)
   ├── 07-references.md             → Source links, ADRs, KT sessions, external docs
-  └── 08-backlog-summary.md        → Story/task table (Jira-ready)
+  ├── 08-backlog-summary.md        → Story/task table (Jira-ready)
+  ├── 09-future-considerations.md  → Post-pilot roadmap
+  ├── 10-decisions-adr.md          → ADR records
+  ├── 11-project-plan-and-governance.md
+  ├── 12-working-agreements-and-metrics.md
+  ├── 13-security-plan.md
+  ├── 14-glossary.md
+  ├── 15-detailed-task-definitions.md
+  ├── 16-code-examples-and-templates.md
+  └── 17-source-content-coverage.md
 ```
 
 ## How to use
 
 1. Create a new parent page in Confluence with the content from `00-parent-overview.md`.
-2. Create child pages for each numbered file (01–08).
+2. Create child pages for each numbered file (01–17).
 3. Replace `TBC` items as decisions are made.
 4. Apply Confluence labels: `proposal`, `ci-cd`, `pilot`, `cerberus-delivery`.
 5. Set status to "Draft" until stakeholder review is complete.
@@ -38,3 +47,4 @@ These pages are a **Confluence-formatted view** of the same information in `docs
 | ADR full text with alternatives table | `docs/adr/` (repo) |
 | Code examples | `examples/` (repo) |
 | Stakeholder overview + decision surface | This `confluence/` folder |
+| Confluence coverage check | `17-source-content-coverage.md` |

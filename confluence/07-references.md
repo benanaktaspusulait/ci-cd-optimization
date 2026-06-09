@@ -66,9 +66,9 @@ Full ADR text with alternatives and consequences: see `docs/adr/` in the reposit
 
 | Page | Status |
 |------|--------|
-| TBC — link to DSA Tech Strategy page | TBC |
-| TBC — link to ACP CI/CD tooling page | TBC |
-| TBC — link to Cerberus Delivery board | TBC |
+| TODO: verify link — DSA Tech Strategy page | TBC |
+| TODO: verify link — ACP CI/CD tooling page | TBC |
+| TODO: verify link — Cerberus Delivery board | TBC |
 
 ---
 
