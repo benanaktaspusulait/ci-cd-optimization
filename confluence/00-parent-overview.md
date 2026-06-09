@@ -157,16 +157,21 @@ Story 1 (pipeline assessment, gate)
 | [Technical Details](04-technical-details.md) | Dockerfile, Testcontainers, BuildKit, Compose — full code examples |
 | [Pipeline & Drone Context](05-pipeline-and-drone.md) | Drone/RepoSync constraints, CI vs Deploy pipeline |
 | [Deployment & Release](06-deployment-and-release.md) | Deploy pipeline context (outside pilot scope) |
+| [Backlog — Detailed](07-backlog-detailed.md) | 6 stories + 23 tasks with full why/goal/scope/acceptance |
 | [References](07-references.md) | Repositories, ADR summary, KT sessions, technology documentation |
 | [Backlog Summary](08-backlog-summary.md) | 6 stories + 23 tasks, story-point estimates, ticket order |
+| [Architecture Decisions — Detailed](08-decisions-adr.md) | 5 ADRs with full context, decision, consequences, alternatives |
 | [Future Considerations](09-future-considerations.md) | Post-pilot roadmap and architecture decision candidates |
-| [Architecture Decisions (ADRs)](10-decisions-adr.md) | 5 ADRs — context, decision, consequences, alternatives, template |
+| [Architecture Decisions — ADR Index](10-decisions-adr.md) | 5 ADRs — concise format with index, follow-ups, template |
+| [Glossary — Full](10-glossary.md) | All terminology with detailed definitions and environment table |
 | [Project Plan and Governance](11-project-plan-and-governance.md) | Timeline, milestones, branching/CI flow, governance |
+| [Security Plan — Full](11-security-plan.md) | Secret handling, scanning, policy-as-code, supply-chain, reporting |
 | [Working Agreements and Metrics](12-working-agreements-and-metrics.md) | Status board rules, Definition of Done, metrics template |
 | [Security Plan](13-security-plan.md) | Secret handling, scanning, policy-as-code, supply-chain |
 | [Glossary](14-glossary.md) | All terminology and environment clarification |
 | [Detailed Task Definitions](15-detailed-task-definitions.md) | Full per-task why, goal, scope, acceptance criteria |
 | [Code Examples and Templates](16-code-examples-and-templates.md) | Dockerfile, Compose, Testcontainers, CI templates |
+| [Source Content Coverage](17-source-content-coverage.md) | Internal coverage map — confirms no content was left behind |
 
 ---
 
