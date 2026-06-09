@@ -39,8 +39,10 @@ CI/CD and container workflows create recurring friction:
 
 ## Objectives
 
+> **Note:** Numeric targets below are initial aspirations. They will be validated and adjusted once Story 2 captures the concrete baseline.
+
 - Reduce local Docker build time by ≥ 30%.
-- Reduce final image size by ≥ 30% (multi-stage build removes JDK from runtime).
+- Reduce final image size by ≥ 30% (multi-stage build removes build tools from runtime).
 - Reduce Docker build context by ≥ 50% (`.dockerignore`).
 - Validate Testcontainers for one integration dependency (isolation, determinism).
 - Map Docker Compose services and clarify CI vs local-debug roles.
@@ -100,6 +102,8 @@ Evidence-first: every change is proved with before/after numbers. No change is a
 ---
 
 ## Success Targets
+
+> **Note:** Numeric targets are initial aspirations, subject to validation after Story 2 baseline capture. They may be adjusted once concrete measurements are available.
 
 **CST-local targets (achievable within the pilot):**
 
@@ -163,7 +167,6 @@ Story 1 (pipeline assessment, gate)
 | [Glossary](14-glossary.md) | All terminology and environment clarification |
 | [Detailed Task Definitions](15-detailed-task-definitions.md) | Full per-task why, goal, scope, acceptance criteria |
 | [Code Examples and Templates](16-code-examples-and-templates.md) | Dockerfile, Compose, Testcontainers, CI templates |
-| [Source Content Coverage](17-source-content-coverage.md) | Coverage map confirming no content was left behind |
 
 ---
 

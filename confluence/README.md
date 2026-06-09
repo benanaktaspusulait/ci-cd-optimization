@@ -27,13 +27,13 @@ Create pages in numerical order. The parent page (`00`) must exist first, then c
 
 ### Do NOT Upload (internal only)
 
-The following files are **internal redirect/migration stubs** and should NOT be uploaded to Confluence:
+The following files are prefixed with `_internal-` and should NOT be uploaded to Confluence:
 
-- `07-backlog-detailed.md` — consolidated into `08-backlog-summary` + `15-detailed-task-definitions`
-- `08-decisions-adr.md` — consolidated into `10-decisions-adr`
-- `10-glossary.md` — consolidated into `14-glossary`
-- `11-security-plan.md` — consolidated into `13-security-plan`
-- `17-source-content-coverage.md` — internal coverage check, not stakeholder content
+- `_internal-07-backlog-detailed.md` — consolidated into `08-backlog-summary` + `15-detailed-task-definitions`
+- `_internal-08-decisions-adr.md` — consolidated into `10-decisions-adr`
+- `_internal-10-glossary.md` — consolidated into `14-glossary`
+- `_internal-11-security-plan.md` — consolidated into `13-security-plan`
+- `_internal-17-source-content-coverage.md` — internal coverage check, not stakeholder content
 
 ---
 
@@ -67,7 +67,7 @@ The following files are **internal redirect/migration stubs** and should NOT be 
 - **Draft status** — all pages are marked as Draft pending stakeholder review and feedback.
 - **Consistent metadata** — each page has a metadata table at the top with parent page, status, labels, and last-updated date.
 - **Feedback mechanism** — each page ends with a prompt for comments and questions.
-- **Redirect pages** — files `07-backlog-detailed`, `08-decisions-adr`, `10-glossary`, and `11-security-plan` are internal redirect stubs. They exist to preserve repo links but should NOT be uploaded to Confluence. `17-source-content-coverage` is an internal coverage check and also should not be uploaded.
+- **Internal stubs** — files prefixed with `_internal-` are redirect/migration stubs that should NOT be uploaded to Confluence. They exist to preserve repo links and document consolidation history.
 
 ---
 

@@ -41,8 +41,8 @@ CMD ["java", "-javaagent:/local/opentelemetry-javaagent.jar", ... "-jar", "/loca
 ```
 
 **Problems:**
-- Ships JDK + build tools in production image (~450 MB).
-- No layer separation — any source change re-downloads dependencies.
+- Ships full JDK and OS/runtime tools in production image (~450 MB).
+- No layer separation — depending on the build path, source changes may trigger full dependency re-resolution.
 - No BuildKit cache mounts — Maven `.m2` not persisted between builds.
 - `yum update` in same layer as app code — invalidates frequently.
 

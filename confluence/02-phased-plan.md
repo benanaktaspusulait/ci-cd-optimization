@@ -44,9 +44,9 @@
 
 **Expected outcome:**
 - Pipeline and build baselines documented with measurement method.
-- Build context size reduced by ≥ 50%.
-- Local build time reduced by ≥ 30% (dependency caching + multi-stage).
-- Image size reduced by ≥ 30% (full JDK and build tools removed from runtime image).
+- Build context size reduced by ≥ 50% (initial target, subject to baseline validation).
+- Local build time reduced by ≥ 30% (initial target, subject to baseline validation).
+- Image size reduced by ≥ 30% (initial target — build tools removed from runtime image).
 
 **Success criteria:**
 - [ ] Baseline numbers captured and repeatable.

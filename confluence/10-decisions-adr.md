@@ -242,7 +242,7 @@ During the pilot, no services will be removed. The output is a classification an
 
 The current Dockerfile has several characteristics that cause slow builds and large images:
 
-- **Single-stage build** — the final image contains JDK, Maven, build tools, source code, and the compiled application (~450 MB).
+- **Single-stage build** — the final image may contain the full JDK, build-time tools, and potentially source or intermediate artifacts alongside the compiled application (~450 MB). The exact contents depend on the current build path.
 - **No layer caching strategy** — dependencies are re-downloaded on every build because the Maven cache is not preserved between layers.
 - **Large build context** — approximately 200 MB is sent to the Docker daemon because there is no `.dockerignore` (or an insufficient one).
 - **Ephemeral Drone pods** — the Drone Kubernetes runner creates fresh pods for each pipeline run. Any local Docker layer cache is lost between runs.
@@ -275,7 +275,7 @@ Configuration:
 
 **Positive:**
 
-- Image size reduction — runtime image contains only JRE + JAR (~150–180 MB vs ~450 MB). Target ≥ 30% reduction.
+- Image size reduction — runtime image ships only the application JAR and minimal runtime base (~150–300 MB vs ~450 MB). Target ≥ 30% reduction; exact size depends on runtime base choice (full JDK vs JRE-only or slim variant).
 - Faster local builds — cache mounts avoid re-downloading ~200 MB of Maven dependencies on every build.
 - Security improvement — production image does not contain build tools, source code, or intermediate artifacts.
 - Multi-stage works anywhere — no special CI infrastructure required. Benefits are immediate locally.
