@@ -1,12 +1,14 @@
 # Architecture Decision Records (ADRs)
 
+> ⚠️ **Internal only — do not publish to Confluence.** The canonical ADR page is [Architecture Decisions (10-decisions-adr.md)](10-decisions-adr.md). This file is retained in the repository for reference and contains the same ADRs in a more detailed prose format.
+
 | Field | Value |
 |-------|-------|
 | **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
-| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
+| **Labels** | `internal`, `do-not-publish` |
 
 ---
 

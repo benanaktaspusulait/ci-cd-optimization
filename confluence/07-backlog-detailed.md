@@ -1,12 +1,14 @@
 # Backlog — Detailed Stories and Tasks
 
+> ⚠️ **Internal only — do not publish to Confluence.** This content has been consolidated into [Backlog Summary](08-backlog-summary.md) and [Detailed Task Definitions](15-detailed-task-definitions.md). This file is retained in the repository for reference.
+
 | Field | Value |
 |-------|-------|
 | **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
-| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
+| **Labels** | `internal`, `do-not-publish` |
 
 > **Note:** This backlog is a **candidate structure only**. Individual tickets should not be created until priority, ownership and target board are agreed with Thomas Reddy and relevant Cerberus Delivery stakeholders.
 

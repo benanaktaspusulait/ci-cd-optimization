@@ -1,12 +1,14 @@
 # Source Content Coverage
 
+> ⚠️ **Internal only — do not publish to Confluence.** This is an internal coverage check confirming all source content was transferred to the canonical Confluence pages. Not intended for stakeholder review.
+
 | Field | Value |
 |-------|-------|
 | **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
-| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
+| **Labels** | `internal`, `do-not-publish` |
 
 This page maps the original source documentation to the Confluence page set. Its purpose is to confirm no meaningful content has been left behind.
 

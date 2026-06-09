@@ -28,7 +28,7 @@ A decision is needed on whether to proceed with the pilot and which repository t
 
 CI/CD and container workflows create recurring friction:
 
-- **Long build times** — repeated dependency downloads (~200 MB Maven deps), poor layer caching, large build contexts (~200 MB sent to Docker daemon).
+- **Long build times** — poor layer caching, large build contexts (~200 MB sent to Docker daemon), and potential repeated dependency resolution (~200 MB Maven deps) depending on the build path.
 - **Heavy integration-test setup** — full Docker Compose stacks (Zookeeper, Kafka, Schema Registry, Redis, LocalStack, 7 aggregator services, command adaptor) start for every CI run regardless of what the test actually needs.
 - **Flaky, environment-dependent tests** — shared state between tests, environment drift between local and CI (port conflicts, resource limits, network differences).
 - **Oversized images** — ~450 MB images shipping a full JDK and additional OS/runtime tools to production.
@@ -42,7 +42,7 @@ CI/CD and container workflows create recurring friction:
 > **Note:** Numeric targets below are initial aspirations. They will be validated and adjusted once Story 2 captures the concrete baseline.
 
 - Reduce local Docker build time by ≥ 30%.
-- Reduce final image size by ≥ 30% (multi-stage build removes build tools from runtime).
+- Reduce final image size by ≥ 30% (multi-stage build removes build tools from runtime; runtime base choice — e.g. `amazoncorretto:17` slim variant or JRE-only — to be validated in Story 3).
 - Reduce Docker build context by ≥ 50% (`.dockerignore`).
 - Validate Testcontainers for one integration dependency (isolation, determinism).
 - Map Docker Compose services and clarify CI vs local-debug roles.
@@ -157,27 +157,22 @@ Story 1 (pipeline assessment, gate)
 | [Technical Details](04-technical-details.md) | Dockerfile, Testcontainers, BuildKit, Compose — full code examples |
 | [Pipeline & Drone Context](05-pipeline-and-drone.md) | Drone/RepoSync constraints, CI vs Deploy pipeline |
 | [Deployment & Release](06-deployment-and-release.md) | Deploy pipeline context (outside pilot scope) |
-| [Backlog — Detailed](07-backlog-detailed.md) | 6 stories + 23 tasks with full why/goal/scope/acceptance |
 | [References](07-references.md) | Repositories, ADR summary, KT sessions, technology documentation |
-| [Backlog Summary](08-backlog-summary.md) | 6 stories + 23 tasks, story-point estimates, ticket order |
-| [Architecture Decisions — Detailed](08-decisions-adr.md) | 5 ADRs with full context, decision, consequences, alternatives |
+| [Backlog Summary](08-backlog-summary.md) | 6 stories + 23 tasks, story-point estimates, dependencies, ticket order |
 | [Future Considerations](09-future-considerations.md) | Post-pilot roadmap and architecture decision candidates |
-| [Architecture Decisions — ADR Index](10-decisions-adr.md) | 5 ADRs — concise format with index, follow-ups, template |
-| [Glossary — Full](10-glossary.md) | All terminology with detailed definitions and environment table |
+| [Architecture Decisions (ADRs)](10-decisions-adr.md) | 5 ADRs — context, decision, consequences, alternatives, template |
 | [Project Plan and Governance](11-project-plan-and-governance.md) | Timeline, milestones, branching/CI flow, governance |
-| [Security Plan — Full](11-security-plan.md) | Secret handling, scanning, policy-as-code, supply-chain, reporting |
 | [Working Agreements and Metrics](12-working-agreements-and-metrics.md) | Status board rules, Definition of Done, metrics template |
 | [Security Plan](13-security-plan.md) | Secret handling, scanning, policy-as-code, supply-chain |
 | [Glossary](14-glossary.md) | All terminology and environment clarification |
 | [Detailed Task Definitions](15-detailed-task-definitions.md) | Full per-task why, goal, scope, acceptance criteria |
 | [Code Examples and Templates](16-code-examples-and-templates.md) | Dockerfile, Compose, Testcontainers, CI templates |
-| [Source Content Coverage](17-source-content-coverage.md) | Internal coverage map — confirms no content was left behind |
 
 ---
 
 ## Remaining TBC Items
 
-The following items remain as `TBC` because they are not yet confirmed:
+Open items to resolve during review and delivery:
 
 - Final pilot repository and compared candidate repositories.
 - Board links for specific tickets (GitLab issues or Jira).
@@ -185,8 +180,7 @@ The following items remain as `TBC` because they are not yet confirmed:
 - KT session dates and related Confluence links.
 - Exact baseline metric values from Story 2.
 - ACP/ETO acceptance and dates for post-pilot items.
-
-These are not gaps — they are real unknowns to resolve during review and delivery.
+- Calendar dates for the 4-week plan (currently relative weeks).
 
 ---
 
