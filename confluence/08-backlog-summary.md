@@ -67,7 +67,101 @@ Story 1 (pipeline assessment, gate)
 
 ---
 
-## Ticket Creation Order
+## Story Details
+
+### Story 1 — Pipeline Assessment (Drone/RepoSync)
+
+**Goal:** Understand the centrally managed Drone pipeline structure, establish what can be changed locally vs what requires ACP/RepoSync coordination, and assess feasibility of Testcontainers and BuildKit.
+
+**Why:** The `.drone.star` pipeline is managed via RepoSync. Local changes are not durable. The pilot must separate repo-local proof points from changes that need ACP coordination.
+
+**Acceptance criteria:**
+- `.drone.star` structure documented (steps, services, DIND)
+- Local vs RepoSync boundaries defined
+- CI steps and Docker Compose usage mapped
+- Testcontainers feasibility assessed (DIND access, Ryuk, DOCKER_HOST)
+- BuildKit feasibility assessed
+- Findings inform later stories
+
+---
+
+### Story 2 — Baseline & Pilot Scope
+
+**Goal:** Compare candidate repos, select one, and capture a trustworthy "before" state.
+
+**Why:** Without a baseline there is no way to prove whether an optimisation helped.
+
+**Acceptance criteria:**
+- At least two candidates compared
+- Pilot repo selected with rationale
+- Pipeline, build, image-size and integration-test baselines captured
+- Measurement method recorded (repeatable)
+- Baseline agreed with stakeholders
+
+---
+
+### Story 3 — Docker Build Optimisation
+
+**Goal:** Apply practical Dockerfile/build-context improvements and prove impact with before/after numbers.
+
+**Why:** Small changes (layer ordering, `.dockerignore`, cache mounts, multi-stage) often deliver disproportionate gains without changing application behaviour.
+
+**Drone constraint:** Multi-stage and `.dockerignore` work anywhere. Cache mounts work locally but are ephemeral in CI DIND. Remote cache requires ACP.
+
+**Acceptance criteria:**
+- Dockerfile/context reviewed; cache-invalidation risks identified
+- `.dockerignore` present and appropriate
+- At least one layering/cache improvement applied
+- Build time and image size compared before/after
+
+---
+
+### Story 4 — Testcontainers Pilot
+
+**Goal:** Prove whether Testcontainers can replace part of docker-compose for one dependency with better isolation and determinism.
+
+**Why:** Full Compose stacks are slow, share state, and cause flaky failures. Testcontainers offers isolated, deterministic, per-test environments.
+
+**Drone constraint:** CI feasibility depends on T1.4. DIND + DOCKER_HOST + RYUK_DISABLED needed. If CI not feasible → stays local-only (still valuable).
+
+**Acceptance criteria:**
+- One candidate dependency selected with rationale
+- Testcontainers setup implemented and connecting
+- Flow compared with existing Compose
+- Findings and continue/stop recommendation documented
+
+---
+
+### Story 5 — Docker Compose Rationalisation
+
+**Goal:** Clarify which Compose services are truly needed for CI vs local debugging, recommend reduced role.
+
+**Why:** Compose files grow and serve mixed purposes. Separating CI from local reduces overhead without removing developer tooling.
+
+**Note:** Docker Compose should not be removed without mapping current usage. Goal = reduce unnecessary CI orchestration, not remove local workflows.
+
+**Acceptance criteria:**
+- All services mapped (image, ports, dependencies, purpose)
+- Services classified (CI-required / local-debug / optional / removable)
+- CI vs local usage separated
+- Reduced role recommended with risk/impact
+
+---
+
+### Story 6 — CST-local vs ACP/ETO Ownership Assessment
+
+**Goal:** Consolidate evidence, classify each item into three ownership categories (CST / ACP / DSA ETO), recommend target operating model.
+
+**Why:** A pilot is only valuable if it ends in a clear decision. This routes follow-up work to the right board.
+
+**Acceptance criteria:**
+- Consolidated findings summary exists
+- Each item classified with rationale
+- Each item mapped to suggested board/owner
+- Target operating model recommendation
+- Findings shared; feedback captured
+
+---
 
 Create incrementally — not all at once:
 
