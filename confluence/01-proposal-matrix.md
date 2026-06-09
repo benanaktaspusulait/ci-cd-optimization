@@ -19,6 +19,8 @@ Each proposal is assessed on Value, Risk, Complexity, Effort, and MoSCoW priorit
 - High risk + high complexity + unclear value = needs more investigation.
 - Items with cross-team or ACP/ETO impact may need a DACI decision record.
 
+> **Note:** Numeric improvement estimates (e.g. "~450 MB → ~300 MB") are initial targets, subject to validation after Story 2 baseline capture.
+
 | # | Proposal | Description | Value | Risk | Complexity | Effort | MoSCoW | Owner | Phase | Notes |
 |---|----------|-------------|:-----:|:----:|:----------:|:------:|:------:|-------|:-----:|-------|
 | 1 | `.dockerignore` validation | Exclude `.git`, `target`, `docs`, `src/test`, IDE files from Docker build context. Reduces context from ~200 MB to ~50 MB. | High | Low | Low | Low | Must | CST | 1 | Quick win — 30 min effort, immediate measurable gain |

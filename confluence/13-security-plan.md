@@ -160,7 +160,7 @@ The pilot security approach is **observe and learn**:
 3. Document findings — provide evidence to ACP/ETO for the case to implement hard gates.
 4. Structure Dockerfiles correctly — multi-stage builds, non-root users, pinned bases — so that future policy enforcement is straightforward.
 
-Hard gates, image signing, and org-wide policies require ACP/ETO ownership and are post-pilot activities.
+Hard gates, image signing, and org-wide policies require ACP/ETO ownership and are post-pilot activities. **This security plan covers the pilot only and does not constitute production-ready security posture.** Production rollout requires the post-pilot gates described above.
 
 ---
 

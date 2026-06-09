@@ -28,7 +28,7 @@ A decision is needed on whether to proceed with the pilot and which repository t
 
 CI/CD and container workflows create recurring friction:
 
-- **Long build times** — poor layer caching, large build contexts (~200 MB sent to Docker daemon), and potential repeated dependency resolution (~200 MB Maven deps) depending on the build path.
+- **Long build times** — poor Docker layer caching, large build contexts (~200 MB sent to Docker daemon). The CI Maven step may also suffer from repeated dependency resolution (~200 MB) if caching is not effective; this will be validated during Story 2 baseline capture.
 - **Heavy integration-test setup** — full Docker Compose stacks (Zookeeper, Kafka, Schema Registry, Redis, LocalStack, 7 aggregator services, command adaptor) start for every CI run regardless of what the test actually needs.
 - **Flaky, environment-dependent tests** — shared state between tests, environment drift between local and CI (port conflicts, resource limits, network differences).
 - **Oversized images** — ~450 MB images shipping a full JDK and additional OS/runtime tools to production.

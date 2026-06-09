@@ -177,6 +177,8 @@ Fill this in as the pilot progresses. Baseline values come from Story 2; after v
 
 ### Core Metrics
 
+> **Note:** Target values are initial aspirations, subject to validation after baseline capture. They may be adjusted.
+
 | Metric | Baseline | After | Delta | Target | Source / method |
 |--------|----------|-------|-------|--------|-----------------|
 | Pipeline duration (avg) | | | | >= 20% reduction (post-platform) | |

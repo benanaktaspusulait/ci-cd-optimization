@@ -10,6 +10,8 @@
 
 This page provides the copy/adapt examples and the key snippets needed to understand them. All code is inline below — no other files are needed.
 
+> **Classification note:** This page contains internal project details (package names, registry domains, infrastructure versions). It is intended for internal Confluence only. Do not share externally without security/classification review.
+
 ---
 
 ## Real Project Context
