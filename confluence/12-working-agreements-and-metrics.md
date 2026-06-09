@@ -7,35 +7,27 @@
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
 
-This page carries the original contributing guide, live status rules, Definition of Done, and metrics template into Confluence.
+This page consolidates the contributing guide, live status rules, Definition of Done, and metrics template.
 
 ---
 
 ## Documentation Structure
 
-```text
-README.md                  -> entry point: purpose, key constraint, success targets, story map
-CONTRIBUTING.md            -> working guide
-PROJECT-PLAN.md            -> timeline, milestones, risk register, branching/CI flow, test strategy
-SECURITY.md                -> secret management, scanning policy, policy-as-code
-docs/
-  PROJECT-CONTEXT.md       -> background, current state, business impact, technology stack
-  PIPELINE-CONTEXT.md      -> Drone/RepoSync constraint and CI vs deploy boundary
-  SCOPE-AND-GUARDRAILS.md  -> pilot scope, assumptions, open questions, deferred work
-  adr/                     -> Architecture Decision Records
-  stories/
-    INDEX.md               -> one-page list of every story + task title
-    STATUS-BOARD.md        -> live task status and issue links
-    DEFINITION-OF-DONE.md  -> shared DoD + conventions
-    metrics-template.md    -> fillable before/after metrics sheet
-    tech-notes.md          -> technical reference
-    story-<n>-<slug>/      -> story and task detail
-examples/                  -> copy/adapt examples for Testcontainers, Docker and CI
-```
+This proposal is organised as a set of Confluence pages beneath a single parent page. The levels are **Epic → Story → Task**:
 
-**Levels:** Epic -> Story -> Task.
+- **Parent Overview** — entry point: purpose, key constraint, success targets, story map.
+- **Working Agreements and Metrics** (this page) — working guide, status board rules, Definition of Done, metrics template.
+- **Project Plan and Governance** — timeline, milestones, risk register, branching/CI flow, test strategy.
+- **Security Plan** — secret management, scanning policy, policy-as-code.
+- **Proposal Matrix**, **Phased Plan**, **Risks and DACI** — decision and prioritisation content.
+- **Pipeline & Drone Context** and **Deployment & Release** — current CI/CD and deploy environment.
+- **Backlog Summary** — one-page list of every story and task with story points.
+- **Detailed Task Definitions** — full why, goal, scope and acceptance criteria for every task.
+- **Architecture Decisions (ADRs)** — significant decisions with context and consequences.
+- **Technical Details** and **Code Examples and Templates** — Dockerfile, Compose, Testcontainers and CI examples.
+- **Glossary** and **References** — terminology and supporting context.
 
-**Decisions:** recorded as ADRs. **Plan and risks:** Project Plan. **Security:** Security Plan.
+**Decisions** are recorded as ADRs. **Plan and risks** live in the Project Plan. **Security** lives in the Security Plan.
 
 ---
 

@@ -13,10 +13,12 @@ Key terms and abbreviations used across the project.
 
 | Term | Full name / meaning |
 |------|---------------------|
-| **FDP** | The product/team context this pilot runs in. "FDP" is the pilot scope; one representative repository owned by this team is selected in T2.1. |
+| **FDP** | Forms Data Platform — the broader programme containing the adaptor services this pilot targets. "FDP" is the pilot scope; one representative repository owned by this team is selected in T2.1. |
 | **CST** | The local development team that can own and directly validate repo-local changes (Dockerfiles, test code, Maven profiles, docs/config). Changes classified as "CST-local" in Story 6 do not require platform approval. |
 | **ETO** | DSA ETO / Enabling / CIT — the wider engineering/platform org. Owns shared infrastructure: base images, CI/CD templates, registry, security gates. Prioritisation sits with Ezhil's role and depends on alignment with DSA Tech Strategy. |
 | **ACP** | Application Container Platform — manages CI/CD tooling (Drone, runners, DIND images, RepoSync). Pipeline-level changes require ACP prioritisation. |
+| **CIT** | Cloud Infrastructure & Tooling — referenced in the context of DSA ETO / Enabling. Concerned with cross-cutting infrastructure and tooling standards. |
+| **ECR** | Amazon Elastic Container Registry — one of the container image registries used for storing built Docker images. |
 | **MR** | Merge Request — the GitLab equivalent of a Pull Request. All pilot changes require an MR into `develop`. |
 | **MMA Helm repo** | The central service repo that deploys all FDP services to Kubernetes via Helm. It has its own Drone pipeline for Helm packaging, linting, templating, and deploying. Separate from the adaptor CI pipeline. |
 | **Service repo** | See MMA Helm repo — the single repository responsible for deploying all service charts. |
@@ -51,8 +53,16 @@ Key terms and abbreviations used across the project.
 | Source code hosting | **GitLab** (`gitlab.digital.homeoffice.gov.uk`) — self-hosted |
 | CI/CD system | **Drone** (Kubernetes runner, DIND service) |
 | Pipeline config | `.drone.star` (Starlark) — centrally managed via **RepoSync** |
-| Container registries | `docker.digital.homeoffice.gov.uk`, ECR, Artifactory |
+| Container registries | `docker.digital.homeoffice.gov.uk`, ECR, Artifactory (Docker) |
+| Artifact repository | **Artifactory** (Maven dependencies + Helm charts) |
 | RepoSync source repo | `https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync` |
+| Docker access in CI | DIND sidecar at `tcp://docker:2375` (unencrypted, pod-internal) |
+| Deployment mechanism | Helm charts via MMA Helm repo → SIT → bVal → Production |
+| Environment promotion | SIT → bVal → Production (manual promotion) |
+| Feature toggling | Helm values per environment |
+| Production access | PNR room (physical) or approved remote mechanism |
+| Secrets in CI | Drone secrets (injected as environment variables into pipeline steps) |
+| Runtime secrets | Vault / envconsul (injected at container startup) |
 | Maven cache paths | Docker build stages use `/root/.m2/repository` because the image builds as root. Drone Maven steps can use `.m2/repository` via `MAVEN_OPTS=-Dmaven.repo.local=.m2/repository` if the central template enables a workspace cache. Local developer runs usually use `~/.m2/repository`. Confirm the selected pilot repo matches these paths in T3.3. |
 | Java version for Testcontainers | Minimum **Java 11**; Java 17+ recommended. Confirm against pilot repo's `pom.xml` in T4.1. |
 

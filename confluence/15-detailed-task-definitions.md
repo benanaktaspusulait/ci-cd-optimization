@@ -7,7 +7,7 @@
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
 
-This page carries the full story/task intent from the original `docs/stories/story-*` files into Confluence: why, goal, scope and acceptance criteria. The short Jira-ready list remains in [Backlog Summary](08-backlog-summary.md).
+This page gives the full story and task intent — why, goal, scope and acceptance criteria — for every task. The short Jira-ready list is on the [Backlog Summary](08-backlog-summary.md) page.
 
 ---
 

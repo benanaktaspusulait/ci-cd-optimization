@@ -34,39 +34,39 @@ Story 1 (pipeline assessment, gate)
 
 ## Full Task List (Jira-ready)
 
-Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of effort.
+Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of effort. Total estimated effort: **35 SP** (~15 working days, part-time over 4 weeks).
 
-| ID | Title | Type | SP | Priority | Owner | Sprint | Status |
-|----|-------|------|:--:|:--------:|-------|:------:|--------|
-| **S1** | **Pipeline Assessment** | Story | — | Must | TBC | W1 | Not started |
-| T1.1 | Review .drone.star pipeline structure | Research | 2 | Must | TBC | W1 | Not started |
-| T1.2 | Identify local vs RepoSync boundaries | Analysis | 1 | Must | TBC | W1 | Not started |
-| T1.3 | Map CI steps, DIND and Compose usage | Research | 2 | Must | TBC | W1 | Not started |
-| T1.4 | Assess Testcontainers feasibility in Drone | Research | 2 | Must | TBC | W1 | Not started |
-| T1.5 | Assess BuildKit/cache feasibility | Research | 1 | Should | TBC | W1 | Not started |
-| **S2** | **Baseline & Pilot Scope** | Story | — | Must | TBC | W1 | Not started |
-| T2.1 | Compare candidate pipelines and select pilot repo | Research | 1 | Must | TBC | W1 | Not started |
-| T2.2 | Capture CI/CD pipeline baseline | Research | 2 | Must | TBC | W1 | Not started |
-| T2.3 | Capture Docker build & image-size baseline | Research | 1 | Must | TBC | W1 | Not started |
-| T2.4 | Capture integration-test baseline | Research | 2 | Must | TBC | W1 | Not started |
-| **S3** | **Docker Build Optimisation** | Story | — | Must | TBC | W2 | Not started |
-| T3.1 | Review current Dockerfile & build context | Analysis | 2 | Must | TBC | W2 | Not started |
-| T3.2 | Add or validate .dockerignore | Implementation | 1 | Must | TBC | W2 | Not started |
-| T3.3 | Apply Dockerfile layering / cache improvement | Implementation | 2 | Must | TBC | W2 | Not started |
-| T3.4 | Measure local & CI build impact | Analysis | 2 | Should | TBC | W3 | Not started |
-| **S4** | **Testcontainers Pilot** | Story | — | Must | TBC | W2 | Not started |
-| T4.1 | Select candidate dependency/test | Research | 1 | Must | TBC | W2 | Not started |
-| T4.2 | Implement Testcontainers setup | Implementation | 3 | Must | TBC | W2 | Not started |
-| T4.3 | Compare with docker-compose flow | Analysis | 2 | Should | TBC | W3 | Not started |
-| T4.4 | Document findings & constraints | Documentation | 1 | Should | TBC | W3 | Not started |
-| **S5** | **Docker Compose Rationalisation** | Story | — | Should | TBC | W3 | Not started |
-| T5.1 | Map services started by docker-compose | Research | 1 | Must | TBC | W3 | Not started |
-| T5.2 | Classify services & usage | Analysis | 2 | Must | TBC | W3 | Not started |
-| T5.3 | Recommend reduced Compose role | Documentation | 2 | Should | TBC | W4 | Not started |
-| **S6** | **Findings, Ownership & Recommendations** | Story | — | Must | TBC | W4 | Not started |
-| T6.1 | Consolidate pilot findings | Documentation | 2 | Must | TBC | W4 | Not started |
-| T6.2 | Classify ownership & recommend target board | Analysis | 2 | Must | TBC | W4 | Not started |
-| T6.3 | Share findings with stakeholders | Documentation | 1 | Should | TBC | W4 | Not started |
+| ID | Title | Type | SP | Priority | Depends on | Sprint | Status |
+|----|-------|------|:--:|:--------:|------------|:------:|--------|
+| **S1** | **Pipeline Assessment** | Story | — | Must | — | W1 | Not started |
+| T1.1 | Review .drone.star pipeline structure | Research | 2 | Must | — | W1 | Not started |
+| T1.2 | Identify local vs RepoSync boundaries | Analysis | 1 | Must | T1.1 | W1 | Not started |
+| T1.3 | Map CI steps, DIND and Compose usage | Research | 2 | Must | T1.1 | W1 | Not started |
+| T1.4 | Assess Testcontainers feasibility in Drone | Research | 2 | Must | T1.1, T1.3 | W1 | Not started |
+| T1.5 | Assess BuildKit/cache feasibility | Research | 1 | Should | T1.1, T1.3 | W1 | Not started |
+| **S2** | **Baseline & Pilot Scope** | Story | — | Must | S1 | W1 | Not started |
+| T2.1 | Compare candidate pipelines and select pilot repo | Research | 1 | Must | T1.2 | W1 | Not started |
+| T2.2 | Capture CI/CD pipeline baseline | Research | 2 | Must | T2.1 | W1 | Not started |
+| T2.3 | Capture Docker build & image-size baseline | Research | 1 | Must | T2.1 | W1 | Not started |
+| T2.4 | Capture integration-test baseline | Research | 2 | Must | T2.1 | W1 | Not started |
+| **S3** | **Docker Build Optimisation** | Story | — | Must | S2 | W2 | Not started |
+| T3.1 | Review current Dockerfile & build context | Analysis | 2 | Must | T2.1 | W2 | Not started |
+| T3.2 | Add or validate .dockerignore | Implementation | 1 | Must | T3.1 | W2 | Not started |
+| T3.3 | Apply Dockerfile layering / cache improvement | Implementation | 2 | Must | T3.1 | W2 | Not started |
+| T3.4 | Measure local & CI build impact | Analysis | 2 | Should | T3.3 | W3 | Not started |
+| **S4** | **Testcontainers Pilot** | Story | — | Must | S2 | W2 | Not started |
+| T4.1 | Select candidate dependency/test | Research | 1 | Must | T2.1 | W2 | Not started |
+| T4.2 | Implement Testcontainers setup | Implementation | 3 | Must | T4.1 | W2 | Not started |
+| T4.3 | Compare with docker-compose flow | Analysis | 2 | Should | T4.2 | W3 | Not started |
+| T4.4 | Document findings & constraints | Documentation | 1 | Should | T4.3 | W3 | Not started |
+| **S5** | **Docker Compose Rationalisation** | Story | — | Should | S4 | W3 | Not started |
+| T5.1 | Map services started by docker-compose | Research | 1 | Must | T4.4 | W3 | Not started |
+| T5.2 | Classify services & usage | Analysis | 2 | Must | T5.1 | W3 | Not started |
+| T5.3 | Recommend reduced Compose role | Documentation | 2 | Should | T4.4, T5.2 | W4 | Not started |
+| **S6** | **Findings, Ownership & Recommendations** | Story | — | Must | S3, S4, S5 | W4 | Not started |
+| T6.1 | Consolidate pilot findings | Documentation | 2 | Must | T3.4, T4.4, T5.3 | W4 | Not started |
+| T6.2 | Classify ownership & recommend target board | Analysis | 2 | Must | T6.1 | W4 | Not started |
+| T6.3 | Share findings with stakeholders | Documentation | 1 | Should | T6.2 | W4 | Not started |
 
 ---
 

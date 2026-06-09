@@ -17,7 +17,7 @@ This folder contains **Confluence-ready pages** for the CI/CD Optimisation Pilot
 ## How to Upload to Confluence
 
 1. **Create the parent page** from `00-parent-overview.md` — this is the top-level page that all others sit beneath.
-2. **Create child pages** for files `01` through `11` — each becomes a child of the parent page.
+2. **Create child pages** for files `01` through `16` — each becomes a child of the parent page.
 3. **Apply labels** to all pages: `proposal`, `ci-cd`, `pilot`, `cerberus-delivery`.
 4. **Set status** to **Draft** on all pages until stakeholder review is complete.
 
@@ -38,11 +38,16 @@ Create pages in numerical order. The parent page (`00`) must exist first, then c
 | `04-technical-details.md` | Technical Details | Dockerfile, Testcontainers, BuildKit, Compose — full code examples inline. |
 | `05-pipeline-and-drone.md` | Pipeline & Drone Context | Drone/RepoSync constraints, CI vs Deploy pipeline, DIND details. |
 | `06-deployment-and-release.md` | Deployment & Release | Deploy pipeline context (outside pilot scope, documented for awareness). |
-| `07-backlog-detailed.md` | Backlog Detailed | 6 stories and 23 tasks with full acceptance criteria and details. |
-| `08-decisions-adr.md` | Architecture Decisions (ADRs) | 5 ADRs — context, decision, consequences, alternatives considered. |
+| `07-references.md` | References | Repositories, ADR summary, KT sessions, and technology documentation. |
+| `08-backlog-summary.md` | Backlog Summary | 6 stories and 23 tasks, story-point estimates, and ticket creation order. |
 | `09-future-considerations.md` | Future Considerations | Post-pilot roadmap, production readiness gaps, technical opportunities. |
-| `10-glossary.md` | Glossary | All terminology, abbreviations, and environment clarification. |
-| `11-security-plan.md` | Security Plan | Secret handling, scanning policy, policy-as-code, supply-chain hardening. |
+| `10-decisions-adr.md` | Architecture Decisions (ADRs) | 5 ADRs — context, decision, consequences, alternatives, and template. |
+| `11-project-plan-and-governance.md` | Project Plan and Governance | Timeline, milestones, branching/CI flow, and governance. |
+| `12-working-agreements-and-metrics.md` | Working Agreements and Metrics | Status board rules, Definition of Done, and metrics template. |
+| `13-security-plan.md` | Security Plan | Secret handling, scanning policy, policy-as-code, supply-chain hardening. |
+| `14-glossary.md` | Glossary | All terminology, abbreviations, and environment clarification. |
+| `15-detailed-task-definitions.md` | Detailed Task Definitions | Full per-task why, goal, scope, and acceptance criteria for all 23 tasks. |
+| `16-code-examples-and-templates.md` | Code Examples and Templates | Dockerfile, Compose, Testcontainers, and CI templates inline. |
 
 ---
 

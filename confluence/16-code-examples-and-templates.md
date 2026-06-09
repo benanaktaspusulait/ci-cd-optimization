@@ -7,9 +7,7 @@
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
 
-This page carries the original `examples/` content into Confluence as a catalogue of copy/adapt examples and the key snippets needed to understand them.
-
-> The repo remains the source of truth for executable files. This Confluence page preserves the intent, usage and important configuration so reviewers do not need to inspect the repo first.
+This page provides the copy/adapt examples and the key snippets needed to understand them. All code is inline below — no other files are needed.
 
 ---
 
@@ -37,29 +35,29 @@ This page carries the original `examples/` content into Confluence as a catalogu
 
 ### Testcontainers + Cucumber + Spring Boot
 
-| File | What it shows |
-|------|---------------|
-| `examples/testcontainers/pom-dependencies.xml` | Minimal dependencies to add to existing `pom.xml`; most FDP dependencies already exist |
-| `examples/testcontainers/TestcontainersBaseIT.java` | Cucumber runner using JUnit 4 `@RunWith`, matching existing FDP pattern |
-| `examples/testcontainers/CucumberSpringConfig.java` | Spring Boot <-> Testcontainers glue with FDP-specific properties (`fdp.kafka.broker`, `fdp.app.redis.nodes`, etc.) |
-| `examples/testcontainers/RedisContainerConfig.java` | Redis 5.0.6 container; simplest first candidate for T4.1 |
-| `examples/testcontainers/KafkaContainerConfig.java` | Zookeeper + Kafka + Schema Registry, cp-7.5.5, matching production MSK |
-| `examples/testcontainers/LocalStackContainerConfig.java` | LocalStack IAM example if chosen as candidate |
+| Example | What it shows |
+|---------|---------------|
+| Testcontainers `pom.xml` dependencies | Minimal dependencies to add to the existing `pom.xml`; most FDP dependencies already exist |
+| `TestcontainersBaseIT` Cucumber runner | Cucumber runner using JUnit 4 `@RunWith`, matching existing FDP pattern |
+| `CucumberSpringConfig` | Spring Boot <-> Testcontainers glue with FDP-specific properties (`fdp.kafka.broker`, `fdp.app.redis.nodes`, etc.) |
+| `RedisContainerConfig` | Redis 5.0.6 container; simplest first candidate for T4.1 |
+| `KafkaContainerConfig` | Zookeeper + Kafka + Schema Registry, cp-7.5.5, matching production MSK |
+| `LocalStackContainerConfig` | LocalStack IAM example if chosen as candidate |
 
 ### Docker Build Optimisation
 
-| File | What it shows |
-|------|---------------|
-| `examples/docker/Dockerfile` | Optimised multi-stage build; current single-stage `amazoncorretto:17` becomes deps/build/runtime stages with cache mounts |
-| `examples/docker/docker-compose.yml` | Infrastructure services only, mirroring RepoSync-controlled compose without FDP application services |
-| `examples/docker/.dockerignore` | Lean build context for Java/Maven multi-module project |
+| Example | What it shows |
+|---------|---------------|
+| Optimised `Dockerfile` | Multi-stage build; current single-stage `amazoncorretto:17` becomes deps/build/runtime stages with cache mounts |
+| Infrastructure `docker-compose.yml` | Infrastructure services only, mirroring RepoSync-controlled compose without FDP application services |
+| `.dockerignore` | Lean build context for Java/Maven multi-module project |
 
 ### CI/CD
 
-| File | What it shows |
-|------|---------------|
-| `examples/ci/drone-considerations.md` | How Testcontainers/BuildKit would work in the real Drone pipeline |
-| `examples/ci/gitlab-ci-integration-test.yml` | Illustrative GitLab CI equivalent with Testcontainers mode and Compose fallback |
+| Example | What it shows |
+|---------|---------------|
+| Drone considerations | How Testcontainers/BuildKit would work in the real Drone pipeline |
+| GitLab CI integration-test job | Illustrative GitLab CI equivalent with Testcontainers mode and Compose fallback |
 
 > The real FDP CI uses **Drone** (`.drone.star` via RepoSync), not GitLab CI. GitLab CI snippets are illustrative only.
 

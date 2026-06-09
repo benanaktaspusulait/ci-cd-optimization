@@ -31,7 +31,7 @@
 | ADR-0004 | BuildKit cache + multi-stage builds | Multi-stage local; remote cache post-pilot (ACP) |
 | ADR-0005 | CI runner Docker mode (Drone/DIND) | Assess DIND access; fallback = local-only Testcontainers |
 
-Full ADR text with alternatives and consequences: see `docs/adr/` in the repository.
+Full ADR text with alternatives and consequences is on the [Architecture Decisions (ADRs)](10-decisions-adr.md) page.
 
 ---
 
