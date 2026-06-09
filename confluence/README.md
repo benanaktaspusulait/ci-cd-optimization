@@ -17,13 +17,23 @@ This folder contains **Confluence-ready pages** for the CI/CD Optimisation Pilot
 ## How to Upload to Confluence
 
 1. **Create the parent page** from `00-parent-overview.md` — this is the top-level page that all others sit beneath.
-2. **Create child pages** for files `01` through `16` — each becomes a child of the parent page.
+2. **Create child pages** from the files listed in the Page Structure table below — each becomes a child of the parent page.
 3. **Apply labels** to all pages: `proposal`, `ci-cd`, `pilot`, `cerberus-delivery`.
 4. **Set status** to **Draft** on all pages until stakeholder review is complete.
 
 ### Upload Order
 
 Create pages in numerical order. The parent page (`00`) must exist first, then child pages can be created in any order beneath it.
+
+### Do NOT Upload (internal only)
+
+The following files are **internal redirect/migration stubs** and should NOT be uploaded to Confluence:
+
+- `07-backlog-detailed.md` — consolidated into `08-backlog-summary` + `15-detailed-task-definitions`
+- `08-decisions-adr.md` — consolidated into `10-decisions-adr`
+- `10-glossary.md` — consolidated into `14-glossary`
+- `11-security-plan.md` — consolidated into `13-security-plan`
+- `17-source-content-coverage.md` — internal coverage check, not stakeholder content
 
 ---
 
@@ -57,7 +67,7 @@ Create pages in numerical order. The parent page (`00`) must exist first, then c
 - **Draft status** — all pages are marked as Draft pending stakeholder review and feedback.
 - **Consistent metadata** — each page has a metadata table at the top with parent page, status, labels, and last-updated date.
 - **Feedback mechanism** — each page ends with a prompt for comments and questions.
-- **Redirect pages** — files `07-backlog-detailed`, `08-decisions-adr`, `10-glossary`, and `11-security-plan` are redirect stubs pointing to their consolidated canonical pages. They exist to preserve links but all content lives in the canonical page.
+- **Redirect pages** — files `07-backlog-detailed`, `08-decisions-adr`, `10-glossary`, and `11-security-plan` are internal redirect stubs. They exist to preserve repo links but should NOT be uploaded to Confluence. `17-source-content-coverage` is an internal coverage check and also should not be uploaded.
 
 ---
 

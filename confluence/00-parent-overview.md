@@ -14,7 +14,9 @@
 
 This page presents a proposed pilot to improve container build and integration-test performance for one FDP adaptor repository. The pilot validates improvement ideas locally with before/after evidence before proposing any wider rollout.
 
-The current CI pipeline experiences long build times (~5 min Docker build, ~12 min total pipeline), heavy Docker Compose test setup (~90 sec startup with 7+ services), flaky integration tests (shared state, environment drift), and oversized Docker images (~450 MB shipping JDK and build tools to production). These slow the developer feedback loop and may delay security patches reaching production.
+The current CI pipeline experiences long build times (~5 min Docker build, ~12 min total pipeline), heavy Docker Compose test setup (~90 sec startup with 7+ services), flaky integration tests (shared state, environment drift), and oversized Docker images (~450 MB shipping a full JDK and OS tools to production). These slow the developer feedback loop and may delay security patches reaching production.
+
+> **Note:** The numbers above are initial observations. Concrete baseline values are not assumed — capturing and validating them is the first step after pipeline assessment (Story 2).
 
 The pilot focuses on what CST/Cerberus Delivery can validate locally (Dockerfile optimisation, Testcontainers prototype, Compose review) while clearly identifying what requires ACP or DSA ETO/Enabling coordination.
 
@@ -29,11 +31,9 @@ CI/CD and container workflows create recurring friction:
 - **Long build times** — repeated dependency downloads (~200 MB Maven deps), poor layer caching, large build contexts (~200 MB sent to Docker daemon).
 - **Heavy integration-test setup** — full Docker Compose stacks (Zookeeper, Kafka, Schema Registry, Redis, LocalStack, 7 aggregator services, command adaptor) start for every CI run regardless of what the test actually needs.
 - **Flaky, environment-dependent tests** — shared state between tests, environment drift between local and CI (port conflicts, resource limits, network differences).
-- **Oversized images** — ~450 MB images shipping JDK, Maven, and build tools to production.
+- **Oversized images** — ~450 MB images shipping a full JDK and additional OS/runtime tools to production.
 - **Unclear ownership** — some improvements are CST-local; others need ACP (CI tooling) or DSA ETO (wider patterns).
 - **Centrally managed pipeline** — `.drone.star` is controlled via RepoSync; local pipeline edits are overwritten.
-
-Concrete baseline numbers are not assumed — capturing them is the first step after pipeline assessment.
 
 ---
 

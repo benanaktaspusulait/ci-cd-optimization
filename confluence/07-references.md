@@ -16,7 +16,7 @@
 |------------|---------|--------|
 | `fdp-cmd-adaptor-dvla` | Pilot candidate adaptor (DVLA trailer registration) | Requires GitLab access |
 | `dde-adaptor-reposync` | Central RepoSync source for `.drone.star` pipeline | Requires GitLab access |
-| `ci-cd-optimization` (this repo) | Pilot planning, templates, examples | GitHub (benanaktaspusulait) |
+| `ci-cd-optimization` (this repo) | Pilot planning, templates, examples | TBC — to be confirmed with approved internal location |
 | MMA Helm service repo | Deploys all FDP services to Kubernetes | Requires GitLab access |
 | Runbook repository | Approved release steps for environments | Requires GitLab access |
 
