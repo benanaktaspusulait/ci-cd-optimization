@@ -2,8 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
-| **Created by** | Benan Aktas |
+| **Parent page** | Container & CI/CD Optimisation Pilot |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
 
@@ -13,13 +12,19 @@
 
 ## Deploy Pipeline
 
-Deployment is managed through the **MMA service repository** (Helm-based), not through individual adaptor repositories.
+Deployment is managed through the **MMA service repository** (Helm-based), not through individual adaptor repositories. The deploy pipeline is a separate Drone pipeline.
 
 ```text
-Tag pipeline (per-adaptor) → builds image + Helm chart → uploads to Artifactory
-                                                                     │
-Service repo pipeline (MMA) ← pulls chart version from Artifactory ──┘
-    → Helm package → lint → template → mass diff → upload → deploy to K8s
+Tag pipeline (per-adaptor repo):
+  → Maven clean install + test
+  → Trivy scan + Sonar scan
+  → Docker build + push to registry
+  → Helm package + Helm dependency build + Artifactory upload
+
+Service repo deploy pipeline (MMA Helm repo):
+  → Pulls chart version from Artifactory
+  → Helm package → lint → template → mass diff → upload
+  → Deploys to Kubernetes (dev → SIT → bVal → prod)
 ```
 
 ---
@@ -27,16 +32,16 @@ Service repo pipeline (MMA) ← pulls chart version from Artifactory ──┘
 ## Release Flow
 
 ```text
-feature/MMA-XXXXX → develop → release/X.Y.Z → tag (vX.Y.Z) → tag pipeline → Artifactory
-                                                                                    │
-                                              Service repo deploy pipeline ◄────────┘
-                                              dev → SIT (QAT approval) → bVal → prod
+feature/MMA-XXXXX  →  develop  →  release/X.Y.Z  →  tag (vX.Y.Z)  →  tag pipeline  →  Artifactory
+                                                                                            │
+                                                Service repo deploy pipeline  ◄─────────────┘
+                                                dev → SIT (QAT approval) → bVal → prod
 ```
 
 - **Feature branches:** created from Jira tickets, developed, MR into `develop`.
-- **Release branches:** cut from `develop` when sprint is ready.
-- **Tags:** developer creates tag on release branch → triggers tag pipeline.
-- **Deploy:** service repo picks up new chart version and deploys via Helm.
+- **Release branches:** cut from `develop` when sprint is ready (e.g. `release/5.9.0`).
+- **Tags:** developer creates tag on release branch → triggers tag pipeline (Maven + Trivy + Sonar + Helm + Artifactory upload).
+- **Deploy:** service repo picks up new chart version and deploys via Helm to Kubernetes.
 - **Release day:** Thursday.
 
 ---
@@ -45,32 +50,38 @@ feature/MMA-XXXXX → develop → release/X.Y.Z → tag (vX.Y.Z) → tag pipelin
 
 | Environment | Purpose | Approval gate |
 |-------------|---------|---------------|
-| dev | Development testing | None (automatic) |
+| dev | Development testing | None (automatic on merge to develop) |
 | SIT | System Integration Testing | QAT must approve before promotion |
-| bVal | Business Validation | TBC |
+| bVal | Business Validation (more data than prod in some cases) | TBC |
 | prod | Production | TBC |
 
 ---
 
 ## Rollback
 
-**Current state:** No automated rollback exists. If a deployment causes issues, the team uses manual `helm rollback` or attempts to fix forward.
+**Current state:** No automated rollback exists. If a deployment causes issues:
+- Team attempts to fix forward.
+- Manual `helm rollback` is possible but not documented as standard procedure.
+- No pipeline step triggers automatic rollback on failure.
 
-This was confirmed in KT sessions. Automated rollback is a post-pilot improvement recommendation (see [Risks and DACI](03-risks-and-daci.md)).
+This was confirmed in knowledge transfer sessions. Automated rollback is a post-pilot improvement recommendation.
 
 ---
 
 ## Feature Flags
 
-Feature activation is controlled through Helm values files, not code deployments. A service may be deployed but specific features disabled per environment. Dev teams decide what is enabled where.
+Feature activation is controlled through **Helm values files**, not code deployments:
+- A service may be deployed but specific features disabled per environment.
+- Dev teams decide what is enabled where.
+- This means deployment success ≠ feature activation ≠ functional validation.
 
 ---
 
-## Validation
+## Validation Stages
 
 | Stage | Who validates | Method |
 |-------|---------------|--------|
-| CI | Pipeline | Maven tests + Trivy + Sonar |
+| CI (tag pipeline) | Automated | Maven tests + Trivy + Sonar |
 | Post-deploy (dev/SIT) | Dev teams | Playwright / Cypress (starting to adopt) |
 | SIT gate | QAT | Manual approval before higher environments |
 | bVal/prod | TBC | TBC |
@@ -79,13 +90,22 @@ Feature activation is controlled through Helm values files, not code deployments
 
 ## Release Automation (In Progress)
 
-A separate project (Gareth Andrews) is automating service chart management and release flow. The pilot should coordinate with this project to avoid conflicting changes. Gareth's work aims to reduce manual steps around tagging, chart versioning, and deployment triggers.
+A separate project (Gareth Andrews) is automating:
+- Service chart management (currently manual).
+- Release-branch → tag → deploy flow automation.
+- Jira ticket status integration and changelog generation.
+
+The CI/CD optimisation pilot and release automation are complementary but separate:
+- **Pilot:** improves build + test speed.
+- **Release automation:** improves deploy + release management.
+
+Coordination is needed to avoid conflicting changes to pipeline or Helm chart structure. Story 6 findings should be shared with Gareth's project.
 
 ---
 
 ## Why This Is Outside Pilot Scope
 
-The pilot focuses on **build + test** (faster builds, smaller images, deterministic tests). Deployment and release focuses on **deploy + operate** (rollback, feature activation, environment parity). They are complementary but have different owners, timelines, and risk profiles.
+The pilot focuses on **build + test** (faster builds, smaller images, deterministic tests). Deployment focuses on **deploy + operate** (rollback, feature activation, environment parity). Different owners, timelines, and risk profiles.
 
 Pilot findings may inform future release engineering improvements, but the pilot does not change the deploy pipeline.
 

@@ -3,7 +3,6 @@
 | Field | Value |
 |-------|-------|
 | **Owner** | TBC (CST / Cerberus Delivery) |
-| **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Created** | 2026-06-09 |
 | **Last updated** | 2026-06-09 |
@@ -15,7 +14,7 @@
 
 This page presents a proposed pilot to improve container build and integration-test performance for one FDP adaptor repository. The pilot validates improvement ideas locally with before/after evidence before proposing any wider rollout.
 
-The current CI pipeline experiences long build times, heavy Docker Compose test setup, flaky integration tests, and oversized Docker images. These slow the developer feedback loop and may delay security patches reaching production.
+The current CI pipeline experiences long build times (~5 min Docker build, ~12 min total pipeline), heavy Docker Compose test setup (~90 sec startup with 7+ services), flaky integration tests (shared state, environment drift), and oversized Docker images (~450 MB shipping JDK and build tools to production). These slow the developer feedback loop and may delay security patches reaching production.
 
 The pilot focuses on what CST/Cerberus Delivery can validate locally (Dockerfile optimisation, Testcontainers prototype, Compose review) while clearly identifying what requires ACP or DSA ETO/Enabling coordination.
 
@@ -27,18 +26,21 @@ A decision is needed on whether to proceed with the pilot and which repository t
 
 CI/CD and container workflows create recurring friction:
 
-- **Long build times** — repeated dependency downloads, poor layer caching, large build contexts (~200 MB sent to Docker daemon).
-- **Heavy integration-test setup** — full Docker Compose stacks (~7 aggregators + Kafka + Redis + Schema Registry) start for every CI run regardless of what the test actually needs.
-- **Flaky tests** — shared state between tests, environment-dependent failures, differences between local and CI behaviour.
-- **Oversized images** — ~450 MB images shipping JDK and build tools to production.
+- **Long build times** — repeated dependency downloads (~200 MB Maven deps), poor layer caching, large build contexts (~200 MB sent to Docker daemon).
+- **Heavy integration-test setup** — full Docker Compose stacks (Zookeeper, Kafka, Schema Registry, Redis, LocalStack, 7 aggregator services, command adaptor) start for every CI run regardless of what the test actually needs.
+- **Flaky, environment-dependent tests** — shared state between tests, environment drift between local and CI (port conflicts, resource limits, network differences).
+- **Oversized images** — ~450 MB images shipping JDK, Maven, and build tools to production.
 - **Unclear ownership** — some improvements are CST-local; others need ACP (CI tooling) or DSA ETO (wider patterns).
+- **Centrally managed pipeline** — `.drone.star` is controlled via RepoSync; local pipeline edits are overwritten.
+
+Concrete baseline numbers are not assumed — capturing them is the first step after pipeline assessment.
 
 ---
 
 ## Objectives
 
 - Reduce local Docker build time by ≥ 30%.
-- Reduce final image size by ≥ 30% (multi-stage build, remove JDK from runtime).
+- Reduce final image size by ≥ 30% (multi-stage build removes JDK from runtime).
 - Reduce Docker build context by ≥ 50% (`.dockerignore`).
 - Validate Testcontainers for one integration dependency (isolation, determinism).
 - Map Docker Compose services and clarify CI vs local-debug roles.
@@ -51,11 +53,11 @@ CI/CD and container workflows create recurring friction:
 
 ### In Scope
 
+- Drone/RepoSync pipeline constraint assessment.
 - Baseline measurement (pipeline timing, build time, image size, test setup).
 - Dockerfile multi-stage build and `.dockerignore` validation.
 - Local Testcontainers prototype for one dependency (Redis or Kafka).
 - Docker Compose service mapping and CI/local classification.
-- Drone/RepoSync pipeline constraint assessment.
 - Ownership classification and stakeholder communication.
 
 ### Out of Scope
@@ -75,18 +77,17 @@ CI/CD and container workflows create recurring friction:
 A small, measurable pilot on **one** representative repository:
 
 1. Assess Drone/RepoSync pipeline constraints (what can be changed locally).
-2. Compare at least two candidate pipelines/repositories for portability, then select one pilot target.
-3. Capture baseline metrics before any change.
-4. Apply local Docker build optimisations and measure the impact.
-5. Prototype Testcontainers locally for one integration dependency.
-6. Map Compose usage and recommend a reduced CI role.
-7. Consolidate findings and classify ownership (CST / ACP / DSA ETO).
+2. Capture baseline metrics before any change.
+3. Apply local Docker build optimisations and measure the impact.
+4. Prototype Testcontainers locally for one integration dependency.
+5. Map Compose usage and recommend a reduced CI role.
+6. Consolidate findings and classify ownership (CST / ACP / DSA ETO).
 
 Evidence-first: every change is proved with before/after numbers. No change is assumed beneficial until measured.
 
 ---
 
-## Ownership Boundaries
+## Ownership and Prioritisation Boundaries
 
 | Category | Scope | Examples | Agreed with |
 |----------|-------|----------|-------------|
@@ -94,9 +95,13 @@ Evidence-first: every change is proved with before/after numbers. No change is a
 | **ACP** | CI/CD tooling | Drone runners, DIND image, BuildKit enablement, RepoSync changes, remote cache | ACP prioritisation |
 | **DSA ETO / Enabling / CIT** | Wider platform patterns | Shared base images, shared templates, cross-project adoption, engineering standards | Ezhil's role, DSA Tech Strategy alignment |
 
+> The current DSA focus is Core Cloud and Data Platform. Any platform/tooling-level improvement must be clearly separated from CST-local pilot work.
+
 ---
 
-## Success Summary (CST-local targets)
+## Success Targets
+
+**CST-local targets (achievable within the pilot):**
 
 | Criterion | Target |
 |-----------|--------|
@@ -107,6 +112,35 @@ Evidence-first: every change is proved with before/after numbers. No change is a
 | Compose services classified | All services mapped with CI/local role |
 | Ownership documented | CST vs ACP vs DSA ETO classified |
 
+**Platform-dependent targets (require ACP/ETO action after the pilot):**
+
+| Criterion | Target | Requires |
+|-----------|--------|----------|
+| CI build time reduction | ≥ 20% | ACP/RepoSync: BuildKit enablement in `.drone.star` |
+| CI pipeline duration | ≥ 20% | ACP: remote cache + Testcontainers CI support |
+| Testcontainers in CI | Running in Drone pipeline | ACP/RepoSync: Maven step environment changes |
+
+---
+
+## Stories
+
+| # | Story | Tasks | Depends on | Phase |
+|---|-------|:-----:|------------|:-----:|
+| 1 | Pipeline Assessment (Drone/RepoSync) | 5 | — | 1 |
+| 2 | Baseline & Pilot Scope | 4 | 1 | 1 |
+| 3 | Docker Build Optimisation | 4 | 2 | 1–2 |
+| 4 | Testcontainers Pilot | 4 | 2 | 2 |
+| 5 | Docker Compose Rationalisation | 3 | 4 | 2–3 |
+| 6 | CST-local vs ACP/ETO Ownership Assessment | 3 | 3, 4, 5 | 3 |
+
+```text
+Story 1 (pipeline assessment, gate)
+   └──> Story 2 (baseline, gate)
+           ├──> Story 3 (build) ──────┐
+           └──> Story 4 (testcontainers) ─┼──> Story 5 (compose)
+                                          └──> Story 6 (ownership)
+```
+
 ---
 
 ## Child Pages
@@ -116,20 +150,14 @@ Evidence-first: every change is proved with before/after numbers. No change is a
 | [Proposal Matrix](01-proposal-matrix.md) | All proposals rated by Value, Risk, Complexity, Effort, MoSCoW |
 | [Phased Plan](02-phased-plan.md) | Phase 1–4 delivery approach with success criteria |
 | [Risks and DACI](03-risks-and-daci.md) | Risk register + decision areas requiring multi-stakeholder input |
-| [Technical Details](04-technical-details.md) | Dockerfile, Testcontainers, BuildKit, Compose — deep technical content |
+| [Technical Details](04-technical-details.md) | Dockerfile, Testcontainers, BuildKit, Compose — full code examples |
 | [Pipeline & Drone Context](05-pipeline-and-drone.md) | Drone/RepoSync constraints, CI vs Deploy pipeline |
 | [Deployment & Release](06-deployment-and-release.md) | Deploy pipeline context (outside pilot scope) |
-| [References](07-references.md) | Source links, ADRs, KT sessions |
-| [Backlog Summary](08-backlog-summary.md) | Story/task list with details (Jira-ready) |
-| [Future Considerations](09-future-considerations.md) | Post-pilot roadmap, architecture decision candidates |
-| [Architecture Decisions](10-decisions-adr.md) | ADR full text — context, decision, consequences, alternatives |
-| [Project Plan and Governance](11-project-plan-and-governance.md) | Timeline, milestones, branching, release flow, verification strategy |
-| [Working Agreements and Metrics](12-working-agreements-and-metrics.md) | Contributing guide, live status rules, Definition of Done, metrics template |
-| [Security Plan](13-security-plan.md) | Secret handling, scanning policy, policy-as-code, supply-chain hardening |
-| [Glossary](14-glossary.md) | Terms, acronyms, environment clarification |
-| [Detailed Task Definitions](15-detailed-task-definitions.md) | Full story/task why, goal, scope and acceptance criteria |
-| [Code Examples and Templates](16-code-examples-and-templates.md) | Example catalogue and application notes |
-| [Source Content Coverage](17-source-content-coverage.md) | Mapping from original repo documents to Confluence pages |
+| [Backlog Detailed](07-backlog-detailed.md) | 6 stories + 23 tasks with full details |
+| [Architecture Decisions](08-decisions-adr.md) | 5 ADRs — context, decision, consequences, alternatives |
+| [Future Considerations](09-future-considerations.md) | Post-pilot roadmap and architecture decision candidates |
+| [Glossary](10-glossary.md) | All terminology |
+| [Security Plan](11-security-plan.md) | Secret handling, scanning, policy-as-code |
 
 ---
 

@@ -2,62 +2,134 @@
 
 | Field | Value |
 |-------|-------|
-| **Parent page** | [Container & CI/CD Optimisation Pilot](00-parent-overview.md) |
-| **Created by** | Benan Aktas |
+| **Parent page** | Container & CI/CD Optimisation Pilot |
 | **Status** | Draft |
 | **Last updated** | 2026-06-09 |
 
-> This page contains deep technical content for engineers. Non-technical readers should refer to the [parent overview](00-parent-overview.md) and [proposal matrix](01-proposal-matrix.md) instead.
+> This page contains deep technical content for engineers. Non-technical readers should refer to the parent overview and proposal matrix.
 
 ---
 
 ## 1. Dockerfile Optimisation
 
-### Current state
+### Current State
 
-The existing Dockerfile is single-stage:
-- Base image: `amazoncorretto:17`
-- Copies pre-built JAR + OpenTelemetry agent
-- Includes `yum install` for system packages + envconsul (Vault integration)
-- Ships JDK + build tools in the runtime image (~450 MB)
-- No layer separation between dependencies and source
-
-### Proposed multi-stage approach
+The existing Dockerfile (`amazoncorretto:17` base) is single-stage:
 
 ```dockerfile
-# Stage 1: Resolve dependencies (cached separately from source)
+FROM amazoncorretto:17
+
+COPY ./target/cmd-adaptor-dvla-exec.jar /local
+COPY ./target/dependencies/opentelemetry-javaagent.jar /local/opentelemetry-javaagent.jar
+
+WORKDIR /tmp
+
+RUN yum install -y shadow-utils unzip \
+    && yum update -y ca-certificates ... \
+    && curl --silent --output /tmp/envconsul.zip https://releases.hashicorp.com/envconsul/0.13.1/envconsul_0.13.1_linux_amd64.zip \
+    && unzip envconsul.zip && mv envconsul /usr/local/bin/envconsul \
+    && adduser -u 1000 -U -m -s /bin/bash fdpuser \
+    && chmod 0755 /local/cmd-adaptor-dvla-exec.jar \
+    && chown fdpuser:fdpuser /local/cmd-adaptor-dvla-exec.jar
+
+USER fdpuser
+WORKDIR /home/fdpuser
+
+CMD ["java", "-javaagent:/local/opentelemetry-javaagent.jar", ... "-jar", "/local/cmd-adaptor-dvla-exec.jar"]
+```
+
+**Problems:**
+- Ships JDK + build tools in production image (~450 MB).
+- No layer separation — any source change re-downloads dependencies.
+- No BuildKit cache mounts — Maven `.m2` not persisted between builds.
+- `yum update` in same layer as app code — invalidates frequently.
+
+### Proposed Multi-Stage Dockerfile
+
+```dockerfile
+# syntax=docker/dockerfile:1
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Stage 1: Resolve dependencies (cached independently of source changes)
+# ══════════════════════════════════════════════════════════════════════════════
 FROM amazoncorretto:17 AS deps
 WORKDIR /app
-COPY pom.xml cmd-adaptor-dvla/pom.xml cmd-adaptor-dvla-common/pom.xml ./
-COPY .mvn mvnw ./
+
+# Copy only dependency metadata — rebuilds ONLY when pom.xml changes.
+COPY pom.xml ./
+COPY cmd-adaptor-dvla/pom.xml cmd-adaptor-dvla/
+COPY cmd-adaptor-dvla-common/pom.xml cmd-adaptor-dvla-common/
+COPY cmd-adaptor-dvla-test-common/pom.xml cmd-adaptor-dvla-test-common/
+COPY cmd-adaptor-dvla-integration-tests/pom.xml cmd-adaptor-dvla-integration-tests/
+
+COPY .mvn .mvn
+COPY mvnw ./
+RUN chmod +x mvnw
+
+# Cache mount: persists /root/.m2 across builds locally (ephemeral in CI DIND).
 RUN --mount=type=cache,target=/root/.m2/repository \
     ./mvnw -B dependency:go-offline -pl cmd-adaptor-dvla -am -DskipTests
 
-# Stage 2: Build (only rebuilds on source change)
+# ══════════════════════════════════════════════════════════════════════════════
+# Stage 2: Build the application
+# ══════════════════════════════════════════════════════════════════════════════
 FROM deps AS build
+
 COPY cmd-adaptor-dvla/src cmd-adaptor-dvla/src
 COPY cmd-adaptor-dvla-common/src cmd-adaptor-dvla-common/src
-RUN --mount=type=cache,target=/root/.m2/repository \
-    ./mvnw -B package -pl cmd-adaptor-dvla -am -DskipTests
 
-# Stage 3: Runtime (JDK removed — smaller, more secure)
+RUN --mount=type=cache,target=/root/.m2/repository \
+    ./mvnw -B package -pl cmd-adaptor-dvla -am -DskipTests \
+    && cp cmd-adaptor-dvla/target/cmd-adaptor-dvla-exec.jar /app/app.jar
+
+# Download OpenTelemetry agent
+RUN --mount=type=cache,target=/root/.m2/repository \
+    ./mvnw -B dependency:copy \
+      -Dartifact=io.opentelemetry.javaagent:opentelemetry-javaagent:1.30.0:jar \
+      -DoutputDirectory=/app/agent
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Stage 3: Runtime (minimal — no JDK, no Maven, no source)
+# ══════════════════════════════════════════════════════════════════════════════
 FROM amazoncorretto:17 AS runtime
-# ... envconsul + non-root user + JAR only
+
+# Install envconsul (HashiCorp Vault integration)
+RUN yum install -y shadow-utils unzip \
+    && curl --silent --output /tmp/envconsul.zip \
+       https://releases.hashicorp.com/envconsul/0.13.1/envconsul_0.13.1_linux_amd64.zip \
+    && unzip /tmp/envconsul.zip -d /usr/local/bin/ \
+    && rm -f /tmp/envconsul.zip \
+    && yum clean all && rm -rf /var/cache/yum
+
+RUN adduser -u 1000 -U -m -s /bin/bash fdpuser
+
+WORKDIR /home/fdpuser
+COPY --from=build --chown=fdpuser:fdpuser /app/app.jar ./cmd-adaptor-dvla-exec.jar
+COPY --from=build --chown=fdpuser:fdpuser /app/agent/opentelemetry-javaagent-1.30.0.jar ./opentelemetry-javaagent.jar
+
+USER fdpuser
+EXPOSE 7112 8077
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD ["sh", "-c", "curl -sf http://localhost:7112/actuator/health || exit 1"]
+
+CMD ["java", \
+     "-javaagent:/home/fdpuser/opentelemetry-javaagent.jar", \
+     "-jar", "/home/fdpuser/cmd-adaptor-dvla-exec.jar"]
 ```
 
-### Expected gains
+### Expected Gains
 
-| Metric | Before | After (estimated) |
-|--------|--------|-------------------|
-| Image size | ~450 MB | ~300 MB (JDK + Maven removed from runtime) |
-| Local rebuild (source change only) | ~5 min | ~1.5 min (deps layer cached) |
-| Build context | ~200 MB | ~50 MB (.dockerignore excludes .git, target, docs) |
+| Metric | Before (estimated) | After (estimated) | Improvement |
+|--------|--------------------|--------------------|-------------|
+| Image size | ~450 MB | ~300 MB | ≥ 30% ↓ |
+| Local rebuild (source change) | ~5 min | ~1.5 min | ≥ 70% ↓ |
+| Local rebuild (dep change) | ~5 min | ~3 min | ~40% ↓ |
+| Build context | ~200 MB | ~50 MB | ≥ 75% ↓ |
 
 ---
 
 ## 2. .dockerignore
-
-### Proposed content
 
 ```gitignore
 .git/
@@ -75,53 +147,231 @@ docker-compose*.yml
 src/test/
 ```
 
-This keeps only files needed for the build in the Docker context.
+---
+
+## 3. Docker Compose — Current CI Services
+
+The integration test `docker-compose.yml` (RepoSync-controlled) starts these services:
+
+| Service | Image | Version | Purpose | CI-required? |
+|---------|-------|---------|---------|:------------:|
+| zookeeper | confluentinc/cp-zookeeper | 7.5.5 | Kafka dependency | Yes |
+| kafka | confluentinc/cp-kafka | 7.5.5 | Event streaming (matches MSK 3.5.1 prod) | Yes |
+| schema-registry | confluentinc/cp-schema-registry | 7.5.5 | Avro schema management | Yes |
+| redis | redis | 5.0.6 | Cache / state store | Yes |
+| localstack | localstack/localstack | 0.12.18 | AWS IAM emulation | Maybe |
+| jaeger | jaegertracing/all-in-one | 1.65.0 | OpenTelemetry trace UI | No (local debug) |
+| kafdrop | obsidiandynamics/kafdrop | 3.30.0 | Kafka UI | No (local debug) |
+| kafka-rest | confluentinc/cp-kafka-rest | 7.5.5 | REST API for Kafka | Maybe |
+| aggregate-party | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
+| aggregate-object | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
+| aggregate-location | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
+| aggregate-event | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
+| aggregate-service | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
+| aggregate-matching | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
+| aggregate-v1id-v2id | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
+| command-adaptor | Built from source | — | The service under test | Yes |
+| pre-integration-test | Custom build | — | Wait/health-check orchestrator | Yes (startup only) |
+| integration-tests | ileap-java17-mvn:1.3 | — | Runs Maven integration tests | Yes |
+
+Story 5 maps and classifies these to determine what can be reduced in CI.
 
 ---
 
-## 3. Testcontainers
+## 4. Testcontainers
 
 ### Approach
 
-Replace one Docker Compose dependency (Redis recommended) with Testcontainers in integration tests. The existing Cucumber + JUnit 4 (vintage) test structure is preserved.
+Replace one Docker Compose dependency with Testcontainers. The existing Cucumber + JUnit 4 (vintage) test structure is preserved.
 
-### Key components
-
-| Component | Role |
-|-----------|------|
-| `RedisContainerConfig.java` | Starts Redis 5.0.6 container, exposes dynamic port |
-| `KafkaContainerConfig.java` | Starts Zookeeper + Kafka (cp-7.5.5) + Schema Registry with shared network |
-| `CucumberSpringConfig.java` | Bridges Cucumber ↔ Spring Boot ↔ Testcontainers via `@DynamicPropertySource` |
-| `TestcontainersBaseIT.java` | Cucumber runner (`@RunWith(Cucumber.class)`) with `@CucumberOptions` |
-
-### FDP-specific properties wired
+### RedisContainerConfig.java
 
 ```java
-@DynamicPropertySource
-static void kafkaProperties(DynamicPropertyRegistry registry) {
-    registry.add("fdp.kafka.broker", () -> KafkaContainerConfig.BOOTSTRAP_SERVERS);
-    registry.add("fdp.kafka.schema-registry-url", () -> KafkaContainerConfig.SCHEMA_REGISTRY_URL);
-    registry.add("fdp.app.kafka.stream.replication-factor", () -> "1");
-    registry.add("fdp.app.kafka.topic.suffix", () -> "0");
+package uk.gov.ho.dacc.fdp.integration;
+
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.utility.DockerImageName;
+
+public class RedisContainerConfig {
+
+    // Pin to same version as production docker-compose
+    private static final DockerImageName REDIS_IMAGE = DockerImageName.parse("redis:5.0.6");
+
+    public static final GenericContainer<?> REDIS = new GenericContainer<>(REDIS_IMAGE)
+            .withExposedPorts(6379);
+
+    static {
+        REDIS.start();
+    }
+
+    public static String getRedisNodes() {
+        return REDIS.getHost() + ":" + REDIS.getMappedPort(6379);
+    }
 }
 ```
 
-### Maven dependencies to add
+### KafkaContainerConfig.java (Zookeeper + Kafka + Schema Registry)
 
-Only 3 new dependencies (Testcontainers BOM + core + kafka module). All Cucumber/Spring/JUnit dependencies already exist.
+```java
+package uk.gov.ho.dacc.fdp.integration;
 
-### Reuse policy
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.containers.Network;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.utility.DockerImageName;
 
-- **Local:** reuse enabled (`testcontainers.reuse.enable=true`) for faster iteration.
-- **CI:** reuse disabled — clean containers per pipeline run (deterministic).
+public class KafkaContainerConfig {
 
-### Maven profile
+    // Pin to versions matching production MSK (PM-71719: MSK 3.5.1 = cp-kafka 7.5.5)
+    private static final DockerImageName ZOOKEEPER_IMAGE = DockerImageName.parse("confluentinc/cp-zookeeper:7.5.5");
+    private static final DockerImageName KAFKA_IMAGE = DockerImageName.parse("confluentinc/cp-kafka:7.5.5");
+    private static final DockerImageName SCHEMA_REGISTRY_IMAGE = DockerImageName.parse("confluentinc/cp-schema-registry:7.5.5");
+
+    private static final Network NETWORK = Network.newNetwork();
+
+    private static final GenericContainer<?> ZOOKEEPER = new GenericContainer<>(ZOOKEEPER_IMAGE)
+            .withNetwork(NETWORK)
+            .withNetworkAliases("zookeeper")
+            .withEnv("ZOOKEEPER_CLIENT_PORT", "2181")
+            .withEnv("ZOOKEEPER_TICK_TIME", "2000")
+            .withExposedPorts(2181)
+            .waitingFor(Wait.forListeningPort());
+
+    public static final KafkaContainer KAFKA = new KafkaContainer(KAFKA_IMAGE)
+            .withNetwork(NETWORK)
+            .withNetworkAliases("kafka")
+            .withExternalZookeeper("zookeeper:2181")
+            .withEnv("KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR", "1")
+            .withEnv("KAFKA_AUTO_CREATE_TOPICS_ENABLE", "false")
+            .dependsOn(ZOOKEEPER);
+
+    private static final GenericContainer<?> SCHEMA_REGISTRY = new GenericContainer<>(SCHEMA_REGISTRY_IMAGE)
+            .withNetwork(NETWORK)
+            .withNetworkAliases("schema-registry")
+            .withExposedPorts(8081)
+            .withEnv("SCHEMA_REGISTRY_HOST_NAME", "schema-registry")
+            .withEnv("SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS", "PLAINTEXT://kafka:9092")
+            .dependsOn(KAFKA)
+            .waitingFor(Wait.forHttp("/subjects").forStatusCode(200));
+
+    public static final String BOOTSTRAP_SERVERS;
+    public static final String SCHEMA_REGISTRY_URL;
+
+    static {
+        ZOOKEEPER.start();
+        KAFKA.start();
+        SCHEMA_REGISTRY.start();
+        BOOTSTRAP_SERVERS = KAFKA.getBootstrapServers();
+        SCHEMA_REGISTRY_URL = "http://" + SCHEMA_REGISTRY.getHost() + ":" + SCHEMA_REGISTRY.getMappedPort(8081);
+    }
+}
+```
+
+### CucumberSpringConfig.java
+
+```java
+package uk.gov.ho.dacc.fdp.integration;
+
+import io.cucumber.spring.CucumberContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+
+@CucumberContextConfiguration
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("integration-test")
+public class CucumberSpringConfig {
+
+    @DynamicPropertySource
+    static void kafkaProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.kafka.bootstrap-servers", () -> KafkaContainerConfig.BOOTSTRAP_SERVERS);
+        registry.add("fdp.kafka.broker", () -> KafkaContainerConfig.BOOTSTRAP_SERVERS);
+        registry.add("fdp.kafka.schema-registry-url", () -> KafkaContainerConfig.SCHEMA_REGISTRY_URL);
+        registry.add("fdp.app.kafka.stream.replication-factor", () -> "1");
+        registry.add("fdp.app.kafka.stream.min-insync-replicas", () -> "1");
+        registry.add("fdp.app.kafka.topic.suffix", () -> "0");
+    }
+
+    @DynamicPropertySource
+    static void redisProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.redis.host", RedisContainerConfig.REDIS::getHost);
+        registry.add("spring.data.redis.port", () -> RedisContainerConfig.REDIS.getMappedPort(6379));
+        registry.add("fdp.app.redis.nodes", RedisContainerConfig::getRedisNodes);
+    }
+
+    @DynamicPropertySource
+    static void otelProperties(DynamicPropertyRegistry registry) {
+        registry.add("otel.traces.exporter", () -> "none");
+        registry.add("otel.metrics.exporter", () -> "none");
+    }
+}
+```
+
+### TestcontainersBaseIT.java (Cucumber runner)
+
+```java
+package uk.gov.ho.dacc.fdp.integration;
+
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features = "classpath:features",
+        glue = "uk.gov.ho.dacc.fdp.integration",
+        plugin = {"pretty", "json:target/cucumber-report.json"},
+        tags = "not @snapshot"
+)
+public class TestcontainersBaseIT {
+}
+```
+
+### Maven Dependencies to Add
+
+Add to parent `pom.xml` `<dependencyManagement>`:
+
+```xml
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>testcontainers-bom</artifactId>
+    <version>1.19.8</version>
+    <type>pom</type>
+    <scope>import</scope>
+</dependency>
+```
+
+Add to `cmd-adaptor-dvla-integration-tests/pom.xml`:
+
+```xml
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>testcontainers</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>junit-jupiter</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>kafka</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+All other dependencies (Cucumber, Spring Boot Test, JUnit) already exist in the project.
+
+### Maven Profile
 
 ```xml
 <profile>
     <id>testcontainers</id>
     <properties>
-        <skip.containers>true</skip.containers>    <!-- skip docker-compose-maven-plugin -->
+        <skip.containers>true</skip.containers>
         <skip.aggregators>true</skip.aggregators>
         <skip.integration.tests>false</skip.integration.tests>
     </properties>
@@ -130,15 +380,20 @@ Only 3 new dependencies (Testcontainers BOM + core + kafka module). All Cucumber
 
 Usage: `./mvnw verify -pl cmd-adaptor-dvla-integration-tests -P testcontainers`
 
+### Reuse Policy
+
+- **Local:** reuse enabled (`testcontainers.reuse.enable=true` in `~/.testcontainers.properties`) for faster feedback.
+- **CI:** reuse disabled (default) — clean containers per pipeline run (deterministic).
+
 ---
 
-## 4. BuildKit Cache
+## 5. BuildKit
 
-### Local cache mounts
+### Local Cache Mounts
 
-`--mount=type=cache,target=/root/.m2/repository` persists Maven downloads across local builds. Immediate benefit, no infrastructure needed.
+`DOCKER_BUILDKIT=1 docker build .` enables `--mount=type=cache`. The Maven `.m2` repository persists across local builds — deps are not re-downloaded unless `pom.xml` changes.
 
-### Remote cache (post-pilot, ACP dependent)
+### Remote Cache (post-pilot, requires ACP)
 
 ```bash
 docker buildx build \
@@ -148,84 +403,37 @@ docker buildx build \
   --tag $REGISTRY_IMAGE:$COMMIT_SHA --push .
 ```
 
-**Not implementable without ACP:** requires registry namespace, write permissions, DIND BuildKit support, and RepoSync `.drone.star` change.
+**Not implementable without ACP:** requires registry namespace (`docker.digital.homeoffice.gov.uk/dacc-aws/fdp-cache`), write permissions, DIND BuildKit support, and RepoSync `.drone.star` change.
+
+### Build Measurement
+
+Local measurement approach (before/after):
+
+```bash
+# Warm build (with cache)
+time DOCKER_BUILDKIT=1 docker build -t pilot:test .
+
+# Cold build (no cache)
+time DOCKER_BUILDKIT=1 docker build --no-cache -t pilot:nocache .
+
+# Image size
+docker images pilot:test --format '{{.Size}}'
+```
 
 ---
 
-## 5. Docker Compose — Current CI Usage
+## 6. Base Image Strategy (Post-Pilot, DSA ETO)
 
-The integration test docker-compose starts:
+Target hierarchy:
 
-| Service | Image | Purpose | CI-required? |
-|---------|-------|---------|:------------:|
-| zookeeper | cp-zookeeper:7.5.5 | Kafka dependency | Yes |
-| kafka | cp-kafka:7.5.5 | Event streaming | Yes |
-| schema-registry | cp-schema-registry:7.5.5 | Avro schema management | Yes |
-| redis | redis:5.0.6 | Cache / state store | Yes |
-| localstack | localstack:0.12.18 | IAM emulation | TBC |
-| jaeger | jaegertracing/all-in-one:1.65.0 | Trace UI | No (local debug) |
-| kafdrop | obsidiandynamics/kafdrop:3.30.0 | Kafka UI | No (local debug) |
-| aggregate-party/object/location/event/service/matching/v1id-v2id | Internal FDP images | Stream processors | For snapshot tests only |
-| command-adaptor | Built from source | The service under test | Yes |
+```text
+base-os (patched OS — e.g. Amazon Linux)
+  └── base-runtime (JRE + core runtime deps)
+        └── base-build (JDK + Maven — build stages only)
+              └── application (team-built)
+```
 
-Story 5 maps and classifies these to determine what can be removed from CI.
-
----
-
-## 6. Security
-
-### Secret management
-
-| Concern | Approach |
-|---------|----------|
-| CI secrets (registry creds, tokens) | **Drone secrets** (per-repo or org-level) — encrypted, injected at runtime |
-| Build-time secrets (Maven `settings.xml`) | **BuildKit secret mounts** (`--mount=type=secret`) — never baked into layers |
-| App runtime secrets | **HashiCorp Vault** via envconsul — out of pilot scope to implement, in scope to document |
-| Preventing leaks | `.dockerignore` excludes `.env`, key files; secret scanning in CI |
-
-**Rules:** No secrets in image layers, build args, logs, or repo. No real credentials in examples. Rotate any suspected leak.
-
-### Scanning policy
-
-| What | Tool (candidate) | When | Pilot mode | Target gate |
-|------|------------------|------|------------|-------------|
-| Image vulnerabilities | Trivy or Snyk | Every pilot build | Report-only | Fail on Critical |
-| Dependency vulnerabilities | Trivy / `mvn` audit | On MR + weekly | Report-only | Fail on Critical |
-| Secret scanning | gitleaks / trufflehog | On MR | Report-only | Fail on any secret |
-| SBOM generation | Syft (SPDX/CycloneDX) | On image build | Artefact attached | Required |
-| Base image freshness | Scheduled scan | Weekly | Report-only | Flag outdated/EOL |
-
-Tool choice is CST-local for the pilot. Org-wide scanning standard/gate is ACP/ETO (classify in Story 6).
-
-### Policy as code
-
-| Policy | Rule | Enforcement |
-|--------|------|-------------|
-| No `root` runtime | Non-root USER in Dockerfile | hadolint + image policy check |
-| No unpinned images | Version (or digest for critical) pinned | hadolint + CI lint |
-| No secrets in image | No secret material in layers | Secret scan of built image |
-| Healthcheck present | Long-running images define HEALTHCHECK | hadolint |
-| Approved base images | Use sanctioned images only | Policy check against allowlist (ACP/ETO) |
-
-Enforcement: start with hadolint (fast, local + CI). OPA/Conftest for admission policies. Pilot runs in **warn** mode; promote to **block** after baseline.
-
-### Supply-chain hardening (ACP/ETO, post-pilot)
-
-- Digest pinning for critical base images.
-- Image signing/provenance (cosign) — assess feasibility.
-- Scheduled base-image rebuilds.
-- Deprecated-image policy.
-
----
-
-## 7. Code Examples
-
-Working examples exist in the repository under `examples/`:
-- `examples/testcontainers/` — RedisContainerConfig, KafkaContainerConfig, CucumberSpringConfig, pom-dependencies
-- `examples/docker/` — optimised Dockerfile, .dockerignore, docker-compose
-- `examples/ci/` — Drone considerations, GitLab CI illustrative snippet
-
-For the Confluence-converted catalogue and application notes, see [Code Examples and Templates](16-code-examples-and-templates.md).
+> The initial pilot may identify where shared base images would help, but creating and maintaining organisation-level base images would require DSA ETO ownership, lifecycle management, rebuild cadence, and compatibility guarantees.
 
 ---
 
