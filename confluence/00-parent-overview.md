@@ -168,7 +168,10 @@ Story 1 (pipeline assessment, gate)
 | Working Agreements and Metrics | Status board rules, Definition of Done, metrics template |
 | Security Plan | Secret handling, scanning, policy-as-code, supply-chain |
 | Glossary | All terminology and environment clarification |
-| Detailed Task Definitions | Full per-task why, goal, scope, acceptance criteria |
+| Detailed Task Definitions | Index for all 23 task definitions, split by story group |
+| Task Definitions — Story 1 & 2 | Assessment and Baseline tasks (T1.1–T2.4) |
+| Task Definitions — Story 3 & 4 | Build Optimisation and Testcontainers tasks (T3.1–T4.4) |
+| Task Definitions — Story 5 & 6 | Compose Rationalisation and Ownership tasks (T5.1–T6.3) |
 | Code Examples and Templates | Dockerfile, Compose, Testcontainers, CI templates |
 
 ---
