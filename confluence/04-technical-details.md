@@ -173,10 +173,47 @@ Story 5 maps and classifies these to determine what can be removed from CI.
 
 ## 6. Security
 
-- **Trivy scan:** already exists in tag pipeline; proposed to add as non-blocking report in CI.
-- **Sonar scan:** already in pipeline.
-- **Secret handling:** envconsul (Vault) for runtime; BuildKit `--mount=type=secret` for build-time.
-- **Non-root user:** existing Dockerfile already uses `fdpuser` (UID 1000).
+### Secret management
+
+| Concern | Approach |
+|---------|----------|
+| CI secrets (registry creds, tokens) | **Drone secrets** (per-repo or org-level) — encrypted, injected at runtime |
+| Build-time secrets (Maven `settings.xml`) | **BuildKit secret mounts** (`--mount=type=secret`) — never baked into layers |
+| App runtime secrets | **HashiCorp Vault** via envconsul — out of pilot scope to implement, in scope to document |
+| Preventing leaks | `.dockerignore` excludes `.env`, key files; secret scanning in CI |
+
+**Rules:** No secrets in image layers, build args, logs, or repo. No real credentials in examples. Rotate any suspected leak.
+
+### Scanning policy
+
+| What | Tool (candidate) | When | Pilot mode | Target gate |
+|------|------------------|------|------------|-------------|
+| Image vulnerabilities | Trivy or Snyk | Every pilot build | Report-only | Fail on Critical |
+| Dependency vulnerabilities | Trivy / `mvn` audit | On MR + weekly | Report-only | Fail on Critical |
+| Secret scanning | gitleaks / trufflehog | On MR | Report-only | Fail on any secret |
+| SBOM generation | Syft (SPDX/CycloneDX) | On image build | Artefact attached | Required |
+| Base image freshness | Scheduled scan | Weekly | Report-only | Flag outdated/EOL |
+
+Tool choice is CST-local for the pilot. Org-wide scanning standard/gate is ACP/ETO (classify in Story 6).
+
+### Policy as code
+
+| Policy | Rule | Enforcement |
+|--------|------|-------------|
+| No `root` runtime | Non-root USER in Dockerfile | hadolint + image policy check |
+| No unpinned images | Version (or digest for critical) pinned | hadolint + CI lint |
+| No secrets in image | No secret material in layers | Secret scan of built image |
+| Healthcheck present | Long-running images define HEALTHCHECK | hadolint |
+| Approved base images | Use sanctioned images only | Policy check against allowlist (ACP/ETO) |
+
+Enforcement: start with hadolint (fast, local + CI). OPA/Conftest for admission policies. Pilot runs in **warn** mode; promote to **block** after baseline.
+
+### Supply-chain hardening (ACP/ETO, post-pilot)
+
+- Digest pinning for critical base images.
+- Image signing/provenance (cosign) — assess feasibility.
+- Scheduled base-image rebuilds.
+- Deprecated-image policy.
 
 ---
 

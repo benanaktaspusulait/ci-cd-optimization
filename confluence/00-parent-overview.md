@@ -118,7 +118,9 @@ Evidence-first: every change is proved with before/after numbers. No change is a
 | [Pipeline & Drone Context](05-pipeline-and-drone.md) | Drone/RepoSync constraints, CI vs Deploy pipeline |
 | [Deployment & Release](06-deployment-and-release.md) | Deploy pipeline context (outside pilot scope) |
 | [References](07-references.md) | Source links, ADRs, KT sessions |
-| [Backlog Summary](08-backlog-summary.md) | Story/task list (Jira-ready) |
+| [Backlog Summary](08-backlog-summary.md) | Story/task list with details (Jira-ready) |
+| [Future Considerations](09-future-considerations.md) | Post-pilot roadmap, architecture decision candidates |
+| [Architecture Decisions](10-decisions-adr.md) | ADR full text — context, decision, consequences, alternatives |
 
 ---
 
