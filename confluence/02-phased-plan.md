@@ -46,7 +46,7 @@
 - Pipeline and build baselines documented with measurement method.
 - Build context size reduced by ≥ 50%.
 - Local build time reduced by ≥ 30% (dependency caching + multi-stage).
-- Image size reduced by ≥ 30% (JDK + Maven removed from runtime image).
+- Image size reduced by ≥ 30% (full JDK and build tools removed from runtime image).
 
 **Success criteria:**
 - [ ] Baseline numbers captured and repeatable.
