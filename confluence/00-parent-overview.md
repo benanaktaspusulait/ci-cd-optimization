@@ -3,6 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Owner** | TBC (CST / Cerberus Delivery) |
+| **Created by** | Benan Aktas |
 | **Status** | Draft |
 | **Created** | 2026-06-09 |
 | **Last updated** | 2026-06-09 |
