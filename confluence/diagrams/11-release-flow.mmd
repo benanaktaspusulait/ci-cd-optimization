@@ -1,0 +1,10 @@
+graph LR
+    FB["feature/MMA-XXXXX"] -->|MR| DEV[develop]
+    DEV -->|"cut release"| REL["release/X.Y.Z"]
+    REL -->|"tag vX.Y.Z"| TAG[Tag Pipeline]
+    TAG -->|"Maven + Trivy + Sonar<br/>+ Helm + Artifactory"| ART[Artifactory]
+    ART -->|"chart version"| SVC[MMA Service Repo<br/>Deploy Pipeline]
+    SVC --> D[dev]
+    D --> SIT["SIT<br/>(QAT approval)"]
+    SIT --> BVAL[bVal]
+    BVAL --> PROD[Production]

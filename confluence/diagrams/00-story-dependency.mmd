@@ -1,0 +1,9 @@
+graph TD
+    S1[Story 1: Pipeline Assessment<br/>gate] --> S2[Story 2: Baseline<br/>gate]
+    S2 --> S3[Story 3: Build Optimisation]
+    S2 --> S4[Story 4: Testcontainers]
+    S3 --> S5[Story 5: Compose Rationalisation]
+    S4 --> S5
+    S3 --> S6[Story 6: Findings & Ownership]
+    S4 --> S6
+    S5 --> S6

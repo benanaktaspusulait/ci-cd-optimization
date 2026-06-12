@@ -1,0 +1,9 @@
+graph TD
+    A["base-os<br/>(patched OS — e.g. Amazon Linux)"] --> B["base-runtime<br/>(JRE + core runtime deps)"]
+    B --> C["base-build<br/>(JDK + Maven — build stages only)"]
+    C --> D["application<br/>(team-built)"]
+
+    style A fill:#fff3e0,stroke:#e65100
+    style B fill:#e8f5e9,stroke:#2e7d32
+    style C fill:#e3f2fd,stroke:#1565c0
+    style D fill:#f3e5f5,stroke:#6a1b9a

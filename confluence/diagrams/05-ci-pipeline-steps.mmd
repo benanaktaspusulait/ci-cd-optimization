@@ -1,0 +1,13 @@
+graph TD
+    S1["1. RepoSync Version check"] --> S2["2. Retrieve Artifactory Secrets"]
+    S2 --> S3["3. Wait for Docker (DIND)"]
+    S3 --> S4["4. Extract Adaptor Info"]
+    S4 --> S5["5. Kafka & Redis<br/>docker-compose up"]
+    S5 --> S6["6. Aggregators<br/>docker-compose up -d (7 services)"]
+    S6 --> S7["7. mvn clean install<br/>build + unit tests"]
+    S7 --> S8["8. Command Adaptor<br/>docker-compose up --build"]
+    S8 --> S9["9. Pre-Integration Tests<br/>wait checks"]
+    S9 --> S10["10. Integration Tests<br/>--exit-code-from"]
+    S10 --> S11["11. Sonar Scan"]
+    S11 --> S12["12. Trivy Scan"]
+    S12 --> S13["13. Slack Notification"]

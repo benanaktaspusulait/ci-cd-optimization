@@ -1,0 +1,18 @@
+graph LR
+    subgraph TAG["Tag Pipeline (per-adaptor repo)"]
+        T1[Maven build + test] --> T2[Trivy + Sonar scan]
+        T2 --> T3[Docker build + push]
+        T3 --> T4[Helm package + upload<br/>to Artifactory]
+    end
+
+    T4 -->|"chart version"| D1
+
+    subgraph DEPLOY["Service Repo Deploy Pipeline (MMA Helm)"]
+        D1[Pull chart from Artifactory] --> D2[Helm package + lint + template]
+        D2 --> D3[Mass diff + upload]
+        D3 --> D4[Deploy to K8s]
+    end
+
+    D4 --> SIT[SIT]
+    SIT -->|"QAT approves"| BVAL[bVal]
+    BVAL --> PROD[Production]

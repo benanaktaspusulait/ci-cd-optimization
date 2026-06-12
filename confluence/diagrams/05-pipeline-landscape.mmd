@@ -1,0 +1,19 @@
+graph TD
+    subgraph CI["CI PIPELINE (per-adaptor repo, .drone.star via RepoSync) — PILOT SCOPE"]
+        A[Clone] --> B[Docker/DIND]
+        B --> C[Maven build + test]
+        C --> D[Docker Compose<br/>Kafka, Redis, Schema Registry,<br/>aggregators, cmd-adaptor]
+        D --> E[Integration tests]
+        E --> F[Trivy scan]
+        F --> G[Sonar scan]
+    end
+    G -->|"produces: Docker image +<br/>Helm chart (Artifactory)"| H
+
+    subgraph DEPLOY["DEPLOY PIPELINE (MMA service repo) — NOT IN PILOT"]
+        H[Helm package] --> I[lint + template]
+        I --> J[mass diff + upload]
+        J --> K[Deploy to Kubernetes<br/>dev → SIT → bVal → prod]
+    end
+
+    style CI fill:#e8f5e9,stroke:#2e7d32
+    style DEPLOY fill:#fce4ec,stroke:#c62828
