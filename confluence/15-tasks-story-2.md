@@ -5,11 +5,13 @@
 | **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
 | **Status** | Draft |
-| **Last updated** | 2026-06-09 |
-| **Last reviewed** | 2026-06-09 |
+| **Last updated** | 2026-06-23 |
+| **Last reviewed** | 2026-06-23 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 Tasks for Story 2 (Baseline & Pilot Scope). Without baseline data, no optimisation can be proved.
+
+This story does not implement any optimisation. It only selects the pilot target and captures the baseline required to prove before/after impact.
 
 ---
 
@@ -36,6 +38,8 @@ Tasks for Story 2 (Baseline & Pilot Scope). Without baseline data, no optimisati
 | Type | Research |
 | Estimate | 1 |
 | Priority | Must |
+| Labels | `baseline`, `repo-selection`, `portability` |
+| Sprint | Week 1 |
 | Depends on | T1.2 |
 | Owner | TBC |
 | Status | Not started |
@@ -49,6 +53,19 @@ Tasks for Story 2 (Baseline & Pilot Scope). Without baseline data, no optimisati
 - Review at least two candidate FDP repositories/pipelines.
 - Weigh pipeline duration, Docker Compose usage, integration-test complexity, current delivery priority/risk, and portability.
 - Recommend one repository and record why.
+
+**Candidate comparison matrix:**
+
+| Criteria | Candidate A | Candidate B | Notes |
+|----------|-------------|-------------|-------|
+| Pipeline duration | TBC | TBC | Last N runs |
+| Docker Compose usage | TBC | TBC | Low / Medium / High |
+| Integration-test complexity | TBC | TBC | Low / Medium / High |
+| Dockerfile ownership | TBC | TBC | RepoSync / repo-local |
+| Testcontainers suitability | TBC | TBC | Low / Medium / High |
+| Build optimisation potential | TBC | TBC | Low / Medium / High |
+| Delivery risk | TBC | TBC | Low / Medium / High |
+| Portability to other adaptors | TBC | TBC | Low / Medium / High |
 
 **Acceptance criteria:**
 
@@ -96,11 +113,34 @@ Tasks for Story 2 (Baseline & Pilot Scope). Without baseline data, no optimisati
 - Capture failed-pipeline frequency if available.
 - Note data source and method, for example last N runs from CI history.
 
+**Recommended measurement window:**
+
+- Use the last 5 successful runs where possible.
+- Separately record failed/cancelled runs.
+- Exclude obvious one-off infrastructure incidents unless they are recurring.
+- Record measurement date and source.
+
 **Acceptance criteria:**
 
 - [ ] Baseline pipeline metrics are documented.
 - [ ] Data source / measurement method is recorded.
 - [ ] Metrics can be re-measured for before/after comparison.
+
+**Baseline capture output:**
+
+| Metric | Value | Source / method |
+|--------|-------|-----------------|
+| Average successful CI duration | TBC | Last 5 successful runs |
+| Median successful CI duration | TBC | Last 5 successful runs |
+| Slowest successful CI duration | TBC | Last 5 successful runs |
+| Fastest successful CI duration | TBC | Last 5 successful runs |
+| Build stage duration | TBC | Drone UI/API |
+| Unit test stage duration | TBC | Drone UI/API or Maven logs |
+| Integration test stage duration | TBC | Drone UI/API |
+| Failed/cancelled runs in sample | TBC | Last N runs |
+| Most expensive step by duration | TBC | Drone UI/API |
+| Repeated setup time | TBC | apk/docker-compose install, waits |
+| Measurement date | TBC | — |
 
 ### T2.3 — Capture Docker Build and Image-Size Baseline
 
@@ -127,6 +167,18 @@ Tasks for Story 2 (Baseline & Pilot Scope). Without baseline data, no optimisati
 - [ ] Current final image size is documented.
 - [ ] Current base image and build approach are identified.
 
+**Docker baseline output:**
+
+| Metric | Value | Source / method |
+|--------|-------|-----------------|
+| Local Docker build time | TBC | `time docker build ...` |
+| CI Docker build time | TBC | Drone publish/build step logs |
+| Final image size | TBC | `docker images` / registry metadata |
+| Build context size | TBC | Docker build output / `du -sh` |
+| Base image | TBC | Dockerfile |
+| Runtime image family | TBC | JDK / JRE / slim / approved base |
+| Trivy HIGH/CRITICAL count | TBC | Current CI Trivy output |
+
 ### T2.4 — Capture Integration-Test Baseline
 
 | Field | Value |
@@ -152,9 +204,51 @@ Tasks for Story 2 (Baseline & Pilot Scope). Without baseline data, no optimisati
 - [ ] Required dependencies are listed.
 - [ ] Known pain points / flaky behaviours are captured.
 
+**Integration-test baseline output:**
 
+| Metric / Area | Value | Source / method |
+|---------------|-------|-----------------|
+| Integration test command | TBC | Drone step / Maven command |
+| Maven profile used | TBC | `ci-snapshot`, etc. |
+| Compose file path | TBC | docker-compose.yml |
+| Required infra services | TBC | Kafka, Redis, LocalStack, etc. |
+| Required custom app services | TBC | Aggregators, command-adaptor |
+| Startup/wait duration | TBC | Drone logs |
+| Actual test execution duration | TBC | Maven/Failsafe logs |
+| Known flaky failures | TBC | Recent failed runs |
+| Local vs CI topology differences | TBC | Story 1 findings / pipeline map |
 
+### T2.5 — Produce Baseline Summary and Re-Measurement Method
 
+| Field | Value |
+|-------|-------|
+| Type | Documentation |
+| Estimate | 1 |
+| Priority | Must |
+| Labels | `baseline`, `summary`, `measurement` |
+| Sprint | Week 1 |
+| Depends on | T2.2, T2.3, T2.4 |
+| Owner | TBC |
+| Status | Not started |
+
+**Why:** T2.2, T2.3 and T2.4 capture separate baseline slices. A short summary is needed so stakeholders can agree the before state and later compare it with Stories 3, 4 and 5.
+
+**Goal:** Create a concise baseline summary and re-measurement method for before/after comparison.
+
+**Scope:**
+
+- Consolidate CI pipeline, Docker build/image, and integration-test baseline metrics.
+- Record the exact measurement method used for each metric.
+- Separate measured values from missing data or assumptions.
+- Document known limitations so later comparisons do not overclaim improvement.
+
+**Acceptance criteria:**
+
+- [ ] Baseline summary exists.
+- [ ] Measurement method is documented.
+- [ ] Metrics are separated into CI pipeline, Docker build/image, and integration-test sections.
+- [ ] Known limitations and missing data are recorded.
+- [ ] Stakeholders can agree this is the baseline for later comparison.
 
 ---
 
