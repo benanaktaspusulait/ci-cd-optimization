@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | Draft baseline pack — T2.1 second-candidate check and stakeholder confirmation pending; estimates pending Drone UI + local build confirmation |
+| **Status** | Draft baseline pack — T2.1 stakeholder confirmation pending; estimates pending Drone UI + local build confirmation |
 | **Date** | 2026-06-11 |
 
 ---
@@ -11,7 +11,7 @@
 
 | Task | File | Status |
 |------|------|:------:|
-| T2.1 — Select pilot repo | [T2.1-select-repo.md](./T2.1-select-repo.md) | ⚠️ pending second-candidate check + stakeholder confirmation |
+| T2.1 — Select pilot repo | [T2.1-select-repo.md](./T2.1-select-repo.md) | ⚠️ pending stakeholder confirmation |
 | T2.2 — Pipeline baseline | [T2.2-pipeline-baseline.md](./T2.2-pipeline-baseline.md) | ✅ (estimated) |
 | T2.3 — Docker build & image baseline | [T2.3-build-image-baseline.md](./T2.3-build-image-baseline.md) | ✅ (estimated) |
 | T2.4 — Integration test baseline | [T2.4-integration-test-baseline.md](./T2.4-integration-test-baseline.md) | ✅ |
@@ -39,7 +39,7 @@
 
 ## Key Decisions Made
 
-1. **Working pilot recommendation:** `fdp-cmd-adaptor-sns` — representative, low-risk, portable patterns; lightweight second-candidate check and stakeholder confirmation still required
+1. **Working pilot recommendation:** `fdp-cmd-adaptor-sns` — representative, low-risk, portable patterns; DVLA lightweight comparison completed from provided source excerpts; stakeholder confirmation still required
 2. **Measurement method:** Drone UI (last 10 runs on develop) for CI; `time docker build` for local
 3. **First Testcontainers candidate:** Redis (simplest, fastest startup, best isolation benefit)
 4. **Biggest Docker optimisation opportunity:** Switch base image from full JDK to JRE-only Alpine (60% size reduction)

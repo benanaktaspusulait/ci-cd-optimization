@@ -1,0 +1,3276 @@
+<groupId>uk.gov.ho.dacc.fdp</groupId>
+<artifactId>fdp-cmd-adaptor-dvla</artifactId>
+<version>1.0.3-SNAPSHOT</version>
+<packaging>pom</packaging>
+<name>fdp-cmd-adaptor-dvla</name>
+<description>FDP Command Adaptor application and integration tests</description>
+
+<modules>
+    <module>cmd-adaptor-dvla-common</module>
+    <module>cmd-adaptor-dvla-test-common</module>
+    <module>cmd-adaptor-dvla</module>
+    <module>cmd-adaptor-dvla-integration-tests</module>
+</modules>
+
+<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <java.version>17</java.version>
+    <spring-boot-maven-plugin.version>3.5.9</spring-boot-maven-plugin.version> <!-- must match spring version in fdp-bom -->
+    <maven-failsafe-plugin.version>3.5.5</maven-failsafe-plugin.version>
+    <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+    <fdp-cmd-adaptor-test-common.version>2.3.4</fdp-cmd-adaptor-test-common.version>
+    <fdp-commons.version>5.2.7</fdp-commons.version>
+    <fdp-bom.version>3.2.11</fdp-bom.version>
+    <opentelemetry.version>1.30.0</opentelemetry.version> <!-- must match that in fdp-bom - for use in dockerfile-->
+    <cdlz-avro-schemas.version>1.2.0</cdlz-avro-schemas.version>
+    <mapping.version>1.1.5</mapping.version>
+    <mapping.lib.version>3.2.3</mapping.lib.version>
+    <mapping.plugin.version>3.5.3</mapping.plugin.version>
+    <aggregator-core.version>10.3.0</aggregator-core.version>
+    <jacoco.version>0.8.14</jacoco.version>
+    <skip.integration.tests>true</skip.integration.tests>
+    <skip.integration.tests.docker-compose>true</skip.integration.tests.docker-compose>
+    <changelog.version>2.2.11</changelog.version>
+</properties>
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>com.amashchenko.maven.plugin</groupId>
+            <artifactId>gitflow-maven-plugin</artifactId>
+            <version>1.21.0</version>
+            <configuration>
+                <gitFlowConfig>
+                    <productionBranch>master</productionBranch>
+                    <developmentBranch>develop</developmentBranch>
+                </gitFlowConfig>
+                <!-- Stop the appending madness of feature branch names. -->
+                <skipFeatureVersion>true</skipFeatureVersion>
+            </configuration>
+        </plugin>
+
+        <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <plugin>
+            <groupId>se.bjurr.gitchangelog</groupId>
+            <artifactId>git-changelog-maven-plugin</artifactId>
+            <version>${changelog.version}</version>
+            <inherited>false</inherited>
+            <dependencies>
+                <dependency>
+                    <groupId>org.openjdk.nashorn</groupId>
+                    <artifactId>nashorn-core</artifactId>
+                    <version>15.7</version>
+                </dependency>
+            </dependencies>
+            <executions>
+                <execution>
+                    <id>GenerateGitChangelog</id>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>git-changelog</goal>
+                    </goals>
+                    <configuration>
+                        <templateFile>changelog.mustache</templateFile>
+                        <ignoreCommitsIfMessageMatches>^Update versions for release.*|^Update for next development version.*|^(?i)update changelog.*|^Merge tag.*|^(?i)reposync.*|^\*\*reposync.*|^Merge branch.*|^WIP.*|^\[WIP\].*</ignoreCommitsIfMessageMatches>
+                        <file>CHANGELOG.md</file>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
+            <executions>
+                <execution>
+                    <id>prepare-agent</id>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>report</id>
+                    <phase>test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>uk.gov.ho.dacc.fdp</groupId>
+            <artifactId>fdp-bom</artifactId>
+            <version>${fdp-bom.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.kafka</groupId>
+        <artifactId>spring-kafka</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>uk.gov.ho.dacc.fdp</groupId>
+        <artifactId>fdp-commons</artifactId>
+        <version>${fdp-commons.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>uk.gov.ho.dsa.cdl.schemas</groupId>
+        <artifactId>dvla-trailer-registration</artifactId>
+        <version>1.2.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>uk.gov.ho.dsa.cdl.schemas</groupId>
+        <artifactId>dvla-trailer-disposal</artifactId>
+        <version>1.1.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.kafka</groupId>
+        <artifactId>kafka-clients</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>uk.gov.ho.dacc.fdp</groupId>
+        <artifactId>fdp-cmd-adaptor-test-common</artifactId>
+        <version>${fdp-cmd-adaptor-test-common.version}</version>
+    </dependency>
+</dependencies>
+
+
+<repositories>
+    <repository>
+        <id>confluent</id>
+        <url>https://packages.confluent.io/maven/</url>
+    </repository>
+</repositories>
+
+#############################################################################
+
+DO NOT EDIT LOCALLY!!!!!!!
+WARNING: This file is controlled centrally, any changes made in the command
+adaptor repository will be overwritten by the RepoSync process. See
+https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync
+DO NOT EDIT LOCALLY!!!!!!!
+#############################################################################
+FROM amazoncorretto:17
+
+USER root
+
+COPY ./confluent.repo /etc/yum.repos.d/confluent.repo
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+
+RUN yum clean all
+&& chmod 644 /etc/yum.repos.d/confluent.repo
+&& chmod 755 /usr/local/bin/entrypoint.sh
+&& yum upgrade -y freetype nss nss-util nss-softokn nspr openssl-libs
+&& rpm --import https://packages.confluent.io/rpm/7.2/archive.key
+&& yum update -y cyrus-sasl-lib expat glib2 jetty-jaas
+&& yum clean all
+&& yum install -y confluent-community-2.13.noarch jq shadow-utils tar util-linux
+&& rm -rf /var/cache/yum
+&& yum clean all
+&& mkdir /usr/logs
+&& adduser
+-u 1000
+-U
+-m
+-s /bin/bash
+appuser
+&& chown appuser:appuser /usr/logs
+&& chmod -R 777 /usr/logs
+
+WORKDIR /home/appuser
+USER appuser
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+
+<parent>
+    <groupId>uk.gov.ho.dacc.fdp</groupId>
+    <artifactId>fdp-cmd-adaptor-dvla</artifactId>
+    <version>1.0.3-SNAPSHOT</version>
+</parent>
+
+<artifactId>cmd-adaptor-dvla-integration-tests</artifactId>
+
+<profiles>
+    <profile>
+        <id>local</id>
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+        <properties>
+            <skip.containers>true</skip.containers>
+            <skip.aggregators>true</skip.aggregators>
+            <skip.integration.tests>true</skip.integration.tests>
+            <cucumber.options></cucumber.options>
+        </properties>
+    </profile>
+    <profile>
+        <id>local-int-cmd</id>
+        <properties>
+            <skip.containers>false</skip.containers>
+            <skip.aggregators>true</skip.aggregators>
+            <skip.integration.tests>false</skip.integration.tests>
+            <cucumber.options>--tags not @snapshot</cucumber.options>
+            <kafka.bootstrap.server.host>localhost</kafka.bootstrap.server.host>
+            <kafka.bootstrap.server.port>9092</kafka.bootstrap.server.port>
+            <kafka.schemaregistry.server.host>localhost</kafka.schemaregistry.server.host>
+            <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+            <fdp.app.kafka.topic.suffix>0</fdp.app.kafka.topic.suffix>
+        </properties>
+    </profile>
+    <profile>
+        <id>local-int-snapshot</id>
+        <properties>
+            <skip.containers>false</skip.containers>
+            <skip.aggregators>false</skip.aggregators>
+            <skip.integration.tests>false</skip.integration.tests>
+            <kafka.bootstrap.server.host>localhost</kafka.bootstrap.server.host>
+            <kafka.bootstrap.server.port>9092</kafka.bootstrap.server.port>
+            <kafka.schemaregistry.server.host>localhost</kafka.schemaregistry.server.host>
+            <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+            <fdp.app.kafka.topic.suffix>0</fdp.app.kafka.topic.suffix>
+        </properties>
+    </profile>
+    <profile>
+        <!-- To be used on 6point6 GitHub Workflow -->
+        <id>ci-cmd</id>
+        <properties>
+            <skip.containers>true</skip.containers>
+            <skip.aggregators>true</skip.aggregators>
+            <skip.integration.tests>false</skip.integration.tests>
+            <cucumber.options>--tags not @snapshot</cucumber.options>
+            <kafka.bootstrap.server.host>kafka</kafka.bootstrap.server.host>
+            <kafka.bootstrap.server.port>29092</kafka.bootstrap.server.port>
+            <kafka.schemaregistry.server.host>schema-registry</kafka.schemaregistry.server.host>
+            <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+            <fdp.app.kafka.topic.suffix>0</fdp.app.kafka.topic.suffix>
+        </properties>
+    </profile>
+    <profile>
+        <!-- To be used on HO ACP GitLab/Drone -->
+        <id>ci-snapshot</id>
+        <properties>
+            <skip.containers>true</skip.containers>
+            <skip.aggregators>true</skip.aggregators>
+            <skip.integration.tests>false</skip.integration.tests>
+            <kafka.bootstrap.server.host>kafka</kafka.bootstrap.server.host>
+            <kafka.bootstrap.server.port>29092</kafka.bootstrap.server.port>
+            <kafka.schemaregistry.server.host>schema-registry</kafka.schemaregistry.server.host>
+            <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+            <fdp.app.kafka.topic.suffix>0</fdp.app.kafka.topic.suffix>
+        </properties>
+    </profile>
+    <profile>
+        <!-- To be used on the deployment to the dacc-dde-dev K8s namespaces -->
+        <id>k8s-dacc-dde-dev</id>
+        <properties>
+            <skip.containers>true</skip.containers>
+            <skip.aggregators>true</skip.aggregators>
+            <skip.integration.tests>false</skip.integration.tests>
+            <kafka.bootstrap.server.host>dacc-dde-kafka</kafka.bootstrap.server.host>
+            <kafka.bootstrap.server.port>9092</kafka.bootstrap.server.port>
+            <kafka.schemaregistry.server.host>dacc-dde-schema-registry</kafka.schemaregistry.server.host>
+            <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+            <fdp.app.kafka.topic.suffix>dvla</fdp.app.kafka.topic.suffix>
+        </properties>
+    </profile>
+    <profile>
+        <!-- To be used on the deployment to the dacc-dde-test K8s namespaces -->
+        <id>k8s-dacc-dde-test</id>
+        <properties>
+            <skip.containers>true</skip.containers>
+            <skip.aggregators>true</skip.aggregators>
+            <skip.integration.tests>false</skip.integration.tests>
+            <kafka.bootstrap.server.host>dacc-dde-kafka</kafka.bootstrap.server.host>
+            <kafka.bootstrap.server.port>9092</kafka.bootstrap.server.port>
+            <kafka.schemaregistry.server.host>dacc-dde-schema-registry</kafka.schemaregistry.server.host>
+            <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+            <fdp.app.kafka.topic.suffix>dvla</fdp.app.kafka.topic.suffix>
+        </properties>
+    </profile>
+    <profile>
+        <!-- To be used on the deployment to the dacc-fdp-dev K8s namespaces -->
+        <id>k8s-dacc-fdp-dev</id>
+        <properties>
+            <skip.containers>true</skip.containers>
+            <skip.aggregators>true</skip.aggregators>
+            <skip.integration.tests>false</skip.integration.tests>
+            <kafka.bootstrap.server.host>fdp-kafka-svc.dacc-fdp-dev.svc.cluster.local</kafka.bootstrap.server.host>
+            <kafka.bootstrap.server.port>9092</kafka.bootstrap.server.port>
+            <kafka.schemaregistry.server.host>fdp-schema-registry-svc.dacc-fdp-dev.svc.cluster.local</kafka.schemaregistry.server.host>
+            <kafka.schemaregistry.server.port>8081</kafka.schemaregistry.server.port>
+            <fdp.app.kafka.topic.suffix>dvla</fdp.app.kafka.topic.suffix>
+        </properties>
+    </profile>
+</profiles>
+
+<dependencies>
+    <dependency>
+        <groupId>uk.gov.ho.dacc.fdp</groupId>
+        <artifactId>cmd-adaptor-dvla-test-common</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-java</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-junit</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.junit.vintage</groupId>
+        <artifactId>junit-vintage-engine</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-junit-platform-engine</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-expressions</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <optional>true</optional>
+    </dependency>
+
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+    </dependency>
+</dependencies>
+
+<build>
+    <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+        </resource>
+    </resources>
+    <testResources>
+        <testResource>
+            <directory>src/test/resources</directory>
+            <filtering>true</filtering>
+        </testResource>
+    </testResources>
+    <plugins>
+        <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <groupId>org.apache.maven.plugins</groupId>
+            <version>${maven-surefire-plugin.version}</version>
+            <configuration>
+                <excludes>
+                    <exclude>**/*E2ETest</exclude>
+                </excludes>
+                <skip>${skip.integration.tests}</skip>
+            </configuration>
+        </plugin>
+        <plugin>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <groupId>org.apache.maven.plugins</groupId>
+            <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+        <plugin>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <groupId>org.apache.maven.plugins</groupId>
+            <version>${maven-failsafe-plugin.version}</version>
+            <executions>
+                <execution>
+                    <id>execute-integration-tests</id>
+                    <phase>integration-test</phase>
+                    <goals>
+                        <goal>integration-test</goal>
+                        <goal>verify</goal>
+                    </goals>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <mapping.version>${mapping.version}</mapping.version>
+                            <cucumber.options>${cucumber.options}</cucumber.options>
+                        </systemPropertyVariables>
+                        <excludes>
+                            <exclude>none</exclude>
+                        </excludes>
+                        <includes>
+                            <include>**/*E2ETest</include>
+                        </includes>
+                        <skip>${skip.integration.tests}</skip>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>com.dkanejs.maven.plugins</groupId>
+            <artifactId>docker-compose-maven-plugin</artifactId>
+            <version>4.0.0</version>
+            <executions>
+                <execution>
+                    <id>startup-stage-1</id>
+                    <phase>pre-integration-test</phase>
+                    <goals>
+                        <goal>up</goal>
+                    </goals>
+                    <configuration>
+                        <build>true</build>
+                        <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                        </composeFile>
+                        <detachedMode>false</detachedMode>
+                        <envVars>
+                            <ADAPTOR_NAME>dvla</ADAPTOR_NAME>
+                            <FDP_APP_KAFKA_TOPIC_SUFFIX>0</FDP_APP_KAFKA_TOPIC_SUFFIX>
+                            <WAIT_CHECK>redis_kafka</WAIT_CHECK>
+                        </envVars>
+                        <services>
+                            <service>pre-integration-test</service>
+                        </services>
+                        <skip>${skip.containers}</skip>
+                    </configuration>
+                </execution>
+
+                <execution>
+                    <id>start-aggregators</id>
+                    <phase>pre-integration-test</phase>
+                    <goals>
+                        <goal>up</goal>
+                    </goals>
+                    <configuration>
+                        <build>true</build>
+                        <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                        </composeFile>
+                        <detachedMode>true</detachedMode>
+                        <envVars>
+                            <ADAPTOR_NAME>dvla</ADAPTOR_NAME>
+                            <STARTUP_STAGE>3</STARTUP_STAGE>
+                            <CORE_TAG>${aggregator-core.version}</CORE_TAG>
+                        </envVars>
+                        <services>
+                            <service>aggregate-party</service>
+                            <service>aggregate-object</service>
+                            <service>aggregate-location</service>
+                            <service>aggregate-event</service>
+                            <service>aggregate-service</service>
+                            <service>aggregate-matching</service>
+                            <service>aggregate-v1id-v2id</service>
+                        </services>
+                        <skip>${skip.aggregators}</skip>
+                    </configuration>
+                </execution>
+
+                <execution>
+                    <id>ensure-aggregators-are-ready</id>
+                    <phase>pre-integration-test</phase>
+                    <goals>
+                        <goal>up</goal>
+                    </goals>
+                    <configuration>
+                        <build>true</build>
+                        <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                        </composeFile>
+                        <detachedMode>false</detachedMode>
+                        <envVars>
+                            <ADAPTOR_NAME>dvla</ADAPTOR_NAME>
+                            <FDP_APP_KAFKA_TOPIC_SUFFIX>0</FDP_APP_KAFKA_TOPIC_SUFFIX>
+                            <WAIT_CHECK>aggregators</WAIT_CHECK>
+                        </envVars>
+                        <services>
+                            <service>pre-integration-test</service>
+                        </services>
+                        <skip>${skip.aggregators}</skip>
+                    </configuration>
+                </execution>
+
+                <execution>
+                    <id>start-command-adaptor</id>
+                    <phase>pre-integration-test</phase>
+                    <goals>
+                        <goal>up</goal>
+                    </goals>
+                    <configuration>
+                        <build>true</build>
+                        <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                        </composeFile>
+                        <detachedMode>true</detachedMode>
+                        <envVars>
+                            <ADAPTOR_NAME>dvla</ADAPTOR_NAME>
+                        </envVars>
+                        <services>
+                            <service>command-adaptor</service>
+                        </services>
+                        <skip>${skip.containers}</skip>
+                    </configuration>
+                </execution>
+
+                <execution>
+                    <id>ensure-cmd-adaptor-is-ready</id>
+                    <phase>pre-integration-test</phase>
+                    <goals>
+                        <goal>up</goal>
+                    </goals>
+                    <configuration>
+                        <build>true</build>
+                        <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                        </composeFile>
+                        <detachedMode>false</detachedMode>
+                        <envVars>
+                            <ADAPTOR_NAME>dvla</ADAPTOR_NAME>
+                            <FDP_APP_KAFKA_TOPIC_SUFFIX>0</FDP_APP_KAFKA_TOPIC_SUFFIX>
+                            <WAIT_CHECK>command_adaptor</WAIT_CHECK>
+                        </envVars>
+                        <services>
+                            <service>pre-integration-test</service>
+                        </services>
+                        <skip>${skip.containers}</skip>
+                    </configuration>
+                </execution>
+
+                <execution>
+                    <id>post-integration-test</id>
+                    <phase>post-integration-test</phase>
+                    <goals>
+                        <goal>down</goal>
+                    </goals>
+                    <configuration>
+                        <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                        </composeFile>
+                        <skip>${skip.containers}</skip>
+                    </configuration>
+                </execution>
+
+                <execution>
+                    <id>clean</id>
+                    <phase>clean</phase>
+                    <goals>
+                        <goal>down</goal>
+                    </goals>
+                    <configuration>
+                        <composeFile>${project.basedir}/src/test/resources/docker-compose/docker-compose.yml
+                        </composeFile>
+                        <skip>${skip.containers}</skip>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+
+<repositories>
+    <repository>
+        <id>confluent</id>
+        <url>https://packages.confluent.io/maven/</url>
+    </repository>
+</repositories>
+
+
+
+<groupId>uk.gov.ho.dacc.fdp</groupId>
+<artifactId>fdp-cmd-adaptor-dvla</artifactId>
+<version>1.0.3-SNAPSHOT</version>
+<packaging>pom</packaging>
+<name>fdp-cmd-adaptor-dvla</name>
+<description>FDP Command Adaptor application and integration tests</description>
+
+<modules>
+    <module>cmd-adaptor-dvla-common</module>
+    <module>cmd-adaptor-dvla-test-common</module>
+    <module>cmd-adaptor-dvla</module>
+    <module>cmd-adaptor-dvla-integration-tests</module>
+</modules>
+
+<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <java.version>17</java.version>
+    <spring-boot-maven-plugin.version>3.5.9</spring-boot-maven-plugin.version> <!-- must match spring version in fdp-bom -->
+    <maven-failsafe-plugin.version>3.5.5</maven-failsafe-plugin.version>
+    <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+    <fdp-cmd-adaptor-test-common.version>2.3.4</fdp-cmd-adaptor-test-common.version>
+    <fdp-commons.version>5.2.7</fdp-commons.version>
+    <fdp-bom.version>3.2.11</fdp-bom.version>
+    <opentelemetry.version>1.30.0</opentelemetry.version> <!-- must match that in fdp-bom - for use in dockerfile-->
+    <cdlz-avro-schemas.version>1.2.0</cdlz-avro-schemas.version>
+    <mapping.version>1.1.5</mapping.version>
+    <mapping.lib.version>3.2.3</mapping.lib.version>
+    <mapping.plugin.version>3.5.3</mapping.plugin.version>
+    <aggregator-core.version>10.3.0</aggregator-core.version>
+    <jacoco.version>0.8.14</jacoco.version>
+    <skip.integration.tests>true</skip.integration.tests>
+    <skip.integration.tests.docker-compose>true</skip.integration.tests.docker-compose>
+    <changelog.version>2.2.11</changelog.version>
+</properties>
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>com.amashchenko.maven.plugin</groupId>
+            <artifactId>gitflow-maven-plugin</artifactId>
+            <version>1.21.0</version>
+            <configuration>
+                <gitFlowConfig>
+                    <productionBranch>master</productionBranch>
+                    <developmentBranch>develop</developmentBranch>
+                </gitFlowConfig>
+                <!-- Stop the appending madness of feature branch names. -->
+                <skipFeatureVersion>true</skipFeatureVersion>
+            </configuration>
+        </plugin>
+
+        <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <plugin>
+            <groupId>se.bjurr.gitchangelog</groupId>
+            <artifactId>git-changelog-maven-plugin</artifactId>
+            <version>${changelog.version}</version>
+            <inherited>false</inherited>
+            <dependencies>
+                <dependency>
+                    <groupId>org.openjdk.nashorn</groupId>
+                    <artifactId>nashorn-core</artifactId>
+                    <version>15.7</version>
+                </dependency>
+            </dependencies>
+            <executions>
+                <execution>
+                    <id>GenerateGitChangelog</id>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>git-changelog</goal>
+                    </goals>
+                    <configuration>
+                        <templateFile>changelog.mustache</templateFile>
+                        <ignoreCommitsIfMessageMatches>^Update versions for release.*|^Update for next development version.*|^(?i)update changelog.*|^Merge tag.*|^(?i)reposync.*|^\*\*reposync.*|^Merge branch.*|^WIP.*|^\[WIP\].*</ignoreCommitsIfMessageMatches>
+                        <file>CHANGELOG.md</file>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
+            <executions>
+                <execution>
+                    <id>prepare-agent</id>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>report</id>
+                    <phase>test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>uk.gov.ho.dacc.fdp</groupId>
+            <artifactId>fdp-bom</artifactId>
+            <version>${fdp-bom.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.kafka</groupId>
+        <artifactId>spring-kafka</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>uk.gov.ho.dacc.fdp</groupId>
+        <artifactId>fdp-commons</artifactId>
+        <version>${fdp-commons.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>uk.gov.ho.dsa.cdl.schemas</groupId>
+        <artifactId>dvla-trailer-registration</artifactId>
+        <version>1.2.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>uk.gov.ho.dsa.cdl.schemas</groupId>
+        <artifactId>dvla-trailer-disposal</artifactId>
+        <version>1.1.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.kafka</groupId>
+        <artifactId>kafka-clients</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>uk.gov.ho.dacc.fdp</groupId>
+        <artifactId>fdp-cmd-adaptor-test-common</artifactId>
+        <version>${fdp-cmd-adaptor-test-common.version}</version>
+    </dependency>
+</dependencies>
+
+
+<repositories>
+    <repository>
+        <id>confluent</id>
+        <url>https://packages.confluent.io/maven/</url>
+    </repository>
+</repositories>
+
+
+"""
+
+DO NOT EDIT LOCALLY!!!!!!!
+WARNING: This file is controlled centrally, any changes made in the command
+adaptor repository will be overwritten by the RepoSync process
+DO NOT EDIT LOCALLY!!!!!!!
+
+Drone CI (Starlark) Pipelines.
+
+This script is deployed from https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync
+
+This is a Starlark script. Starlark is a cut down dialect of Python
+and is supported by Drone CI. As this pipeline is going to be more
+complex than our other pipelines, it makes sense to be able to add
+logic via this script rather than page after page of repetitive
+YAML. Fix whitespace issue.
+
+More about Starlark can be found at:
+
+https://docs.drone.io/pipeline/scripting/starlark/
+https://docs.bazel.build/versions/master/skylark/language.html
+"""
+ADAPTORS_METADATA = {
+'DVLA': {
+'cdlz_topic_number': 'landing-dvla-trailer-registration',
+'replicas': 1,
+'feed_name': 'dvla'
+}
+}
+COMMAND_ADAPTOR_NAME = 'dvla'
+ECR_REPOSITORY = ''
+ARTIFACTORY_REPOSITORY = 'dacc-aws/fdp-cmd-adaptor-dvla'
+KAFKA_TOPIC_SUFFIX = 'dvla'
+FDP_APP_MATCHING_NAME = 'DVLA'
+USE_FDP_DEPLOY = 'false'
+LOCALSTACK_SERVICES = 'iam'
+DEPLOYMENT_MECHANISM = 'KD'
+ECR_REGISTRY = '340268328991.dkr.ecr.eu-west-2.amazonaws.com'
+ARTIFACTORY_REGISTRY = 'docker.digital.homeoffice.gov.uk'
+KD_IMAGE = 'quay.io/ukhomeofficedigital/kd:v1.20.15'
+FDP_DEPLOY_IMAGE = 'docker.digital.homeoffice.gov.uk/dacc-aws/fdp-deploy:latest'
+MAVEN_JAVA17_IMAGE = 'quay.io/ukhomeofficedigital/ileap-java17-mvn:1.3'
+DIND_IMAGE = '340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind'
+TRIVY_IMAGE = '340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/trivy/client:latest'
+
+def add_pipeline_service(pipeline, service):
+"""
+Append a step to a pipeline.
+
+Parameters
+----------
+pipeline : dict
+    The pipeline that the step is to be added to.
+service : dict
+    The service to be added.
+
+Returns
+-------
+dict
+    A new instance of the pipeline with the service appended.
+"""
+services = pipeline['services']
+services.append(service)
+pipeline['services'] = services
+return pipeline
+def add_pipeline_step(pipeline, step, pull='if-not-exists'):
+"""
+Append a step to a pipeline.
+
+Parameters
+----------
+pipeline : dict
+    The pipeline that the step is to be added to.
+step : dict
+    The step to be added.
+pull : str, optional
+    The pull directive for the step image (default 'if-not-exists').
+Returns
+-------
+dict
+    A new instance of the pipeline with the step appended.
+"""
+steps = pipeline['steps']
+step['pull'] = pull
+steps.append(step)
+pipeline['steps'] = steps
+return pipeline
+def blank_pipeline(name, depends_on=None):
+"""
+Create a boilerplate pipeline.
+
+Parameters
+----------
+name : str
+    The name of the pipeline.
+depends_on: list of str, optional
+    The names of a pipeline that must pass for this pipeline to execute.
+
+Returns
+-------
+dict
+    A very basic pipeline.
+"""
+response = {
+    'kind': 'pipeline',
+    'name': name,
+    'type': 'kubernetes',
+    'platform': {
+        'os': 'linux',
+        'arch': 'amd64'
+    },
+    'services': [],
+    'steps': []
+}
+
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'RepoSync Version',
+        'image': 'alpine:latest',
+        'commands': [
+            'echo "RepoSync Version: 7.1.0"'
+        ]
+    }
+)
+
+if depends_on:
+    response['depends_on'] = depends_on
+
+return response
+def ci_pipeline(ctx):
+"""
+Create a Continuous Integration (CI) Pipeline.
+
+Parameters
+----------
+ctx : A Drone CI context.
+    The context passed by Drone CI.
+
+Returns
+-------
+dict
+    A CI pipeline.
+"""
+response = blank_pipeline('CI')
+response = add_pipeline_service(
+    response,
+    {
+        'name': 'docker',
+        'image': DIND_IMAGE
+    }
+)
+
+response = add_pipeline_step(
+    response,
+    retrieve_vault_dev_secrets_step(name='Retrieve Artifactory Secrets', drone_deploy_to=ctx.build.target)
+)
+
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Wait for Docker',
+        'image': DIND_IMAGE,
+        'commands': [
+            '/usr/local/bin/wait',
+        ],
+        'depends_on': [
+            'Retrieve Artifactory Secrets'
+        ]
+    }
+)
+
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Extract Adaptor Information',
+        'image': MAVEN_JAVA17_IMAGE,
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            './bin/adaptor-info.sh'
+        ],
+        'depends_on': [
+            'Wait for Docker'
+        ]
+    }
+)
+
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Kafka & Redis',
+        'image': DIND_IMAGE,
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            'apk add --no-cache ca-certificates docker-compose && update-ca-certificates',
+            'echo "$${ARTIFACTORY_PASSWORD}" | docker login -u "$${ARTIFACTORY_USERNAME}" --password-stdin docker.digital.homeoffice.gov.uk',
+            'docker-compose -f cmd-adaptor-%s-integration-tests/src/test/resources/docker-compose/docker-compose.yml run --rm wait4localstack /usr/local/bin/wait4localstack -ve http://localstack:4566/health' % COMMAND_ADAPTOR_NAME,
+            'WAIT_CHECK="redis_kafka" docker-compose -f cmd-adaptor-%s-integration-tests/src/test/resources/docker-compose/docker-compose.yml up pre-integration-test' % COMMAND_ADAPTOR_NAME
+        ],
+        'environment': {
+            'ADAPTOR_NAME': COMMAND_ADAPTOR_NAME,
+            'DOCKER_HOST': 'tcp://docker:2375'
+        },
+        'depends_on': [
+            'Wait for Docker'
+        ]
+    }
+)
+
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Aggregators',
+        'image': DIND_IMAGE,
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            'apk add --no-cache ca-certificates docker-compose && update-ca-certificates',
+            'echo "$${ARTIFACTORY_PASSWORD}" | docker login -u "$${ARTIFACTORY_USERNAME}" --password-stdin docker.digital.homeoffice.gov.uk',
+            'source CORE_TAG.env',
+            'docker-compose -f cmd-adaptor-%s-integration-tests/src/test/resources/docker-compose/docker-compose.yml up -d aggregate-matching aggregate-event aggregate-location aggregate-object aggregate-party aggregate-service' % COMMAND_ADAPTOR_NAME
+        ],
+        'environment': {
+            'ADAPTOR_NAME': COMMAND_ADAPTOR_NAME
+        },
+        'depends_on': [
+            'Extract Adaptor Information',
+            'Kafka & Redis'
+        ]
+    }
+)
+
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'mvn clean install',
+        'image': MAVEN_JAVA17_IMAGE,
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            "echo -n 'export CORE_TAG=' > CORE_TAG.env",
+            'mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=aggregator-core.version -q -DforceStdout',
+            'mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=aggregator-core.version -q -DforceStdout >> CORE_TAG.env',
+            'cat CORE_TAG.env',
+            "[[ $( cat CORE_TAG.env| wc -w | sed 's/[ \t]//g' ) == 2 ]]",
+            'mvn clean install'
+        ],
+        'depends_on': [
+            'Extract Adaptor Information'
+        ]
+    }
+)
+
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Command Adaptor',
+        'image': DIND_IMAGE,
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            'apk add --no-cache ca-certificates docker-compose && update-ca-certificates',
+            'WAIT_CHECK="command_adaptor" docker-compose -f cmd-adaptor-%s-integration-tests/src/test/resources/docker-compose/docker-compose.yml up --build command-adaptor' % COMMAND_ADAPTOR_NAME
+        ],
+        'environment': {
+            'ADAPTOR_NAME': COMMAND_ADAPTOR_NAME
+        },
+        'depends_on': [
+            'mvn clean install',
+            'Kafka & Redis'
+        ],
+        'detach': True
+    }
+)
+
+if COMMAND_ADAPTOR_NAME == 'ctp':
+    response = add_pipeline_step(
+        response,
+        {
+            'name': 'Reporting Adaptor',
+            'image': DIND_IMAGE,
+            'commands': [
+                '. ./set_drone_secrets.sh',
+                'apk add --no-cache ca-certificates docker-compose && update-ca-certificates',
+                'WAIT_CHECK="command_adaptor" docker-compose -f cmd-adaptor-%s-integration-tests/src/test/resources/docker-compose/docker-compose.yml up --build command-adaptor-reporting' % COMMAND_ADAPTOR_NAME
+            ],
+            'environment': {
+                'ADAPTOR_NAME': COMMAND_ADAPTOR_NAME
+            },
+            'depends_on': [
+                'mvn clean install',
+                'Kafka & Redis'
+            ],
+            'detach': True
+        }
+    )
+
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Pre-Integration Tests',
+        'image': DIND_IMAGE,
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            'apk add --no-cache ca-certificates docker-compose && update-ca-certificates',
+            './bin/pre-integration-test.sh'
+        ],
+        'environment': {
+            'ADAPTOR_NAME': COMMAND_ADAPTOR_NAME,
+            'DOCKER_HOST': 'tcp://docker:2375'
+        },
+        'depends_on': [
+            'Aggregators',
+            'mvn clean install'
+        ]
+    }
+)
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Integration Tests',
+        'image': DIND_IMAGE,
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            'apk add --no-cache ca-certificates docker-compose && update-ca-certificates',
+            'WAIT_CHECK="command_adaptor" docker-compose -f cmd-adaptor-%s-integration-tests/src/test/resources/docker-compose/docker-compose.yml up pre-integration-test' % COMMAND_ADAPTOR_NAME,
+            'WAIT_CHECK="aggregators" docker-compose -f cmd-adaptor-%s-integration-tests/src/test/resources/docker-compose/docker-compose.yml up pre-integration-test' % COMMAND_ADAPTOR_NAME,
+            'docker-compose -f cmd-adaptor-%s-integration-tests/src/test/resources/docker-compose/docker-compose.yml ps' % COMMAND_ADAPTOR_NAME,
+            'docker-compose -f cmd-adaptor-%s-integration-tests/src/test/resources/docker-compose/docker-compose.yml up --exit-code-from integration-tests integration-tests' % COMMAND_ADAPTOR_NAME,
+            './bin/integration-test.sh'
+        ],
+        'environment': {
+            'ADAPTOR_NAME': COMMAND_ADAPTOR_NAME
+        },
+        'depends_on': [
+            'Pre-Integration Tests'
+        ]
+    }
+)
+
+# Sonar: HO setup only allows for a single branch to be ingested
+# as such only target the main developer branch develop (Gitflow) or master/main (Trunk)
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Sonar Scan',
+        'image': 'quay.io/ukhomeofficedigital/sonar-scanner:latest',
+        'pull': 'if-not-exists',
+        'when': {
+            'event': ['push'],
+            'branch': ['develop']
+        },
+        'depends_on': [
+            'mvn clean install'
+        ]
+    }
+)
+
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Scan with Trivy',
+        'depends_on': [
+            'Integration Tests'
+        ],
+        'commands': [
+            # PM-75944: updated application to use ecr trivy db
+            'trivy image --exit-code 0 --no-progress docker-compose-command-adaptor:latest --severity CRITICAL,HIGH --ignore-unfixed --db-repository  acp-zot-helm.acp-zot.svc.cluster.local/ecr/aquasecurity/trivy-db --java-db-repository acp-zot-helm.acp-zot.svc.cluster.local/ecr/aquasecurity/trivy-java-db'
+        ],
+        'image': TRIVY_IMAGE
+    }
+)
+
+response = add_pipeline_step(response, {
+    'name': 'Send Slack Success Message (v1.1)',
+    'image': 'curlimages/curl:latest',
+    'pull': 'if-not-exists',
+    'commands': [
+        '. ./set_drone_secrets.sh',
+        'source .drone/slack-functions.sh',
+        'send_slack_success $SLACK_APP_TOKEN'
+    ],
+    'when': {
+        'status': 'success',
+        'event': ['push'],
+        'branch': ['develop', 'main', 'master']
+    },
+    'depends_on': [
+        'Scan with Trivy'
+    ]
+})
+
+response = add_pipeline_step(response, {
+    'name': 'Send Slack Failure Message (v1.1)',
+    'image': 'curlimages/curl:latest',
+    'pull': 'if-not-exists',
+    'commands': [
+        '. ./set_drone_secrets.sh',
+        'source .drone/slack-functions.sh',
+        'send_slack_failure $SLACK_APP_TOKEN'
+    ],
+    'when': {
+        'status': 'failure',
+        'event': ['push'],
+        'branch': ['develop', 'main', 'master']
+    },
+    'depends_on': [
+        'Scan with Trivy'
+    ]
+})
+
+return response
+def retrieve_vault_dev_secrets_step(*, name='Retrieve Artifactory Secrets', drone_deploy_to):
+"""
+Create step to retrieve secrets from vault and store in set_drone_secrets.sh
+
+Parameters
+----------
+name : step name
+
+Returns
+-------
+dict
+    An ECR pipeline for Drone CI.
+"""
+
+kube_token_name = ''
+if 'dacc-dde-dev' == drone_deploy_to:
+    kube_token_name = 'dde-dev-kube-token'
+elif 'dacc-dde-test' == drone_deploy_to:
+    kube_token_name = 'dde-test-kube-token'
+elif 'dacc-dde-sit' == drone_deploy_to:
+    kube_token_name = 'dde-sit-kube-token'
+elif 'dacc-fdp-dev' == drone_deploy_to:
+    kube_token_name = 'dev-kube-token'
+elif 'dacc-fdp-test' == drone_deploy_to:
+    kube_token_name = 'test-kube-token'
+elif 'dacc-fdp-sit' == drone_deploy_to:
+    kube_token_name = 'sit-kube-token'
+
+vault_kube_token_cmd = ''
+if kube_token_name:
+    vault_kube_token_cmd = 'echo export KUBE_TOKEN=$(vault read -field=kube-token secret/dacc/fdp/admin/kube-tokens/%s) >> set_drone_secrets.sh' % kube_token_name
+
+return {
+    'name': name,
+    'image': 'quay.io/ukhomeofficedigital/hashicorp-vault:1.6.0',
+    'commands': [
+        # Get Artifactory secrets
+        "echo export ARTIFACTORY_USERNAME=$(vault read -field=username secret/dacc/fdp/admin/artifactory/username) >> set_drone_secrets.sh",
+        "echo export ARTIFACTORY_PASSWORD=$(vault read -field=password secret/dacc/fdp/admin/artifactory/password) >> set_drone_secrets.sh",
+        # Get Slack secrets
+        "echo export SLACK_APP_TOKEN=$(vault read -field=token secret/dacc/fdp/drone/slack-fdp-alert-token) >> set_drone_secrets.sh",
+        # Get Kube token
+        vault_kube_token_cmd,
+        '. ./set_drone_secrets.sh',
+        'if [ -z "$${ARTIFACTORY_USERNAME}" ]; then echo "ERROR - Failed to fetch ARTIFACTORY_USERNAME"; exit 1; fi;',
+        'if [ -z "$${ARTIFACTORY_PASSWORD}" ]; then echo "ERROR - Failed to fetch ARTIFACTORY_PASSWORD"; exit 1; fi;'
+    ],
+    'environment': {
+        'VAULT_ADDR': {
+            'from_secret': 'VAULT_ADDR_DEV'
+        },
+        'VAULT_TOKEN': {
+            'from_secret': 'VAULT_TOKEN_DEV'
+        },
+    }
+}
+
+Parameters
+----------
+ctx : A Drone CI context.
+    The context passed by Drone CI.
+name : str, optional
+    The name of the Pipleline.
+depends_on : list of str, optional
+    Any pipelines that must run beforehand.
+namespace : str, optional
+    If not provided, the target will be taken from the ctx.
+delete : bool, optional
+    Are the resources to be deleted (default False).
+Returns
+-------
+dict
+    The pipeline.
+"""
+response = blank_pipeline(name, depends_on)
+
+if namespace:
+    drone_deploy_to = namespace
+else:
+    drone_deploy_to = ctx.build.target
+
+kd_args = '--timeout 15m'
+
+if delete:
+    kd_args += ' --delete'
+
+image_tag = get_deployment_tag(ctx)
+
+image_url = '%s/%s:%s' % (
+    ECR_REGISTRY,
+    ECR_REPOSITORY,
+    image_tag
+)
+
+if not ECR_REPOSITORY and ARTIFACTORY_REPOSITORY:
+    image_url = '%s/%s:%s' % (
+        ARTIFACTORY_REGISTRY,
+        ARTIFACTORY_REPOSITORY,
+        image_tag
+    )
+
+adaptor_name = COMMAND_ADAPTOR_NAME
+kafka_topic_suffix = KAFKA_TOPIC_SUFFIX
+CORE_TAG = None
+params = getattr(ctx.build, 'params', {})
+
+if ctx.build.event == 'promote' and ctx.build.commit != '':
+    if 'CORE_TAG' in params:
+        CORE_TAG = params['CORE_TAG']
+
+    if 'ADAPTOR_NAME' in params:
+        adaptor_name = params['ADAPTOR_NAME']
+
+    if 'KAFKA_TOPIC_SUFFIX' in params:
+        kafka_topic_suffix = params['KAFKA_TOPIC_SUFFIX']
+
+response = add_pipeline_step(
+    response,
+    retrieve_vault_dev_secrets_step(name='Retrieve Artifactory Secrets', drone_deploy_to=drone_deploy_to)
+)
+
+core_step_depends_on = 'Retrieve Artifactory Secrets'
+
+if 'true' == USE_FDP_DEPLOY:
+    fdp_deploy_mode = 'create-topics'
+    if delete:
+        fdp_deploy_mode = 'delete-topics'
+
+    fdp_deploy_step_name = 'FDP-Deploy %s' % fdp_deploy_mode
+    core_step_depends_on = fdp_deploy_step_name
+
+    response = add_pipeline_step(
+        response,
+        {
+            'name': fdp_deploy_step_name,
+            'commands': [
+                'source set_drone_secrets.sh',
+                'export FDP_DEPLOY_KUBE_TOKEN=$${KUBE_TOKEN}',
+                '/app/deploy.py --debug --run-as-job',
+                '/app/tail-job-logs.sh $(cat /tmp/latest_job_name)',
+            ],
+            'depends_on': [
+                'Retrieve Artifactory Secrets',
+            ],
+            'environment': {
+                'FDP_DEPLOY_MODE': fdp_deploy_mode,
+                'FDP_DEPLOY_CI': 'true',
+                'FDP_DEPLOY_FEED': COMMAND_ADAPTOR_NAME,
+                'FDP_DEPLOY_ENVIRONMENT': drone_deploy_to,
+                'FDP_DEPLOY_KUBE_CLUSTER_NAME': 'acp-notprod',
+                'FDP_DEPLOY_KUBE_SERVER': 'https://kube-api-notprod.notprod.acp.homeoffice.gov.uk',
+            },
+            'image': FDP_DEPLOY_IMAGE,
+        }
+    )
+
+if CORE_TAG:
+    core_step = {
+        'name': 'Core Tag %s' % CORE_TAG,
+        'image': 'alpine:latest',
+        'commands': [
+            "echo 'export CORE_TAG=%s' > CORE_TAG.env" % CORE_TAG,
+            'cat CORE_TAG.env',
+        ],
+        'depends_on': [
+            core_step_depends_on
+        ]
+    }
+else:
+    core_step = {
+        'name': 'Extract Aggregator Core Tag',
+        'image': MAVEN_JAVA17_IMAGE,
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            "echo -n 'export CORE_TAG=' > CORE_TAG.env",
+            'mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=aggregator-core.version -q -DforceStdout >> CORE_TAG.env',
+            'cat CORE_TAG.env',
+            "[[ $( cat CORE_TAG.env| wc -w | sed 's/[ \t]//g' ) == 2 ]]"
+        ],
+        'depends_on': [
+            core_step_depends_on
+        ]
+    }
+
+response = add_pipeline_step(response, core_step)
+
+if ctx.build.event == 'push' and not delete:
+    response = add_pipeline_step(response, {
+        'name': 'Slack: Notification Start',
+        'image': 'curlimages/curl:latest',
+        'pull': 'if-not-exists',
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            'source .drone/slack-functions.sh',
+            "send_slack_text dacc-dde-dev 'Build `${DRONE_BUILD_NUMBER}` starting for *${DRONE_REPO_NAME}* to *%s*.' $SLACK_APP_TOKEN" % namespace
+        ],
+        'depends_on': [
+            'clone'
+        ]
+    })
+
+aggregate_details = [
+    ('Matching Aggregator', 'kube/fdp-aggregate-matching-deployment.yml')
+]
+
+depends_on = []
+
+for aggregate_detail in aggregate_details:
+    name, file = aggregate_detail
+    depends_on.append(name)
+    response = add_pipeline_step(
+        response,
+        {
+            'name': name,
+            'commands': [
+                '. ./set_drone_secrets.sh',
+                'apk upgrade --no-cache',
+                'apk add --no-cache ca-certificates curl',
+                'bin/kd-env-wrapper.sh %s --file %s' % (kd_args, file)
+            ],
+            'depends_on': [
+                core_step['name']
+            ],
+            'environment': {
+                'ADAPTOR_NAME': adaptor_name,
+                'ADAPTOR_REPLICA_COUNT': 'N/A',
+                'CDLZ_TOPIC_NUMBER': 'N/A',
+                'DRONE_DEPLOY_TO': drone_deploy_to,
+                'FDP_APP_KAFKA_TOPIC_SUFFIX': kafka_topic_suffix,
+                'FDP_APP_MATCHING_NAME': FDP_APP_MATCHING_NAME,
+                'FDP_FEED_NAME': adaptor_name,
+            },
+            'image': KD_IMAGE,
+        }
+    )
+
+aggregate_details = {
+    'event': {
+        'port': 7104
+    },
+    'location': {
+        'port': 7103
+    },
+    'object': {
+        'port': 7102
+    },
+    'party': {
+        'port': 7101
+    },
+    'service': {
+        'port': 7105
+    },
+    'v1id-v2id': {
+        'port': 7108
+    }
+}
+
+for aggregator_type in aggregate_details.keys():
+    name = 'Aggregate %s' % aggregator_type
+    port = aggregate_details[aggregator_type]['port']
+    depends_on.append(name)
+    namespace_type = drone_deploy_to.split('-')[-1]
+
+    if namespace_type in ['dev', 'test']:
+        response = add_pipeline_step(
+            response,
+            {
+                'name': "GRPC %s" % aggregator_type,
+                'commands': [
+                    '. ./set_drone_secrets.sh',
+                    'apk upgrade --no-cache',
+                    'apk add --no-cache ca-certificates curl',
+                    'bin/kd-env-wrapper.sh %s --file %s' % (kd_args, 'kube/grpc-service.yml'),
+                ],
+                'depends_on': [
+                    core_step['name']
+                ],
+                'environment': {
+                    'ADAPTOR_NAME': adaptor_name,
+                    'ADAPTOR_REPLICA_COUNT': 'N/A',
+                    'CDLZ_TOPIC_NUMBER': 'N/A',
+                    'DRONE_DEPLOY_TO': drone_deploy_to,
+                    'FDP_AGGREGATOR_PORT': port,
+                    'FDP_AGGREGATOR_TYPE': aggregator_type,
+                    'FDP_APP_KAFKA_TOPIC_SUFFIX': kafka_topic_suffix,
+                    'FDP_APP_MATCHING_NAME': FDP_APP_MATCHING_NAME,
+                    'FDP_FEED_NAME': adaptor_name,
+                },
+                'image': KD_IMAGE,
+            }
+        )
+
+    response = add_pipeline_step(
+        response,
+        {
+            'name': name,
+            'commands': [
+                '. ./set_drone_secrets.sh',
+                'apk upgrade --no-cache',
+                'apk add --no-cache ca-certificates curl',
+                'bin/kd-env-wrapper.sh %s --file %s' % (kd_args, 'kube/fdp-aggregate-sts.yml')
+            ],
+            'depends_on': [
+                core_step['name']
+            ],
+            'environment': {
+                'ADAPTOR_NAME': adaptor_name,
+                'ADAPTOR_REPLICA_COUNT': 'N/A',
+                'CDLZ_TOPIC_NUMBER': 'N/A',
+                'DRONE_DEPLOY_TO': drone_deploy_to,
+                'FDP_AGGREGATOR_PORT': port,
+                'FDP_AGGREGATOR_TYPE': aggregator_type,
+                'FDP_APP_KAFKA_TOPIC_SUFFIX': kafka_topic_suffix,
+                'FDP_APP_MATCHING_NAME': FDP_APP_MATCHING_NAME,
+                'FDP_FEED_NAME': adaptor_name,
+            },
+            'image': KD_IMAGE,
+        }
+    )
+
+if COMMAND_ADAPTOR_NAME == 'pnr':
+    # We don't deploy Kafka Connect with PNR.
+    second_wave = [
+        ('Matching Delta', 'kube/fdp-cmd-adaptor-matching-delta-deployment.yml'),
+        ('Output Adaptor', 'kube/fdp-output-adaptor-polev1-deployment.yml')
+    ]
+else:
+    second_wave = [
+        ('Matching Delta', 'kube/fdp-cmd-adaptor-matching-delta-deployment.yml'),
+        ('Kafka Connect Error', 'kube/fdp-kces-error-deployment.yml'),
+        ('Kafka Connect ES Event', 'kube/fdp-kces-event-deployment.yml'),
+        ('Kafka Connect ES Location', 'kube/fdp-kces-location-deployment.yml'),
+        ('Kafka Connect ES From Matching Delta', 'kube/fdp-kces-from-matching-delta-deployment.yml'),
+        ('Kafka Connect ES From Matching Wash', 'kube/fdp-kces-from-matching-wash-deployment.yml'),
+        ('Kafka Connect ES To Matching Delta', 'kube/fdp-kces-to-matching-delta-deployment.yml'),
+        ('Kafka Connect ES To Matching Wash', 'kube/fdp-kces-to-matching-wash-deployment.yml'),
+        ('Kafka Connect ES Object', 'kube/fdp-kces-object-deployment.yml'),
+        ('Kafka Connect ES Party', 'kube/fdp-kces-party-deployment.yml'),
+        ('Kafka Connect ES Service', 'kube/fdp-kces-service-deployment.yml'),
+        ('Kafka Connect ES Suspense', 'kube/fdp-kces-suspense-deployment.yml'),
+        ('Kafka Connect S3 Output V1', 'kube/fdp-kcs3-output-adaptor-polev1-deployment.yml'),
+        ('Kafka Connect S3 Output V2', 'kube/fdp-kcs3-output-adaptor-polev2-deployment.yml'),
+        ('Output Adaptor', 'kube/fdp-output-adaptor-polev1-deployment.yml')
+    ]
+
+for pod in second_wave:
+    name, file = pod
+    response = add_pipeline_step(
+        response,
+        {
+            'name': name,
+            'commands': [
+                '. ./set_drone_secrets.sh',
+                'apk upgrade --no-cache',
+                'apk add --no-cache ca-certificates curl',
+                'bin/kd-env-wrapper.sh %s --file %s' % (kd_args, file)
+            ],
+            'depends_on': [
+                core_step['name']
+            ],
+            'environment': {
+                'ADAPTOR_NAME': adaptor_name,
+                'ADAPTOR_REPLICA_COUNT': 'N/A',
+                'CDLZ_TOPIC_NUMBER': 'N/A',
+                'DRONE_DEPLOY_TO': drone_deploy_to,
+                'FDP_APP_KAFKA_TOPIC_SUFFIX': kafka_topic_suffix,
+                'FDP_APP_MATCHING_NAME': FDP_APP_MATCHING_NAME,
+                'FDP_FEED_NAME': adaptor_name,
+            },
+            'image': KD_IMAGE
+        }
+    )
+
+e2e_depends_on = depends_on
+
+for name in ADAPTORS_METADATA.keys():
+    replicas = ADAPTORS_METADATA[name]['replicas']
+    cdlz_topic_number = ADAPTORS_METADATA[name]['cdlz_topic_number']
+    feed_name = ADAPTORS_METADATA[name]['feed_name']
+    e2e_depends_on.append(name)
+    namespace_type = drone_deploy_to.split('-')[-1]
+    adaptor_environment = {
+        'ADAPTOR_NAME': adaptor_name,
+        'ADAPTOR_REPLICA_COUNT': replicas,
+        'CDLZ_TOPIC_NUMBER': cdlz_topic_number,
+        'DRONE_DEPLOY_TO': drone_deploy_to,
+        'FDP_FEED_NAME': feed_name,
+        'IMAGE_URL': image_url,
+        'FDP_APP_MATCHING_NAME': FDP_APP_MATCHING_NAME,
+        'FDP_APP_KAFKA_TOPIC_SUFFIX': kafka_topic_suffix,
+    }
+
+    if 'extra_env_vars' in ADAPTORS_METADATA[name]:
+        extra_env_vars = ADAPTORS_METADATA[name]['extra_env_vars']
+        extra_env_var_keys = extra_env_vars.keys()
+
+        for extra_env_var in extra_env_var_keys:
+            adaptor_environment[extra_env_var] = extra_env_vars[extra_env_var]
+
+        # Convert the key names so they can be displayed in the deploy step.
+        extra_env_var_keys = ','.join(extra_env_var_keys)
+    else:
+        extra_env_var_keys = 'N/A'
+
+    if namespace_type in ['dev', 'test']:
+        response = add_pipeline_step(
+            response,
+            {
+                'name': "GRPC Netpol %s" % name,
+                'commands': [
+                    '. ./set_drone_secrets.sh',
+                    'apk upgrade --no-cache',
+                    'apk add --no-cache ca-certificates curl',
+                    'bin/kd-env-wrapper.sh %s --file %s' % (kd_args, 'kube/grpc-netpol.yml'),
+                ],
+                'depends_on': [
+                    core_step['name']
+                ],
+                'environment': {
+                    'ADAPTOR_NAME': adaptor_name,
+                    'ADAPTOR_REPLICA_COUNT': 'N/A',
+                    'CDLZ_TOPIC_NUMBER': 'N/A',
+                    'DRONE_DEPLOY_TO': drone_deploy_to,
+                    'FDP_AGGREGATOR_PORT': port,
+                    'FDP_AGGREGATOR_TYPE': aggregator_type,
+                    'FDP_APP_KAFKA_TOPIC_SUFFIX': kafka_topic_suffix,
+                    'FDP_APP_MATCHING_NAME': FDP_APP_MATCHING_NAME,
+                    'FDP_FEED_NAME': adaptor_name,
+                },
+                'image': KD_IMAGE,
+            }
+        )
+
+    response = add_pipeline_step(
+        response,
+        {
+            'name': name,
+            'commands': [
+                '. ./set_drone_secrets.sh',
+                'echo "Adaptor name: %s"' % adaptor_name,
+                'echo "Extra environment variables: %s"' % extra_env_var_keys,
+                'apk upgrade --no-cache',
+                'apk add --no-cache ca-certificates curl',
+                'bin/kd-env-wrapper.sh %s --file kube/adaptor.yml' % kd_args
+            ],
+            'depends_on': [
+                core_step['name']
+            ],
+            'environment': adaptor_environment,
+            'image': KD_IMAGE
+        }
+    )
+
+if delete:
+    response = add_pipeline_step(
+        response,
+        {
+            'name': 'Remove PVCs',
+            'commands': [
+                '. ./set_drone_secrets.sh',
+                'bin/kd-env-wrapper.sh run delete pvc -l name=fdp-aggregate-event-%s' % adaptor_name,
+                'bin/kd-env-wrapper.sh run delete pvc -l name=fdp-aggregate-location-%s' % adaptor_name,
+                'bin/kd-env-wrapper.sh run delete pvc -l name=fdp-aggregate-matching-%s' % adaptor_name,
+                'bin/kd-env-wrapper.sh run delete pvc -l name=fdp-aggregate-object-%s' % adaptor_name,
+                'bin/kd-env-wrapper.sh run delete pvc -l name=fdp-aggregate-party-%s' % adaptor_name,
+                'bin/kd-env-wrapper.sh run delete pvc -l name=fdp-aggregate-service-%s' % adaptor_name,
+                'bin/kd-env-wrapper.sh run delete pvc -l name=fdp-aggregate-v1id-v2id-%s' % adaptor_name
+            ],
+            'environment': {
+                'ADAPTOR_NAME': adaptor_name,
+                'ADAPTOR_REPLICA_COUNT': 'N/A',
+                'CDLZ_TOPIC_NUMBER': 'N/A',
+                'DRONE_DEPLOY_TO': drone_deploy_to,
+                'FDP_APP_KAFKA_TOPIC_SUFFIX': adaptor_name,
+                'FDP_APP_MATCHING_NAME': FDP_APP_MATCHING_NAME,
+                'FDP_FEED_NAME': adaptor_name,
+            },
+            'depends_on': depends_on,
+            'image': KD_IMAGE
+        }
+    )
+
+# In dev and test environments, we deploy the End-to-End test container.
+namespace_type = drone_deploy_to.split('-')[-1]
+
+if adaptor_name != COMMAND_ADAPTOR_NAME:
+    run_e2e = False
+elif adaptor_name == 'sds':
+    run_e2e = False
+elif namespace_type in ['dev', 'test']:
+    run_e2e = True
+else:
+    run_e2e = False
+
+if run_e2e:
+    commands = [
+        '. ./set_drone_secrets.sh',
+        'bin/kd-env-wrapper.sh --delete --file kube/e2e-test.yml'
+    ]
+
+    if not delete:
+        commands.append('bin/kd-env-wrapper.sh --file kube/e2e-test.yml --timeout=35m')
+        response = add_pipeline_step(
+            response,
+            {
+                'name': 'E2E Logs',
+                'depends_on': e2e_depends_on,
+                'commands': [
+                    'bin/tail-k8s-e2e-logs.sh'
+                ],
+                'environment': {
+                    'ADAPTOR_NAME': COMMAND_ADAPTOR_NAME,
+                    'KUBE_NAMESPACE': namespace,
+                    'KUBE_SERVER': 'https://kube-api-notprod.notprod.acp.homeoffice.gov.uk',
+                    'KUBE_CERTIFICATE_AUTHORITY': 'https://raw.githubusercontent.com/UKHomeOffice/acp-ca/master/acp-notprod.crt'
+                },
+                'image': KD_IMAGE,
+                'detach': True
+            }
+        )
+
+    response = add_pipeline_step(
+        response,
+        {
+            'name': 'E2E',
+            'commands': commands,
+            'depends_on': e2e_depends_on,
+            'environment': {
+                'ADAPTOR_NAME': COMMAND_ADAPTOR_NAME,
+                'ADAPTOR_REPLICA_COUNT': 'N/A',
+                'CDLZ_TOPIC_NUMBER': 'N/A',
+                'DRONE_DEPLOY_TO': drone_deploy_to,
+                'FDP_APP_MATCHING_NAME': FDP_APP_MATCHING_NAME,
+                'FDP_FEED_NAME': feed_name,
+                'IMAGE_URL': image_url,
+            },
+            'image': KD_IMAGE
+        }
+    )
+
+if ctx.build.event == 'tag' and delete:
+    release_name = COMMAND_ADAPTOR_NAME.upper()
+    template_lines = [
+        'Release Declared: <${DRONE_REPO_LINK}/-/tags|`%s-${DRONE_TAG}`> Build Number: <${DRONE_BUILD_LINK}|`${DRONE_BUILD_NUMBER}`>' % release_name
+    ]
+
+    if COMMAND_ADAPTOR_NAME == 'sds':
+        depends_on = ['SDS']
+    elif COMMAND_ADAPTOR_NAME == 'ctp':
+        depends_on = ['CTP']
+    else:
+        depends_on = ['E2E']
+
+    response = add_pipeline_step(response, {
+        'name': 'Slack: Declare Release',
+        'image': 'curlimages/curl:latest',
+        'pull': 'if-not-exists',
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            'source .drone/slack-functions.sh',
+            "send_slack_text fdp-developer-support '%s' $SLACK_APP_TOKEN" % '\n'.join(template_lines)
+        ],
+        'depends_on': [
+            'Retrieve Artifactory Secrets'
+        ]
+    })
+
+if ctx.build.event == 'push' and delete:
+    if COMMAND_ADAPTOR_NAME == 'sds':
+        slack_depends_on = ['SDS']
+    elif COMMAND_ADAPTOR_NAME == 'ctp':
+        slack_depends_on = ['CTP']
+    else:
+        slack_depends_on = ['E2E']
+
+    response = add_pipeline_step(response, {
+        'name': 'Slack: End Result Success Message (v1.1)',
+        'image': 'curlimages/curl:latest',
+        'pull': 'if-not-exists',
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            'source .drone/slack-functions.sh',
+            "send_slack_text dacc-dde-dev '%s' $SLACK_APP_TOKEN" % '\n'.join(['Build `${DRONE_BUILD_NUMBER}` has deployed successfully for *${DRONE_REPO_NAME}* to *%s*.' % namespace])
+        ],
+        'when': {
+            'status': 'success',
+            'event': ['push'],
+        },
+        'depends_on': slack_depends_on
+    })
+
+    response = add_pipeline_step(response, {
+        'name': 'Slack: End Result Failed Message (v1.1)',
+        'image': 'curlimages/curl:latest',
+        'pull': 'if-not-exists',
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            'source .drone/slack-functions.sh',
+            "send_slack_text dacc-dde-dev '%s' $SLACK_APP_TOKEN" % '\n'.join(['Build `${DRONE_BUILD_NUMBER}` has failed to deploy for *${DRONE_REPO_NAME}* to *%s*.' % namespace, '<${DRONE_BUILD_LINK}|Link to build page ↗>'])
+        ],
+        'when': {
+            'status': 'failure',
+            'event': ['push'],
+        },
+        'depends_on': slack_depends_on
+    })
+
+return response
+
+def ecr_pipeline(ctx, title, ecr_step, depends_on=None):
+"""
+Create a pipeline to deploy images to ECR.
+
+Parameters
+----------
+ctx : A Drone CI context.
+    The context passed by Drone CI.
+depends_on : str, optional
+    The name of a pipeline that must pass for this pipeline to execute.
+
+Returns
+-------
+dict
+    An ECR pipeline for Drone CI.
+"""
+response = blank_pipeline(title, depends_on)
+
+# Bomb the ECR deployment if the ECR_REGISTRY is set to ''.
+if not ECR_REPOSITORY and not ARTIFACTORY_REPOSITORY:
+    response = add_pipeline_step(
+        response,
+        {
+            'name': 'Deployment not implemented for this adaptor',
+            'image': 'alpine:latest',
+            'commands': [
+                'echo "Build event: "' + ctx.build.event,
+                'false'
+            ]
+        }
+    )
+
+    return response
+
+response = add_pipeline_step(
+    response,
+    retrieve_vault_dev_secrets_step(name='Retrieve Artifactory Secrets', drone_deploy_to=ctx.build.target)
+)
+response = add_pipeline_service(
+    response,
+    {
+        'name': 'docker',
+        'image': DIND_IMAGE
+    }
+)
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Validate working hours',
+        'image': 'python:alpine',
+        'commands': [
+            'python cmd-adaptor-%s-integration-tests/src/test/resources/CheckWH.py' % COMMAND_ADAPTOR_NAME
+        ],
+        'environment': {
+            'TZ': 'Europe/London'
+        }
+    }
+)
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Wait for Docker',
+        'environment': {
+            'DOCKER_HOST': 'tcp://docker:2375',
+        },
+        'image': DIND_IMAGE,
+        'commands': [
+            '/usr/local/bin/wait',
+        ]
+    }
+)
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Maven',
+        'image': MAVEN_JAVA17_IMAGE,
+        'commands': [
+            '. ./set_drone_secrets.sh',
+            'mvn clean install',
+            'mvn -B dependency:go-offline'
+        ],
+        'depends_on': [
+            'Validate working hours'
+        ],
+        'environment': {
+            'DOCKER_HOST': 'tcp://docker:2375',
+            'TESTCONTAINERS_RYUK_DISABLED': 'true',
+            # WORKAROUND: disabling testcontainers reaper processes not compatible with drone
+            # https://java.testcontainers.org/features/configuration/#disabling-ryuk
+        }
+    }
+)
+response = add_pipeline_step(response, ecr_step)
+return response
+
+def fail_pipeline(ctx, title, depends_on=None):
+"""
+Create a pipeline to deliberately fail drone
+"""
+response = blank_pipeline(title, depends_on)
+response = add_pipeline_step(
+response,
+{
+'name': 'Failing Build',
+'image': 'alpine:latest',
+'commands': [
+'echo "Build event: "' + ctx.build.event,
+'false'
+]
+}
+)
+
+return response
+def get_deployment_tag(ctx):
+"""
+Figure out if we're using a gitref or a SemVer tag.
+
+If this is a push to a branch (or a subsequent promote of that build)
+then the context will contain a branch name.  However,  if the event
+was a tag (or a subsequent promotion of that build) then the branch
+name is a blank string but the ref will be set (e.g. "refs/tags/0.1.2").
+
+Parameters
+----------
+ctx : A Drone CI context.
+    The context passed by Drone CI.
+"""
+if ctx.build.event == 'tag':
+    tag = ctx.build.ref.split('/')[2]
+elif ctx.build.event == 'promote' and ctx.build.branch == '':
+    tag = ctx.build.ref.split('/')[2]
+else:
+    tag = ctx.build.commit
+
+return tag
+def renew_vault_token_pipeline():
+"""
+Create a pipeline to deploy images to ECR
+
+Returns
+-------
+dict
+    An ECR pipeline for Drone CI.
+
+see https://confluence.dsa.homeoffice.gov.uk/display/Digital/howto%3A+Drone+set+pipeline+vault+secrets
+"""
+pipeline_name = 'Renew Vault Tokens'
+response = blank_pipeline(pipeline_name)
+response = add_pipeline_step(
+    response,
+    {
+        'name': 'Renew Vault Tokens',
+        'image': 'quay.io/ukhomeofficedigital/hashicorp-vault:1.6.0',
+        'pull': 'if-not-exists',
+        'commands': [
+            '# Renew Dev Drone Vault Token',
+            'export VAULT_TOKEN=$${VAULT_TOKEN_DEV}',
+            'export VAULT_ADDR=$${VAULT_ADDR_DEV}',
+            'vault token renew > /dev/null'
+        ],
+        'environment': {
+            'VAULT_ADDR_DEV': {
+                'from_secret': 'VAULT_ADDR_DEV'
+            },
+            'VAULT_TOKEN_DEV': {
+                'from_secret': 'VAULT_TOKEN_DEV'
+            }
+        }
+    }
+)
+return response
+def not_implemented_pipeline(ctx, message='Not Implemented'):
+"""
+Create a pipeline that indicates the workflow is not implemented.
+
+Parameters
+----------
+ctx : A Drone CI context.
+    The context passed by Drone CI.
+
+Returns
+-------
+dict
+    A pipeline indicating not implemented work (and the context).
+"""
+response = blank_pipeline('Not Implemented')
+response = add_pipeline_step(
+    response,
+    {
+        'name': message,
+        'image': 'alpine:latest',
+        'commands': [
+            'echo "Build event: "' + ctx.build.event,
+            'false'
+        ]
+    }
+)
+return response
+def invalid_deployment_mechanism_pipeline(deployment_mechanism):
+"""
+Create a pipeline that indicates the KD deployment mechanism is not
+applicable to this adaptor.
+
+Parameters
+----------
+deployment_mechanism : The deployment mechanism metadata for the
+                     adaptor being deployed.
+
+Returns
+-------
+dict
+    A pipeline indicating an invalid deployment mechanism.
+"""
+response = blank_pipeline('Invalid Deployment Mechanism')
+if deployment_mechanism == 'DEHELM':
+    response = add_pipeline_step(
+        response,
+        {
+            'name': "Use Data Engineering Helm Chart",
+            'image': 'alpine:latest',
+            'commands': [
+                'echo "This adaptor uses a Data Engineering Helm Chart to deploy."',
+                'false'
+            ]
+        }
+    )
+else:
+    response = add_pipeline_step(
+        response,
+        {
+            'name': "Use FDP Team Helm Chart",
+            'image': 'alpine:latest',
+            'commands': [
+                'echo "This adaptor uses a FDP Team Helm Chart to deploy."',
+                'false'
+            ]
+        }
+    )
+return response
+def promote_event(ctx):
+"""
+Handle a promote event.
+
+Parameters
+----------
+ctx : A Drone CI context.
+    The context passed by Drone CI.
+
+Returns
+-------
+    list of dict
+        One or more pipelines to process the promotion.
+"""
+environment = getattr(ctx.build, 'environment', '')
+
+if not environment:
+    # An ugly work around as drone CLI doesn't support setting a promote
+    # environment.
+    promote_target = ctx.build.target.split('-')
+else:
+    promote_target = environment.split('-')
+
+action = promote_target[0]
+namespace_type = promote_target[-1]
+
+if DEPLOYMENT_MECHANISM != 'KD':
+    if namespace_type != 'dev' and namespace_type != 'test':
+        pipeline = invalid_deployment_mechanism_pipeline(DEPLOYMENT_MECHANISM)
+        return [pipeline]
+
+if action == 'rm':
+    namespace = '-'.join(promote_target[1:])
+    title = 'Remove %s' % namespace
+    pipeline = deploy_pipeline(ctx, title, namespace=namespace, delete=True)
+else:
+    namespace = '-'.join(promote_target)
+    title = 'Deploy %s' % namespace
+    pipeline = deploy_pipeline(ctx, title, namespace=namespace)
+
+return [pipeline]
+def main(ctx):
+"""
+Entry point for PLACI Drone CI Pipeline.
+
+Parse the context and metadata and create pipelines accordingly.
+
+Parameters
+----------
+ctx : A Drone CI context.
+    The context passed by Drone CI.
+"""
+pipelines = []
+
+image_tag = get_deployment_tag(ctx)
+
+adaptor_ecr_step = {
+    'name': 'Publish Command Adaptor to ECR',
+    'image': 'plugins/ecr',
+    'environment': {
+        'AWS_REGION': 'eu-west-2',
+        'DOCKER_HOST': 'tcp://docker:2375',
+    },
+    'settings': {
+        'access_key': {
+            'from_secret': 'aws_access_key_id'
+        },
+        'context': 'cmd-adaptor-%s' % COMMAND_ADAPTOR_NAME,
+        'dockerfile': 'cmd-adaptor-%s/Dockerfile' % COMMAND_ADAPTOR_NAME,
+        'registry': ECR_REGISTRY,
+        'repo': ECR_REPOSITORY,
+        'secret_key': {
+            'from_secret': 'aws_secret_access_key'
+        },
+        'tags': image_tag
+    },
+    'depends_on': [
+        'Maven',
+        'Wait for Docker'
+    ]
+}
+adaptor_artifactory_step = {
+    'name': 'Publish Command Adaptor to Artifactory',
+    'image': DIND_IMAGE,
+    'commands': [
+        'source ./set_drone_secrets.sh',
+        'docker login -u="$${ARTIFACTORY_USERNAME}" -p="$${ARTIFACTORY_PASSWORD}" "$${ARTIFACTORY_REGISTRY}"',
+        'docker build -t $${ARTIFACTORY_REGISTRY}/$${ARTIFACTORY_REPOSITORY}:$${IMAGE_TAG} -f cmd-adaptor-$${COMMAND_ADAPTOR_NAME}/Dockerfile cmd-adaptor-$${COMMAND_ADAPTOR_NAME}',
+        'docker push $${ARTIFACTORY_REGISTRY}/$${ARTIFACTORY_REPOSITORY}:$${IMAGE_TAG}',
+    ],
+    'environment': {
+        'IMAGE_TAG': image_tag,
+        'DOCKER_HOST': 'tcp://docker:2375',
+        'COMMAND_ADAPTOR_NAME': COMMAND_ADAPTOR_NAME,
+        'ARTIFACTORY_REGISTRY': ARTIFACTORY_REGISTRY,
+        'ARTIFACTORY_REPOSITORY': ARTIFACTORY_REPOSITORY,
+    },
+    'depends_on': [
+        'Retrieve Artifactory Secrets',
+        'Maven',
+        'Wait for Docker'
+    ]
+}
+adaptor_ecr_e2e_step = {
+    'name': 'Publish End-to-End Test to ECR',
+    'image': 'plugins/ecr',
+    'environment': {
+        'AWS_REGION': 'eu-west-2',
+        'DOCKER_HOST': 'tcp://docker:2375'
+    },
+    'settings': {
+        'access_key': {
+            'from_secret': 'aws_access_key_id'
+        },
+        'dockerfile': 'Dockerfile.smoketest',
+        'registry': ECR_REGISTRY,
+        'repo': ECR_REPOSITORY,
+        'secret_key': {
+            'from_secret': 'aws_secret_access_key'
+        },
+        'tags': '%s-e2e' % image_tag
+    },
+    'depends_on': [
+        'Maven',
+        'Wait for Docker'
+    ]
+}
+adaptor_artifactory_e2e_step = {
+    'name': 'Publish End-to-End Test to Artifactory',
+    'image': DIND_IMAGE,
+    'commands': [
+        'source ./set_drone_secrets.sh',
+        'docker login -u="$${ARTIFACTORY_USERNAME}" -p="$${ARTIFACTORY_PASSWORD}" "$${ARTIFACTORY_REGISTRY}"',
+        'docker build -t $${ARTIFACTORY_REGISTRY}/$${ARTIFACTORY_REPOSITORY}:$${IMAGE_TAG} -f Dockerfile.smoketest .',
+        'docker push $${ARTIFACTORY_REGISTRY}/$${ARTIFACTORY_REPOSITORY}:$${IMAGE_TAG}',
+    ],
+    'environment': {
+        'IMAGE_TAG': '%s-e2e' % image_tag,
+        'DOCKER_HOST': 'tcp://docker:2375',
+        'COMMAND_ADAPTOR_NAME': COMMAND_ADAPTOR_NAME,
+        'ARTIFACTORY_REGISTRY': ARTIFACTORY_REGISTRY,
+        'ARTIFACTORY_REPOSITORY': ARTIFACTORY_REPOSITORY,
+    },
+    'depends_on': [
+        'Retrieve Artifactory Secrets',
+        'Maven',
+        'Wait for Docker'
+    ]
+}
+sds_listener_ecr_step = {
+    'name': 'Publish Listener to ECR',
+    'image': 'plugins/ecr',
+    'environment': {
+        'AWS_REGION': 'eu-west-2',
+        'DOCKER_HOST': 'tcp://docker:2375'
+    },
+    'settings': {
+        'access_key': {
+            'from_secret': 'aws_access_key_id'
+        },
+        'context': 'cmd-adaptor-listener-%s' % COMMAND_ADAPTOR_NAME,
+        'dockerfile': 'cmd-adaptor-listener-%s/Dockerfile' % COMMAND_ADAPTOR_NAME,
+        'registry': ECR_REGISTRY,
+        'repo': ECR_REPOSITORY,
+        'secret_key': {
+            'from_secret': 'aws_secret_access_key'
+        },
+        'tags': '%s-listener' % image_tag
+    },
+    'depends_on': [
+        'Maven',
+        'Wait for Docker'
+    ]
+}
+ctp_reporting_artifactory_step = {
+    'name': 'Publish CTP Reporting to Artifactory',
+    'image': DIND_IMAGE,
+    'commands': [
+        'source ./set_drone_secrets.sh',
+        'docker login -u="$${ARTIFACTORY_USERNAME}" -p="$${ARTIFACTORY_PASSWORD}" "$${ARTIFACTORY_REGISTRY}"',
+        'docker build -t $${ARTIFACTORY_REGISTRY}/$${ARTIFACTORY_REPOSITORY}:$${IMAGE_TAG} -f cmd-adaptor-$${COMMAND_ADAPTOR_NAME}-reporting/Dockerfile cmd-adaptor-$${COMMAND_ADAPTOR_NAME}-reporting',
+        'docker push $${ARTIFACTORY_REGISTRY}/$${ARTIFACTORY_REPOSITORY}:$${IMAGE_TAG}',
+    ],
+    'environment': {
+        'IMAGE_TAG': '%s-reporting' % image_tag,
+        'DOCKER_HOST': 'tcp://docker:2375',
+        'COMMAND_ADAPTOR_NAME': COMMAND_ADAPTOR_NAME,
+        'ARTIFACTORY_REGISTRY': ARTIFACTORY_REGISTRY,
+        'ARTIFACTORY_REPOSITORY': ARTIFACTORY_REPOSITORY,
+    },
+    'depends_on': [
+        'Retrieve Artifactory Secrets',
+        'Maven',
+        'Wait for Docker'
+    ]
+}
+
+if ctx.build.event == 'promote':
+    pipelines = promote_event(ctx)
+elif ctx.build.event == 'push':
+    if ctx.build.branch == 'master':
+        pipelines.append(blank_pipeline('push to master'))
+    elif ctx.build.branch == 'develop':
+        pipelines.append(ci_pipeline(ctx))
+
+        if ctx.build.message.strip() != 'Update for next development version':
+
+            # Current pipeline setup pushing cmd adapter images to ECR
+            adaptor_step_name = 'ECR Adaptor'
+            adaptor_pipline = ecr_pipeline(
+                ctx,
+                adaptor_step_name,
+                adaptor_ecr_step,
+                depends_on=['CI']
+            )
+
+            e2e_step_name = 'ECR E2E'
+            e2e_pipline = ecr_pipeline(
+                ctx,
+                e2e_step_name,
+                adaptor_ecr_e2e_step,
+                depends_on=['CI']
+            )
+
+            # This is a new pipeline using artifactory to store docker images
+            if not ECR_REPOSITORY and ARTIFACTORY_REPOSITORY:
+                adaptor_step_name = 'ARTIFACTORY Adaptor'
+                adaptor_pipline = ecr_pipeline(
+                    ctx,
+                    adaptor_step_name,
+                    adaptor_artifactory_step,
+                    depends_on=['CI']
+                )
+
+                e2e_step_name = 'ARTIFACTORY E2E'
+                e2e_pipline = ecr_pipeline(
+                    ctx,
+                    e2e_step_name,
+                    adaptor_artifactory_e2e_step,
+                    depends_on=['CI']
+                )
+
+            pipelines.append(adaptor_pipline)
+            pipelines.append(e2e_pipline)
+
+            if COMMAND_ADAPTOR_NAME == 'sds':
+                pipelines.append(fail_pipeline(
+                    ctx,
+                    'FIXME: update SDS "ECR Listener" to use artifactory',
+                    depends_on=['CI'])
+                )
+                pipelines.append(ecr_pipeline(
+                    ctx,
+                    'ECR Listener',
+                    sds_listener_ecr_step,
+                    depends_on=['CI'])
+                )
+
+            if COMMAND_ADAPTOR_NAME == 'ctp':
+                pipelines.append(ecr_pipeline(
+                    ctx,
+                    'ECR Reporting',
+                    ctp_reporting_artifactory_step,
+                    depends_on=['CI'])
+                )
+
+            pipelines.append(
+                deploy_pipeline(
+                    ctx,
+                    'CD',
+                    [adaptor_step_name, e2e_step_name],
+                    'dacc-dde-dev'
+                )
+            )
+            pipelines.append(
+                deploy_pipeline(
+                    ctx,
+                    'Cleardown',
+                    ['CD'],
+                    'dacc-dde-dev',
+                    True
+                )
+            )
+    else:
+        pipelines.append(ci_pipeline(ctx))
+elif ctx.build.event == 'pull_request':
+    pipelines.append(blank_pipeline('GitLab MR'))
+elif ctx.build.event == 'tag':
+    # Current pipeline setup pushing cmd adapter images to ECR
+    adaptor_step_name = 'ECR Adaptor'
+    adaptor_pipline = ecr_pipeline(
+        ctx,
+        adaptor_step_name,
+        adaptor_ecr_step,
+    )
+
+    e2e_step_name = 'ECR E2E'
+    e2e_pipline = ecr_pipeline(
+        ctx,
+        e2e_step_name,
+        adaptor_ecr_e2e_step,
+    )
+
+    # This is a new pipeline using artifactory to store docker images
+    if not ECR_REPOSITORY and ARTIFACTORY_REPOSITORY:
+        adaptor_step_name = 'ARTIFACTORY Adaptor'
+        adaptor_pipline = ecr_pipeline(
+            ctx,
+            adaptor_step_name,
+            adaptor_artifactory_step
+        )
+
+        e2e_step_name = 'ARTIFACTORY E2E'
+        e2e_pipline = ecr_pipeline(
+            ctx,
+            e2e_step_name,
+            adaptor_artifactory_e2e_step
+        )
+
+    pipelines.append(adaptor_pipline)
+    pipelines.append(e2e_pipline)
+
+    if COMMAND_ADAPTOR_NAME == 'sds':
+        pipelines.append(fail_pipeline(ctx, 'FIXME: update SDS "ECR Listener" to use artifactory'))
+        pipelines.append(ecr_pipeline(
+            ctx,
+            'SDS Listerner',
+            sds_listener_ecr_step)
+        )
+
+    if COMMAND_ADAPTOR_NAME == 'ctp':
+        pipelines.append(ecr_pipeline(
+            ctx,
+            'CTP Reporting',
+            ctp_reporting_artifactory_step)
+        )
+
+    pipelines.append(deploy_pipeline(ctx, 'CD', [adaptor_step_name, e2e_step_name], 'dacc-dde-test'))
+    pipelines.append(deploy_pipeline(ctx, 'Cleardown', ['CD'], 'dacc-dde-test', True))
+
+elif ctx.build.event == 'cron' and ctx.build.cron == 'renew-vault-tokens':
+    pipelines.append(renew_vault_token_pipeline())
+
+else:
+    pipelines.append(not_implemented_pipeline(ctx))
+
+return pipelines
+
+
+
+#############################################################################
+
+DO NOT EDIT LOCALLY!!!!!!!
+WARNING: This file is controlled centrally, any changes made in the command
+adaptor repository will be overwritten by the RepoSync process. See
+https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync
+DO NOT EDIT LOCALLY!!!!!!!
+#############################################################################
+FROM quay.io/ukhomeofficedigital/ileap-java17-mvn:1.3
+
+ENV HOME=/home/ileap
+
+WORKDIR /tmp
+
+RUN apk add aws-cli && aws --version
+
+COPY . /home/ileap
+COPY cmd-adaptor-dvla-integration-tests/src/test/resources/settings.xml
+/usr/local/etc/settings.xml
+COPY cmd-adaptor-dvla-integration-tests/src/test/resources/sut-entrypoint.sh
+/usr/local/bin/entrypoint.sh
+
+RUN mkdir -p /home/ileap/.m2 && cp -r /root/.m2 /home/ileap/
+RUN chown -R ileap:ileap /home/ileap
+USER ileap
+WORKDIR /home/ileap
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+benanaktaspusulait commented 4 minutes ago
+@benanaktaspusulait
+benanaktaspusulait
+4 minutes ago
+Owner
+Author
+#############################################################################
+
+DO NOT EDIT LOCALLY!!!!!!!
+WARNING: This file is controlled centrally, any changes made in the command
+adaptor repository will be overwritten by the RepoSync process. See
+https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync
+DO NOT EDIT LOCALLY!!!!!!!
+#############################################################################
+FROM amazoncorretto:17
+
+COPY ./target/cmd-adaptor-dvla-exec.jar /local
+COPY ./target/dependencies/opentelemetry-javaagent.jar /local/opentelemetry-javaagent.jar
+
+WORKDIR /tmp
+
+RUN yum install -y
+shadow-utils
+unzip
+&& yum update -y ca-certificates cpio curl cyrus-sasl-lib expat glib2 libcurl libdb libssh2 libdb-utils libnghttp2 libpng libtasn1 libxml2 ncurses ncurses-base ncurses-libs nss nss-util nss-softokn nspr openldap openssl-libs python python-libs sqlite xz-libs yum zlib
+&& yum erase -y vim-data
+&& yum clean all
+&& rm -rf /var/cache/yum
+&& curl --silent --output /tmp/envconsul.zip https://releases.hashicorp.com/envconsul/0.13.1/envconsul_0.13.1_linux_amd64.zip
+&& unzip envconsul.zip
+&& rm -f envconsul.zip
+&& mv envconsul /usr/local/bin/envconsul
+&& chown root:root /usr/local/bin/envconsul
+&& chmod 0755 /usr/local/bin/envconsul
+&& adduser
+-u 1000
+-U
+-m
+-s /bin/bash
+fdpuser
+&& chmod 0755 /local/cmd-adaptor-dvla-exec.jar
+&& chown fdpuser:fdpuser /local/cmd-adaptor-dvla-exec.jar
+&& chmod 0755 /local/opentelemetry-javaagent.jar
+&& chown fdpuser:fdpuser /local/opentelemetry-javaagent.jar
+
+Run Application as non-root
+WORKDIR /home/fdpuser
+USER fdpuser
+
+CMD ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8077", "-javaagent:/local/opentelemetry-javaagent.jar", "-Dcom.sun.management.jmxremote", "-Dcom.sun.management.jmxremote.port=9012", "-Dcom.sun.management.jmxremote.rmi.port=9012", "-Dcom.sun.management.jmxremote.authenticate=false", "-Dcom.sun.management.jmxremote.local.only=false", "-Dcom.sun.management.jmxremote.ssl=false", "-Djava.rmi.server.hostname=localhost", "-jar", "/local/cmd-adaptor-dvla-exec.jar"]
+
+<parent>
+    <groupId>uk.gov.ho.dacc.fdp</groupId>
+    <artifactId>fdp-cmd-adaptor-dvla</artifactId>
+    <version>1.0.3-SNAPSHOT</version>
+</parent>
+
+<artifactId>cmd-adaptor-dvla</artifactId>
+<packaging>jar</packaging>
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-configuration-processor</artifactId>
+        <optional>true</optional>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.kafka</groupId>
+        <artifactId>kafka-streams-test-utils</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>uk.gov.ho.dacc.fdp</groupId>
+        <artifactId>cmd-adaptor-dvla-common</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>uk.gov.ho.dacc.fdp</groupId>
+        <artifactId>cmd-adaptor-dvla-test-common</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>uk.gov.ho.dacc.fdp</groupId>
+        <artifactId>fdp-cmd-adaptor-mapping-template-lib</artifactId>
+        <version>${mapping.lib.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-junit</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-java</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-spring</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-api</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-exporter-logging</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>io.opentelemetry.javaagent</groupId>
+        <artifactId>opentelemetry-javaagent</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>org.junit.vintage</groupId>
+        <artifactId>junit-vintage-engine</artifactId>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+
+<build>
+    <resources>
+        <resource>
+            <filtering>true</filtering>
+            <directory>src/main/resources</directory>
+        </resource>
+    </resources>
+    <testResources>
+        <testResource>
+            <filtering>true</filtering>
+            <directory>src/test/resources</directory>
+        </testResource>
+    </testResources>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+                <finalName>${project.name}</finalName>
+                <classifier>exec</classifier>
+            </configuration>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>repackage</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>build-info</id>
+                    <goals>
+                        <goal>build-info</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>uk.gov.ho.dacc.fdp</groupId>
+            <artifactId>fdp-cmd-adaptor-mapping-generator</artifactId>
+            <version>3.4.0</version>
+            <executions>
+                <execution>
+                    <id>trailer-registration</id>
+                    <phase>generate-sources</phase>
+                    <goals>
+                        <goal>avro-mapping</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.basedir}/target/generated-sources</outputDirectory>
+                        <configFileName>mappings/ConfigFileConfig.json</configFileName>
+                        <outputPackage>uk.gov.ho.dacc.fdp.service.registration</outputPackage>
+                        <inputClass>uk.gov.ho.dsa.cdl.dvla.trailer.registration.StreamIngestRecord
+                        </inputClass>
+                        <runLogInputClass>uk.gov.ho.dacc.fdp.runlog.DvlaTrailerRegistrationRunlogInput
+                        </runLogInputClass>
+                        <outputClassMapping>{
+                            "Party":"uk.gov.ho.dacc.pole.party.PartyRecord",
+                            "Location":"uk.gov.ho.dacc.pole.location.LocationRecord",
+                            "Event":"uk.gov.ho.dacc.pole.event.EventRecord",
+                            "Object":"uk.gov.ho.dacc.pole.object.ObjectRecord",
+                            "Service":"uk.gov.ho.dacc.pole.service.ServiceRecord"
+                            }
+                        </outputClassMapping>
+                        <removeAttributeBody>true</removeAttributeBody>
+                        <removeAttributeBody>true</removeAttributeBody>
+                        <removeAttributeBodyPrefix>body</removeAttributeBodyPrefix>
+                        <generateTransformersBuilders>true</generateTransformersBuilders>
+                        <generateRunlog>true</generateRunlog>
+                        <generateService>true</generateService>
+                        <generateLookupClasses>false</generateLookupClasses>
+                        <useCloners>true</useCloners>
+                        <useStreamContextData>true</useStreamContextData>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>trailer-disposal-event</id>
+                    <phase>generate-sources</phase>
+                    <goals>
+                        <goal>avro-mapping</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.basedir}/target/generated-sources</outputDirectory>
+                        <configFileName>mappings/ConfigFileConfig.json</configFileName>
+                        <outputPackage>uk.gov.ho.dacc.fdp.service.disposal</outputPackage>
+                        <inputClass>uk.gov.ho.dsa.cdl.dvla.trailer.disposal.StreamIngestRecord</inputClass>
+                        <runLogInputClass>uk.gov.ho.dacc.fdp.runlog.DvlaTrailerDisposalRunlogInput
+                        </runLogInputClass>
+                        <outputClassMapping>{
+                            "Event":"uk.gov.ho.dacc.pole.event.EventRecord",
+                            "Service":"uk.gov.ho.dacc.pole.service.ServiceRecord"
+                            }
+                        </outputClassMapping>
+                        <removeAttributeBody>true</removeAttributeBody>
+                        <removeAttributeBody>true</removeAttributeBody>
+                        <removeAttributeBodyPrefix>body</removeAttributeBodyPrefix>
+                        <generateTransformersBuilders>true</generateTransformersBuilders>
+                        <generateRunlog>true</generateRunlog>
+                        <generateService>true</generateService>
+                        <generateLookupClasses>false</generateLookupClasses>
+                        <useCloners>true</useCloners>
+                        <useStreamContextData>true</useStreamContextData>
+                    </configuration>
+                </execution>
+            </executions>
+            <dependencies>
+                <dependency>
+                    <groupId>uk.gov.ho.dacc.fdp</groupId>
+                    <artifactId>fdp-cmd-adaptor-mapping-template-lib</artifactId>
+                    <version>${mapping.lib.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>uk.gov.ho.dacc.fdp</groupId>
+                    <artifactId>fdp-cmd-adaptor-dvla-mapping</artifactId>
+                    <version>${mapping.version}</version>
+                </dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
+            <executions>
+                <execution>
+                    <id>prepare-agent</id>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>report</id>
+                    <phase>test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>com.coderplus.maven.plugins</groupId>
+            <artifactId>copy-rename-maven-plugin</artifactId>
+            <version>1.0.1</version>
+            <executions>
+                <execution>
+                    <id>rename-file</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>rename</goal>
+                    </goals>
+                    <configuration>
+                        <sourceFile>target/lib/opentelemetry-javaagent-${opentelemetry.version}.jar</sourceFile>
+                        <destinationFile>target/dependencies/opentelemetry-javaagent.jar</destinationFile>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+
+<repositories>
+    <repository>
+        <id>confluent</id>
+        <url>https://packages.confluent.io/maven/</url>
+    </repository>
+</repositories>
+
+#############################################################################
+
+WARNING: This file is controlled via RepoSync, any changes made in the
+command adaptor repository will be overwritten by the RepoSync process.
+See https://gitlab.digital.homeoffice.gov.uk/dacc-de/dde-adaptor-reposync
+Overriding of configured variables can be placed in a file called ".env"
+in the same directory as this file. See
+https://gitlab.digital.homeoffice.gov.uk/dacc-aws/fdp-cmd-adaptor-pnr/-/blob/develop/cmd-adaptor-pnr-integration-tests/src/test/resources/docker-compose/.env
+for an example.
+#############################################################################
+version: '3'
+
+services:
+aggregate-event:
+image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-event:${CORE_TAG}"
+command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9014 -Dcom.sun.management.jmxremote.rmi.port=9014 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-event.jar"
+container_name: aggregate-event
+depends_on:
+- kafka
+- schema-registry
+- redis
+environment:
+- SPRING_PROFILES_ACTIVE=docker
+- LOG_LEVEL=INFO
+- FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+- FDP_KAFKA_STREAM_THREADS=1
+- FDP_KAFKA_BROKER=kafka:29092
+- FDP_APP_KAFKA_TOPIC_SUFFIX=0
+- FDP_APP_REDIS_NODES=redis:6379
+- FDP_APP_JAEGER_HOST=jaeger
+- FDP_APP_JAEGER_PORT=4317
+- FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+- FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+- OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+- OTEL_SERVICE_NAME=event-aggregate
+- OTEL_TRACES_EXPORTER=otlp
+- OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+ports:
+- 7104:7104
+- 9014:9014
+platform: linux/amd64
+restart: always
+
+aggregate-location:
+image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-location:${CORE_TAG}"
+command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9013 -Dcom.sun.management.jmxremote.rmi.port=9013 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-location.jar"
+container_name: aggregate-location
+depends_on:
+- kafka
+- schema-registry
+- redis
+environment:
+- SPRING_PROFILES_ACTIVE=docker
+- LOG_LEVEL=INFO
+- FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+- FDP_KAFKA_STREAM_THREADS=1
+- FDP_KAFKA_BROKER=kafka:29092
+- FDP_APP_KAFKA_TOPIC_SUFFIX=0
+- FDP_APP_REDIS_NODES=redis:6379
+- FDP_APP_JAEGER_HOST=jaeger
+- FDP_APP_JAEGER_PORT=4317
+- FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+- FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+- OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+- OTEL_SERVICE_NAME=location-aggregate
+- OTEL_TRACES_EXPORTER=otlp
+- OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+ports:
+- 7103:7103
+- 9013:9013
+platform: linux/amd64
+restart: always
+
+aggregate-matching:
+image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-matching:${CORE_TAG}"
+command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9016 -Dcom.sun.management.jmxremote.rmi.port=9016 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-matching.jar"
+container_name: aggregate-matching
+depends_on:
+- kafka
+- schema-registry
+environment:
+- SPRING_PROFILES_ACTIVE=docker
+- FDP_APP_KAFKA_TOPIC_SUFFIX=0
+- FDP_APP_MATCHING_AGGREGATE_TARGET=${FDP_APP_MATCHING_AGGREGATE_TARGET-BOTH}
+- FDP_APP_MATCHING_TYPES_TO_FILTER=${FDP_APP_MATCHING_TYPES_TO_FILTER-}
+- LOG_LEVEL=INFO
+- FDP_APP_REDIS_NODES=redis:6379
+- FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+- FDP_KAFKA_STREAM_THREADS=1
+- FDP_KAFKA_BROKER=kafka:29092
+# The following ENVs are required by PNR and APIDQ (any repo using fdp-apps v13 aggregate-matching). See PM-69684
+- FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+- FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+- FDP_APP_MATCHING_SUBTYPES_TO_PRESERVE=${FDP_APP_MATCHING_SUBTYPES_TO_PRESERVE-}
+- FDP_APP_JAEGER_HOST=jaeger
+- FDP_APP_JAEGER_PORT=4317
+- OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+- OTEL_SERVICE_NAME=matching-aggregate
+- OTEL_TRACES_EXPORTER=otlp
+- OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+ports:
+- 7106:7106
+- 9016:9016
+platform: linux/amd64
+restart: always
+
+aggregate-object:
+image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-object:${CORE_TAG}"
+command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9012 -Dcom.sun.management.jmxremote.rmi.port=9012 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-object.jar"
+container_name: aggregate-object
+depends_on:
+- kafka
+- schema-registry
+- redis
+environment:
+- SPRING_PROFILES_ACTIVE=docker
+- LOG_LEVEL=INFO
+- FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+- FDP_KAFKA_STREAM_THREADS=1
+- FDP_KAFKA_BROKER=kafka:29092
+- FDP_APP_KAFKA_TOPIC_SUFFIX=0
+- FDP_APP_REDIS_NODES=redis:6379
+- FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+- FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+- FDP_APP_JAEGER_HOST=jaeger
+- FDP_APP_JAEGER_PORT=4317
+- OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+- OTEL_SERVICE_NAME=object-aggregate
+- OTEL_TRACES_EXPORTER=otlp
+- OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+ports:
+- 7102:7102
+- 9012:9012
+platform: linux/amd64
+restart: always
+
+aggregate-party:
+image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-party:${CORE_TAG}"
+command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.rmi.port=9011 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-party.jar"
+container_name: aggregate-party
+depends_on:
+- kafka
+- schema-registry
+- redis
+environment:
+- SPRING_PROFILES_ACTIVE=docker
+- LOG_LEVEL=INFO
+- FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+- FDP_KAFKA_STREAM_THREADS=1
+- FDP_KAFKA_BROKER=kafka:29092
+- FDP_APP_KAFKA_TOPIC_SUFFIX=0
+- FDP_APP_REDIS_NODES=redis:6379
+- FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+- FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+- FDP_APP_JAEGER_HOST=jaeger
+- FDP_APP_JAEGER_PORT=4317
+- OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+- OTEL_SERVICE_NAME=party-aggregate
+- OTEL_TRACES_EXPORTER=otlp
+- OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+ports:
+- 7101:7101
+- 9011:9011
+platform: linux/amd64
+restart: always
+
+aggregate-service:
+image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-service:${CORE_TAG}"
+command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9015 -Dcom.sun.management.jmxremote.rmi.port=9015 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-service.jar"
+container_name: aggregate-service
+depends_on:
+- kafka
+- schema-registry
+- redis
+environment:
+- SPRING_PROFILES_ACTIVE=docker
+- LOG_LEVEL=INFO
+- FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+- FDP_KAFKA_STREAM_THREADS=1
+- FDP_KAFKA_BROKER=kafka:29092
+- FDP_APP_KAFKA_TOPIC_SUFFIX=0
+- FDP_APP_REDIS_NODES=redis:6379
+- FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+- FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+- FDP_APP_JAEGER_HOST=jaeger
+- FDP_APP_JAEGER_PORT=4317
+- OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+- OTEL_SERVICE_NAME=service-aggregate
+- OTEL_TRACES_EXPORTER=otlp
+- OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+ports:
+- 7105:7105
+- 9015:9015
+platform: linux/amd64
+restart: always
+
+aggregate-v1id-v2id:
+image: "docker.digital.homeoffice.gov.uk/dacc-aws/fdp-aggregate-v1id-v2id:${CORE_TAG}"
+command: "java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9018 -Dcom.sun.management.jmxremote.rmi.port=9018 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -jar /home/fdpuser/aggregate-v1id-v2id.jar"
+container_name: aggregate-v1id-v2id
+depends_on:
+- kafka
+- schema-registry
+environment:
+- SPRING_PROFILES_ACTIVE=docker
+- LOG_LEVEL=INFO
+- FDP_KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+- FDP_KAFKA_STREAM_THREADS=1
+- FDP_KAFKA_BROKER=kafka:29092
+- FDP_APP_KAFKA_TOPIC_SUFFIX=0
+- FDP_APP_REDIS_NODES=redis:6379
+- FDP_APP_KAFKA_STREAM_MIN_INSYNC_REPLICAS=1
+- FDP_APP_KAFKA_STREAM_REPLICATION_FACTOR=1
+- FDP_APP_JAEGER_HOST=jaeger
+- FDP_APP_JAEGER_PORT=4317
+- OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+- OTEL_SERVICE_NAME=v1id-v2id-aggregate
+- OTEL_TRACES_EXPORTER=otlp
+- OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED=true
+ports:
+- 7108:7108
+- 9018:9018
+platform: linux/amd64
+restart: always
+
+command-adaptor:
+build: ../../../../../cmd-adaptor-dvla
+container_name: command-adaptor
+environment:
+FDP_APP_KAFKA_TOPIC_SUFFIX: 0
+WAIT_CHECK: "${WAIT_CHECK-}"
+ADAPTOR_NAME: "dvla"
+SPRING_PROFILES_ACTIVE: "docker"
+ARTIFACTORY_USERNAME: "${ARTIFACTORY_USERNAME-}"
+ARTIFACTORY_PASSWORD: "${ARTIFACTORY_PASSWORD-}"
+OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+OTEL_SERVICE_NAME: "cmd_adaptor_dvla"
+OTEL_TRACES_EXPORTER: "otlp"
+OTEL_METRICS_EXPORTER: "none"
+OTEL_LOGS_EXPORTER: "none"
+OTEL_INSTRUMENTATION_COMMON_EXPERIMENTAL_CONTROLLER_TELEMETRY_ENABLED : "false"
+OTEL_INSTRUMENTATION_COMMON_EXPERIMENTAL_VIEW_TELEMETRY_ENABLED : "false"
+OTEL_INSTRUMENTATION_HTTP_URL_CONNECTION_ENABLED : "false"
+OTEL_INSTRUMENTATION_OKHTTP_ENABLED : "false"
+OTEL_INSTRUMENTATION_TOMCAT_ENABLED : "false"
+OTEL_INSTRUMENTATION_KAFKA_CLIENTS_ENABLED : "true"
+OTEL_INSTRUMENTATION_SERVLET_ENABLED : "true"
+restart: always
+ports:
+- 7112:7112
+- 8077:8077
+
+integration-tests:
+container_name: integration-tests
+entrypoint: mvn -Pci-snapshot install
+environment:
+FDP_APP_KAFKA_TOPIC_SUFFIX: 0
+WAIT_CHECK: "${WAIT_CHECK-}"
+ADAPTOR_NAME: "dvla"
+SPRING_PROFILES_ACTIVE: "docker"
+ARTIFACTORY_USERNAME: "${ARTIFACTORY_USERNAME-}"
+ARTIFACTORY_PASSWORD: "${ARTIFACTORY_PASSWORD-}"
+image: quay.io/ukhomeofficedigital/ileap-java17-mvn:1.3
+volumes:
+- "../../../../..:/app"
+working_dir: /app
+
+jaeger:
+container_name: jaeger
+environment:
+COLLECTOR_OTLP_ENABLED: true
+hostname: jaeger
+image: jaegertracing/all-in-one:1.65.0
+ports:
+- 4317:4317
+- 4318:4318
+- 14250:14250
+- 16686:16686
+healthcheck:
+test: ["CMD-SHELL", "nc -z localhost 14269"]
+interval: 30s
+timeout: 10s
+retries: 3
+platform: linux/amd64
+restart: always
+
+kafdrop:
+container_name: kafdrop
+depends_on:
+- kafka
+- schema-registry
+environment:
+CMD_ARGS: "--message.format=AVRO --schemaregistry.connect=http://schema-registry:8081 --topic.createEnabled=false --topic.deleteEnabled=false"
+KAFKA_BROKERCONNECT: kafka:29092
+hostname: kafdrop
+image: obsidiandynamics/kafdrop:3.30.0
+ports:
+- 9000:9000
+healthcheck:
+test: ["CMD", "curl", "--fail", "http://localhost:9000/actuator/health"]
+interval: 30s
+timeout: 10s
+retries: 3
+platform: linux/amd64
+restart: always
+
+kafka:
+# PM-71719: MSK deployed 3.5.1 equates to cp-kafka 7.5.5
+# https://docs.confluent.io/platform/7.6/installation/versions-interoperability.html
+image: confluentinc/cp-kafka:7.5.5
+container_name: kafka
+hostname: kafka
+depends_on:
+- zookeeper
+healthcheck:
+test: ["CMD", "nc", "-vz", "localhost", "9092"]
+interval: 30s
+timeout: 10s
+retries: 3
+ports:
+# "-._,-'"-.,-'"-._,-'"-.,-'"-._,-'"-.,-'"-._,-'"-.,-'"-._,- # An important note about accessing Kafka from clients on other machines: # ----------------------------------------------------------------------- # # The config used here exposes port 9092 for _external_ connections to the broker # i.e. those from _outside_ the docker network. This could be from the host machine # running docker, or maybe further afield if you've got a more complicated setup. # If the latter is true, you will need to change the value 'localhost' in # KAFKA_ADVERTISED_LISTENERS to one that is resolvable to the docker host from those # remote clients # # For connections _internal_ to the docker network, such as from other services # and components, use kafka:29092. # # See https://rmoff.net/2018/08/02/kafka-listeners-explained/ for details # "-.,-'"-._,-'"-.,-'"-._,-'"-.,-'"-._,-'"-.,-'"-._,-'"-._,-
+#
+- 9092:9092
+environment:
+KAFKA_BROKER_ID: 1
+KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+KAFKA_ADVERTISED_HOST_NAME: kafka
+KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+KAFKA_LOG4J_LOGGERS: "kafka=WARN,
+kafka.producer.async.DefaultEventHandler=WARN,
+kafka.request.logger=WARN,
+kafka.controller=WARN,
+kafka.log.LogCleaner=WARN,
+state.change.logger=WARN,
+kafka.authorizer.logger=WARN"
+platform: linux/amd64
+restart: always
+
+kafka-topic-extract:
+user: "${DOCKER_USER}"
+build: kafka-topic-extract
+container_name: kafka-topic-extract
+environment:
+ADAPTOR_NAME: "dvla"
+FDP_APP_KAFKA_TOPIC_SUFFIX: 0
+KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+LOG_LEVEL: INFO
+KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+volumes:
+- "${HOME}/Downloads:/mnt/downloads"
+
+kafka-rest:
+# PM-71719: MSK deployed 3.5.1 equates to cp-kafka 7.5.5
+# https://docs.confluent.io/platform/7.6/installation/versions-interoperability.html
+image: confluentinc/cp-kafka-rest:7.5.5
+container_name: kafka-rest
+depends_on:
+- kafka
+environment:
+KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+KAFKA_REST_HOST_NAME: kafka-rest
+KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+healthcheck:
+test: ["CMD", "nc", "-vz", "localhost", "8082"]
+interval: 1s
+timeout: 1s
+retries: 30
+ports:
+- 8082:8082
+platform: linux/amd64
+restart: always
+
+localstack:
+container_name: "localstack"
+environment:
+LOCALSTACK_DEBUG: 1
+LOCALSTACK_SERVICES: "iam"
+healthcheck:
+test: ["CMD", "curl", "--fail", "http://localhost:4566/health"]
+interval: 30s
+timeout: 10s
+retries: 3
+image: localstack/localstack:0.12.18
+ports:
+- "127.0.0.1:4566:4566"
+platform: linux/amd64
+restart: always
+
+pre-integration-test:
+# This container should be started as part of the Maven
+# pre-integration-test stage of the cycle.
+build: pre-integration-test
+environment:
+FDP_APP_KAFKA_TOPIC_SUFFIX: 0
+WAIT_CHECK: "${WAIT_CHECK-}"
+ADAPTOR_NAME: "dvla"
+SPRING_PROFILES_ACTIVE: "docker"
+ARTIFACTORY_USERNAME: "${ARTIFACTORY_USERNAME-}"
+ARTIFACTORY_PASSWORD: "${ARTIFACTORY_PASSWORD-}"
+container_name: pre-integration-test
+depends_on:
+- kafdrop
+- redis
+- jaeger
+
+schema-registry:
+# PM-71719: MSK deployed 3.5.1 equates to cp-kafka 7.5.5
+# https://docs.confluent.io/platform/7.6/installation/versions-interoperability.html
+image: confluentinc/cp-schema-registry:7.5.5
+container_name: schema-registry
+ports:
+- 8081:8081
+depends_on:
+- zookeeper
+- kafka
+environment:
+SCHEMA_REGISTRY_HOST_NAME: schema-registry
+SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+SCHEMA_REGISTRY_KAFKASTORE_SSL_ENABLED_PROTOCOLS: PLAINTEXT
+healthcheck:
+test: ["CMD", "curl", "--fail", "http://localhost:8081/subjects"]
+interval: 30s
+timeout: 10s
+retries: 3
+platform: linux/amd64
+restart: always
+
+redis:
+container_name: redis
+image: redis:5.0.6
+healthcheck:
+test: ["CMD", "redis-cli", "ping"]
+interval: 30s
+timeout: 10s
+retries: 3
+ports:
+- 6379:6379
+platform: linux/amd64
+restart: always
+
+wait4localstack:
+command: "/usr/local/bin/wait4localstack -e http://localstack:4566/health"
+container_name: wait4localstack
+depends_on:
+- localstack
+image: "locp/wait4localstack:0.2.0"
+platform: linux/amd64
+
+zookeeper:
+# PM-71719: MSK deployed 3.5.1 equates to cp-kafka 7.5.5
+# https://docs.confluent.io/platform/7.6/installation/versions-interoperability.html
+image: confluentinc/cp-zookeeper:7.5.5
+container_name: zookeeper
+environment:
+ZOOKEEPER_CLIENT_PORT: 2181
+ZOOKEEPER_TICK_TIME: 2000
+healthcheck:
+test: ["CMD", "nc", "-vz", "localhost", "2181"]
+interval: 30s
+timeout: 10s
+retries: 3
+ports:
+- 2181:2181
+platform: linux/amd64
+restart: always
+
+Add a comment
+new Comment
+Markdown input: edit mode selected.
+Write
+Preview
+Use Markdown to format your comment
+Remember, contributions to this repository should follow its contributing guidelines and security policy.
+Metadata
+Assignees
+No one -
+Labels
+No labels
+Projects
+@benanaktaspusulait's untitled project
+Status
+
+Todo
+Milestone
+No milestone
+Relationships
+None yet
+Development
+ for this issue or link a pull request.
+NotificationsCustomize
+You're receiving notifications because you're subscribed to this thread.
+
+
+
+
+
+
