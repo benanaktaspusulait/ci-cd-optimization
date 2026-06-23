@@ -3,8 +3,9 @@
 | Field | Value |
 |-------|-------|
 | **Jira** | CST-2000 |
-| **Status** | Analysis complete - ACP confirmations recorded as follow-up items |
-| **Date** | 2026-06-11 |
+| **Status** | Analysis complete - ACP confirmations and CI smoke validations recorded as follow-up items |
+| **Date completed** | 2026-06-11 |
+| **Last updated** | 2026-06-23 (T1.5 ownership wording aligned with T1.2; smoke validation, decision and risk sections retained) |
 | **Source analysed** | `.drone.star` (RepoSync v7.1.0), `docker-compose.yml`, `Dockerfile`, `.drone/slack-functions.sh`, `bin/*.sh` |
 
 ---
@@ -18,6 +19,21 @@
 | T1.3 — Map CI steps, DIND & Compose | [T1.3-map-ci-steps.md](./T1.3-map-ci-steps.md) | ✅ |
 | T1.4 — Testcontainers feasibility | [T1.4-testcontainers-feasibility.md](./T1.4-testcontainers-feasibility.md) | ✅ |
 | T1.5 — BuildKit/cache feasibility | [T1.5-buildkit-feasibility.md](./T1.5-buildkit-feasibility.md) | ✅ |
+
+---
+
+## Story 1 Acceptance Criteria
+
+| # | Criterion | Status | Evidence |
+|---|-----------|:------:|----------|
+| 1 | `.drone.star` structure documented (steps, services, DIND) | ✅ | T1.1 — pipeline types, step ordering, DIND config |
+| 2 | Local vs RepoSync-controlled boundaries defined | ✅ | T1.2 — classification table + ownership map |
+| 3 | CI steps and Docker Compose usage mapped | ✅ | T1.3 — step-by-step map, DIND interactions |
+| 4 | Testcontainers feasibility assessed (DIND, Ryuk, DOCKER_HOST) | ✅ | T1.4 — feasible with constraints, pending smoke validation |
+| 5 | BuildKit feasibility in current DIND assessed | ✅ | T1.5 — tiered feasibility decision, pending smoke validation |
+| 6 | Findings inform which later stories are local vs central | ✅ | This summary — "What Later Stories Can Do" table |
+
+**Note:** Two feasibility items (Testcontainers CI, BuildKit CI) are assessed as *likely feasible* but carry an open smoke-validation step that needs a Drone run plus ACP confirmation of the DIND image. These are recorded as follow-up items, not blockers for local pilot work.
 
 ---
 
@@ -44,7 +60,7 @@ The `pull_request` event itself generates only `blank_pipeline('GitLab MR')` (a 
 
 ### 4. BuildKit is likely available but unconfirmed
 
-The ACP DIND image has no explicit version tag. Multi-stage Dockerfile is the biggest local win (60%+ image size reduction). Remote registry cache requires ACP infrastructure that does not currently exist.
+The ACP DIND image has no explicit version tag, so BuildKit support is **likely but unproven** until a smoke test runs in Drone. Multi-stage Dockerfile is expected to be the biggest local win (image-size reduction to be **measured** against the approved runtime base — no fixed percentage claimed before baseline). Cache mounts help within a single build but are ephemeral between CI runs. Remote registry cache requires ACP infrastructure that does not currently exist. See T1.5 for the tiered feasibility decision and required `.drone.star` changes.
 
 ### 5. Pipeline has measurable inefficiencies
 
@@ -57,6 +73,10 @@ The ACP DIND image has no explicit version tag. Multi-stage Dockerfile is the bi
 
 The `send_slack_failure` function in `.drone/slack-functions.sh` makes a second `send_slack_text` call where a channel name (`fdp-alarm-nonprod`) appears to be passed as the message text parameter rather than as a target channel. This needs confirmation with the team — it may be benign but unintended.
 
+### 7. Docker Compose is orchestrated in two layers
+
+Integration tests are driven by **two distinct Compose mechanisms**: the Drone pipeline's own `docker-compose up` steps (Kafka, Redis, aggregators, command-adaptor) and the Maven `docker-compose-maven-plugin` invoked inside the integration-tests container. The two layers are mutually exclusive by environment (Drone orchestrates in CI; the Maven plugin is used for local/other paths), but they overlap in intent and are a source of the double Maven build and coupling. This is the primary input for Story 5 (Compose rationalisation) — see T1.4 §7 for the full lifecycle map and which layer should own the lifecycle.
+
 ---
 
 ## What Later Stories Can Do Locally vs Centrally
@@ -64,7 +84,7 @@ The `send_slack_failure` function in `.drone/slack-functions.sh` makes a second 
 | Story | Can do locally | Needs RepoSync/ACP |
 |-------|---------------|-------------------|
 | **S2 — Baseline** | Local build timing, image size measurement | Drone UI pipeline timing (read-only, no change needed) |
-| **S3 — Build Optimisation** | Prototype multi-stage Dockerfile, test `.dockerignore`, local measurements | Apply Dockerfile/dockerignore to real builds (RepoSync MR) |
+| **S3 — Build Optimisation** | Prototype multi-stage Dockerfile, test `.dockerignore`, local cache mounts, local measurements | Apply Dockerfile changes through RepoSync; apply `.dockerignore` through repo or RepoSync once ownership is confirmed; add `DOCKER_BUILDKIT=1` on the publish step |
 | **S4 — Testcontainers** | Full local prototype with any dependency | CI execution (RepoSync MR for env vars) |
 | **S5 — Compose Rationalisation** | Document and classify services | Modify docker-compose.yml (RepoSync MR) |
 | **S6 — Findings** | Consolidate, classify ownership | Share with ACP/ETO stakeholders |
