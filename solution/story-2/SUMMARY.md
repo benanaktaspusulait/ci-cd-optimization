@@ -15,7 +15,7 @@
 | T2.2 — Pipeline baseline | [T2.2-pipeline-baseline.md](./T2.2-pipeline-baseline.md) | ⚠️ 3 actual samples captured; N=10 pending |
 | T2.3 — Docker build & image baseline | [T2.3-build-image-baseline.md](./T2.3-build-image-baseline.md) | ⚠️ estimated; DVLA shape checked |
 | T2.4 — Integration test baseline | [T2.4-integration-test-baseline.md](./T2.4-integration-test-baseline.md) | ⚠️ baseline drafted; DVLA shape checked |
-| T2.5 — Baseline summary and re-measurement method | [T2.5-baseline-summary-remeasurement.md](./T2.5-baseline-summary-remeasurement.md) | ⚠️ summary drafted; stakeholder agreement pending |
+| T2.5 — Baseline summary and re-measurement method | [T2.5-baseline-summary-remeasurement.md](T2.5-redis-testcontainers-pilot-plan.md) | ⚠️ summary drafted; stakeholder agreement pending |
 
 ---
 
