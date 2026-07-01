@@ -37,6 +37,7 @@ src/
 
 # Keep only the runtime artefacts copied by the Dockerfile.
 target/**
+!target/
 !target/cmd-adaptor-sns-exec.jar
 !target/dependencies/
 !target/dependencies/opentelemetry-javaagent.jar
