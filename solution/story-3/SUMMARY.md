@@ -1,83 +1,72 @@
-# Story 3 — Docker Build Optimisation: Summary
+# Story 3 - Docker Build Optimisation: Summary
 
 | Field | Value |
 |-------|-------|
-| **Status** | Done |
-| **Date** | 2026-06-11 |
+| **Status** | Draft Story 3 preparation - task definitions aligned; implementation and after-measurements not started |
+| **Date updated** | 2026-07-01 |
 
 ---
 
 ## Deliverables
 
-| Task | File | Status |
-|------|------|:------:|
-| T3.1 — Review Dockerfile & build context | [T3.1-review-dockerfile.md](./T3.1-review-dockerfile.md) | ✅ |
-| T3.2 — Add or validate .dockerignore | [T3.2-dockerignore.md](./T3.2-dockerignore.md) | ✅ |
-| T3.3 — Layering / cache improvement | [T3.3-layering-improvement.md](./T3.3-layering-improvement.md) | ✅ |
-| T3.4 — Measure impact | [T3.4-measure-impact.md](./T3.4-measure-impact.md) | ✅ (plan ready) |
+| Task | File | Current state |
+|------|------|---------------|
+| T3.1 - Review Dockerfile & build context | [T3.1-review-dockerfile.md](./T3.1-review-dockerfile.md) | Draft analysis aligned to Story 1/2 evidence |
+| T3.2 - Add or validate .dockerignore | [T3.2-dockerignore.md](./T3.2-dockerignore.md) | Candidate proposal only; ownership/apply step pending |
+| T3.3 - Layering / cache improvement | [T3.3-layering-improvement.md](./T3.3-layering-improvement.md) | Prototype plan only; production change pending RepoSync route |
+| T3.4 - Measure impact | [T3.4-measure-impact.md](./T3.4-measure-impact.md) | Measurement plan updated; after-values pending |
 
 ---
 
-## Key Results
+## Baseline To Use
 
-> ⚠️ "Before" numbers are estimates from static analysis; "After" numbers are projected based on known base image sizes. Both require local docker build confirmation.
+Story 3 should use measured Story 2 values, not the older static estimates.
 
-| Metric | Before (estimated) | After (projected) | Improvement |
-|--------|--------|-------|:-----------:|
-| Image size | ~550 MB | ~180-200 MB | **~65%** ↓ |
-| Build context | ~150 MB | ~80 MB | **~50%** ↓ |
-| Build time (cold) | ~2-3 min | ~30-60s | **~70%** ↓ |
-| Build time (warm) | ~1.5-2 min | ~5-10s | **~90%** ↓ |
+| Metric | Measured before-state | Source |
+|--------|-----------------------|--------|
+| CI elapsed duration | Average `13:35`, median `13:31` from N=10 successful SNS CI sample | T2.2 |
+| `Command Adaptor` visible CI step | Average `11:01`, range `10:49-11:18` | T2.2 |
+| Local Docker cold/no-cache build | `real 1m17.855s` | T2.3 |
+| Local Docker warm cached build | `real 0m0.851s` | T2.3 |
+| Final image size | `906MB` | T2.3 |
+| Full Docker build context transferred | `191.27MB` | T2.3 |
+| Base/rootfs layers visible in history | `165MB + 300MB` | T2.3 |
+| Executable JAR layer | `173MB` | T2.3 |
+| `yum install/update` layer | `249MB` | T2.3 |
+| Docker ignore status | No Docker ignore file found in SNS local checkout | T2.3 |
 
-All targets expected to be met (targets were ≥30% build time, ≥30% image size, ≥50% context). Actual validation pending local build execution.
-
----
-
-## Changes Proposed (RepoSync MR)
-
-1. **`.dockerignore`** — exclude src/, unused target/ files, IDE files
-2. **Base image** — `amazoncorretto:17` → `eclipse-temurin:17-jre-alpine`
-3. **Layer order** — system deps first (cached), application JARs last (rebuild on change)
-4. **Split RUN** — separate packages / envconsul / user creation
-5. **HEALTHCHECK** — added for orchestrator readiness
-6. **Debug/JMX** — moved to JAVA_OPTS env var (not hardcoded)
+The `Command Adaptor` CI step is a cost-concentration signal, not an isolated Docker build timer. Step durations may overlap and must not be summed or converted directly into exact CI elapsed-time savings.
 
 ---
 
-## Security Improvements
+## Story 3 Direction
 
-- Removed full JDK from runtime (compiler not needed → reduced attack surface)
-- Non-root user retained ✅
-- Debug port no longer open by default
-- JMX authentication no longer explicitly disabled in base image
-- HEALTHCHECK enables faster failure detection
+Recommended first Story 3 path:
 
----
-
-## Build/Publish Integrity (P0 — from architecture review)
-
-> This is a distinct architectural finding surfaced by the Story 1 synthesis. It is not a Dockerfile-content issue, but it directly affects the value of every build optimisation here.
-
-**Problem:** The image that is integration-tested and Trivy-scanned in the CI pipeline (`docker-compose-command-adaptor:latest`, built via compose `--build`) is **not** the image that is published — the ECR/Artifactory pipeline performs a *separate* `docker build` and pushes that. (Cross-ref: T1.1 §6, T1.3 §5.1 — "double Maven build".)
-
-**Why it matters:** This breaks build-once-promote. CI's green test result and the Trivy scan apply to an artifact that is then discarded and rebuilt. With unpinned base/tooling images, the published image can differ from the tested one — a release-integrity and supply-chain concern, independent of the size/layering gains in this story.
-
-**Recommended solution:** Build the image **once**, tag by commit SHA, run integration tests + Trivy against that exact image, then **promote the same digest** in the publish stage (retag/push — no rebuild).
-
-| Trade-off | Detail |
-|-----------|--------|
-| Pro | What is tested/scanned is what ships; removes one full build per push |
-| Con | Requires sharing the built image across pipeline stages (interim SHA tag + cleanup policy); RepoSync change to CI + publish stages |
-
-**Ownership:** RepoSync MR (CI + Artifactory pipeline change). Routed via Story 6 / T6.2.
+1. Confirm `.dockerignore` ownership.
+2. Apply or propose a `.dockerignore` that keeps only the current Dockerfile's required runtime artefacts.
+3. Prototype the lowest-risk Dockerfile layer-order change locally: move expensive package/envconsul/user setup before frequently changing application artefact copies while preserving the current packaging lifecycle.
+4. Measure before/after using the T2.3 baseline.
+5. Route durable Dockerfile changes through RepoSync, with ACP/image-source confirmation for any runtime base-image change.
 
 ---
 
-## Open Questions
+## Not Claimed
 
-| # | Question | Impact |
-|---|----------|--------|
-| 1 | Is `.dockerignore` managed by RepoSync? | Determines whether local add is safe or needs MR |
-| 2 | What is the actual application port for HEALTHCHECK? | docker-compose.yml shows 7112 but `application.yml` not reviewed |
-| 3 | Does envconsul work on Alpine (musl libc)? | May need static binary or glibc compatibility layer |
-| 4 | Are there native library dependencies that require glibc? | Would block Alpine switch; Jammy (Ubuntu) fallback available |
+- No Story 3 Jira task is marked done here.
+- No production Dockerfile, `.dockerignore`, `.drone.star` or Docker Compose change is claimed as applied.
+- No image-size or build-time reduction is claimed until after-values are measured.
+- No direct public image switch is recommended without approved image-source / Artifactory validation.
+- DVLA and RoRo TSV support structural portability only; they do not provide measured SNS after-values.
+
+---
+
+## Open Items
+
+| # | Item | Why it matters |
+|---|------|----------------|
+| 1 | Confirm whether `.dockerignore` is repo-local or RepoSync-managed | Determines whether it can be added directly or must go through the template route |
+| 2 | Confirm production Dockerfile change route with RepoSync | Current Dockerfile appears centrally controlled |
+| 3 | Confirm approved smaller Java runtime image path | Required before recommending any base-image replacement |
+| 4 | Build and measure a local candidate image | Required before keep/adjust recommendation |
+| 5 | Run Trivy/smoke checks on candidate image if built | Prevents trading build improvement for runtime/security regression |

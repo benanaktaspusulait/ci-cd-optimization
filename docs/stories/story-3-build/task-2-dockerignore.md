@@ -20,27 +20,44 @@
 A missing or weak `.dockerignore` sends unnecessary files into the build context, slowing builds and invalidating cache when irrelevant files change. This is one of the cheapest, lowest-risk wins available.
 
 ## Goal
-Ensure the pilot repository has an appropriate `.dockerignore` that keeps the build context lean.
+Ensure the pilot repository has an appropriate `.dockerignore` proposal or applied change that keeps the build context lean without breaking the current packaging-only Dockerfile.
 
 ## Scope
 - Check whether a `.dockerignore` exists and what it covers.
-- Exclude build output, IDE/editor files, VCS metadata, logs and local artefacts.
+- Confirm whether `.dockerignore` is repo-local or RepoSync-managed.
+- Exclude IDE/editor files, VCS metadata, logs, local artefacts and unnecessary generated files.
+- Retain the two runtime artefacts required by the current Dockerfile:
+  - `target/cmd-adaptor-sns-exec.jar`
+  - `target/dependencies/opentelemetry-javaagent.jar`
 
 Suggested baseline:
 ```gitignore
-.git
-.gitlab
-target
-build
-.idea
-.vscode
+# Source is not needed by the current Dockerfile; it packages pre-built artefacts.
+src/
+
+# Keep only the runtime artefacts copied by the Dockerfile.
+target/**
+!target/cmd-adaptor-sns-exec.jar
+!target/dependencies/
+!target/dependencies/opentelemetry-javaagent.jar
+
+# Local tooling and noise.
+.git/
+.gitignore
+.idea/
+.vscode/
 *.iml
 *.log
 .DS_Store
-.tmp
+tmp/
+.tmp/
 ```
 
+Do not use a blanket `target` exclusion unless the required JAR and OpenTelemetry agent are explicitly re-included and a Docker build verifies that the context still contains them.
+
 ## Acceptance criteria
-- [ ] `.dockerignore` exists and is appropriate for the repository
+- [ ] Current Docker ignore status is documented from the SNS checkout
+- [ ] `.dockerignore` ownership route is confirmed or explicitly left pending
+- [ ] Candidate/applied `.dockerignore` retains the runtime artefacts required by the Dockerfile
 - [ ] Unnecessary files are excluded from the build context
-- [ ] Build-context reduction is noted where measurable
+- [ ] Build-context before/after is measured if the file is applied; otherwise the reduction remains a candidate claim only

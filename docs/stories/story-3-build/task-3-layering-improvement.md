@@ -17,40 +17,44 @@
 | **Status** | Not started |
 
 ## Why
-The biggest build-time wins usually come from ordering layers so dependencies are cached separately from source code, and from using build cache mounts. Applying one focused change keeps the impact measurable and easy to review.
+The biggest practical Story 3 wins are expected to come from reducing the packaging image size, improving Docker layer reuse and reducing build context. The current Dockerfile packages pre-built Maven artefacts; it does not build the application inside Docker. Applying one focused change keeps the impact measurable and easy to review.
 
 ## Goal
-Apply a single, well-understood layering or cache improvement to the pilot Dockerfile.
+Prototype a single, well-understood Dockerfile/build-context improvement locally, or prepare it as a RepoSync-ready change if direct production editing is not owned by the pilot repository.
 
 ## Scope
 Consider (pick the highest-value one for this repo):
-- copy dependency metadata before source code
-- separate dependency resolution from application build
-- use multi-stage builds
-- use cache mounts for the dependency cache
+- move package/envconsul/user setup before application `COPY` instructions so code changes do not invalidate rarely changing setup layers
+- split the current monolithic `RUN` into logical layers where that improves cache granularity and readability
+- review the `amazoncorretto:17` full-JDK runtime base against an approved smaller runtime base available through the organisation's image-source / Artifactory path
+- add or validate `.dockerignore` alongside the Dockerfile change so unnecessary generated files are not sent to the daemon
+- use BuildKit cache mounts only for local prototypes or after Drone/DIND smoke validation, because CI support is currently unproven
 
-Reference pattern:
+Do not change the lifecycle to build Maven inside the Dockerfile unless that larger design is explicitly selected. The existing pipeline builds Maven artefacts first, then the Dockerfile copies `target/cmd-adaptor-sns-exec.jar` and `target/dependencies/opentelemetry-javaagent.jar`.
+
+Reference pattern for the current packaging-only Dockerfile:
 ```dockerfile
-# syntax=docker/dockerfile:1
-FROM company/java17-maven-base:1.0 AS deps
-WORKDIR /app
-COPY pom.xml .mvn mvnw ./
-RUN --mount=type=cache,target=/root/.m2 ./mvnw -B dependency:go-offline
+FROM <approved-java17-runtime-base>
 
-FROM deps AS build
-COPY src ./src
-RUN --mount=type=cache,target=/root/.m2 ./mvnw -B package -DskipTests
+WORKDIR /tmp
 
-FROM company/java17-runtime-base:1.0
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+# Rarely changing setup first.
+RUN <install required packages, envconsul and fdpuser using approved sources>
+
+# Frequently changing artefacts last.
+COPY ./target/dependencies/opentelemetry-javaagent.jar /local/opentelemetry-javaagent.jar
+COPY ./target/cmd-adaptor-sns-exec.jar /local/cmd-adaptor-sns-exec.jar
+
+WORKDIR /home/fdpuser
+USER fdpuser
+CMD ["java", "-javaagent:/local/opentelemetry-javaagent.jar", "-jar", "/local/cmd-adaptor-sns-exec.jar"]
 ```
 
-> Apply **one** focused change at a time — not a full rewrite — so the effect can be attributed clearly.
+> Apply **one** focused change at a time — not a full rewrite — so the effect can be attributed clearly. Production Dockerfile changes should be routed through RepoSync unless ownership is confirmed otherwise.
 
 ## Acceptance criteria
-- [ ] One layering/cache change is applied
-- [ ] Expected benefit is described
+- [ ] One focused Dockerfile/build-context change is prototyped locally or prepared as a RepoSync-ready change
+- [ ] Expected benefit is described qualitatively and tied to the T2.3 measured baseline
 - [ ] Compatibility risks or concerns are noted
-- [ ] Built image passes Trivy scan without new Critical vulnerabilities (non-blocking report)
+- [ ] Approved image-source / Artifactory and runtime compatibility constraints are noted for any base-image change
+- [ ] Built image passes local smoke checks; Trivy scan result is captured if a candidate image is built
