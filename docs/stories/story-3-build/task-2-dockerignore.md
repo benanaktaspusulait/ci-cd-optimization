@@ -1,4 +1,4 @@
-# T3.2 — Add or validate .dockerignore
+# T3.2 — Add or validate .dockerignore while preserving runtime artefacts
 
 **Story:** [Story 3 — Docker Build Optimisation](./README.md)
 
@@ -20,12 +20,12 @@
 A missing or weak `.dockerignore` sends unnecessary files into the build context, slowing builds and invalidating cache when irrelevant files change. This is one of the cheapest, lowest-risk wins available.
 
 ## Goal
-Ensure the pilot repository has an appropriate `.dockerignore` proposal or applied change that keeps the build context lean without breaking the current packaging-only Dockerfile.
+Add or validate `.dockerignore` to reduce build context without breaking the required Docker `COPY` inputs for the current packaging-only Dockerfile.
 
 ## Scope
 - Check whether a `.dockerignore` exists and what it covers.
 - Confirm whether `.dockerignore` is repo-local or RepoSync-managed.
-- Exclude IDE/editor files, VCS metadata, logs, local artefacts and unnecessary generated files.
+- Exclude IDE/editor files, VCS metadata, logs, local artefacts and unnecessary generated files while explicitly retaining the runtime artefacts copied by the Dockerfile.
 - Retain the two runtime artefacts required by the current Dockerfile:
   - `target/cmd-adaptor-sns-exec.jar`
   - `target/dependencies/opentelemetry-javaagent.jar`
@@ -56,9 +56,13 @@ tmp/
 
 Do not use a blanket `target` exclusion unless the required JAR and OpenTelemetry agent are explicitly re-included and a Docker build verifies that the context still contains them.
 
+Excluding `src/` is valid only while the Dockerfile continues to package pre-built artefacts and does not copy source files.
+
 ## Acceptance criteria
-- [ ] Current Docker ignore status is documented from the SNS checkout
-- [ ] `.dockerignore` ownership route is confirmed or explicitly left pending
-- [ ] Candidate/applied `.dockerignore` retains the runtime artefacts required by the Dockerfile
-- [ ] Unnecessary files are excluded from the build context
-- [ ] Build-context before/after is measured if the file is applied; otherwise the reduction remains a candidate claim only
+- [ ] `.dockerignore` exists or the ownership route preventing direct addition is documented.
+- [ ] Required artefacts are preserved:
+  - `target/cmd-adaptor-sns-exec.jar`
+  - `target/dependencies/opentelemetry-javaagent.jar`
+- [ ] Docker build succeeds after the `.dockerignore` change or validation.
+- [ ] Unnecessary files are excluded from the build context.
+- [ ] Build context before/after is recorded where measurable.

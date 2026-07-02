@@ -1,4 +1,4 @@
-# T3.1 — Review current Dockerfile & build context
+# T3.1 — Confirm Dockerfile ownership route and select optimisation candidate
 
 **Story:** [Story 3 — Docker Build Optimisation](./README.md)
 
@@ -10,28 +10,24 @@
 | **Story** | Story 3 — Docker Build Optimisation |
 | **Estimate** | 2 |
 | **Priority** | Must |
-| **Labels** | `docker`, `dockerfile`, `build-context` |
+| **Labels** | `docker`, `dockerfile`, `build-context`, `ownership` |
 | **Sprint** | Week 2 |
-| **Depends on** | T2.1, T2.3, T1.5 |
+| **Depends on** | T2.3 |
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
 ## Why
-Optimisation should be evidence-led, not guesswork. Reviewing the current Dockerfile reveals where the cache breaks and which layers are rebuilt unnecessarily, so effort goes where it actually helps.
+Optimisation should start from the measured T2.3 Docker/image baseline rather than repeating broad discovery. This task turns the T2.3 findings into an ownership route and one safe implementation candidate for Story 3.
 
 ## Goal
-Understand and document the current Dockerfile structure and build context against the measured Story 2 baseline, then identify concrete optimisation opportunities without claiming savings before measurement.
+Use the T2.3 Docker/image baseline to confirm the RepoSync/platform ownership route and select one safe Docker/build-context optimisation candidate.
 
 ## Scope
-Review:
-- current base image
-- layer ordering
-- dependency installation steps
-- COPY instructions
-- build-context size
-- unnecessary files pulled into the Docker context
-- Dockerfile and `.dockerignore` ownership route
-- approved image-source / Artifactory constraints for any runtime base-image change
+Review the T2.3 evidence and decide:
+- which Dockerfile or build-context candidate is safest to attempt first
+- whether Dockerfile changes must go through RepoSync/platform ownership
+- whether `.dockerignore` is repo-local or centrally managed
+- whether any base-image option has an approved image-source / Artifactory / security route
 
 Use the T2.3 measured SNS baseline as the starting point:
 
@@ -44,13 +40,20 @@ Use the T2.3 measured SNS baseline as the starting point:
 | Base/rootfs layers visible in Docker history | `165MB + 300MB` |
 | Executable JAR layer | `173MB` |
 | `yum install/update` layer | `249MB` |
-| Docker ignore status | Not found in SNS local checkout |
+| Docker ignore status | Not found in SNS local checkout during T2.3 local file search |
 
 DVLA and RoRo TSV may be used as structural portability evidence only unless direct measurements are captured for them.
 
+Candidate options include:
+- `.dockerignore` / build-context reduction while preserving runtime artefacts
+- `yum install/update` layer repeatability review
+- layer-order improvement for the current packaging-only Dockerfile
+- runtime base-image review only after approved image-source / Artifactory validation
+
 ## Acceptance criteria
-- [ ] Current Dockerfile structure is documented
-- [ ] Measured image-size, layer and build-context baseline values from T2.3 are referenced
-- [ ] Cache-invalidation risks and repeatability concerns are identified
-- [ ] RepoSync, `.dockerignore` ownership and approved image-source constraints are captured
-- [ ] A prioritised list of optimisation opportunities is produced without unmeasured saving claims
+- [ ] T2.3 baseline is reviewed as the before-state.
+- [ ] Dockerfile and `.dockerignore` ownership route is confirmed or documented.
+- [ ] One safe optimisation candidate is selected.
+- [ ] RepoSync/platform route is captured where required.
+- [ ] No production/base-image change is recommended without image-source, Artifactory and security validation.
+- [ ] No optimisation saving is claimed without before/after measurement.
