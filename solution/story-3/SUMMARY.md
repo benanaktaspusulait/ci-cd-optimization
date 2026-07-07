@@ -13,7 +13,7 @@
 |------|------|---------------|
 | T3.1 - Review Dockerfile & build context | [T3.1-review-dockerfile.md](./T3.1-review-dockerfile.md) | Completed analysis; first candidate confirmed as targeted `.dockerignore` / build-context reduction |
 | T3.2 - Add or validate .dockerignore | [T3.2-dockerignore.md](./T3.2-dockerignore.md) | Completed locally; context transfer measured at `189B`; durable ownership route still pending |
-| T3.3 - Layering / cache improvement | [T3.3-layering-improvement.md](./T3.3-layering-improvement.md) | Prototype plan only; production change pending RepoSync route |
+| T3.3 - Layering / cache improvement | [T3.3-layering-improvement.md](./T3.3-layering-improvement.md) | Local layer-order prototype prepared; production change pending measurement and RepoSync route |
 | T3.4 - Measure impact | [T3.4-measure-impact.md](./T3.4-measure-impact.md) | Measurement plan updated; after-values pending |
 
 ---
@@ -30,6 +30,7 @@ Story 3 should use measured Story 2 values, not the older static estimates.
 | Local Docker warm cached build | `real 0m0.851s` | T2.3 |
 | Final image size | `906MB` | T2.3 |
 | Full Docker build context transferred | `191.27MB` | T2.3 |
+| T3.2 validated build context transfer | `189B` | T3.2 |
 | Base/rootfs layers visible in history | `165MB + 300MB` | T2.3 |
 | Executable JAR layer | `173MB` | T2.3 |
 | `yum install/update` layer | `249MB` | T2.3 |
@@ -46,7 +47,7 @@ Recommended first Story 3 path:
 1. Keep the targeted `.dockerignore` candidate because local validation reduced build context while preserving required runtime artefacts.
 2. Confirm `.dockerignore` durable ownership before claiming CI benefit or wider adoption.
 3. Prototype the lowest-risk Dockerfile layer-order change locally: move expensive package/envconsul/user setup before frequently changing application artefact copies while preserving the current packaging lifecycle.
-4. Measure before/after using the T2.3 baseline.
+4. Measure current Dockerfile vs layer-order prototype warm-cache rebuild behaviour after an application JAR change, using the T3.2 `.dockerignore` state as the current build-context baseline.
 5. Route durable Dockerfile changes through RepoSync, with ACP/image-source confirmation for any runtime base-image change.
 
 ---
