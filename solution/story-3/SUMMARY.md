@@ -13,7 +13,7 @@
 |------|------|---------------|
 | T3.1 - Review Dockerfile & build context | [T3.1-review-dockerfile.md](./T3.1-review-dockerfile.md) | Completed analysis; first candidate confirmed as targeted `.dockerignore` / build-context reduction |
 | T3.2 - Add or validate .dockerignore | [T3.2-dockerignore.md](./T3.2-dockerignore.md) | Completed locally; context transfer measured at `189B`; durable ownership route still pending |
-| T3.3 - Layering / cache improvement | [T3.3-layering-improvement.md](./T3.3-layering-improvement.md) | Measured and confirmed on customer machine (2 independent runs): warm-cache rebuild after JAR change is ~15-16x faster with layer-order prototype (77.90s→5.08s, 75.82s→4.62s); no cold-build/image-size change; carried forward to T3.4, production change still pending RepoSync ownership route |
+| T3.3 - Layering / cache improvement | [T3.3-layering-improvement.md](./T3.3-layering-improvement.md) | Measured and confirmed on the Home Office development machine (2 independent runs): same-daemon warm-cache rebuild after real JAR content change is ~15-16x faster with layer-order prototype (77.90s→5.08s, 75.82s→4.62s); no cold-build/image-size change; carried forward to T3.4, production change still pending RepoSync ownership route |
 | T3.4 - Measure impact | [T3.4-measure-impact.md](./T3.4-measure-impact.md) | Measurement plan updated; after-values pending |
 
 ---
