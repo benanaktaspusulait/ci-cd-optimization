@@ -14,7 +14,8 @@
 | **Sprint** | Week 3 |
 | **Depends on** | T3.2 and T3.3 |
 | **Owner** | _TBD_ |
-| **Status** | Ready to execute — T3.2 and T3.3 measurements available for consolidation |
+| **Status** | Completed - T3.2 and T3.3 measurements consolidated into the impact summary |
+| **Execution result** | [T3.4 impact summary](../../../solution/story-3/T3.4-impact-summary.md) |
 
 ## Why
 A change is only worth keeping if it measurably helps. Comparing against the Story 2 baseline turns the optimisation into evidence stakeholders can trust.
@@ -79,14 +80,14 @@ The T2.2 `Command Adaptor` Drone step is useful as CI cost-concentration evidenc
 - T3.3 recommendation: carry forward the layer-order prototype to the ownership discussion; do not recommend production adoption without RepoSync/platform ownership confirmation.
 
 ## Acceptance criteria
-- [ ] Before/after local Docker build metrics are captured.
-- [ ] Before/after build-context and image-size metrics are captured.
-- [ ] T3.2 `.dockerignore` impact is summarised separately from T3.3 layer-order impact.
-- [ ] No-change warm-cache rebuild and real JAR-change warm-cache rebuild are not mixed.
-- [ ] Same-daemon local warm-cache benefit is scoped separately from CI benefit.
-- [ ] Production adoption is not recommended without RepoSync/platform ownership confirmation.
-- [ ] Production adoption recommendation distinguishes between "keep locally validated change" and "carry forward prototype for RepoSync/platform discussion".
-- [ ] Improvement or regression is documented.
-- [ ] CI impact is measured only if available.
-- [ ] No CI saving is claimed without CI measurement.
-- [ ] A keep/adjust recommendation is made.
+- [x] Before/after local Docker build metrics are captured.
+- [x] Before/after build-context and image-size metrics are captured.
+- [x] T3.2 `.dockerignore` impact is summarised separately from T3.3 layer-order impact.
+- [x] No-change warm-cache rebuild and real JAR-change warm-cache rebuild are not mixed.
+- [x] Same-daemon local warm-cache benefit is scoped separately from CI benefit.
+- [x] Production adoption is not recommended without RepoSync/platform ownership confirmation.
+- [x] Production adoption recommendation distinguishes between "keep locally validated change" and "carry forward prototype for RepoSync/platform discussion".
+- [x] Improvement or regression is documented.
+- [x] CI impact is measured only if available; otherwise it is explicitly recorded as not measured.
+- [x] No CI saving is claimed without CI measurement.
+- [x] A keep/adjust recommendation is made.

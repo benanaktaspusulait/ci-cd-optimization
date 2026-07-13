@@ -30,4 +30,4 @@ T3.2 may satisfy the first implementation candidate where `.dockerignore` / buil
 | T3.1 | [Confirm Dockerfile ownership route and select optimisation candidate](./task-1-review-dockerfile.md) | 2 | Must | Not started |
 | T3.2 | [Add or validate .dockerignore while preserving runtime artefacts](./task-2-dockerignore.md) | 1 | Must | Not started |
 | T3.3 | [Apply one safe Docker build optimisation](./task-3-layering-improvement.md) | 2 | Must | Not started |
-| T3.4 | [Measure local Docker build and image impact](./task-4-measure-impact.md) | 2 | Should | Not started |
+| T3.4 | [Measure local Docker build and image impact](./task-4-measure-impact.md) | 2 | Should | Completed - impact summary published |

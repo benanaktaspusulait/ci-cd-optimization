@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | Story 3 preparation with T3.2 local `.dockerignore` validation completed; remaining Dockerfile/base-image work pending ownership and approval routes |
-| **Date updated** | 2026-07-07 |
+| **Status** | Story 3 measurement complete - one keep-now change and one carry-forward prototype recorded |
+| **Date updated** | 2026-07-13 |
 
 ---
 
@@ -13,8 +13,8 @@
 |------|------|---------------|
 | T3.1 - Review Dockerfile & build context | [T3.1-review-dockerfile.md](./T3.1-review-dockerfile.md) | Completed analysis; first candidate confirmed as targeted `.dockerignore` / build-context reduction |
 | T3.2 - Add or validate .dockerignore | [T3.2-dockerignore.md](./T3.2-dockerignore.md) | Completed locally; context transfer measured at `189B`; durable ownership route still pending |
-| T3.3 - Layering / cache improvement | [T3.3-layering-improvement.md](./T3.3-layering-improvement.md) | Measured and confirmed on the Home Office development machine (2 independent runs): same-daemon warm-cache rebuild after real JAR content change is ~15-16x faster with layer-order prototype (77.90s→5.08s, 75.82s→4.62s); no cold-build/image-size change; carried forward to T3.4, production change still pending RepoSync ownership route |
-| T3.4 - Measure impact | [T3.4-measure-impact.md](./T3.4-measure-impact.md) | Measurement plan updated; after-values pending |
+| T3.3 - Layering / cache improvement | [T3.3-layering-improvement.md](./T3.3-layering-improvement.md) | Measured and confirmed on the Home Office development machine (2 independent runs): same-daemon warm-cache rebuild after real JAR content change is ~15-16x faster with layer-order prototype (77.90s→5.08s, 75.82s→4.62s); no cold-build/image-size change; classified by T3.4 as carry-forward, with production change still pending RepoSync ownership route |
+| T3.4 - Measure impact | [T3.4-impact-summary.md](./T3.4-impact-summary.md) | Completed; T3.2/T3.3 measurements consolidated with claim boundaries and keep/carry-forward decisions |
 
 ---
 
@@ -42,13 +42,13 @@ The `Command Adaptor` CI step is a cost-concentration signal, not an isolated Do
 
 ## Story 3 Direction
 
-Recommended first Story 3 path:
+Recorded Story 3 decision:
 
 1. Keep the targeted `.dockerignore` candidate because local validation reduced build context while preserving required runtime artefacts.
 2. Confirm `.dockerignore` durable ownership before claiming CI benefit or wider adoption.
-3. Prototype the lowest-risk Dockerfile layer-order change locally: move expensive package/envconsul/user setup before frequently changing application artefact copies while preserving the current packaging lifecycle.
-4. Measure current Dockerfile vs layer-order prototype warm-cache rebuild behaviour after an application JAR change, using the T3.2 `.dockerignore` state as the current build-context baseline.
-5. Route durable Dockerfile changes through RepoSync, with ACP/image-source confirmation for any runtime base-image change.
+3. Carry forward the measured layer-order prototype for RepoSync/platform ownership discussion; do not apply it to the production Dockerfile yet.
+4. Measure CI applicability only if the ownership route is confirmed and a representative Drone run is available.
+5. Route any durable Dockerfile change through RepoSync, with ACP/image-source confirmation for any future runtime base-image change.
 
 ---
 
@@ -69,5 +69,5 @@ Recommended first Story 3 path:
 | 1 | Confirm whether `.dockerignore` is repo-local or RepoSync-managed | Determines whether durable adoption can be a repo MR or must go through the template route |
 | 2 | Confirm production Dockerfile change route with RepoSync | Current Dockerfile appears centrally controlled |
 | 3 | Confirm approved smaller Java runtime image path | Required before recommending any base-image replacement |
-| 4 | Build and measure any next Dockerfile-layer or base-image candidate | Required before keep/adjust recommendation beyond T3.2 |
-| 5 | Run Trivy/smoke checks on candidate image if built | Prevents trading build improvement for runtime/security regression |
+| 4 | Measure layer-order behaviour in representative CI only if selected by RepoSync/platform | Required before claiming CI benefit or production applicability |
+| 5 | Complete approved security scanning if the prototype advances | Local smoke checks passed; Trivy was blocked by the local Docker-socket environment |
