@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | Story 3 measurement complete - one keep-now change and one carry-forward prototype recorded |
-| **Date updated** | 2026-07-13 |
+| **Status** | Story 3 complete - one keep-now change and one carry-forward prototype recorded |
+| **Date updated** | 2026-07-14 |
 
 ---
 
@@ -15,6 +15,21 @@
 | T3.2 - Add or validate .dockerignore | [T3.2-dockerignore.md](./T3.2-dockerignore.md) | Completed locally; context transfer measured at `189B`; durable ownership route still pending |
 | T3.3 - Layering / cache improvement | [T3.3-layering-improvement.md](./T3.3-layering-improvement.md) | Measured and confirmed on the Home Office development machine (2 independent runs): same-daemon warm-cache rebuild after real JAR content change is ~15-16x faster with layer-order prototype (77.90s→5.08s, 75.82s→4.62s); no cold-build/image-size change; classified by T3.4 as carry-forward, with production change still pending RepoSync ownership route |
 | T3.4 - Measure impact | [T3.4-impact-summary.md](./T3.4-impact-summary.md) | Completed; T3.2/T3.3 measurements consolidated with claim boundaries and keep/carry-forward decisions |
+
+---
+
+## Consolidated Outcome
+
+Story 3 produced one validated keep-now change and one measured carry-forward prototype:
+
+| Area | Before | After / Candidate | Story 3 decision | Claim boundary |
+|---|---:|---:|---|---|
+| Targeted `.dockerignore` / build context | `191.27MB` | `189B` | **Keep now** | Build-context reduction claimed |
+| Final image size | `906MB` | `906MB`; `875MB` vs `875MB` in T3.3 same-session comparison | No image-size action | No image-size saving claimed |
+| Cold/no-cache build | `real 1m17.855s` | `real 78.14s` / broadly similar | No cold-build action | No cold-build saving claimed |
+| No-change warm build | `real 0m0.851s` | Separate from T3.3 JAR-change scenario | Context only | Do not compare directly |
+| JAR-change warm rebuild | `75.82-77.90s` current Dockerfile | `4.62-5.08s` layer-order prototype | **Carry forward** | Claimed only as local same-daemon warm-cache benefit |
+| CI impact | Not measured | Not measured | No CI recommendation | No CI saving claimed |
 
 ---
 
@@ -42,7 +57,7 @@ The `Command Adaptor` CI step is a cost-concentration signal, not an isolated Do
 
 ## Story 3 Direction
 
-Recorded Story 3 decision:
+Recorded Story 3 decision from T3.4:
 
 1. Keep the targeted `.dockerignore` candidate because local validation reduced build context while preserving required runtime artefacts.
 2. Confirm `.dockerignore` durable ownership before claiming CI benefit or wider adoption.
@@ -55,8 +70,10 @@ Recorded Story 3 decision:
 ## Not Claimed
 
 - No production Dockerfile, `.drone.star` or Docker Compose change is claimed as applied.
-- No image-size reduction, CI saving or cold-build-time improvement is claimed from T3.2.
+- No image-size reduction, CI saving or cold-build-time improvement is claimed from Story 3.
+- No CI benefit is claimed from the T3.3 layer-order prototype; the measured benefit is local same-daemon warm-cache rebuild after a real JAR content change.
 - No broad adaptor-family `.dockerignore` rollout is claimed.
+- No broad adaptor-family layer-order rollout is claimed.
 - No direct public image switch is recommended without approved image-source / Artifactory validation.
 - DVLA and RoRo TSV support structural portability only; they do not provide measured SNS after-values.
 
