@@ -24,6 +24,18 @@ T4.1 should reuse the published T2.4/T2.5 decision and perform only the reposito
 ## Goal
 Confirm Redis as the first low-complexity Testcontainers pilot candidate, using the T2.4/T2.5 evidence, and define a safe Phase 1 scope for implementation.
 
+## Expected output
+
+T4.1 should produce a short implementation-readiness record containing:
+
+- confirmed target integration-test module and test framework
+- selected Testcontainers dependency/version-management route
+- selected Redis image, tag and image-source route
+- selected Redis connectivity approach
+- selected opt-in Maven profile, include pattern or isolated test-class approach
+- confirmed non-goals and RepoSync constraints
+- a T4.2 ready / blocked decision with any unresolved prerequisites listed
+
 ## Scope
 Confirm and document that:
 
@@ -39,12 +51,13 @@ Before T4.2, check and record these implementation prerequisites:
 - the Testcontainers dependency and version-management approach
 - an existing Redis client dependency or a simple alternative connectivity approach
 - an opt-in Maven profile, test include pattern or clearly isolated test-class approach
-- the compose Redis image/tag to align with, if available
+- the exact Redis image/tag and image-source route to use, aligned with the compose baseline where available; do not assume direct public-registry access without local or approved registry validation
 - confirmation that no local-only edit to `pre-integration-test/app.py` is required or permitted
 
 ## Acceptance criteria
 - [ ] Redis is confirmed as the first candidate and the rationale is documented
 - [ ] The Kafka and Schema Registry follow-up rationale is documented
 - [ ] Phase 1 scope and non-goals are documented
-- [ ] Repository-level implementation prerequisites are checked and recorded, including the integration-test module, test framework, dependency-management route, Redis connectivity approach and intended opt-in execution mechanism
+- [ ] Repository-level implementation prerequisites are checked and recorded, including the confirmed target module, test framework, dependency-management route, Redis image/source, Redis connectivity approach and intended opt-in execution mechanism
+- [ ] A T4.2 implementation-ready or blocked decision is recorded; any unresolved prerequisite is identified explicitly as a blocker or follow-up
 - [ ] No CI saving or flaky-test improvement is claimed
