@@ -52,7 +52,9 @@ Unless separately implemented and measured, state explicitly:
 ## Acceptance criteria
 - [ ] Findings and intentionally untested areas are documented
 - [ ] Local, CI and RepoSync constraints are documented
+- [ ] Every measured value is linked to its measurement method or source evidence
 - [ ] A continue/stop recommendation is documented
+- [ ] The final recommendation distinguishes measured evidence, interpretation and follow-up assumptions
 - [ ] Required non-claims are documented
 - [ ] Next-step recommendations are separated into:
   - [ ] Option A complete / incomplete

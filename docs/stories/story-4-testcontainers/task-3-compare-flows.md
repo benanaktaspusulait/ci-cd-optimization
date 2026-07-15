@@ -36,6 +36,7 @@ Compare the two Redis-related paths across:
 - developer feedback loop
 - isolation and determinism
 - dependency wiring complexity
+- repeated-run behaviour, where practical, to distinguish one-off startup cost from stable local behaviour
 - CI feasibility, recorded as not measured when no CI run was attempted
 - benefits, drawbacks and limitations
 - whether the evidence is sufficient to attempt Redis Option B or prioritise a Kafka and Schema Registry follow-up
@@ -52,4 +53,5 @@ The existing `redis_kafka` pre-integration readiness stage combines Redis readin
 - [ ] Benefits, drawbacks and limitations are documented
 - [ ] CI suitability is not claimed unless it was attempted and measured
 - [ ] Existing docker-compose Redis startup time is reported only if it can be isolated with a documented measurement method; otherwise it is explicitly recorded as not separately measured
+- [ ] The comparison records the exact commands, environment and measurement method used for each measured value
 - [ ] The recommendation states whether to continue to Redis Option B and/or a Kafka and Schema Registry follow-up
