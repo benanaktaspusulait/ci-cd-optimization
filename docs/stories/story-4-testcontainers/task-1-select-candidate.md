@@ -14,7 +14,7 @@
 | **Sprint** | Week 2 |
 | **Depends on** | T2.4, T2.5 |
 | **Owner** | _TBD_ |
-| **Status** | Not started |
+| **Status** | Completed |
 
 ## Why
 T2.4/T2.5 already identified Redis as the lower-complexity first Testcontainers candidate. This task confirms that decision and fixes the implementation boundary before T4.2; it does not restart open-ended candidate selection.
@@ -55,9 +55,9 @@ Before T4.2, check and record these implementation prerequisites:
 - confirmation that no local-only edit to `pre-integration-test/app.py` is required or permitted
 
 ## Acceptance criteria
-- [ ] Redis is confirmed as the first candidate and the rationale is documented
-- [ ] The Kafka and Schema Registry follow-up rationale is documented
-- [ ] Phase 1 scope and non-goals are documented
-- [ ] Repository-level implementation prerequisites are checked and recorded, including the confirmed target module, test framework, dependency-management route, Redis image/source, Redis connectivity approach and intended opt-in execution mechanism
-- [ ] A T4.2 implementation-ready or blocked decision is recorded; any unresolved prerequisite is identified explicitly as a blocker or follow-up
-- [ ] No CI saving or flaky-test improvement is claimed
+- [x] Redis is confirmed as the first candidate and the rationale is documented
+- [x] The Kafka and Schema Registry follow-up rationale is documented
+- [x] Phase 1 scope and non-goals are documented
+- [x] Repository-level implementation prerequisites are checked and recorded, including the confirmed target module, test framework, dependency-management route, Redis image/source, Redis connectivity approach and intended opt-in execution mechanism
+- [x] A T4.2 implementation-ready or blocked decision is recorded; any unresolved prerequisite is identified explicitly as a blocker or follow-up
+- [x] No CI saving or flaky-test improvement is claimed

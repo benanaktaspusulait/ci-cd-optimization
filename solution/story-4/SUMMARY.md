@@ -1,48 +1,61 @@
-# Story 4 — Testcontainers Pilot: Summary
+# Story 4 - Testcontainers Pilot: Summary
 
 | Field | Value |
 |-------|-------|
-| **Status** | Done |
-| **Date** | 2026-06-11 |
+| **Status** | In progress - T4.1 completed; T4.2 ready to start |
+| **Date updated** | 2026-07-16 |
 
 ---
 
 ## Deliverables
 
-| Task | File | Status |
-|------|------|:------:|
-| T4.1 — Select candidate | [T4.1-select-candidate.md](./T4.1-select-candidate.md) | ✅ |
-| T4.2 — Implement setup | [T4.2-implement-setup.md](./T4.2-implement-setup.md) | ✅ |
-| T4.3 — Compare flows | [T4.3-compare-flows.md](./T4.3-compare-flows.md) | ✅ |
-| T4.4 — Document findings | [T4.4-document-findings.md](./T4.4-document-findings.md) | ✅ |
+| Task | File | Current state |
+|------|------|---------------|
+| T4.1 - Confirm Redis pilot candidate and scope | [T4.1-select-candidate.md](./T4.1-select-candidate.md) | Completed; Redis confirmed as the Phase 1 candidate and T4.2 implementation route recorded |
+| T4.2 - Implement Redis Testcontainers smoke/wiring pilot | [T4.2-implement-setup.md](./T4.2-implement-setup.md) | Ready to refresh/execute using the T4.1 readiness route |
+| T4.3 - Compare Redis pilot with docker-compose support flow | [T4.3-compare-flows.md](./T4.3-compare-flows.md) | Pending T4.2 implementation and local evidence |
+| T4.4 - Document Redis pilot findings, limits and recommendation | [T4.4-document-findings.md](./T4.4-document-findings.md) | Pending T4.2/T4.3 evidence |
 
 ---
 
-## Key Results
+## Current Outcome
 
-- **Selected candidate:** Redis (simplest, fastest, highest isolation benefit)
-- **Test startup:** 2-4 min → 3-25s (**85-98% faster**)
-- **Test isolation:** None → Full (per test class)
-- **Approach:** Coexistence — new TC tests alongside existing Cucumber/Compose tests
-- **CI:** Feasible with RepoSync MR (DOCKER_HOST + TESTCONTAINERS_RYUK_DISABLED)
-- **Pattern:** Reusable across all FDP adaptors via shared `TestInfrastructure` class
+T4.1 completed the Redis-first implementation-readiness check.
+
+Confirmed:
+
+- Redis remains the Phase 1 Testcontainers pilot candidate from T2.4/T2.5.
+- The target module is `cmd-adaptor-sns-integration-tests`.
+- The existing test framework supports an isolated JUnit Jupiter smoke test.
+- The compose Redis baseline is `redis:5.0.6`.
+- T4.2 should use a local, opt-in Maven route and should not alter `local-int-cmd`, `local-int-snapshot`, existing compose E2E flow or CI defaults.
+- RepoSync-controlled files such as docker-compose/pre-integration assets should not be edited for T4.2.
+- No local blocker was found for a minimal Redis Testcontainers smoke/wiring pilot.
+
+Selected T4.2 route:
+
+- Add Testcontainers through a repo-local Maven dependency/version-management route.
+- Add only the minimal test-scoped Redis client dependency needed for the smoke test.
+- Start `redis:5.0.6` with Testcontainers.
+- Connect through the mapped host/port from the test JVM.
+- Verify `PING` and `SET/GET`.
+- Prove repeated local executions do not depend on previous Redis state.
 
 ---
 
-## Open Questions
+## Not Claimed
 
-| # | Question | Impact |
-|---|----------|--------|
-| 1 | Which specific test class should be the first TC conversion target? | Need team input to identify Redis-dependent, potentially flaky test |
-| 2 | Does the Drone DIND version support Testcontainers requirements? | Blocks CI enablement |
-| 3 | Does Testcontainers 1.19.x have compatibility issues with the project's Spring Boot 3.5.9? | Need local validation |
-| 4 | Should `withKraft()` be used or ZooKeeper mode (matching compose)? | Both work; KRaft is simpler for TC |
+- No Redis Testcontainers code has been implemented by T4.1.
+- No local runtime improvement is claimed.
+- No CI saving is claimed.
+- No flaky-test improvement is claimed.
+- No docker-compose replacement is claimed.
+- No Kafka or Schema Registry isolation improvement is claimed.
+- No production or default CI adoption is claimed.
+- No direct public-registry access is assumed for CI.
 
 ---
 
-## Assumptions
+## Next Step
 
-- Docker Desktop (or equivalent) is available on developer machines
-- Testcontainers 1.19.8 is compatible with Java 17 + Spring Boot 3.5.9
-- DIND in Drone supports the Docker API version required by Testcontainers
-- The `fdp.app.redis.nodes` Spring property is the correct config path for Redis connection
+Proceed to T4.2: implement the minimal, local, opt-in Redis Testcontainers smoke/wiring pilot and record exact commands, dependency versions, image-source route and measurement method.

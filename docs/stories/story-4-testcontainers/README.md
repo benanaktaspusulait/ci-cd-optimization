@@ -16,7 +16,7 @@ Kafka and Schema Registry remain higher-value follow-up candidates because they 
 Phase 1 does not replace docker-compose Redis or the full docker-compose integration stack. It does not claim faster execution, CI savings, fewer flaky tests, improved Kafka isolation or full-stack replacement. Any such outcome requires separate implementation and measurement.
 
 ## Acceptance criteria
-- [ ] Redis is confirmed as the Phase 1 candidate and its scope and non-goals are documented
+- [x] Redis is confirmed as the Phase 1 candidate and its scope and non-goals are documented
 - [ ] A local, opt-in Redis Testcontainers smoke/wiring test is implemented or prototyped and connects successfully
 - [ ] The Redis pilot is compared fairly with the existing docker-compose Redis/support-dependency flow
 - [ ] Findings, limits and a continue/stop recommendation are documented without unmeasured claims
@@ -24,7 +24,7 @@ Phase 1 does not replace docker-compose Redis or the full docker-compose integra
 ## Tasks
 | Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
-| T4.1 | [Confirm Redis pilot candidate and scope](./task-1-select-candidate.md) | 1 | Must | Not started |
-| T4.2 | [Implement Redis Testcontainers smoke/wiring pilot](./task-2-implement-setup.md) | 3 | Must | Not started |
+| T4.1 | [Confirm Redis pilot candidate and scope](./task-1-select-candidate.md) | 1 | Must | Completed |
+| T4.2 | [Implement Redis Testcontainers smoke/wiring pilot](./task-2-implement-setup.md) | 3 | Must | Ready to start |
 | T4.3 | [Compare Redis pilot with docker-compose support flow](./task-3-compare-flows.md) | 2 | Should | Not started |
 | T4.4 | [Document Redis pilot findings, limits and recommendation](./task-4-document-findings.md) | 1 | Should | Not started |
