@@ -2,60 +2,73 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | In progress - T4.1 completed; T4.2 ready to start |
+| **Status** | In progress — T4.1 completed, T4.2 completed, T4.3 in progress (Docker Compose baseline pending) |
 | **Date updated** | 2026-07-16 |
 
 ---
 
 ## Deliverables
 
-| Task | File | Current state |
-|------|------|---------------|
-| T4.1 - Confirm Redis pilot candidate and scope | [T4.1-select-candidate.md](./T4.1-select-candidate.md) | Completed; Redis confirmed as the Phase 1 candidate and T4.2 implementation route recorded |
-| T4.2 - Implement Redis Testcontainers smoke/wiring pilot | [T4.2-implement-setup.md](./T4.2-implement-setup.md) | Ready to refresh/execute using the T4.1 readiness route |
-| T4.3 - Compare Redis pilot with docker-compose support flow | [T4.3-compare-flows.md](./T4.3-compare-flows.md) | Pending T4.2 implementation and local evidence |
-| T4.4 - Document Redis pilot findings, limits and recommendation | [T4.4-document-findings.md](./T4.4-document-findings.md) | Pending T4.2/T4.3 evidence |
+| Task | File | Status |
+|------|------|--------|
+| T4.1 - Confirm Redis pilot candidate and scope | [T4.1-select-candidate.md](./T4.1-select-candidate.md) | Completed |
+| T4.2 - Implement Redis Testcontainers smoke/wiring pilot | [T4.2-implement-setup.md](./T4.2-implement-setup.md) | **Completed** |
+| T4.3 - Compare Redis pilot with docker-compose support flow | [T4.3-compare-flows.md](./T4.3-compare-flows.md) | **In progress — Docker Compose baseline not yet measured** |
+| T4.4 - Document Redis pilot findings, limits and recommendation | [T4.4-document-findings.md](./T4.4-document-findings.md) | Pending T4.3 evidence |
 
 ---
 
-## Current Outcome
+## T4.2 Outcome
 
-T4.1 completed the Redis-first implementation-readiness check.
+A minimal Redis Testcontainers smoke/wiring pilot was implemented in `cmd-adaptor-sns-integration-tests` and validated locally across two independent runs.
 
-Confirmed:
+**Implementation:**
+- Testcontainers 1.19.8 + Jedis 4.4.3 added as test-scoped dependencies
+- `local-testcontainers` Maven profile added (opt-in, skips docker-compose)
+- `MinimalRedisTest.java` created — verifies PING and SET/GET from Java JVM through mapped Redis port
 
-- Redis remains the Phase 1 Testcontainers pilot candidate from T2.4/T2.5.
-- The target module is `cmd-adaptor-sns-integration-tests`.
-- The existing test framework supports an isolated JUnit Jupiter smoke test.
-- The compose Redis baseline is `redis:5.0.6`.
-- T4.2 should use a local, opt-in Maven route and should not alter `local-int-cmd`, `local-int-snapshot`, existing compose E2E flow or CI defaults.
-- RepoSync-controlled files such as docker-compose/pre-integration assets should not be edited for T4.2.
-- No repository-level blocker was found for a minimal Redis Testcontainers smoke/wiring pilot; Docker access, dependency resolution and Redis image availability still need local runtime validation in T4.2.
+**Measured results:**
+- Run 1: 2 tests, 0 failures, test-framework time 6.659s, Maven total 11.712s
+- Run 2: 2 tests, 0 failures, test-framework time 4.556s, Maven total 9.939s
+- Both runs: `BUILD SUCCESS`
+- Repeated-run isolation confirmed (UUID-based keys, fresh container per method)
 
-Selected T4.2 route:
-
-- Add Testcontainers through a repo-local Maven dependency/version-management route.
-- Add only the minimal test-scoped Redis client dependency needed for the smoke test.
-- Start `redis:5.0.6` with Testcontainers.
-- Connect through the mapped host/port from the test JVM.
-- Verify `PING` and `SET/GET`.
-- Prove repeated local executions do not depend on previous Redis state.
+**Safety:**
+- `git diff --name-only` confirmed only two intended paths changed (pom.xml + MinimalRedisTest.java)
+- docker-compose E2E flow, existing profiles, CI config all unchanged
+- RepoSync-controlled files untouched
 
 ---
 
-## Not Claimed
+## T4.3 Status
 
-- No Redis Testcontainers code has been implemented by T4.1.
-- No local runtime improvement is claimed.
-- No CI saving is claimed.
-- No flaky-test improvement is claimed.
-- No docker-compose replacement is claimed.
-- No Kafka or Schema Registry isolation improvement is claimed.
-- No production or default CI adoption is claimed.
-- No direct public-registry access is assumed for CI.
+T4.3 is in progress. T4.2 measured Testcontainers evidence has been recorded in the T4.3 document (Section A).
+
+**No Docker Compose comparison result is claimed yet because a comparable Redis/support-flow baseline has not been measured.** The T4.3 document contains only:
+- Measured Testcontainers evidence from T4.2
+- Structural observations from repository review (clearly labelled as structural, not measured)
+- A Docker Compose measurement plan (not yet executed)
+
+No speed improvement, startup reduction, or developer experience improvement over Docker Compose is claimed.
+
+---
+
+## Not Claimed (across all tasks)
+
+- No CI saving claimed
+- No flaky-test improvement claimed
+- No faster local execution claimed (not measured against Docker Compose baseline)
+- No docker-compose replacement claimed
+- No Kafka or Schema Registry isolation improvement claimed
+- No production or default CI adoption claimed
+- No speed improvement over Docker Compose claimed (not yet measured)
 
 ---
 
 ## Next Step
 
-Proceed to T4.2: implement the minimal, local, opt-in Redis Testcontainers smoke/wiring pilot and record exact commands, dependency versions, image-source route and measurement method.
+T4.3 requires Docker Compose baseline measurements on the target machine before a comparison can be produced. Specifically:
+1. Validate whether Redis can be started independently from the compose file
+2. Collect full E2E compose timing (`mvn verify -Plocal-int-cmd`)
+3. If safe, collect Redis-only compose timing
+4. Compare with T4.2 measured Testcontainers results
