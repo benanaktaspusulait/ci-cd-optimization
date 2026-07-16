@@ -30,7 +30,7 @@ Confirmed:
 - The compose Redis baseline is `redis:5.0.6`.
 - T4.2 should use a local, opt-in Maven route and should not alter `local-int-cmd`, `local-int-snapshot`, existing compose E2E flow or CI defaults.
 - RepoSync-controlled files such as docker-compose/pre-integration assets should not be edited for T4.2.
-- No local blocker was found for a minimal Redis Testcontainers smoke/wiring pilot.
+- No repository-level blocker was found for a minimal Redis Testcontainers smoke/wiring pilot; Docker access, dependency resolution and Redis image availability still need local runtime validation in T4.2.
 
 Selected T4.2 route:
 
