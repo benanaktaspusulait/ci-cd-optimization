@@ -33,10 +33,10 @@ Expected changes are limited to:
 - an opt-in Maven profile, test include pattern or documented explicit `-Dtest=MinimalRedisTest` route
 - a short execution/result note recording the command, dependency versions, image source, timing method and observed outcome
 
-T4.2 must not change these files or routes:
+T4.2 must not change these files or routes unless temporary isolated pilot experimentation is needed:
 
-- RepoSync-managed docker-compose resources
-- `pre-integration-test/app.py`
+- RepoSync-managed docker-compose resources (temporary experimentation allowed if clearly documented; durable changes via RepoSync)
+- `pre-integration-test/app.py` (temporary experimentation allowed if clearly documented; durable changes via RepoSync)
 - `local-int-cmd`
 - `local-int-snapshot`
 - `ci-cmd`
@@ -60,8 +60,8 @@ In the relevant integration-test module:
 - verify that the test does not depend on Redis state from a previous run and that repeated local executions start from a clean or explicitly reset state
 - record how state isolation is achieved, for example unique keys, explicit cleanup, container lifecycle isolation or database reset
 - keep the pilot separate from the full docker-compose E2E flow
-- do not modify the RepoSync-managed `pre-integration-test/app.py`
-- do not change `local-int-cmd` or `local-int-snapshot`
+- RepoSync-controlled files may be changed temporarily in the target repository for isolated pilot experimentation when needed, provided the change is clearly documented and not presented as the durable ownership route. Long-term adoption should still be handled through the relevant RepoSync/MR process.
+- do not change `local-int-cmd` or `local-int-snapshot` as the durable route
 - do not replace compose Redis in Phase 1
 - do not wire the pilot into CI by default
 - document the exact local execution command and, if the test is run, the measurement method and observed local smoke-test time
@@ -100,7 +100,7 @@ Before marking T4.2 complete:
 - [ ] Repeated local executions pass without depending on state left by a previous run, and the isolation/cleanup mechanism is documented
 - [ ] The test is opt-in or otherwise isolated from the full E2E flow
 - [ ] The existing docker-compose E2E flow is not replaced
-- [ ] RepoSync-managed files, `local-int-cmd` and `local-int-snapshot` are not modified
+- [ ] RepoSync-managed files may only be modified for isolated pilot experimentation; durable changes must go through RepoSync
 - [ ] The local execution command and any measured smoke-test time are documented
 - [ ] Final Git diff confirms only intended repo-local pilot files changed
 - [ ] Existing Maven profiles and full E2E execution semantics remain unchanged

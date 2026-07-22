@@ -14,7 +14,7 @@
 | **Sprint** | Week 3 |
 | **Depends on** | T4.2 |
 | **Owner** | _TBD_ |
-| **Status** | Not started |
+| **Status** | Ready to execute — T4.2 evidence available |
 
 ## Why
 The Redis smoke test and the full integration-test suite exercise different scopes. A fair comparison must isolate the Redis/support-dependency workflow and avoid presenting a minimal wiring test as a replacement for the Kafka-driven E2E path.
@@ -47,11 +47,14 @@ Do not compare the minimal Redis smoke test with the full integration-test suite
 
 The existing `redis_kafka` pre-integration readiness stage combines Redis readiness with Kafka, Schema Registry and Kafdrop readiness plus Kafka topic creation. If Redis startup time cannot be isolated safely from that combined flow, record docker-compose Redis startup time as not separately measured rather than assigning an estimate or treating the combined stage as a Redis-only timing.
 
+Full E2E compose timing may be captured as contextual evidence, but it must not be compared directly with the Redis-only Testcontainers smoke test.
+
 ## Acceptance criteria
 - [ ] Redis Testcontainers and the docker-compose Redis/support-dependency flow are compared fairly across the defined dimensions
 - [ ] Full E2E and docker-compose replacement are explicitly marked out of scope
 - [ ] Benefits, drawbacks and limitations are documented
 - [ ] CI suitability is not claimed unless it was attempted and measured
 - [ ] Existing docker-compose Redis startup time is reported only if it can be isolated with a documented measurement method; otherwise it is explicitly recorded as not separately measured
+- [ ] If a Redis-only docker-compose comparison cannot be isolated safely, the limitation and reason are documented, and no like-for-like performance conclusion is made
 - [ ] The comparison records the exact commands, environment and measurement method used for each measured value
 - [ ] The recommendation states whether to continue to Redis Option B and/or a Kafka and Schema Registry follow-up
