@@ -15,7 +15,7 @@ Build time and image size are recurring sources of friction. Story 2 provides th
 
 Story 3 produced one keep-now change and one carry-forward prototype:
 
-- **Keep now:** targeted `.dockerignore`, reducing Docker build context from `191.27MB` to `189B` while preserving required runtime artefacts.
+- **Keep now:** targeted `.dockerignore`, reducing Docker build context from `191.27MB` to `189B` while preserving required runtime artefacts. The targeted `.dockerignore` was validated successfully in the SNS repository. For durable reuse and consistency across command-adaptor repositories, `.dockerignore` ownership and distribution should be considered through RepoSync. RepoSync adoption is a recommended follow-up.
 - **Carry forward:** layer-order Dockerfile prototype, improving local same-daemon warm-cache rebuild after a real JAR content change from `75.82-77.90s` to `4.62-5.08s`.
 
 No image-size reduction, cold-build improvement, CI saving, production Dockerfile change, RepoSync approval or broad adaptor-family rollout is claimed.

@@ -14,7 +14,7 @@
 | **Sprint** | Week 3 |
 | **Depends on** | T4.2 |
 | **Owner** | _TBD_ |
-| **Status** | Ready to execute — T4.2 evidence available |
+| **Status** | In progress — T4.2 evidence available; target-machine Compose runtime measurement pending |
 
 ## Why
 The Redis smoke test and the full integration-test suite exercise different scopes. A fair comparison must isolate the Redis/support-dependency workflow and avoid presenting a minimal wiring test as a replacement for the Kafka-driven E2E path.
