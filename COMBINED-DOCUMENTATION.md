@@ -2625,7 +2625,6 @@ Map services, dependencies and invocation paths; classify their CI, full E2E and
 | **Estimate** | 2 |
 | **Priority** | Must |
 | **Depends on** | [T5.1 evidence](../../../solution/story-5/T5.1-validate-compose-scope.md), [T4.4 findings](../../../solution/story-4/T4.4-document-findings.md) and [Story 4 Summary](../../../solution/story-4/SUMMARY.md) |
-| **Owner** | _TBD_ |
 | **Status** | Done — target-role recommendation prepared; implementation and adoption not approved |
 | **Primary output** | [T5.2 — Decide the Target Compose Role](../../../solution/story-5/T5.2-decide-compose-role.md) |
 
@@ -2667,7 +2666,7 @@ Define explicit keep, candidate, stop/not-now, local-utility and architectural d
 # Story 6 — Pilot Outcome, Ownership and Adoption
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
-**Depends on:** T3.4, current Story 4 evidence and the [T5.2 target-role decision](../../../solution/story-5/T5.2-decide-compose-role.md) · **Parallel with:** —
+**Depends on:** [T3.4 consolidated result](../../../solution/story-3/T3.4-impact-summary.md), [T4.4 findings](../../../solution/story-4/T4.4-document-findings.md), [Story 4 Summary](../../../solution/story-4/SUMMARY.md) and the [T5.2 target-role decision](../../../solution/story-5/T5.2-decide-compose-role.md) · **Parallel with:** —
 
 ## Goal
 Turn the validated pilot evidence into clear ownership routes and an explicit adopt, retain-as-candidate or stop decision for each outcome.
@@ -2713,11 +2712,10 @@ A PoC is useful only when reviewers can see what was actually proved, who can ac
 | Field | Value |
 |---|---|
 | **ID** | T6.1 |
-| **Type** | Evidence and ownership decision |
+| **Type** | Evidence and ownership classification |
 | **Estimate** | 4 |
 | **Priority** | Must |
-| **Depends on** | T3.4, current Story 4 evidence and [T5.2 target-role decision](../../../solution/story-5/T5.2-decide-compose-role.md) |
-| **Owner** | _TBD_ |
+| **Depends on** | [T3.4 consolidated result](../../../solution/story-3/T3.4-impact-summary.md), [T4.4 findings](../../../solution/story-4/T4.4-document-findings.md), [Story 4 Summary](../../../solution/story-4/SUMMARY.md) and [T5.2 target-role decision](../../../solution/story-5/T5.2-decide-compose-role.md) |
 | **Status** | Done — evidence prepared |
 | **Primary output** | [T6.1 — Classify Pilot Outcomes and Ownership Routes](../../../solution/story-6/T6.1-classify-outcomes-and-ownership.md) |
 
@@ -2744,7 +2742,7 @@ Consolidate relevant Story 1–5 evidence; distinguish CST-local, RepoSync/platf
 - [x] Each outcome links to its primary evidence.
 - [x] Measured, observed, structural and inferred statements are separated.
 - [x] Missing metrics are recorded as `not measured`.
-- [x] Each candidate has an owner/board route and rationale.
+- [x] Each candidate has an ownership/adoption route and rationale.
 - [x] Temporary experiments are separated from durable adoption.
 - [x] Production, CI and broad-rollout non-claims are explicit.
 
@@ -2764,7 +2762,6 @@ Consolidate relevant Story 1–5 evidence; distinguish CST-local, RepoSync/platf
 | **Estimate** | 2 |
 | **Priority** | Must |
 | **Depends on** | T6.1 |
-| **Owner** | _TBD_ |
 | **Status** | Not completed — materials prepared; review and feedback not evidenced |
 | **Primary output** | [T6.2 — Decide the Adoption Route and Publish the Pilot Outcome](../../../solution/story-6/T6.2-decide-adoption-route.md) |
 
@@ -2790,10 +2787,10 @@ Prioritise follow-ups; define CI validation and rollout constraints; share the o
 
 - [ ] Each candidate has an agreed adopt, retain-as-candidate or stop decision.
 - [ ] RepoSync/platform and wider-owner actions are prioritised and routed.
-- [ ] Required CI validation and rollout constraints are explicit.
+- [x] Required CI validation and rollout constraints are explicit.
 - [ ] The concise outcome is shared with the agreed stakeholders.
 - [ ] Feedback, approvals and unresolved decisions are recorded.
-- [ ] No prototype or recommendation is described as adopted without evidence.
+- [x] No prototype or recommendation is described as adopted without evidence.
 
 
 ---

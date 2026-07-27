@@ -9,7 +9,6 @@
 | **Estimate** | 2 |
 | **Priority** | Must |
 | **Depends on** | T6.1 |
-| **Owner** | _TBD_ |
 | **Status** | Not completed — materials prepared; review and feedback not evidenced |
 | **Primary output** | [T6.2 — Decide the Adoption Route and Publish the Pilot Outcome](../../../solution/story-6/T6.2-decide-adoption-route.md) |
 
@@ -35,7 +34,7 @@ Prioritise follow-ups; define CI validation and rollout constraints; share the o
 
 - [ ] Each candidate has an agreed adopt, retain-as-candidate or stop decision.
 - [ ] RepoSync/platform and wider-owner actions are prioritised and routed.
-- [ ] Required CI validation and rollout constraints are explicit.
+- [x] Required CI validation and rollout constraints are explicit.
 - [ ] The concise outcome is shared with the agreed stakeholders.
 - [ ] Feedback, approvals and unresolved decisions are recorded.
-- [ ] No prototype or recommendation is described as adopted without evidence.
+- [x] No prototype or recommendation is described as adopted without evidence.

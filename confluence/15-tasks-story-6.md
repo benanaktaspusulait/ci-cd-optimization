@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | **Status** | Consolidated; adoption/share-out incomplete |
-| **Last updated** | 2026-07-23 |
+| **Last updated** | 2026-07-27 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `ownership` |
 
 ## Story goal
@@ -12,7 +12,7 @@ Turn validated pilot evidence into clear ownership routes and an explicit adopt,
 
 **Why:** A PoC is useful only when reviewers can see what was proved, who can act and what remains unapproved.
 
-**Dependencies:** T3.4, current Story 4 evidence and the T5.2 target-role decision (`solution/story-5/T5.2-decide-compose-role.md`).
+**Dependencies:** `solution/story-3/T3.4-impact-summary.md`, `solution/story-4/T4.4-document-findings.md`, `solution/story-4/SUMMARY.md` and `solution/story-5/T5.2-decide-compose-role.md`.
 
 **Boundaries:** Evidence types remain separate. Missing metrics are `not measured`. Local evidence is not CI evidence. The Docker result is only an approximately 15–16x local same-daemon warm-cache JAR-change observation; no image-size, cold-build or CI improvement was shown. Redis-only evidence does not prove flaky-test improvement, Kafka/Schema Registry scope or full-E2E replacement. Prepared materials do not prove approval or adoption.
 
@@ -24,7 +24,7 @@ Turn validated pilot evidence into clear ownership routes and an explicit adopt,
 
 **Status:** Done — evidence prepared.
 
-**Depends on:** T3.4, current Story 4 evidence and the T5.2 target-role decision (`solution/story-5/T5.2-decide-compose-role.md`).
+**Depends on:** `solution/story-3/T3.4-impact-summary.md`, `solution/story-4/T4.4-document-findings.md`, `solution/story-4/SUMMARY.md` and `solution/story-5/T5.2-decide-compose-role.md`.
 
 **Primary output:** `solution/story-6/T6.1-classify-outcomes-and-ownership.md`
 

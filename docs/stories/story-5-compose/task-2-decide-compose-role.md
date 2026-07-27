@@ -9,7 +9,6 @@
 | **Estimate** | 2 |
 | **Priority** | Must |
 | **Depends on** | [T5.1 evidence](../../../solution/story-5/T5.1-validate-compose-scope.md), [T4.4 findings](../../../solution/story-4/T4.4-document-findings.md) and [Story 4 Summary](../../../solution/story-4/SUMMARY.md) |
-| **Owner** | _TBD_ |
 | **Status** | Done — target-role recommendation prepared; implementation and adoption not approved |
 | **Primary output** | [T5.2 — Decide the Target Compose Role](../../../solution/story-5/T5.2-decide-compose-role.md) |
 

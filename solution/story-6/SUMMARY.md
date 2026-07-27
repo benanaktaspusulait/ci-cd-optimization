@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Status** | In progress — classification prepared; owner review/share-out not evidenced |
-| **Date consolidated** | 2026-07-23 |
+| **Date consolidated** | 2026-07-27 |
 
 ---
 
@@ -26,10 +26,9 @@
 
 ## Cross-Cutting Architectural Findings
 
-Two structural findings must be decided before a central cutover:
+- **Dual container-lifecycle ownership** — Drone and Maven encode separate paths. The intended orchestration owner must be decided before a central Compose cutover.
 
-- **Dual container-lifecycle ownership** — Drone and Maven encode separate paths. A single owner remains a candidate, not an approved change.
-- **Build/publish integrity gap** — build-once-promote remains a RepoSync/platform candidate, not a pilot implementation.
+- **Build/publish integrity gap** — build-once-promote remains a separate RepoSync/platform candidate. It should be coordinated with related release work where ownership overlaps, but it is not presented as a Story 6 delivery dependency or pilot implementation.
 
 ## Pilot Result
 
@@ -43,4 +42,9 @@ Two structural findings must be decided before a central cutover:
 
 - Relevant owner review and adopt/candidate/stop decisions.
 - RepoSync/platform routing for centrally owned changes.
+- Kafdrop, Jaeger and LocalStack validation ownership.
+- `aggregate-v1id-v2id` and `aggregate-matching` coverage decisions.
+- `kafka-rest` workflow and owner confirmation.
+- Integration-test runner and orchestration-owner decisions.
+- Build-once-promote disposition and coordination with the related release work.
 - Stakeholder feedback and approvals.
