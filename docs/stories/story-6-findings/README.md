@@ -1,7 +1,7 @@
 # Story 6 — Pilot Outcome, Ownership and Adoption
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
-**Depends on:** T3.4, current Story 4 evidence and T5.2 · **Parallel with:** —
+**Depends on:** T3.4, current Story 4 evidence and the [T5.2 target-role decision](../../../solution/story-5/T5.2-decide-compose-role.md) · **Parallel with:** —
 
 ## Goal
 Turn the validated pilot evidence into clear ownership routes and an explicit adopt, retain-as-candidate or stop decision for each outcome.

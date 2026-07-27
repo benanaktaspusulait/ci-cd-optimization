@@ -8,9 +8,9 @@
 | **Type** | Decision recommendation |
 | **Estimate** | 2 |
 | **Priority** | Must |
-| **Depends on** | T5.1 and current Story 4 evidence |
+| **Depends on** | [T5.1 evidence](../../../solution/story-5/T5.1-validate-compose-scope.md), [T4.4 findings](../../../solution/story-4/T4.4-document-findings.md) and [Story 4 Summary](../../../solution/story-4/SUMMARY.md) |
 | **Owner** | _TBD_ |
-| **Status** | Done — recommendation prepared; adoption not approved |
+| **Status** | Done — target-role recommendation prepared; implementation and adoption not approved |
 | **Primary output** | [T5.2 — Decide the Target Compose Role](../../../solution/story-5/T5.2-decide-compose-role.md) |
 
 ## Why
@@ -23,7 +23,7 @@ Recommend the target role of Compose and state the evidence and ownership requir
 
 ## Scope
 
-Define what should remain for full E2E and local debugging, which changes remain candidates, the preferred orchestration boundary, and the next validation/ownership route.
+Define explicit keep, candidate, stop/not-now, local-utility and architectural decisions for every material T5.1 area, plus the evidence and ownership route required before change.
 
 ## Boundaries / non-goals
 
@@ -33,8 +33,12 @@ Define what should remain for full E2E and local debugging, which changes remain
 
 ## Acceptance criteria
 
-- [x] Keep, candidate and stop/not-now decisions are explicit.
-- [x] Full E2E and local-debug safeguards are retained.
-- [x] Missing functional, timing and CI evidence is identified.
-- [x] RepoSync/platform-owned changes have a durable adoption route.
-- [x] The recommendation does not present a prototype as production-approved.
+- [x] Every material T5.1 rationalisation candidate has an explicit target-role decision.
+- [x] `KEEP`, `CANDIDATE`, `STOP / NOT NOW`, local-utility and architectural decisions are distinguishable.
+- [x] Current validated behaviour is separated from future target-state candidates.
+- [x] Full-E2E and local-debug safeguards are retained.
+- [x] Missing functional, timing, CI and ownership evidence is explicit.
+- [x] RepoSync/platform-owned changes have a durable decision route.
+- [x] Story 6 handoff candidates are explicit and are not presented as approved work.
+- [x] No prototype or repository analysis is presented as production approval.
+- [x] All references point to one canonical T5.2 solution document.

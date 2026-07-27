@@ -875,7 +875,7 @@ Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of ef
 | T4.4 | Document findings & constraints | 1 | Should | Not started | _TBD_ | — |
 | **S5** | **Docker Compose Rationalisation** | — | Should | Done — analysis only | _TBD_ | — |
 | T5.1 | Validate current Compose scope | 3 | Must | Done — evidence prepared | _TBD_ | — |
-| T5.2 | Decide the target Compose role | 2 | Must | Done — recommendation prepared | _TBD_ | — |
+| T5.2 | Decide the target Compose role | 2 | Must | Done — target-role recommendation prepared; implementation and adoption not approved | _TBD_ | — |
 | **S6** | **Pilot Outcome, Ownership and Adoption** | — | Must | In progress | _TBD_ | — |
 | T6.1 | Classify pilot outcomes and ownership routes | 4 | Must | Done — evidence prepared | _TBD_ | — |
 | T6.2 | Decide adoption route and publish pilot outcome | 2 | Must | Not completed — materials prepared | _TBD_ | — |
@@ -950,7 +950,7 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 | ID | Task | SP | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
 | T5.1 | [Validate current Compose scope](story-5-compose/task-1-validate-compose-scope.md) | 3 | _TBD_ | Done — evidence prepared | Week 3 |
-| T5.2 | [Decide the target Compose role](story-5-compose/task-2-decide-compose-role.md) | 2 | _TBD_ | Done — recommendation prepared | Week 4 |
+| T5.2 | [Decide the target Compose role](story-5-compose/task-2-decide-compose-role.md) | 2 | _TBD_ | Done — target-role recommendation prepared; implementation and adoption not approved | Week 4 |
 
 ### [Story 6 — Pilot Outcome, Ownership and Adoption](story-6-findings/README.md)
 
@@ -996,7 +996,7 @@ This inventory records the task structure reviewed before the Story 5 and Story 
 
 - Story 5 evidence has been prepared, so both consolidated documentation outcomes are complete. This does not mean a reduced Compose configuration was implemented or adopted.
 - Story 6 classification material has been prepared. Stakeholder sharing, feedback, approval and adoption are not evidenced, so the final adoption/publishing outcome remains not completed.
-- Existing Story 1–4 evidence remains unchanged. Where it refers to a retired task identifier, compatibility notes in the Story 5/6 solution area preserve the route to the consolidated evidence.
+- Existing Story 1–4 technical evidence remains unchanged. Documentation references to retired task identifiers point directly to the consolidated evidence.
 
 
 ---
@@ -2528,7 +2528,7 @@ Unless separately implemented and measured, state explicitly:
 # Story 5 — Docker Compose Rationalisation
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
-**Depends on:** T1.3, T1.4 and current Story 4 evidence · **Parallel with:** —
+**Depends on:** T1.3, T1.4 and Story 4 final evidence (T4.4 / Story 4 Summary) · **Parallel with:** —
 
 ## Goal
 Define an evidence-backed target role for Docker Compose across CI, full E2E and local debugging, without changing the current default flows.
@@ -2556,7 +2556,7 @@ The repository uses Compose in more than one orchestration path. Reviewers need 
 | Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
 | T5.1 | [Validate current Compose scope](./task-1-validate-compose-scope.md) | 3 | Must | Done — evidence prepared |
-| T5.2 | [Decide the target Compose role](./task-2-decide-compose-role.md) | 2 | Must | Done — recommendation prepared |
+| T5.2 | [Decide the target Compose role](./task-2-decide-compose-role.md) | 2 | Must | Done — target-role recommendation prepared; implementation and adoption not approved |
 
 **Supporting outputs:** [T5.1 evidence](../../../solution/story-5/T5.1-validate-compose-scope.md) · [T5.2 evidence](../../../solution/story-5/T5.2-decide-compose-role.md)
 
@@ -2577,7 +2577,7 @@ The repository uses Compose in more than one orchestration path. Reviewers need 
 | **Type** | Analysis |
 | **Estimate** | 3 |
 | **Priority** | Must |
-| **Depends on** | T1.3, T1.4 and current Story 4 evidence |
+| **Depends on** | T1.3, T1.4 and Story 4 final evidence ([T4.4](../../../solution/story-4/T4.4-document-findings.md) / [Story 4 Summary](../../../solution/story-4/SUMMARY.md)) |
 | **Owner** | _TBD_ |
 | **Status** | Done — evidence prepared |
 | **Primary output** | [T5.1 — Validate Current Compose Scope](../../../solution/story-5/T5.1-validate-compose-scope.md) |
@@ -2607,6 +2607,7 @@ Map services, dependencies and invocation paths; classify their CI, full E2E and
 - [x] Confirmed facts, structural observations and inferences are labelled.
 - [x] Unclear or unmeasured behaviour is recorded without an optimisation claim.
 - [x] The evidence needed for a safe target-role decision is linked.
+- [x] Each confirmed invocation path and service-role classification is linked to repository or pipeline evidence.
 
 
 ---
@@ -2623,9 +2624,9 @@ Map services, dependencies and invocation paths; classify their CI, full E2E and
 | **Type** | Decision recommendation |
 | **Estimate** | 2 |
 | **Priority** | Must |
-| **Depends on** | T5.1 and current Story 4 evidence |
+| **Depends on** | [T5.1 evidence](../../../solution/story-5/T5.1-validate-compose-scope.md), [T4.4 findings](../../../solution/story-4/T4.4-document-findings.md) and [Story 4 Summary](../../../solution/story-4/SUMMARY.md) |
 | **Owner** | _TBD_ |
-| **Status** | Done — recommendation prepared; adoption not approved |
+| **Status** | Done — target-role recommendation prepared; implementation and adoption not approved |
 | **Primary output** | [T5.2 — Decide the Target Compose Role](../../../solution/story-5/T5.2-decide-compose-role.md) |
 
 ## Why
@@ -2638,7 +2639,7 @@ Recommend the target role of Compose and state the evidence and ownership requir
 
 ## Scope
 
-Define what should remain for full E2E and local debugging, which changes remain candidates, the preferred orchestration boundary, and the next validation/ownership route.
+Define explicit keep, candidate, stop/not-now, local-utility and architectural decisions for every material T5.1 area, plus the evidence and ownership route required before change.
 
 ## Boundaries / non-goals
 
@@ -2648,11 +2649,15 @@ Define what should remain for full E2E and local debugging, which changes remain
 
 ## Acceptance criteria
 
-- [x] Keep, candidate and stop/not-now decisions are explicit.
-- [x] Full E2E and local-debug safeguards are retained.
-- [x] Missing functional, timing and CI evidence is identified.
-- [x] RepoSync/platform-owned changes have a durable adoption route.
-- [x] The recommendation does not present a prototype as production-approved.
+- [x] Every material T5.1 rationalisation candidate has an explicit target-role decision.
+- [x] `KEEP`, `CANDIDATE`, `STOP / NOT NOW`, local-utility and architectural decisions are distinguishable.
+- [x] Current validated behaviour is separated from future target-state candidates.
+- [x] Full-E2E and local-debug safeguards are retained.
+- [x] Missing functional, timing, CI and ownership evidence is explicit.
+- [x] RepoSync/platform-owned changes have a durable decision route.
+- [x] Story 6 handoff candidates are explicit and are not presented as approved work.
+- [x] No prototype or repository analysis is presented as production approval.
+- [x] All references point to one canonical T5.2 solution document.
 
 
 ---
@@ -2662,7 +2667,7 @@ Define what should remain for full E2E and local debugging, which changes remain
 # Story 6 — Pilot Outcome, Ownership and Adoption
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
-**Depends on:** T3.4, current Story 4 evidence and T5.2 · **Parallel with:** —
+**Depends on:** T3.4, current Story 4 evidence and the [T5.2 target-role decision](../../../solution/story-5/T5.2-decide-compose-role.md) · **Parallel with:** —
 
 ## Goal
 Turn the validated pilot evidence into clear ownership routes and an explicit adopt, retain-as-candidate or stop decision for each outcome.
@@ -2711,7 +2716,7 @@ A PoC is useful only when reviewers can see what was actually proved, who can ac
 | **Type** | Evidence and ownership decision |
 | **Estimate** | 4 |
 | **Priority** | Must |
-| **Depends on** | T3.4, current Story 4 evidence and T5.2 |
+| **Depends on** | T3.4, current Story 4 evidence and [T5.2 target-role decision](../../../solution/story-5/T5.2-decide-compose-role.md) |
 | **Owner** | _TBD_ |
 | **Status** | Done — evidence prepared |
 | **Primary output** | [T6.1 — Classify Pilot Outcomes and Ownership Routes](../../../solution/story-6/T6.1-classify-outcomes-and-ownership.md) |

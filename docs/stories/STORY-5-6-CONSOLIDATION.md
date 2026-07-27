@@ -28,4 +28,4 @@ This inventory records the task structure reviewed before the Story 5 and Story 
 
 - Story 5 evidence has been prepared, so both consolidated documentation outcomes are complete. This does not mean a reduced Compose configuration was implemented or adopted.
 - Story 6 classification material has been prepared. Stakeholder sharing, feedback, approval and adoption are not evidenced, so the final adoption/publishing outcome remains not completed.
-- Existing Story 1–4 evidence remains unchanged. Where it refers to a retired task identifier, compatibility notes in the Story 5/6 solution area preserve the route to the consolidated evidence.
+- Existing Story 1–4 technical evidence remains unchanged. Documentation references to retired task identifiers point directly to the consolidated evidence.

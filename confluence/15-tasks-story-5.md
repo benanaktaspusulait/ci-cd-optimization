@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | **Status** | Consolidated |
-| **Last updated** | 2026-07-23 |
+| **Last updated** | 2026-07-27 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 ## Story goal
@@ -42,18 +42,22 @@ Define an evidence-backed target role for Docker Compose across CI, full E2E and
 
 **Scope:** Keep/candidate/stop decisions, full-E2E and local safeguards, missing evidence and the durable adoption route.
 
-**Status:** Done — recommendation prepared; adoption not approved.
+**Status:** Done — target-role recommendation prepared; implementation and adoption not approved.
 
-**Depends on:** T5.1 and current Story 4 evidence.
+**Depends on:** T5.1 evidence, T4.4 findings and Story 4 Summary.
 
 **Primary output:** `solution/story-5/T5.2-decide-compose-role.md`
 
 **Acceptance criteria:**
 
-- [x] Keep, candidate and stop/not-now decisions are explicit.
+- [x] Every material T5.1 rationalisation candidate has an explicit target-role decision.
+- [x] Keep, candidate, stop/not-now, local-utility and architectural decisions are distinguishable.
+- [x] Current validated behaviour is separated from future candidates.
 - [x] Full-E2E and local-debug safeguards are retained.
-- [x] Missing functional, timing and CI evidence is identified.
-- [x] RepoSync/platform changes have a durable route.
+- [x] Missing functional, timing, CI and ownership evidence is explicit.
+- [x] RepoSync/platform changes have a durable decision route.
+- [x] Story 6 handoff candidates are explicit and not presented as approved work.
 - [x] No prototype is presented as production-approved.
+- [x] One canonical T5.2 solution document remains.
 
 Legacy mapping: former T5.1 + T5.2 → T5.1; former T5.3 → T5.2.

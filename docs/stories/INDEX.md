@@ -51,7 +51,7 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 | ID | Task | SP | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
 | T5.1 | [Validate current Compose scope](story-5-compose/task-1-validate-compose-scope.md) | 3 | _TBD_ | Done — evidence prepared | Week 3 |
-| T5.2 | [Decide the target Compose role](story-5-compose/task-2-decide-compose-role.md) | 2 | _TBD_ | Done — recommendation prepared | Week 4 |
+| T5.2 | [Decide the target Compose role](story-5-compose/task-2-decide-compose-role.md) | 2 | _TBD_ | Done — target-role recommendation prepared; implementation and adoption not approved | Week 4 |
 
 ### [Story 6 — Pilot Outcome, Ownership and Adoption](story-6-findings/README.md)
 

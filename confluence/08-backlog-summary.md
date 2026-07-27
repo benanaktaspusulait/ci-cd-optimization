@@ -63,7 +63,7 @@ Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of ef
 | T4.4 | Document findings & constraints | Documentation | 1 | Should | T4.3 | W3 | Not started |
 | **S5** | **Docker Compose Rationalisation** | Story | — | Should | T1.3, T1.4, current S4 evidence | W3–4 | Done — analysis only |
 | T5.1 | Validate current Compose scope | Analysis | 3 | Must | T1.3, T1.4, current S4 evidence | W3 | Done — evidence prepared |
-| T5.2 | Decide the target Compose role | Decision | 2 | Must | T5.1, current S4 evidence | W4 | Done — recommendation prepared |
+| T5.2 | Decide the target Compose role | Decision | 2 | Must | T5.1, T4.4 / Story 4 Summary | W4 | Done — target-role recommendation prepared; implementation and adoption not approved |
 | **S6** | **Pilot Outcome, Ownership and Adoption** | Story | — | Must | T3.4, current S4 evidence, T5.2 | W4 | In progress |
 | T6.1 | Classify pilot outcomes and ownership routes | Evidence/decision | 4 | Must | T3.4, current S4 evidence, T5.2 | W4 | Done — evidence prepared |
 | T6.2 | Decide adoption route and publish pilot outcome | Decision/communication | 2 | Must | T6.1 | W4 | Not completed — materials prepared |

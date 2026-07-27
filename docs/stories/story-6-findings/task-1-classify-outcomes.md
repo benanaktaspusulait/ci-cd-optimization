@@ -8,7 +8,7 @@
 | **Type** | Evidence and ownership decision |
 | **Estimate** | 4 |
 | **Priority** | Must |
-| **Depends on** | T3.4, current Story 4 evidence and T5.2 |
+| **Depends on** | T3.4, current Story 4 evidence and [T5.2 target-role decision](../../../solution/story-5/T5.2-decide-compose-role.md) |
 | **Owner** | _TBD_ |
 | **Status** | Done — evidence prepared |
 | **Primary output** | [T6.1 — Classify Pilot Outcomes and Ownership Routes](../../../solution/story-6/T6.1-classify-outcomes-and-ownership.md) |

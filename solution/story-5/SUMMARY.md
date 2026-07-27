@@ -12,7 +12,7 @@
 | Task | Primary output | Status |
 |---|---|---|
 | T5.1 — Validate current Compose scope | [T5.1-validate-compose-scope.md](./T5.1-validate-compose-scope.md) | Done |
-| T5.2 — Decide the target Compose role | [T5.2-decide-compose-role.md](./T5.2-decide-compose-role.md) | Done — recommendation prepared |
+| T5.2 — Decide the target Compose role | [T5.2-decide-compose-role.md](./T5.2-decide-compose-role.md) | Done — target-role recommendation prepared; implementation and adoption not approved |
 
 ---
 
@@ -21,7 +21,7 @@
 - **Observed:** 20 services are defined and 17 participate directly, transitively or as a transient helper in the mapped CI path.
 - **Measured locally:** the opt-in Redis Testcontainers smoke/wiring pilot completed two functional runs.
 - **Not measured:** reduced-Compose CI timing, full-E2E performance, Kafka/Schema Registry replacement and flaky-test impact.
-- **Recommendation:** retain current Compose defaults for full E2E and local debugging; keep reductions and a single-orchestrator model as ownership/validation candidates.
+- **Recommendation:** Compose is the currently validated full-E2E/custom-application mechanism; immediate reduction is not supported, while specific validation and architectural candidates are routed to Story 6.
 - **Adoption:** no Compose, CI or production change is approved or implemented by Story 5.
 
 ---

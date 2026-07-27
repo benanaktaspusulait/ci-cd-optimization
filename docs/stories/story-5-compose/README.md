@@ -1,7 +1,7 @@
 # Story 5 — Docker Compose Rationalisation
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
-**Depends on:** T1.3, T1.4 and current Story 4 evidence · **Parallel with:** —
+**Depends on:** T1.3, T1.4 and Story 4 final evidence (T4.4 / Story 4 Summary) · **Parallel with:** —
 
 ## Goal
 Define an evidence-backed target role for Docker Compose across CI, full E2E and local debugging, without changing the current default flows.
@@ -29,7 +29,7 @@ The repository uses Compose in more than one orchestration path. Reviewers need 
 | Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
 | T5.1 | [Validate current Compose scope](./task-1-validate-compose-scope.md) | 3 | Must | Done — evidence prepared |
-| T5.2 | [Decide the target Compose role](./task-2-decide-compose-role.md) | 2 | Must | Done — recommendation prepared |
+| T5.2 | [Decide the target Compose role](./task-2-decide-compose-role.md) | 2 | Must | Done — target-role recommendation prepared; implementation and adoption not approved |
 
 **Supporting outputs:** [T5.1 evidence](../../../solution/story-5/T5.1-validate-compose-scope.md) · [T5.2 evidence](../../../solution/story-5/T5.2-decide-compose-role.md)
 
