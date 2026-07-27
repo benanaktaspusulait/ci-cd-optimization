@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Status** | Done — analysis and recommendation only |
-| **Date consolidated** | 2026-07-23 |
+| **Date consolidated** | 2026-07-27 |
 
 ---
 
@@ -18,7 +18,7 @@
 
 ## Key Results
 
-- **Observed:** 20 services are defined and 17 are started by the mapped CI path.
+- **Observed:** 20 services are defined and 17 participate directly, transitively or as a transient helper in the mapped CI path.
 - **Measured locally:** the opt-in Redis Testcontainers smoke/wiring pilot completed two functional runs.
 - **Not measured:** reduced-Compose CI timing, full-E2E performance, Kafka/Schema Registry replacement and flaky-test impact.
 - **Recommendation:** retain current Compose defaults for full E2E and local debugging; keep reductions and a single-orchestrator model as ownership/validation candidates.
@@ -31,8 +31,10 @@
 | Fact | Source |
 |------|--------|
 | 20 services defined | Counted from docker-compose.yml |
-| 3 services not started in the mapped CI path (kafka-rest, kafka-topic-extract, aggregate-v1id-v2id) | Story 1 pipeline mapping |
-| `kafdrop` started via `depends_on` chain, not direct pipeline reference | docker-compose.yml `pre-integration-test.depends_on` |
+| 3 services not started in the mapped CI path (`kafka-rest`, `kafka-topic-extract`, `aggregate-v1id-v2id`) | Direct `.drone.star` invocation map plus Compose dependency closure |
+| `kafdrop` starts transitively and is explicitly awaited by readiness code | `docker-compose.yml` plus `pre-integration-test/app.py` |
+| `aggregate-v1id-v2id` starts in `local-int-snapshot` but not in the mapped CI path | Maven Compose plugin plus `.drone.star` |
+| `kafka-topic-extract` has an explicit local utility script; `kafka-rest` has no mapped invocation | `bin/extract_local_kafka_topics.sh` plus repository invocation search |
 | docker-compose.yml is RepoSync-controlled | File header warning |
 
 ---
@@ -41,6 +43,8 @@
 
 | # | Question | Impact |
 |---|----------|--------|
-| 1 | Is `kafdrop` functionally needed in CI, or only a dependency side effect? | Requires equivalent functional validation |
+| 1 | Is `kafdrop` functionally needed, or is its explicit readiness coupling inherited convenience? | Requires equivalent functional validation |
 | 2 | Would removing Jaeger affect adaptor startup or full E2E behaviour? | Requires equivalent functional validation |
-| 3 | Which owner should control the durable orchestration model? | CST design plus RepoSync/platform decision |
+| 3 | Does SNS CI/E2E use LocalStack after its explicit startup/wait step? | Requires endpoint/credential tracing and equivalent validation |
+| 4 | Why does local snapshot start `aggregate-v1id-v2id` while CI excludes it? | Requires coverage intent and owner confirmation |
+| 5 | Which owner should control the durable orchestration model? | CST design plus RepoSync/platform decision |
