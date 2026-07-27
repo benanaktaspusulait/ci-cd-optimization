@@ -8,7 +8,7 @@
 | **Type** | Analysis |
 | **Estimate** | 3 |
 | **Priority** | Must |
-| **Depends on** | T1.3, T1.4 and current Story 4 evidence |
+| **Depends on** | T1.3, T1.4 and Story 4 final evidence ([T4.4](../../../solution/story-4/T4.4-document-findings.md) / [Story 4 Summary](../../../solution/story-4/SUMMARY.md)) |
 | **Owner** | _TBD_ |
 | **Status** | Done — evidence prepared |
 | **Primary output** | [T5.1 — Validate Current Compose Scope](../../../solution/story-5/T5.1-validate-compose-scope.md) |
@@ -38,3 +38,4 @@ Map services, dependencies and invocation paths; classify their CI, full E2E and
 - [x] Confirmed facts, structural observations and inferences are labelled.
 - [x] Unclear or unmeasured behaviour is recorded without an optimisation claim.
 - [x] The evidence needed for a safe target-role decision is linked.
+- [x] Each confirmed invocation path and service-role classification is linked to repository or pipeline evidence.
