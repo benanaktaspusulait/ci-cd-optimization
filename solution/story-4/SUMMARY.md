@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | In progress — T4.1 completed, T4.2 completed, T4.3 functional comparison completed with startup/readiness timing limitation |
-| **Date updated** | 2026-07-22 |
+| **Status** | Closed — Option A functional goal completed; performance and CI evidence remain intentionally unresolved and documented |
+| **Date updated** | 2026-07-27 |
 
 ---
 
@@ -14,7 +14,7 @@
 | T4.1 - Confirm Redis pilot candidate and scope | [T4.1-select-candidate.md](./T4.1-select-candidate.md) | Completed |
 | T4.2 - Implement Redis Testcontainers smoke/wiring pilot | [T4.2-implement-setup.md](./T4.2-implement-setup.md) | **Completed** |
 | T4.3 - Compare Redis pilot with docker-compose support flow | [T4.3-compare-flows.md](./T4.3-compare-flows.md) | **Functional comparison completed; Compose startup/readiness timing not captured** |
-| T4.4 - Document Redis pilot findings, limits and recommendation | [T4.4-document-findings.md](./T4.4-document-findings.md) | Pending T4.3 evidence |
+| T4.4 - Document Redis pilot findings, limits and recommendation | [T4.4-document-findings.md](./T4.4-document-findings.md) | **Completed with documented measurement limitations** |
 
 ---
 
@@ -31,7 +31,7 @@ A minimal Redis Testcontainers smoke/wiring pilot was implemented in `cmd-adapto
 - Run 1: 2 tests, 0 failures, test-framework time 6.659s, Maven total 11.712s
 - Run 2: 2 tests, 0 failures, test-framework time 4.556s, Maven total 9.939s
 - Both runs: `BUILD SUCCESS`
-- Repeated-run isolation confirmed (UUID-based keys, fresh container per method)
+- Measured Redis smoke-test isolation confirmed through fresh per-method containers and UUID-based keys; no system-wide isolation improvement is claimed.
 
 **Safety:**
 - `git diff --name-only` confirmed only two intended paths changed (pom.xml + MinimalRedisTest.java)
@@ -40,9 +40,9 @@ A minimal Redis Testcontainers smoke/wiring pilot was implemented in `cmd-adapto
 
 ---
 
-## T4.3 Status
+## T4.3 Outcome
 
-T4.3 is in progress. T4.2 measured Testcontainers evidence has been recorded, the Docker Compose Redis service has been validated structurally from the repository configuration, and Redis-only Compose functional evidence has been captured across two target-machine runs.
+T4.3 completed a functional comparison with a startup/readiness timing limitation. T4.2 measured Testcontainers evidence was recorded, the Docker Compose Redis service was validated structurally from the repository configuration, and Redis-only Compose functional evidence was captured across two target-machine runs.
 
 Validated Compose Redis evidence:
 
@@ -66,26 +66,26 @@ Compose functional evidence:
 - Exact target-machine Redis-only Compose measurement commands and remaining timing limitation
 - Explicit limitations and claim boundaries
 
-No speed improvement, startup reduction, or developer experience improvement over Docker Compose is claimed.
-
 ---
 
 ## Not Claimed (across all tasks)
 
 - No CI saving claimed
 - No flaky-test improvement claimed
-- No faster local execution claimed (not measured against Docker Compose baseline)
+- No local speed improvement over Docker Compose claimed because comparable startup-to-ready timing was not captured.
 - No docker-compose replacement claimed
 - No Kafka or Schema Registry isolation improvement claimed
 - No production or default CI adoption claimed
-- No speed improvement over Docker Compose claimed (not yet measured)
 
 ---
 
-## Next Step
+## T4.4 Outcome
 
-T4.3 has enough evidence for a functional Redis-only comparison, but not for a performance preference. Next:
-1. Rerun only if `compose_startup_to_ready_seconds` is required for the decision
-2. Keep Compose cleanup time separate from startup/readiness time
-3. Optionally collect full E2E compose timing only as contextual evidence
-4. Do not proceed to Redis Option B on performance grounds from the current evidence
+T4.4 closes the Redis Option A pilot as functionally complete for its narrow local smoke/wiring goal. It records the unavailable measurements without estimates and makes no performance or CI conclusion.
+
+Final direction:
+
+1. Do not treat Redis Option B as a current follow-up candidate; reconsider it only for a separately agreed non-performance objective.
+2. Rerun startup-to-ready measurement only if it becomes decision-critical.
+3. Treat Kafka and Schema Registry as follow-up candidates for a separately scoped coverage/isolation objective, based on T4.1/T2.4 rather than Redis performance.
+4. Validate CI and RepoSync requirements separately if adoption is proposed.
