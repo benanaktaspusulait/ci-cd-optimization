@@ -74,7 +74,7 @@ ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 - **Follow-ups:**
   - T3.3: apply one layering change at a time and measure (not a full rewrite at once).
   - T3.4: compare before/after locally and in CI; verify a `--no-cache` build still succeeds.
-  - Story 6 / T6.2: route remote-cache infra requirement to ACP/ETO.
+  - Story 6 / T6.1: classify and route remote-cache infrastructure to RepoSync/platform or the relevant wider owner.
   - Post-pilot: ACP/ETO provisions cache namespace; request RepoSync change to add `--cache-from`/`--cache-to` to the Drone build step.
 
 ## Alternatives considered

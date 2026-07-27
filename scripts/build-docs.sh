@@ -151,14 +151,12 @@ nav:
       - "T4.4 Document findings": stories/story-4-testcontainers/task-4-document-findings.md
     - "Story 5 — Compose Rationalisation":
       - Overview: stories/story-5-compose/README.md
-      - "T5.1 Map services": stories/story-5-compose/task-1-map-services.md
-      - "T5.2 Classify usage": stories/story-5-compose/task-2-classify-usage.md
-      - "T5.3 Recommend role": stories/story-5-compose/task-3-recommend-role.md
+      - "T5.1 Validate scope": stories/story-5-compose/task-1-validate-compose-scope.md
+      - "T5.2 Decide role": stories/story-5-compose/task-2-decide-compose-role.md
     - "Story 6 — Findings & Ownership":
       - Overview: stories/story-6-findings/README.md
-      - "T6.1 Consolidate findings": stories/story-6-findings/task-1-consolidate-findings.md
-      - "T6.2 Classify ownership": stories/story-6-findings/task-2-classify-ownership.md
-      - "T6.3 Share with stakeholders": stories/story-6-findings/task-3-share-stakeholders.md
+      - "T6.1 Classify outcomes": stories/story-6-findings/task-1-classify-outcomes.md
+      - "T6.2 Decide adoption": stories/story-6-findings/task-2-decide-adoption.md
   - ADRs:
     - Index: adr/README.md
     - "ADR-0001 Pilot not rollout": adr/0001-pilot-not-rollout.md

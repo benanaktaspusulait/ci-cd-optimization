@@ -49,7 +49,7 @@ The final decision is documented in T1.4 findings and carried into Story 4 and S
 - **Follow-ups:**
   - T1.4: confirm DIND connectivity from Maven step.
   - If feasible: submit RepoSync change request with env vars.
-  - T6.2: classify as RepoSync/platform-owned change.
+  - T6.1: classify as a RepoSync/platform-owned change.
   - Document the workaround for the team (env vars needed in CI vs local).
 
 ## Alternatives considered

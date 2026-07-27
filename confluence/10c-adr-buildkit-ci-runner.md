@@ -147,7 +147,7 @@ No changes will be made to the Drone runner infrastructure. The pilot will only 
 
 - T1.4 confirms DIND connectivity from Maven step.
 - If feasible, submit RepoSync change request with env vars.
-- T6.2 classifies as RepoSync/platform-owned.
+- T6.1 classifies this as RepoSync/platform-owned; T6.2 records any adoption decision.
 - Document CI vs local env vars for the team.
 
 ### Alternatives Considered

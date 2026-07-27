@@ -1,56 +1,46 @@
-# Story 6 — Findings, Ownership & Recommendations: Summary
+# Story 6 — Pilot Outcome, Ownership and Adoption: Summary
 
 | Field | Value |
 |-------|-------|
-| **Status** | Done |
-| **Date** | 2026-06-11 |
+| **Status** | In progress — classification prepared; owner review/share-out not evidenced |
+| **Date consolidated** | 2026-07-23 |
 
 ---
 
 ## Deliverables
 
-| Task | File | Status |
-|------|------|:------:|
-| T6.1 — Consolidate findings | [T6.1-consolidate-findings.md](./T6.1-consolidate-findings.md) | ✅ |
-| T6.2 — Classify ownership | [T6.2-classify-ownership.md](./T6.2-classify-ownership.md) | ✅ |
-| T6.3 — Share with stakeholders | [T6.3-share-stakeholders.md](./T6.3-share-stakeholders.md) | ✅ |
+| Task | Primary output | Status |
+|---|---|---|
+| T6.1 — Classify pilot outcomes and ownership routes | [T6.1-classify-outcomes-and-ownership.md](./T6.1-classify-outcomes-and-ownership.md) | Done — evidence prepared |
+| T6.2 — Decide adoption route and publish pilot outcome | [T6.2-decide-adoption-route.md](./T6.2-decide-adoption-route.md) | Not completed — materials prepared |
 
 ---
 
-## Ownership Breakdown
+## Ownership routes
 
-| Owner | Count | First Action | Confidence |
-|-------|:-----:|-------------|:----------:|
-| **CST (do now)** | 12 items | Testcontainers local setup, Dockerfile validation, measurements | High |
-| **ACP (RepoSync MR)** | 10 items | Dockerfile + .dockerignore MR → Testcontainers env vars MR → build-once-promote / single-orchestrator | Medium |
-| **ETO (post-pilot)** | 7 items | Registry cache, shared base images, scanning gates | Low |
+| Owner | Scope |
+|---|---|
+| **CST** | Local evidence, opt-in Redis pilot and authorised repository experiments |
+| **RepoSync/platform** | Durable centrally managed files, CI configuration, Compose templates and orchestration decisions |
+| **Wider ETO/enabling** | Shared base images, cross-repository patterns and organisation-wide infrastructure/policy |
 
 ## Cross-Cutting Architectural Findings
 
-Two system-level findings sit above the per-story wins and must be decided before central rollout (see T6.2 §5, T1.2 System-Level Architecture):
+Two structural findings must be decided before a central cutover:
 
-- **Dual container-lifecycle ownership** — Drone (CI) vs Maven (local), `skip.*`-selected; logic duplicated and diverged (6 vs 7 aggregators, two `CORE_TAG` paths). **Recommended option:** single owner via `mvn verify` (Maven) — decision open, see T1.2 Decision 1 / Decision Order.
-- **Build/publish integrity gap** — the tested/scanned image is rebuilt before publish, so the shipped artifact is not the tested one. **Recommended option:** build-once-promote — decision open (T6.2 §5b).
+- **Dual container-lifecycle ownership** — Drone and Maven encode separate paths. A single owner remains a candidate, not an approved change.
+- **Build/publish integrity gap** — build-once-promote remains a RepoSync/platform candidate, not a pilot implementation.
 
 ## Pilot Result
 
-### Confirmed Findings (from source code analysis)
+### Validated local outcomes
 
-- ✅ Dockerfile uses full JDK (`amazoncorretto:17`) — confirmed from Dockerfile
-- ✅ No `.dockerignore` exists — confirmed from repository scan
-- ✅ 20 services defined in docker-compose.yml — confirmed from file
-- ✅ 6 aggregators + 11 infra/utility/debug services in compose
-- ✅ Compose orchestration via RepoSync-controlled `.drone.star`
-- ✅ Maven profiles `local`, `ci-cmd`, `ci-snapshot` exist in integration-tests pom.xml
-- ✅ Java 17, JUnit 5 — Testcontainers compatible
+- Targeted `.dockerignore`: context `191.27MB` → `189B`; required artefacts preserved; image size unchanged; no cold-build or CI saving.
+- Docker layer-order candidate: approximately 15–16x faster only for the tested local same-daemon warm-cache JAR-change scenario; no image-size, cold-build or CI improvement.
+- Redis Testcontainers pilot: two opt-in local functional runs; no speed, flaky-test, Kafka/Schema Registry, full-E2E or CI benefit claimed.
 
-### Projected Improvements (estimates pending local validation)
+### Pending closure
 
-- ~65% image size reduction (target: ≥30%) — based on known base image sizes
-- ~70% build time reduction (target: ≥30%) — based on layer analysis
-- ~50% build context reduction (target: ≥50%) — based on directory structure
-- ~97% test startup reduction (target: <30s) — based on Testcontainers benchmarks
-- Test isolation: achievable with Testcontainers pattern
-- Compose services classifiable and reducible
-
-> ⚠️ Improvement percentages are structural estimates. Actual validation requires local docker build execution and Drone UI timing capture.
+- Relevant owner review and adopt/candidate/stop decisions.
+- RepoSync/platform routing for centrally owned changes.
+- Stakeholder feedback and approvals.

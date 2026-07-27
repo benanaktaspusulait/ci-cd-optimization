@@ -32,14 +32,12 @@ Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of ef
 | T4.2 | Implement Testcontainers setup | 3 | Must | Not started | _TBD_ | — |
 | T4.3 | Compare with docker-compose flow | 2 | Should | Not started | _TBD_ | — |
 | T4.4 | Document findings & constraints | 1 | Should | Not started | _TBD_ | — |
-| **S5** | **Docker Compose Rationalisation** | — | Should | Not started | _TBD_ | — |
-| T5.1 | Map services started by docker-compose | 1 | Must | Not started | _TBD_ | — |
-| T5.2 | Classify services & usage | 2 | Must | Not started | _TBD_ | — |
-| T5.3 | Recommend reduced Compose role | 2 | Should | Not started | _TBD_ | — |
-| **S6** | **Findings, Ownership & Recommendations** | — | Must | Not started | _TBD_ | — |
-| T6.1 | Consolidate pilot findings | 2 | Must | Not started | _TBD_ | — |
-| T6.2 | Classify ownership & recommend target board | 2 | Must | Not started | _TBD_ | — |
-| T6.3 | Share findings with stakeholders | 1 | Should | Not started | _TBD_ | — |
+| **S5** | **Docker Compose Rationalisation** | — | Should | Done — analysis only | _TBD_ | — |
+| T5.1 | Validate current Compose scope | 3 | Must | Done — evidence prepared | _TBD_ | — |
+| T5.2 | Decide the target Compose role | 2 | Must | Done — recommendation prepared | _TBD_ | — |
+| **S6** | **Pilot Outcome, Ownership and Adoption** | — | Must | In progress | _TBD_ | — |
+| T6.1 | Classify pilot outcomes and ownership routes | 4 | Must | Done — evidence prepared | _TBD_ | — |
+| T6.2 | Decide adoption route and publish pilot outcome | 2 | Must | Not completed — materials prepared | _TBD_ | — |
 
 ---
 

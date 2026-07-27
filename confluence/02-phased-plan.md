@@ -19,8 +19,8 @@
 |------|-------|---------|---------------|
 | **Week 1** | Assess + baseline | Story 1 (T1.1–T1.5), Story 2 (T2.1–T2.4) | Pipeline boundaries understood; at least two candidates compared; one pilot repo selected; baseline captured |
 | **Week 2** | Quick wins + prototype | Story 3 (T3.1–T3.3), Story 4 (T4.1–T4.2) | `.dockerignore` + multi-stage applied; Testcontainers running locally |
-| **Week 3** | Measure + compare | Story 3 (T3.4), Story 4 (T4.3–T4.4), Story 5 (T5.1–T5.2) | Before/after data; Testcontainers vs Compose comparison; Compose mapped |
-| **Week 4** | Rationalise + share | Story 5 (T5.3), Story 6 (T6.1–T6.3) | Compose recommendation; findings consolidated; ownership classified; shared |
+| **Week 3** | Measure + compare | Story 3 (T3.4), Story 4 (T4.3–T4.4), Story 5 (T5.1) | Build evidence; scoped Testcontainers/Compose comparison; Compose scope validated |
+| **Week 4** | Rationalise + decide | Story 5 (T5.2), Story 6 (T6.1–T6.2) | Compose role recommended; outcomes/ownership classified; adoption decisions and share-out recorded |
 
 ### Milestones
 

@@ -14,8 +14,8 @@ Sized from story point estimates (`1`, `2`, `3`, `5`; `1 SP` is roughly 1 day). 
 |------|-------|-----------------|---------------|
 | **Week 1** | Pipeline assessment + baseline | Story 1 (T1.1–T1.5), Story 2 (T2.1–T2.4) | Pipeline boundaries known; pilot repo agreed; baseline metrics captured |
 | **Week 2** | Build + Testcontainers (parallel) | Story 3 (T3.1–T3.3), Story 4 (T4.1–T4.2) | `.dockerignore` + one layering change applied; Testcontainers setup running locally |
-| **Week 3** | Measure + compare | Story 3 (T3.4), Story 4 (T4.3–T4.4), Story 5 (T5.1–T5.2) | Before/after build metrics; Testcontainers vs Compose comparison; Compose services mapped |
-| **Week 4** | Rationalise + consolidate | Story 5 (T5.3), Story 6 (T6.1–T6.3) | Compose recommendation; consolidated findings; ownership classified; findings shared |
+| **Week 3** | Measure + compare | Story 3 (T3.4), Story 4 (T4.3–T4.4), Story 5 (T5.1) | Build evidence; scoped Testcontainers/Compose comparison; Compose scope validated |
+| **Week 4** | Rationalise + decide | Story 5 (T5.2), Story 6 (T6.1–T6.2) | Compose role recommended; outcomes and ownership classified; adoption decisions and share-out recorded |
 
 > This is a ~4-week part-time pilot, not a full-time programme. Adjust per team capacity.
 
@@ -100,7 +100,7 @@ Testcontainers (Story 4) covers integration tests. Everything else still needs v
 | **`.dockerignore` (T3.2)** | Build context size compared before/after; image still contains required files; build succeeds |
 | **Build cache (T3.3)** | Two consecutive builds: second reuses cache; a clean build (no cache) still succeeds (guards R6) |
 | **Testcontainers (T4.2)** | Integration test passes locally; dependency reachable; runs in Drone CI or documented why not |
-| **Compose change (T5.3)** | Integration suite passes with the reduced set; local debugging workflow still works |
+| **Compose change candidate (T5.2)** | Before adoption, the equivalent integration scope passes with the proposed set and the local debugging workflow is preserved |
 | **Metrics (T2.x, T3.4, T4.3)** | Captured via the [metrics template](docs/stories/metrics-template.md); method documented so it's repeatable |
 
 **Verification principles**

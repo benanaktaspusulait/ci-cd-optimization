@@ -21,8 +21,8 @@ This page is the index for full task definitions. Each child page below contains
 | Task Definitions — Story 2: Baseline & Pilot Scope | 2 | T2.1–T2.4 |
 | Task Definitions — Story 3: Docker Build Optimisation | 3 | T3.1–T3.4 |
 | Task Definitions — Story 4: Testcontainers Pilot | 4 | T4.1–T4.4 |
-| Task Definitions — Story 5: Docker Compose Rationalisation | 5 | T5.1–T5.3 |
-| Task Definitions — Story 6: Findings, Ownership & Recommendations | 6 | T6.1–T6.3 |
+| Task Definitions — Story 5: Docker Compose Rationalisation | 5 | T5.1–T5.2 |
+| Task Definitions — Story 6: Pilot Outcome, Ownership and Adoption | 6 | T6.1–T6.2 |
 
 ---
 
@@ -47,14 +47,12 @@ This page is the index for full task definitions. Each child page below contains
 | T4.2 | Implement Testcontainers setup | 4 | 3 |
 | T4.3 | Compare with docker-compose flow | 4 | 2 |
 | T4.4 | Document findings & constraints | 4 | 1 |
-| T5.1 | Map services started by docker-compose | 5 | 1 |
-| T5.2 | Classify services & usage | 5 | 2 |
-| T5.3 | Recommend reduced Compose role | 5 | 2 |
-| T6.1 | Consolidate pilot findings | 6 | 2 |
-| T6.2 | Classify ownership & recommend target board | 6 | 2 |
-| T6.3 | Share findings with stakeholders | 6 | 1 |
+| T5.1 | Validate current Compose scope | 5 | 3 |
+| T5.2 | Decide the target Compose role | 5 | 2 |
+| T6.1 | Classify pilot outcomes and ownership routes | 6 | 4 |
+| T6.2 | Decide adoption route and publish pilot outcome | 6 | 2 |
 
-**Total: 23 tasks, 35 SP** (~15 working days, part-time over 4 weeks).
+**Total: 21 tasks, 36 SP** (indicative sizing; part-time over 4 weeks).
 
 ---
 

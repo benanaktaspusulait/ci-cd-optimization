@@ -61,14 +61,12 @@ Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of ef
 | T4.2 | Implement Testcontainers setup | Implementation | 3 | Must | T4.1 | W2 | Not started |
 | T4.3 | Compare with docker-compose flow | Analysis | 2 | Should | T4.2 | W3 | Not started |
 | T4.4 | Document findings & constraints | Documentation | 1 | Should | T4.3 | W3 | Not started |
-| **S5** | **Docker Compose Rationalisation** | Story | — | Should | S4 | W3 | Not started |
-| T5.1 | Map services started by docker-compose | Research | 1 | Must | T4.4 | W3 | Not started |
-| T5.2 | Classify services & usage | Analysis | 2 | Must | T5.1 | W3 | Not started |
-| T5.3 | Recommend reduced Compose role | Documentation | 2 | Should | T4.4, T5.2 | W4 | Not started |
-| **S6** | **Findings, Ownership and Recommendations** | Story | — | Must | S3, S4, S5 | W4 | Not started |
-| T6.1 | Consolidate pilot findings | Documentation | 2 | Must | T3.4, T4.4, T5.3 | W4 | Not started |
-| T6.2 | Classify ownership & recommend target board | Analysis | 2 | Must | T6.1 | W4 | Not started |
-| T6.3 | Share findings with stakeholders | Documentation | 1 | Should | T6.2 | W4 | Not started |
+| **S5** | **Docker Compose Rationalisation** | Story | — | Should | T1.3, T1.4, current S4 evidence | W3–4 | Done — analysis only |
+| T5.1 | Validate current Compose scope | Analysis | 3 | Must | T1.3, T1.4, current S4 evidence | W3 | Done — evidence prepared |
+| T5.2 | Decide the target Compose role | Decision | 2 | Must | T5.1, current S4 evidence | W4 | Done — recommendation prepared |
+| **S6** | **Pilot Outcome, Ownership and Adoption** | Story | — | Must | T3.4, current S4 evidence, T5.2 | W4 | In progress |
+| T6.1 | Classify pilot outcomes and ownership routes | Evidence/decision | 4 | Must | T3.4, current S4 evidence, T5.2 | W4 | Done — evidence prepared |
+| T6.2 | Decide adoption route and publish pilot outcome | Decision/communication | 2 | Must | T6.1 | W4 | Not completed — materials prepared |
 
 ---
 

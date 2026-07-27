@@ -2,29 +2,27 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | Done |
-| **Date** | 2026-06-11 |
+| **Status** | Done — analysis and recommendation only |
+| **Date consolidated** | 2026-07-23 |
 
 ---
 
 ## Deliverables
 
-| Task | File | Status |
-|------|------|:------:|
-| T5.1 — Map services | [T5.1-map-services.md](./T5.1-map-services.md) | ✅ |
-| T5.2 — Classify usage | [T5.2-classify-usage.md](./T5.2-classify-usage.md) | ✅ |
-| T5.3 — Recommend role | [T5.3-recommend-role.md](./T5.3-recommend-role.md) | ✅ |
+| Task | Primary output | Status |
+|---|---|---|
+| T5.1 — Validate current Compose scope | [T5.1-validate-compose-scope.md](./T5.1-validate-compose-scope.md) | Done |
+| T5.2 — Decide the target Compose role | [T5.2-decide-compose-role.md](./T5.2-decide-compose-role.md) | Done — recommendation prepared |
 
 ---
 
 ## Key Results
 
-- **20 services** defined in docker-compose.yml
-- **17 started in CI** (3 already excluded: kafka-rest, kafka-topic-extract, aggregate-v1id-v2id)
-- **5 infrastructure services** replaceable by Testcontainers (Kafka, ZK, SR, Redis, LocalStack)
-- **Target:** CI compose reduced from 17 → 8 services (**53% reduction**)
-- **Recommendation:** Keep compose for custom apps (aggregators) + local debugging; use Testcontainers for infrastructure in tests
-- **Architectural decision — OPEN (T5.3 §8, decision register T6.2 §5):** container lifecycle should have a **single owner**, but the choice is not locked. **Recommended option:** `mvn verify` (Maven) with Drone reduced to provisioning DIND — gives local/CI parity and removes the dual-orchestration divergence (Drone 6 aggregators vs Maven 7; two `CORE_TAG` paths). **Alternative:** Drone retains ownership. Decision required; sequence per T1.2 "Decision Order".
+- **Observed:** 20 services are defined and 17 are started by the mapped CI path.
+- **Measured locally:** the opt-in Redis Testcontainers smoke/wiring pilot completed two functional runs.
+- **Not measured:** reduced-Compose CI timing, full-E2E performance, Kafka/Schema Registry replacement and flaky-test impact.
+- **Recommendation:** retain current Compose defaults for full E2E and local debugging; keep reductions and a single-orchestrator model as ownership/validation candidates.
+- **Adoption:** no Compose, CI or production change is approved or implemented by Story 5.
 
 ---
 
@@ -33,9 +31,8 @@
 | Fact | Source |
 |------|--------|
 | 20 services defined | Counted from docker-compose.yml |
-| 3 services not started in CI (kafka-rest, kafka-topic-extract, aggregate-v1id-v2id) | Not referenced in `.drone.star` CI steps |
+| 3 services not started in the mapped CI path (kafka-rest, kafka-topic-extract, aggregate-v1id-v2id) | Story 1 pipeline mapping |
 | `kafdrop` started via `depends_on` chain, not direct pipeline reference | docker-compose.yml `pre-integration-test.depends_on` |
-| All aggregator images sourced from `docker.digital.homeoffice.gov.uk/dacc-aws/` | docker-compose.yml image references |
 | docker-compose.yml is RepoSync-controlled | File header warning |
 
 ---
@@ -44,6 +41,6 @@
 
 | # | Question | Impact |
 |---|----------|--------|
-| 1 | Is `kafdrop` functionally needed in CI, or just a depends_on side-effect? | Could remove 1 more service from CI |
-| 2 | Would removing Jaeger from CI break adaptor startup (OTel connection)? | Need to verify OTel is optional/graceful |
-| 3 | Can Docker Compose profiles be added to the RepoSync template? | Affects rationalisation approach |
+| 1 | Is `kafdrop` functionally needed in CI, or only a dependency side effect? | Requires equivalent functional validation |
+| 2 | Would removing Jaeger affect adaptor startup or full E2E behaviour? | Requires equivalent functional validation |
+| 3 | Which owner should control the durable orchestration model? | CST design plus RepoSync/platform decision |

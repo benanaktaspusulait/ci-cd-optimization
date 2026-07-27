@@ -24,9 +24,8 @@ This mixed usage causes problems:
 
 We will reduce Docker Compose's role in **CI** while **keeping it for local debugging**. Specifically:
 
-1. **Map** all services currently in `docker-compose.yml` (T5.1).
-2. **Classify** each service: required for CI tests / local-debug only / optional / removable (T5.2).
-3. **Recommend** which services to remove from the CI flow, which to keep, and which to move to Testcontainers (T5.3).
+1. **Validate scope** by mapping and classifying the services and invocation paths (T5.1).
+2. **Decide the target role** by identifying what to retain and which changes remain evidence/ownership candidates (T5.2).
 
 We will **not remove Compose entirely**. Docker Compose remains valuable for:
 - Spinning up the full stack for local manual testing.
@@ -50,11 +49,11 @@ E2E / exploratory      → Compose or ephemeral environments (future)
 
 - **Negative / trade-offs:**
   - Risk of breaking a hidden local workflow (risk R4) — a service assumed "not needed" turns out to be required.
-  - Requires accurate service mapping first (T5.1–T5.2) — cannot skip straight to removal.
+  - Requires accurate service mapping and classification first (T5.1) — cannot skip straight to removal.
   - Two ways to start dependencies (Testcontainers in code, Compose on CLI) adds mental overhead until the team internalises the split.
 
 - **Follow-ups:**
-  - T5.1–T5.2: map and classify before changing anything.
+  - T5.1: map and classify before changing anything; T5.2 records the recommendation and adoption limits.
   - Change **CI usage only** in the pilot — do not change local Compose usage.
   - Document any hidden dependency discovered during mapping.
   - If a service is borderline, keep it in CI during the pilot and flag for review.

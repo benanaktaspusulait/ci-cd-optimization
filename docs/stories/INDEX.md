@@ -50,14 +50,14 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 
 | ID | Task | SP | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
-| T5.1 | [Map services started by docker-compose](story-5-compose/task-1-map-services.md) | 1 | _TBD_ | Not started | Week 3 |
-| T5.2 | [Classify services & usage](story-5-compose/task-2-classify-usage.md) | 2 | _TBD_ | Not started | Week 3 |
-| T5.3 | [Recommend reduced Compose role](story-5-compose/task-3-recommend-role.md) | 2 | _TBD_ | Not started | Week 4 |
+| T5.1 | [Validate current Compose scope](story-5-compose/task-1-validate-compose-scope.md) | 3 | _TBD_ | Done — evidence prepared | Week 3 |
+| T5.2 | [Decide the target Compose role](story-5-compose/task-2-decide-compose-role.md) | 2 | _TBD_ | Done — recommendation prepared | Week 4 |
 
-### [Story 6 — Findings, Ownership & Recommendations](story-6-findings/README.md)
+### [Story 6 — Pilot Outcome, Ownership and Adoption](story-6-findings/README.md)
 
 | ID | Task | SP | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
-| T6.1 | [Consolidate pilot findings](story-6-findings/task-1-consolidate-findings.md) | 2 | _TBD_ | Not started | Week 4 |
-| T6.2 | [Classify ownership & recommend target board](story-6-findings/task-2-classify-ownership.md) | 2 | _TBD_ | Not started | Week 4 |
-| T6.3 | [Share findings with stakeholders](story-6-findings/task-3-share-stakeholders.md) | 1 | _TBD_ | Not started | Week 4 |
+| T6.1 | [Classify pilot outcomes and ownership routes](story-6-findings/task-1-classify-outcomes.md) | 4 | _TBD_ | Done — evidence prepared | Week 4 |
+| T6.2 | [Decide the adoption route and publish the pilot outcome](story-6-findings/task-2-decide-adoption.md) | 2 | _TBD_ | Not completed — materials prepared | Week 4 |
+
+See the [Story 5 and Story 6 consolidation map](STORY-5-6-CONSOLIDATION.md) for legacy task traceability.

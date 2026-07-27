@@ -14,6 +14,7 @@ Generated from the current project Markdown files. Source documents are left unc
 - `docs/glossary.md`
 - `docs/stories/STATUS-BOARD.md`
 - `docs/stories/INDEX.md`
+- `docs/stories/STORY-5-6-CONSOLIDATION.md`
 - `docs/stories/DEFINITION-OF-DONE.md`
 - `docs/stories/metrics-template.md`
 - `docs/stories/tech-notes.md`
@@ -40,13 +41,11 @@ Generated from the current project Markdown files. Source documents are left unc
 - `docs/stories/story-4-testcontainers/task-3-compare-flows.md`
 - `docs/stories/story-4-testcontainers/task-4-document-findings.md`
 - `docs/stories/story-5-compose/README.md`
-- `docs/stories/story-5-compose/task-1-map-services.md`
-- `docs/stories/story-5-compose/task-2-classify-usage.md`
-- `docs/stories/story-5-compose/task-3-recommend-role.md`
+- `docs/stories/story-5-compose/task-1-validate-compose-scope.md`
+- `docs/stories/story-5-compose/task-2-decide-compose-role.md`
 - `docs/stories/story-6-findings/README.md`
-- `docs/stories/story-6-findings/task-1-consolidate-findings.md`
-- `docs/stories/story-6-findings/task-2-classify-ownership.md`
-- `docs/stories/story-6-findings/task-3-share-stakeholders.md`
+- `docs/stories/story-6-findings/task-1-classify-outcomes.md`
+- `docs/stories/story-6-findings/task-2-decide-adoption.md`
 - `docs/adr/README.md`
 - `docs/adr/0001-pilot-not-rollout.md`
 - `docs/adr/0002-testcontainers-for-integration-tests.md`
@@ -57,14 +56,13 @@ Generated from the current project Markdown files. Source documents are left unc
 - `examples/README.md`
 - `examples/ci/drone-considerations.md`
 
-
 ---
 
 ## Overview
 
 > Source: `README.md`
 
-## Container & CI/CD Optimisation Pilot
+# Container & CI/CD Optimisation Pilot
 
 > **Status:** Pilot planning — not an approved implementation programme.
 > **Scope:** FDP as the pilot context; patterns may be reusable more widely if proven.
@@ -76,7 +74,7 @@ Generated from the current project Markdown files. Source documents are left unc
 
 ---
 
-### Start Here
+## Start Here
 
 | Need | Go to |
 |------|-------|
@@ -92,7 +90,7 @@ Generated from the current project Markdown files. Source documents are left unc
 
 ---
 
-### What This Is
+## What This Is
 
 A small, measurable pilot on **one** representative repository:
 
@@ -108,7 +106,7 @@ The pilot produces evidence and recommendations. It does **not** approve an org-
 
 ---
 
-### Core Constraint
+## Core Constraint
 
 FDP adaptor repositories use a centrally managed `.drone.star` pipeline deployed via **RepoSync**. Local pipeline edits are not a durable delivery route because RepoSync owns the source of truth.
 
@@ -120,7 +118,7 @@ Story 1 exists to make that boundary explicit before the rest of the pilot proce
 
 ---
 
-### Ownership and Prioritisation Boundaries
+## Ownership and Prioritisation Boundaries
 
 Not all improvement ideas can be progressed through the same route. Three distinct ownership categories apply:
 
@@ -161,7 +159,7 @@ These may require wider DSA ETO/Enabling prioritisation and should be assessed a
 
 ---
 
-### Success Targets Summary
+## Success Targets Summary
 
 Targets are proposed and confirmed against the real baseline in Story 2. Detailed measurement fields live in the [metrics template](docs/stories/metrics-template.md).
 
@@ -188,7 +186,7 @@ Targets are proposed and confirmed against the real baseline in Story 2. Detaile
 
 ---
 
-### Stories
+## Stories
 
 | # | Story | Tasks | Depends on | Parallel with |
 |---|-------|:-----:|------------|----------------|
@@ -211,7 +209,7 @@ Progress is tracked in the [status board](docs/stories/STATUS-BOARD.md). The [ba
 
 ---
 
-### Documentation Map
+## Documentation Map
 
 | Document | Purpose |
 |----------|---------|
@@ -228,19 +226,18 @@ Progress is tracked in the [status board](docs/stories/STATUS-BOARD.md). The [ba
 | [Glossary](docs/glossary.md) | FDP/CST/ETO/Drone terminology |
 | [Contributing](CONTRIBUTING.md) | How to work with the backlog |
 
----
 
-## Docs / PROJECT CONTEXT
+---
 
 > Source: `docs/PROJECT-CONTEXT.md`
 
-## Project Context
+# Project Context
 
 Why this pilot exists, what it is trying to improve, and how success is measured. [← Back to overview](../README.md)
 
 ---
 
-### Background
+## Background
 
 CI/CD and container workflows create recurring friction as projects grow. The concrete pain points behind this pilot:
 
@@ -254,7 +251,7 @@ Concrete baseline numbers are **not assumed**. Story 2 captures real build time,
 
 ---
 
-### Current State (to be confirmed in Story 2)
+## Current State (to be confirmed in Story 2)
 
 These are **placeholder estimates** based on initial observations. Exact values will be captured in T2.2–T2.4 and recorded in the [metrics template](stories/metrics-template.md).
 
@@ -271,7 +268,7 @@ These numbers will be replaced with real data once Story 2 is complete.
 
 ---
 
-### Business Impact (estimated)
+## Business Impact (estimated)
 
 - **Developer productivity:** multi-stage builds + Testcontainers locally = ~3 min saved per build cycle. A developer hitting this ~8×/day = **~24 min saved per developer per day**. For a team of 5, that's **~2 hours/day** back into delivery.
 - **Image size → transfer & storage:** 30% smaller image = faster pulls in every environment (dev/SIT/bVal/prod), less registry storage, faster rollout.
@@ -280,7 +277,7 @@ These numbers will be replaced with real data once Story 2 is complete.
 
 ---
 
-### Technology Stack
+## Technology Stack
 
 | Area | Tooling |
 |------|---------|
@@ -295,19 +292,18 @@ These numbers will be replaced with real data once Story 2 is complete.
 | Tracing | OpenTelemetry + Jaeger |
 | Security | Trivy, Sonar, SBOM (Syft), Drone secrets — see [SECURITY.md](../SECURITY.md) |
 
----
 
-## Docs / PIPELINE CONTEXT
+---
 
 > Source: `docs/PIPELINE-CONTEXT.md`
 
-## Pipeline Context
+# Pipeline Context
 
 The Drone/RepoSync and CI/deploy boundary that shapes the pilot. [← Back to overview](../README.md)
 
 ---
 
-### Drone / RepoSync Constraint
+## Drone / RepoSync Constraint
 
 The FDP adaptor repositories use a **centrally managed `.drone.star`** pipeline (Starlark), deployed via **RepoSync**. Local changes to the pipeline config are not durable because RepoSync owns the source of truth.
 
@@ -324,7 +320,7 @@ This means:
 
 ---
 
-### Pipeline Landscape
+## Pipeline Landscape
 
 There are **two separate pipelines** in the FDP ecosystem — the pilot targets only the first:
 
@@ -350,19 +346,18 @@ There are **two separate pipelines** in the FDP ecosystem — the pilot targets 
 
 The pilot optimises the **CI pipeline** (build time, test setup, Docker image). Deploy pipeline improvements (rollback automation, release flow) are captured in [Future considerations](stories/FUTURE-CONSIDERATIONS.md).
 
----
 
-## Docs / SCOPE AND GUARDRAILS
+---
 
 > Source: `docs/SCOPE-AND-GUARDRAILS.md`
 
-## Scope and Guardrails
+# Scope and Guardrails
 
 What the pilot may change, what needs central coordination, and what is deliberately deferred. [← Back to overview](../README.md)
 
 ---
 
-### Pilot Approach
+## Pilot Approach
 
 A small, measurable pilot on **one** representative repository:
 
@@ -375,7 +370,7 @@ A small, measurable pilot on **one** representative repository:
 
 ---
 
-### Immediate Pilot Scope
+## Immediate Pilot Scope
 
 The initial pilot should remain small and measurable.
 
@@ -401,7 +396,7 @@ The initial pilot should remain small and measurable.
 
 ---
 
-### Deferred Work
+## Deferred Work
 
 This is the negative scope / guardrail list. These items may be valid later, but they should not start before the pilot has evidence and ownership.
 
@@ -418,7 +413,7 @@ This is the negative scope / guardrail list. These items may be valid later, but
 
 ---
 
-### Assumptions
+## Assumptions
 
 - The first pilot will use **one** selected repository/service.
 - Baseline metrics will be captured **before** any implementation changes.
@@ -430,7 +425,7 @@ This is the negative scope / guardrail list. These items may be valid later, but
 
 ---
 
-### Decision Points
+## Decision Points
 
 Before creating detailed implementation tickets, the following decisions should be agreed:
 
@@ -444,7 +439,7 @@ Before creating detailed implementation tickets, the following decisions should 
 
 ---
 
-### Open Questions
+## Open Questions
 
 - Which FDP repository/service is the best pilot candidate?
 - Do we have reliable access to current pipeline timing data (Drone UI / API)?
@@ -461,7 +456,7 @@ Before creating detailed implementation tickets, the following decisions should 
 
 ---
 
-### Recommended First Local Changes
+## Recommended First Local Changes
 
 The first local changes should be small and low-risk:
 
@@ -474,13 +469,12 @@ The first local changes should be small and low-risk:
 
 Avoid combining Dockerfile optimisation and Testcontainers changes in the same MR — keep changes attributable.
 
----
 
-## PROJECT PLAN
+---
 
 > Source: `PROJECT-PLAN.md`
 
-## Project Plan
+# Project Plan
 
 Operational plan for the Container & CI/CD Optimisation pilot: timeline, risk register, branching/CI flow, and test strategy. [← Back to overview](README.md)
 
@@ -488,7 +482,7 @@ Operational plan for the Container & CI/CD Optimisation pilot: timeline, risk re
 
 ---
 
-### Timeline (indicative)
+## Timeline (indicative)
 
 Sized from story point estimates (`1`, `2`, `3`, `5`; `1 SP` is roughly 1 day). Stories 3 and 4 run in parallel after the Story 1/2 gates.
 
@@ -496,12 +490,12 @@ Sized from story point estimates (`1`, `2`, `3`, `5`; `1 SP` is roughly 1 day). 
 |------|-------|-----------------|---------------|
 | **Week 1** | Pipeline assessment + baseline | Story 1 (T1.1–T1.5), Story 2 (T2.1–T2.4) | Pipeline boundaries known; pilot repo agreed; baseline metrics captured |
 | **Week 2** | Build + Testcontainers (parallel) | Story 3 (T3.1–T3.3), Story 4 (T4.1–T4.2) | `.dockerignore` + one layering change applied; Testcontainers setup running locally |
-| **Week 3** | Measure + compare | Story 3 (T3.4), Story 4 (T4.3–T4.4), Story 5 (T5.1–T5.2) | Before/after build metrics; Testcontainers vs Compose comparison; Compose services mapped |
-| **Week 4** | Rationalise + consolidate | Story 5 (T5.3), Story 6 (T6.1–T6.3) | Compose recommendation; consolidated findings; ownership classified; findings shared |
+| **Week 3** | Measure + compare | Story 3 (T3.4), Story 4 (T4.3–T4.4), Story 5 (T5.1) | Build evidence; scoped Testcontainers/Compose comparison; Compose scope validated |
+| **Week 4** | Rationalise + decide | Story 5 (T5.2), Story 6 (T6.1–T6.2) | Compose role recommended; outcomes and ownership classified; adoption decisions and share-out recorded |
 
 > This is a ~4-week part-time pilot, not a full-time programme. Adjust per team capacity.
 
-#### Milestones
+### Milestones
 - **M1 — Pipeline assessed + baseline agreed** (end of Week 1): boundaries known, scope locked, numbers captured.
 - **M2 — Optimisations applied** (end of Week 2): build + Testcontainers changes exist.
 - **M3 — Evidence in** (end of Week 3): before/after data collected.
@@ -509,7 +503,7 @@ Sized from story point estimates (`1`, `2`, `3`, `5`; `1 SP` is roughly 1 day). 
 
 ---
 
-### Risk register
+## Risk register
 
 Probability (P) and Impact (I): Low / Med / High.
 
@@ -527,16 +521,16 @@ Probability (P) and Impact (I): Low / Med / High.
 
 ---
 
-### Branching & CI flow
+## Branching & CI flow
 
-#### Pipeline landscape
+### Pipeline landscape
 
 The FDP ecosystem has two separate pipelines:
 
 1. **CI pipeline** (per-adaptor repo, `.drone.star` via RepoSync) — build, test, scan, produce image + Helm chart. **This is what the pilot optimises.**
 2. **Deploy pipeline** (MMA service repo, separate Drone pipeline) — Helm package, lint, template, diff, upload, deploy to Kubernetes. **Not in pilot scope.**
 
-#### Release flow
+### Release flow
 
 ```text
 feature/MMA-XXXXX → develop → release/X.Y.Z → tag (vX.Y.Z) → tag pipeline → Artifactory
@@ -553,7 +547,7 @@ feature/MMA-XXXXX → develop → release/X.Y.Z → tag (vX.Y.Z) → tag pipelin
 - **Release day:** Thursday
 - **Rollback:** no automation — manual `helm rollback` only
 
-#### Pilot branching
+### Pilot branching
 
 How a pilot task moves from work-in-progress to merged:
 
@@ -572,7 +566,7 @@ feature branch  ──MR──>  develop  ──(stabilise)──>  main
 
 ---
 
-### Test & verification strategy
+## Test & verification strategy
 
 Testcontainers (Story 4) covers integration tests. Everything else still needs verification — here's how each change type is confirmed.
 
@@ -582,7 +576,7 @@ Testcontainers (Story 4) covers integration tests. Everything else still needs v
 | **`.dockerignore` (T3.2)** | Build context size compared before/after; image still contains required files; build succeeds |
 | **Build cache (T3.3)** | Two consecutive builds: second reuses cache; a clean build (no cache) still succeeds (guards R6) |
 | **Testcontainers (T4.2)** | Integration test passes locally; dependency reachable; runs in Drone CI or documented why not |
-| **Compose change (T5.3)** | Integration suite passes with the reduced set; local debugging workflow still works |
+| **Compose change candidate (T5.2)** | Before adoption, the equivalent integration scope passes with the proposed set and the local debugging workflow is preserved |
 | **Metrics (T2.x, T3.4, T4.3)** | Captured via the [metrics template](docs/stories/metrics-template.md); method documented so it's repeatable |
 
 **Verification principles**
@@ -590,7 +584,7 @@ Testcontainers (Story 4) covers integration tests. Everything else still needs v
 - Before/after numbers come from the same method on the same repo.
 - A clean (cache-less) build must always still work, so cache is an optimisation, never a dependency.
 
-#### Open test strategy decisions (resolve in T4.2 / T4.1)
+### Open test strategy decisions (resolve in T4.2 / T4.1)
 
 | Question | Decision | Resolved in |
 |----------|----------|-------------|
@@ -599,13 +593,12 @@ Testcontainers (Story 4) covers integration tests. Everything else still needs v
 | Which CI step runs integration tests | Drone `integration-tests` step via docker-compose. Testcontainers alternative assessed in T1.4/T4.2. | T1.4, T4.2 |
 | Testcontainers reuse policy | Local: reuse enabled for faster feedback. CI: reuse disabled — clean, isolated env per run. See [ADR-0002](docs/adr/0002-testcontainers-for-integration-tests.md). | Decided (ADR-0002) |
 
----
 
-## SECURITY
+---
 
 > Source: `SECURITY.md`
 
-## Security Plan
+# Security Plan
 
 Concrete security practices for the pilot. Turns the high-level notes in [tech-notes](docs/stories/tech-notes.md#security--compliance) into an actionable plan. [← Back to overview](README.md)
 
@@ -613,7 +606,7 @@ Concrete security practices for the pilot. Turns the high-level notes in [tech-n
 
 ---
 
-### 1. Secret management
+## 1. Secret management
 
 | Concern | Approach |
 |---------|----------|
@@ -639,7 +632,7 @@ docker buildx build --secret id=maven_settings,src=$HOME/.m2/settings.xml .
 
 ---
 
-### 2. Scanning policy
+## 2. Scanning policy
 
 | What | Tool (candidate) | When | Pilot mode | Target gate |
 |------|------------------|------|------------|-------------|
@@ -659,7 +652,7 @@ docker buildx build --secret id=maven_settings,src=$HOME/.m2/settings.xml .
 
 ---
 
-### 3. Policy as code
+## 3. Policy as code
 
 Container/image rules to enforce automatically rather than by review.
 
@@ -679,7 +672,7 @@ Container/image rules to enforce automatically rather than by review.
 
 ---
 
-### 4. Supply-chain hardening (assessed, mostly ACP/ETO)
+## 4. Supply-chain hardening (assessed, mostly ACP/ETO)
 
 - **Digest pinning** for critical base images (`FROM image@sha256:…`).
 - **Image signing / provenance** (e.g. cosign) — assess feasibility, likely ACP/ETO.
@@ -688,7 +681,7 @@ Container/image rules to enforce automatically rather than by review.
 
 ---
 
-### Responsibilities
+## Responsibilities
 
 | Area | Owner |
 |------|-------|
@@ -696,23 +689,22 @@ Container/image rules to enforce automatically rather than by review.
 | Scanning tool trial in pilot CI | **CST (pilot)** |
 | Org-wide scanning gate, signing infra, base-image allowlist | **Platform / ETO** (route via Story 6) |
 
-### Reporting a vulnerability
+## Reporting a vulnerability
 
 This is a planning/pilot repository with docs plus executable templates/config. If a security issue is found in pilot **code, config, or templates**, raise it privately with the pilot lead rather than opening a public issue.
 
----
 
-## CONTRIBUTING
+---
 
 > Source: `CONTRIBUTING.md`
 
-## Contributing & How to Use This Backlog
+# Contributing & How to Use This Backlog
 
 How this backlog is organised and how to work with it. [← Back to overview](README.md)
 
 ---
 
-### Structure
+## Structure
 
 ```text
 README.md                  → entry point: purpose, key constraint, success targets, story map
@@ -741,13 +733,13 @@ docs/
 **Levels:** Epic (`README.md`) → Story (`docs/stories/story-*/README.md`) → Task (`task-*.md`).
 **Decisions:** recorded as [ADRs](docs/adr/README.md). **Plan & risks:** [PROJECT-PLAN.md](PROJECT-PLAN.md). **Security:** [SECURITY.md](SECURITY.md).
 
-### How to navigate
+## How to navigate
 
 - Start at the [backlog index](docs/stories/INDEX.md) for the full outline.
 - Drill into a story README for its goal and task list.
 - Open a task file for the full detail (why · goal · scope · acceptance criteria).
 
-### Reading a task
+## Reading a task
 
 Every task file follows the same shape:
 
@@ -757,7 +749,7 @@ Every task file follows the same shape:
 - **Scope** — what is covered
 - **Acceptance criteria** — checklist that must pass
 
-### Conventions
+## Conventions
 
 - **Estimate (story points):** use `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of effort
 - **Priority (MoSCoW):** `Must` · `Should` · `Could` · `Won't (this pilot)`
@@ -766,7 +758,7 @@ Every task file follows the same shape:
 
 > The [status board](docs/stories/STATUS-BOARD.md) is the only live progress tracker. Any status values in story/task files are planning snapshots and should not be maintained separately.
 
-### Working a task
+## Working a task
 
 1. Set the task **Status** to `In progress` on the [status board](docs/stories/STATUS-BOARD.md).
 2. Do the work within the task's **scope**.
@@ -778,19 +770,18 @@ Every task file follows the same shape:
 
 > The [status board](docs/stories/STATUS-BOARD.md) is the single source of truth for progress. Update it there, not in individual files.
 
-### Raising tickets
+## Raising tickets
 
 Confirm the delivery tracker before ticket creation. If the pilot repo is GitLab-hosted, use GitLab issues for task links and GitLab MRs for source review. If Jira is the team's delivery tracker, link the Jira ticket in the `Issue` column and still use GitLab MRs for code changes. Route cross-team follow-ups to the CST, RepoSync/platform, or wider ETO board in Story 6.
 
 Create tickets incrementally, following the order in the README. Don't raise everything at once — keep work controlled until pipeline boundaries, baseline data, and ownership are agreed.
 
----
 
-## Docs / Glossary
+---
 
 > Source: `docs/glossary.md`
 
-## Glossary
+# Glossary
 
 Key terms and abbreviations used across this project. [← Back to overview](../README.md)
 
@@ -829,7 +820,7 @@ Key terms and abbreviations used across this project. [← Back to overview](../
 
 ---
 
-### Environment clarification
+## Environment clarification
 
 | Question | Answer |
 |----------|--------|
@@ -843,13 +834,12 @@ Key terms and abbreviations used across this project. [← Back to overview](../
 
 [← Back to overview](../README.md)
 
----
 
-## Docs / Stories / STATUS BOARD
+---
 
 > Source: `docs/stories/STATUS-BOARD.md`
 
-## Status Board
+# Status Board
 
 Single source of truth for pilot task progress. [← Back to overview](../../README.md)
 
@@ -883,18 +873,16 @@ Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of ef
 | T4.2 | Implement Testcontainers setup | 3 | Must | Not started | _TBD_ | — |
 | T4.3 | Compare with docker-compose flow | 2 | Should | Not started | _TBD_ | — |
 | T4.4 | Document findings & constraints | 1 | Should | Not started | _TBD_ | — |
-| **S5** | **Docker Compose Rationalisation** | — | Should | Not started | _TBD_ | — |
-| T5.1 | Map services started by docker-compose | 1 | Must | Not started | _TBD_ | — |
-| T5.2 | Classify services & usage | 2 | Must | Not started | _TBD_ | — |
-| T5.3 | Recommend reduced Compose role | 2 | Should | Not started | _TBD_ | — |
-| **S6** | **Findings, Ownership & Recommendations** | — | Must | Not started | _TBD_ | — |
-| T6.1 | Consolidate pilot findings | 2 | Must | Not started | _TBD_ | — |
-| T6.2 | Classify ownership & recommend target board | 2 | Must | Not started | _TBD_ | — |
-| T6.3 | Share findings with stakeholders | 1 | Should | Not started | _TBD_ | — |
+| **S5** | **Docker Compose Rationalisation** | — | Should | Done — analysis only | _TBD_ | — |
+| T5.1 | Validate current Compose scope | 3 | Must | Done — evidence prepared | _TBD_ | — |
+| T5.2 | Decide the target Compose role | 2 | Must | Done — recommendation prepared | _TBD_ | — |
+| **S6** | **Pilot Outcome, Ownership and Adoption** | — | Must | In progress | _TBD_ | — |
+| T6.1 | Classify pilot outcomes and ownership routes | 4 | Must | Done — evidence prepared | _TBD_ | — |
+| T6.2 | Decide adoption route and publish pilot outcome | 2 | Must | Not completed — materials prepared | _TBD_ | — |
 
 ---
 
-### Ticket-Creation Order
+## Ticket-Creation Order
 
 Create incrementally — not all at once:
 
@@ -904,13 +892,12 @@ Create incrementally — not all at once:
 
 Open the rest once pipeline boundaries are understood and the baseline is underway.
 
----
 
-## Docs / Stories / INDEX
+---
 
 > Source: `docs/stories/INDEX.md`
 
-## Backlog Index
+# Backlog Index
 
 A single-page outline of the whole backlog: every story and its task titles with initial planning info.
 For full detail, follow the links. [← Back to overview](../../README.md)
@@ -921,7 +908,7 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 
 ---
 
-#### [Story 1 — Pipeline Assessment (Drone/RepoSync)](story-1-pipeline-assessment/README.md)
+### [Story 1 — Pipeline Assessment (Drone/RepoSync)](story-1-pipeline-assessment/README.md)
 
 | ID | Task | SP | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
@@ -931,7 +918,7 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 | T1.4 | [Assess Testcontainers feasibility in Drone](story-1-pipeline-assessment/task-4-testcontainers-feasibility.md) | 2 | _TBD_ | Not started | Week 1 |
 | T1.5 | [Assess BuildKit/cache feasibility](story-1-pipeline-assessment/task-5-buildkit-feasibility.md) | 1 | _TBD_ | Not started | Week 1 |
 
-#### [Story 2 — Baseline & Pilot Scope](story-2-baseline/README.md)
+### [Story 2 — Baseline & Pilot Scope](story-2-baseline/README.md)
 
 | ID | Task | SP | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
@@ -940,7 +927,7 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 | T2.3 | [Capture Docker build & image-size baseline](story-2-baseline/task-3-build-image-baseline.md) | 1 | _TBD_ | Not started | Week 1 |
 | T2.4 | [Capture integration-test baseline](story-2-baseline/task-4-integration-test-baseline.md) | 2 | _TBD_ | Not started | Week 1 |
 
-#### [Story 3 — Docker Build Optimisation](story-3-build/README.md) · [ADR-0004](../adr/0004-buildkit-cache-and-layering.md)
+### [Story 3 — Docker Build Optimisation](story-3-build/README.md) · [ADR-0004](../adr/0004-buildkit-cache-and-layering.md)
 
 | ID | Task | SP | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
@@ -949,7 +936,7 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 | T3.3 | [Apply Dockerfile layering / cache improvement](story-3-build/task-3-layering-improvement.md) | 2 | _TBD_ | Not started | Week 2 |
 | T3.4 | [Measure local & CI build impact](story-3-build/task-4-measure-impact.md) | 2 | _TBD_ | Not started | Week 3 |
 
-#### [Story 4 — Testcontainers Pilot](story-4-testcontainers/README.md) · [ADR-0002](../adr/0002-testcontainers-for-integration-tests.md)
+### [Story 4 — Testcontainers Pilot](story-4-testcontainers/README.md) · [ADR-0002](../adr/0002-testcontainers-for-integration-tests.md)
 
 | ID | Task | SP | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
@@ -958,52 +945,88 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 | T4.3 | [Compare with docker-compose flow](story-4-testcontainers/task-3-compare-flows.md) | 2 | _TBD_ | Not started | Week 3 |
 | T4.4 | [Document findings & constraints](story-4-testcontainers/task-4-document-findings.md) | 1 | _TBD_ | Not started | Week 3 |
 
-#### [Story 5 — Docker Compose Rationalisation](story-5-compose/README.md) · [ADR-0003](../adr/0003-reduce-compose-in-ci.md)
+### [Story 5 — Docker Compose Rationalisation](story-5-compose/README.md) · [ADR-0003](../adr/0003-reduce-compose-in-ci.md)
 
 | ID | Task | SP | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
-| T5.1 | [Map services started by docker-compose](story-5-compose/task-1-map-services.md) | 1 | _TBD_ | Not started | Week 3 |
-| T5.2 | [Classify services & usage](story-5-compose/task-2-classify-usage.md) | 2 | _TBD_ | Not started | Week 3 |
-| T5.3 | [Recommend reduced Compose role](story-5-compose/task-3-recommend-role.md) | 2 | _TBD_ | Not started | Week 4 |
+| T5.1 | [Validate current Compose scope](story-5-compose/task-1-validate-compose-scope.md) | 3 | _TBD_ | Done — evidence prepared | Week 3 |
+| T5.2 | [Decide the target Compose role](story-5-compose/task-2-decide-compose-role.md) | 2 | _TBD_ | Done — recommendation prepared | Week 4 |
 
-#### [Story 6 — Findings, Ownership & Recommendations](story-6-findings/README.md)
+### [Story 6 — Pilot Outcome, Ownership and Adoption](story-6-findings/README.md)
 
 | ID | Task | SP | Assignee | Status | Due |
 |----|------|:---:|----------|--------|-----|
-| T6.1 | [Consolidate pilot findings](story-6-findings/task-1-consolidate-findings.md) | 2 | _TBD_ | Not started | Week 4 |
-| T6.2 | [Classify ownership & recommend target board](story-6-findings/task-2-classify-ownership.md) | 2 | _TBD_ | Not started | Week 4 |
-| T6.3 | [Share findings with stakeholders](story-6-findings/task-3-share-stakeholders.md) | 1 | _TBD_ | Not started | Week 4 |
+| T6.1 | [Classify pilot outcomes and ownership routes](story-6-findings/task-1-classify-outcomes.md) | 4 | _TBD_ | Done — evidence prepared | Week 4 |
+| T6.2 | [Decide the adoption route and publish the pilot outcome](story-6-findings/task-2-decide-adoption.md) | 2 | _TBD_ | Not completed — materials prepared | Week 4 |
+
+See the [Story 5 and Story 6 consolidation map](STORY-5-6-CONSOLIDATION.md) for legacy task traceability.
+
 
 ---
 
-## Docs / Stories / DEFINITION OF DONE
+> Source: `docs/stories/STORY-5-6-CONSOLIDATION.md`
+
+# Story 5 and Story 6 Consolidation
+
+This inventory records the task structure reviewed before the Story 5 and Story 6 definitions were changed. It is the traceability record for the documentation-only consolidation; no technical implementation or stakeholder approval is implied.
+
+## Existing-task inventory
+
+| Story | Existing task | Purpose | Proposed consolidated goal |
+|---|---|---|---|
+| Story 5 | T5.1 — Map services started by docker-compose | Inventory services, dependencies, ports and known purpose | T5.1 — Validate current Compose scope |
+| Story 5 | T5.2 — Classify services and usage | Separate CI, local-debug, optional and unclear use | T5.1 — Validate current Compose scope |
+| Story 5 | T5.3 — Recommend reduced Compose role | Define what Compose should retain, what may move, and what must not change | T5.2 — Decide the target Compose role |
+| Story 6 | T6.1 — Consolidate pilot findings | Bring Story 1–5 evidence into a reviewable summary | T6.1 — Classify pilot outcomes and ownership routes |
+| Story 6 | T6.2 — Classify ownership and recommend target board | Separate CST-local, RepoSync/platform and wider ETO work | T6.1 — Classify pilot outcomes and ownership routes |
+| Story 6 | T6.3 — Share findings with stakeholders | Publish the outcome, capture feedback and record next steps | T6.2 — Decide the adoption route and publish the pilot outcome |
+
+## Old-to-new task mapping
+
+| Old task | New consolidated task | Reason |
+|---|---|---|
+| T5.1 | T5.1 | Mapping and usage classification are one evidence-gathering outcome. |
+| T5.2 | T5.1 | Classification has no independent stakeholder outcome without the service map. |
+| T5.3 | T5.2 | The Compose-role recommendation remains a distinct decision outcome. |
+| T6.1 | T6.1 | Evidence consolidation is an input to ownership classification, not a separate delivery. |
+| T6.2 | T6.1 | Ownership and routing complete the same classification outcome. |
+| T6.3 | T6.2 | Sharing, feedback and the adopt/candidate/stop decision form one pilot-close outcome. |
+
+## Status interpretation
+
+- Story 5 evidence has been prepared, so both consolidated documentation outcomes are complete. This does not mean a reduced Compose configuration was implemented or adopted.
+- Story 6 classification material has been prepared. Stakeholder sharing, feedback, approval and adoption are not evidenced, so the final adoption/publishing outcome remains not completed.
+- Existing Story 1–4 evidence remains unchanged. Where it refers to a retired task identifier, compatibility notes in the Story 5/6 solution area preserve the route to the consolidated evidence.
+
+
+---
 
 > Source: `docs/stories/DEFINITION-OF-DONE.md`
 
-## Definition of Done
+# Definition of Done
 
 Project-wide rules that apply to **every** task, in addition to each task's own acceptance criteria.
 A task is only "Done" when all of the following are true.
 
-#### Every task
+### Every task
 - [ ] Task-specific acceptance criteria are all met
 - [ ] Output (findings, change, or decision) is written down in a shareable form
 - [ ] Any assumptions or open questions are recorded
 - [ ] Result is reviewed by at least one other person
 - [ ] Task status is updated on the [status board](STATUS-BOARD.md)
 
-#### Tasks that produce a measurement
+### Tasks that produce a measurement
 - [ ] Metric is captured using the shared [metrics template](metrics-template.md)
 - [ ] Measurement method/source is noted so it can be repeated
 
-#### Tasks that change code or config
+### Tasks that change code or config
 - [ ] Change is small, focused, and reviewable
 - [ ] Compatibility / rollback risk is noted
 - [ ] No secrets are added to the repository or build context
 
 ---
 
-### Conventions
+## Conventions
 
 **Estimate (story points)** — use `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of effort.
 **Priority (MoSCoW)** — `Must` · `Should` · `Could` · `Won't (this pilot)`.
@@ -1011,7 +1034,7 @@ A task is only "Done" when all of the following are true.
 
 ---
 
-### Metrics template
+## Metrics template
 
 Capture every before/after measurement in the dedicated, fillable **[metrics template](metrics-template.md)** — it includes the pilot context, targets, and source-of-method columns. Quick reference of the core fields:
 
@@ -1026,13 +1049,12 @@ Capture every before/after measurement in the dedicated, fillable **[metrics tem
 
 > Targets are tracked in the [metrics template](metrics-template.md) and the [README success targets summary](../../README.md#success-targets-summary). Keep local pilot targets separate from post-platform CI targets.
 
----
 
-## Docs / Stories / Metrics Template
+---
 
 > Source: `docs/stories/metrics-template.md`
 
-## Metrics — Baseline & Results
+# Metrics — Baseline & Results
 
 Fill this in as the pilot progresses. Baseline values come from Story 2; "after" values from Stories 3–5.
 Copy a fresh block per pilot iteration if you measure more than once. [← Back to overview](../../README.md)
@@ -1041,7 +1063,7 @@ Copy a fresh block per pilot iteration if you measure more than once. [← Back 
 
 ---
 
-### Pilot context
+## Pilot context
 
 | Field | Value |
 |-------|-------|
@@ -1051,7 +1073,7 @@ Copy a fresh block per pilot iteration if you measure more than once. [← Back 
 | N (runs averaged) | _TBD_ |
 | Measured by | _TBD_ |
 
-### Core metrics
+## Core metrics
 
 | Metric | Baseline | After | Delta | Target | Source / method |
 |--------|----------|-------|-------|--------|-----------------|
@@ -1068,13 +1090,13 @@ Copy a fresh block per pilot iteration if you measure more than once. [← Back 
 | Developer feedback loop (change → test green) | | | | ≤ 5 min | |
 | Cache hit/miss rate (if available) | | | | — | |
 
-### Notes & observations
+## Notes & observations
 - _Anything that affects interpretation: environment differences, one-off slow runs, cache warm/cold state, etc._
 
-### Source data
+## Source data
 - _Links to pipeline runs, build logs, or commands used._
 
-### Source artefact mapping
+## Source artefact mapping
 
 Use this mapping when copying raw measurements into the core metrics table.
 
@@ -1087,23 +1109,22 @@ Use this mapping when copying raw measurements into the core metrics table.
 
 The metrics template remains the final human-readable summary; raw artefacts are supporting evidence and should be linked in the `Source / method` column.
 
----
 
-## Docs / Stories / Tech Notes
+---
 
 > Source: `docs/stories/tech-notes.md`
 
-## Technical Notes (Reference)
+# Technical Notes (Reference)
 
 Supporting detail for the pilot. Not tasks — reference only.
 Decisions behind these notes are recorded as [ADRs](../adr/README.md); security specifics live in [SECURITY.md](../../SECURITY.md).
 
-#### Base image strategy
+### Base image strategy
 `base-os → base-runtime → base-build → application`. Benefits: standard runtime, shared layers, central patching, easier compliance. Needs: versioned tags, ownership, deprecation policy, scheduled rebuilds, scanning. _(Likely ACP/ETO owned — classify in Story 6.)_
 
 > **Note:** The initial pilot may identify where shared base images would help, but creating and maintaining organisation-level base images would require appropriate ACP/shared engineering ownership, lifecycle management and compatibility guarantees.
 
-#### BuildKit remote cache · [ADR-0004](../adr/0004-buildkit-cache-and-layering.md)
+### BuildKit remote cache · [ADR-0004](../adr/0004-buildkit-cache-and-layering.md)
 CI runners (Drone Kubernetes pods) are ephemeral — no persistent local cache between builds. Use a branch-aware registry cache:
 ```bash
 BRANCH_SLUG="${DRONE_BRANCH:-local}"
@@ -1119,12 +1140,12 @@ Branch builds reuse `main` cache. Replace the variable names with the equivalent
 
 > **Note:** BuildKit remote cache is included as a technical recommendation only. Actual implementation depends on CI runner capability, DIND image support, registry support, security constraints, RepoSync changes and ACP guidance.
 
-#### Testcontainers reuse policy · [ADR-0002](../adr/0002-testcontainers-for-integration-tests.md)
+### Testcontainers reuse policy · [ADR-0002](../adr/0002-testcontainers-for-integration-tests.md)
 Local: reuse may be enabled for faster feedback. CI: reuse disabled — clean, deterministic env per run, no hidden shared state.
 
 > **Note:** Testcontainers should first be validated locally and then assessed against Drone Kubernetes runner/DIND constraints before being proposed for CI usage. Reusable containers should not be assumed suitable for CI without completing Story 1 (pipeline assessment).
 
-#### Security & compliance
+### Security & compliance
 Summary only — the actionable plan (tools, gates, policies, secret handling) is in **[SECURITY.md](../../SECURITY.md)**.
 Versioned base images, digest pinning for critical images, vulnerability scanning, SBOM, image signing if supported, scheduled rebuilds, secret-safe builds:
 ```dockerfile
@@ -1132,7 +1153,7 @@ RUN --mount=type=secret,id=maven_settings,target=/root/.m2/settings.xml \
     mvn -B package
 ```
 
-#### Future platform opportunities (not in pilot)
+### Future platform opportunities (not in pilot)
 
 See **[FUTURE-CONSIDERATIONS.md](FUTURE-CONSIDERATIONS.md)** for the full post-pilot readiness list (rollback, monitoring, artifact management, environment strategy, cost, compliance, troubleshooting runbook).
 
@@ -1140,13 +1161,12 @@ Platform-level capabilities that may become relevant if the pilot proves valuabl
 
 [← Back to overview](../../README.md)
 
----
 
-## Docs / Stories / FUTURE CONSIDERATIONS
+---
 
 > Source: `docs/stories/FUTURE-CONSIDERATIONS.md`
 
-## Future Considerations
+# Future Considerations
 
 Items that are **out of scope for the pilot** but should be addressed if the patterns move to production. These are not tasks — they are a decision backlog for the next phase. [← Back to overview](../../README.md)
 
@@ -1156,23 +1176,23 @@ Items that are **out of scope for the pilot** but should be addressed if the pat
 
 ---
 
-### Post-pilot production readiness
+## Post-pilot production readiness
 
-> **How to action:** After T6.2 classifies ownership, create tickets on the relevant boards and replace the `Next action` cells below with issue links.
+> **How to action:** After T6.1 classifies ownership and T6.2 records owner decisions, create tickets on the agreed boards and replace the `Next action` cells below with issue links.
 
 | # | Category | What's needed | Why it matters | Likely owner | Board | Next action |
 |---|----------|---------------|----------------|--------------|-------|-------------|
-| F1 | **Rollback strategy** | Define how to revert to the previous image/config when a new build causes issues. Options: re-deploy previous image tag, or automated canary with auto-rollback. **KT confirmed: no automated rollback exists today — only manual `helm rollback`.** | Without rollback, a bad deploy stays live until someone manually intervenes. | CST + platform | CST board + platform board | Raise after T6.2 — _link issue here_ |
-| F2 | **Monitoring & alerting** | Track pipeline health metrics (queue time, failure rate, stage duration trend) and alert the team when thresholds breach. Drone API + external dashboards (Grafana). | Degradation goes unnoticed until someone manually checks. | CST (setup) / platform (infra) | CST board + platform board | Raise after T6.2 — _link issue here_ |
-| F3 | **Artifact management** | Define where images are stored (`docker.digital.homeoffice.gov.uk`, ECR, Artifactory), retention/expiry policy (e.g. keep last N tags per branch, expire untagged after 30 days), and cleanup automation. | Unmanaged registries grow indefinitely; stale images consume storage and create confusion. | Platform | Platform board | Raise after T6.2 — _link issue here_ |
-| F4 | **Environment strategy** | Clarify the promotion path: dev → staging → prod. Same pipeline with environment-specific variables? Manual promote gate? Drone promotion pipelines + protected branches. | Pilot assumes one environment; production needs clear separation and gates. | CST + platform | CST board + platform board | Raise after T6.2 — _link issue here_ |
-| F5 | **Cost tracking** | Monitor CI runner minutes, registry storage, and image transfer costs. Set budget alerts. | Optimisation saves time but could shift cost elsewhere (e.g. larger cache storage). | Platform / finance | Platform board | Raise after T6.3 — _link issue here_ |
-| F6 | **Compliance & audit trail** | Ensure pipeline changes are traceable: who approved the MR, what ran, which image was deployed. GitLab audit events + merge request approval rules. | Enterprise/regulated environments require evidence of change control. | Platform / compliance | Platform board | Raise after T6.3 — _link issue here_ |
+| F1 | **Rollback strategy** | Define how to revert to the previous image/config when a new build causes issues. Options: re-deploy previous image tag, or automated canary with auto-rollback. **KT confirmed: no automated rollback exists today — only manual `helm rollback`.** | Without rollback, a bad deploy stays live until someone manually intervenes. | CST + platform | CST board + platform board | Raise after T6.2 owner decision — _link issue here_ |
+| F2 | **Monitoring & alerting** | Track pipeline health metrics (queue time, failure rate, stage duration trend) and alert the team when thresholds breach. Drone API + external dashboards (Grafana). | Degradation goes unnoticed until someone manually checks. | CST (setup) / platform (infra) | CST board + platform board | Raise after T6.2 owner decision — _link issue here_ |
+| F3 | **Artifact management** | Define where images are stored (`docker.digital.homeoffice.gov.uk`, ECR, Artifactory), retention/expiry policy (e.g. keep last N tags per branch, expire untagged after 30 days), and cleanup automation. | Unmanaged registries grow indefinitely; stale images consume storage and create confusion. | Platform | Platform board | Raise after T6.2 owner decision — _link issue here_ |
+| F4 | **Environment strategy** | Clarify the promotion path: dev → staging → prod. Same pipeline with environment-specific variables? Manual promote gate? Drone promotion pipelines + protected branches. | Pilot assumes one environment; production needs clear separation and gates. | CST + platform | CST board + platform board | Raise after T6.2 owner decision — _link issue here_ |
+| F5 | **Cost tracking** | Monitor CI runner minutes, registry storage, and image transfer costs. Set budget alerts. | Optimisation saves time but could shift cost elsewhere (e.g. larger cache storage). | Platform / finance | Platform board | Raise after T6.2 outcome — _link issue here_ |
+| F6 | **Compliance & audit trail** | Ensure pipeline changes are traceable: who approved the MR, what ran, which image was deployed. GitLab audit events + merge request approval rules. | Enterprise/regulated environments require evidence of change control. | Platform / compliance | Platform board | Raise after T6.2 outcome — _link issue here_ |
 | F7 | **Troubleshooting runbook** | Create a developer-facing guide: "pipeline failed — what do I do?" covering common failure modes, how to read logs, how to retry, and when to escalate. | Reduces mean-time-to-recovery and unblocks developers without senior intervention. | CST | CST board | Raise after T6.1 (findings consolidated) — _link issue here_ |
 
 ---
 
-### Recommended priority (post-pilot)
+## Recommended priority (post-pilot)
 
 If the pilot succeeds and the team moves towards production adoption:
 
@@ -1185,7 +1205,7 @@ If the pilot succeeds and the team moves towards production adoption:
 
 ---
 
-### Relationship to pilot
+## Relationship to pilot
 
 These items may surface naturally during the pilot:
 - Story 3 (build optimisation) may reveal artifact/registry questions (→ F3).
@@ -1196,11 +1216,11 @@ When writing the Story 6 consolidated findings, reference this list and recommen
 
 ---
 
-### Post-pilot architecture decisions (candidates)
+## Post-pilot architecture decisions (candidates)
 
 These are decisions that will need to be made if the pilot succeeds and the team moves to production. They are **not pilot scope** — they require ACP/ETO involvement. Record them as formal ADRs when the decision point arrives.
 
-#### Base image strategy
+### Base image strategy
 
 **Context:** Application Dockerfiles currently inherit from arbitrary upstream images (e.g. `eclipse-temurin:17-jre`). There is no shared base-image governance — each repo pins a different tag, CVE patching requires per-repo manual work, and runtime images often include build tooling.
 
@@ -1215,7 +1235,7 @@ These are decisions that will need to be made if the pilot succeeds and the team
 - (+) CVE patches propagate centrally; smaller images; simpler Dockerfiles; central compliance.
 - (−) Teams lose direct control of runtime env; operational burden on ACP/ETO.
 
-#### BuildKit remote cache infrastructure
+### BuildKit remote cache infrastructure
 
 **Context:** Drone CI Kubernetes pods are ephemeral — no persistent local cache. Without a registry-backed remote cache, every CI build downloads dependencies and rebuilds layers from scratch. The pattern (`--cache-from`/`--cache-to` with registry refs) is documented in [tech-notes](tech-notes.md), but provisioning it requires:
 - Registry storage and retention/eviction policy.
@@ -1234,11 +1254,11 @@ These are decisions that will need to be made if the pilot succeeds and the team
 
 ---
 
-### Post-pilot technical opportunities
+## Post-pilot technical opportunities
 
 These are concrete next steps that build on the pilot's findings. They do not require ACP/ETO infrastructure — CST could pursue them independently.
 
-#### Selective test execution
+### Selective test execution
 
 **What:** Only run tests affected by the changed code. If only `payment/` changed, skip `notification/` tests entirely.
 
@@ -1248,7 +1268,7 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 **When:** After Story 4 (Testcontainers) proves which tests are truly independent and isolated.
 
-#### Reusable Drone pipeline templates (via RepoSync)
+### Reusable Drone pipeline templates (via RepoSync)
 
 **What:** Extract the pilot's optimised patterns (BuildKit build, Testcontainers env vars, Trivy scan) into reusable functions within the central `.drone.star` that other FDP adaptors can inherit via RepoSync.
 
@@ -1258,7 +1278,7 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 **When:** After pilot findings are shared (Story 6) and the RepoSync team agrees to adopt the patterns. Requires central ownership.
 
-#### Contract testing (Pact)
+### Contract testing (Pact)
 
 **What:** Verify that services agree on their API contracts (request/response shapes) without deploying them together.
 
@@ -1268,7 +1288,7 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 **When:** When multiple FDP services interact and integration failures are a recurring problem.
 
-#### Ephemeral review environments
+### Ephemeral review environments
 
 **What:** Spin up a short-lived deployment for each MR so reviewers can test the change in a real environment, then tear it down on merge.
 
@@ -1278,7 +1298,7 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 **When:** After the pipeline is fast and reliable (pilot goals achieved); requires ACP/ETO infrastructure for dynamic namespaces.
 
-#### Dependency proxy / artifact cache
+### Dependency proxy / artifact cache
 
 **What:** Cache Maven dependencies and Docker base image pulls at the organisation level so every pipeline doesn't re-download them from the internet.
 
@@ -1289,7 +1309,7 @@ These are concrete next steps that build on the pilot's findings. They do not re
 **When:** When multiple teams hit download latency or rate-limit issues. ACP / DSA ETO owned.
 
 
-#### Release pipeline automation (Gareth's project)
+### Release pipeline automation (Gareth's project)
 
 **What:** An automation project is already in progress (led by Gareth) that aims to eliminate manual service chart management and automate release-branch → tag → deploy flows.
 
@@ -1300,7 +1320,7 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 ---
 
-### Related Future Area: Deployment and Release Safety
+## Related Future Area: Deployment and Release Safety
 
 A separate Cerberus deployment KT highlighted related release engineering areas. These are **outside the initial Container & CI/CD pilot scope** but are noted here as future opportunities.
 
@@ -1327,26 +1347,25 @@ The CI/CD optimisation pilot focuses on **build and test** (faster builds, small
 - Coordinate with Gareth's release automation project to avoid conflicting changes.
 - Clarify environment parity expectations between bVal and production.
 
----
 
-## Docs / Stories / Story 1   Pipeline Assessment / Overview
+---
 
 > Source: `docs/stories/story-1-pipeline-assessment/README.md`
 
-## Story 1 — Drone/RepoSync Pipeline Assessment
+# Story 1 — Drone/RepoSync Pipeline Assessment
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
 **Depends on:** — (gate for the entire pilot) · **Parallel with:** —
 
-### Goal
+## Goal
 Understand the centrally managed Drone pipeline structure, establish what can be changed locally vs what requires RepoSync/platform coordination, and assess feasibility of Testcontainers and BuildKit in the current CI setup.
 
 > **Scope boundary:** this story assesses the **CI pipeline** (per-adaptor repo, `.drone.star`). The **deploy pipeline** (MMA service repo → Helm → Kubernetes) is a separate concern and is documented as context but not optimised by this pilot.
 
-### Why
+## Why
 The FDP adaptor pipelines are generated from a `.drone.star` file managed via RepoSync. Local pipeline changes are not durable, so the pilot must separate repo-local proof points from reusable changes that should be proposed through ACP/RepoSync.
 
-### Acceptance criteria
+## Acceptance criteria
 - [ ] `.drone.star` pipeline structure is documented (steps, services, DIND usage)
 - [ ] Local vs RepoSync-controlled change boundaries are clearly defined
 - [ ] CI pipeline steps and Docker Compose usage are mapped
@@ -1354,7 +1373,7 @@ The FDP adaptor pipelines are generated from a `.drone.star` file managed via Re
 - [ ] BuildKit feasibility in current DIND setup is assessed
 - [ ] Findings inform which later stories can proceed locally vs need central coordination
 
-### Tasks
+## Tasks
 | Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
 | T1.1 | [Review .drone.star pipeline structure](./task-1-review-drone-star.md) | 2 | Must | Not started |
@@ -1363,13 +1382,12 @@ The FDP adaptor pipelines are generated from a `.drone.star` file managed via Re
 | T1.4 | [Assess Testcontainers feasibility in Drone](./task-4-testcontainers-feasibility.md) | 2 | Must | Not started |
 | T1.5 | [Assess BuildKit/cache feasibility](./task-5-buildkit-feasibility.md) | 1 | Should | Not started |
 
----
 
-## Docs / Stories / Story 1   Pipeline Assessment / Task 1   Review Drone Star
+---
 
 > Source: `docs/stories/story-1-pipeline-assessment/task-1-review-drone-star.md`
 
-## T1.1 — Review .drone.star pipeline structure
+# T1.1 — Review .drone.star pipeline structure
 
 **Story:** [Story 1 — Pipeline Assessment](./README.md)
 
@@ -1387,13 +1405,13 @@ The FDP adaptor pipelines are generated from a `.drone.star` file managed via Re
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
+## Why
 The `.drone.star` file defines the entire CI pipeline. Understanding its structure is the prerequisite for every other pilot task — without it, we cannot know what is feasible locally.
 
-### Goal
+## Goal
 Document the current Drone pipeline structure: what runs, in what order, with what services.
 
-### Scope
+## Scope
 - Obtain and review the `.drone.star` source (from the RepoSync source repo)
 - Document pipeline types (CI, ECR, Artifactory, etc.)
 - Document steps within each pipeline (order, images, commands)
@@ -1401,20 +1419,19 @@ Document the current Drone pipeline structure: what runs, in what order, with wh
 - Note any existing Testcontainers-related configuration (e.g. `TESTCONTAINERS_RYUK_DISABLED`)
 - Note how MR/pull_request events are handled
 
-### Acceptance criteria
+## Acceptance criteria
 - [ ] Pipeline types and their purposes are documented
 - [ ] Step ordering and dependencies are mapped
 - [ ] DIND service configuration is documented
 - [ ] Existing Testcontainers workarounds are noted
 - [ ] MR pipeline behaviour is confirmed (blank or full)
 
----
 
-## Docs / Stories / Story 1   Pipeline Assessment / Task 2   Local Vs Central
+---
 
 > Source: `docs/stories/story-1-pipeline-assessment/task-2-local-vs-central.md`
 
-## T1.2 — Identify local vs RepoSync-controlled change boundaries
+# T1.2 — Identify local vs RepoSync-controlled change boundaries
 
 **Story:** [Story 1 — Pipeline Assessment](./README.md)
 
@@ -1432,31 +1449,30 @@ Document the current Drone pipeline structure: what runs, in what order, with wh
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
+## Why
 RepoSync owns the central pipeline source of truth. The pilot must know exactly which files/changes are repo-local vs centrally controlled so local work stays realistic and reusable pipeline changes can be shaped for ACP/RepoSync.
 
-### Goal
+## Goal
 Produce a clear table of what the pilot team can change locally and what should become an ACP/RepoSync change request or recommendation.
 
-### Scope
+## Scope
 Classify:
 - **Repo-local (safe to change):** Dockerfile, `.dockerignore`, Maven profiles, `pom.xml` dependencies, test source code, `application-*.yml`, docker-compose files used by Maven plugin.
 - **RepoSync-controlled (requires coordination):** `.drone.star`, pipeline steps/ordering, DIND image, Drone secrets, service definitions.
 - **Unclear / confirm:** docker-compose files invoked by the pipeline (is the compose file in the repo or generated?), Maven step environment variables.
 
-### Acceptance criteria
+## Acceptance criteria
 - [ ] A clear "local vs central" classification exists
 - [ ] The RepoSync source repo and change request process are identified
 - [ ] The pilot team knows who to contact for central changes
 - [ ] Any centrally controlled files that appear local are flagged
 
----
 
-## Docs / Stories / Story 1   Pipeline Assessment / Task 3   Map Ci Steps
+---
 
 > Source: `docs/stories/story-1-pipeline-assessment/task-3-map-ci-steps.md`
 
-## T1.3 — Map CI pipeline steps, DIND usage and Docker Compose commands
+# T1.3 — Map CI pipeline steps, DIND usage and Docker Compose commands
 
 **Story:** [Story 1 — Pipeline Assessment](./README.md)
 
@@ -1474,13 +1490,13 @@ Classify:
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
+## Why
 The current CI pipeline is heavy — multiple docker-compose up/down cycles, wait containers, aggregator startups, and Maven builds. Understanding exactly what happens (and how long each step takes) is essential for identifying optimisation opportunities and measuring baseline.
 
-### Goal
+## Goal
 Produce a step-by-step map of the CI pipeline with timing data where available.
 
-### Scope
+## Scope
 For the CI pipeline (`ci_pipeline` in `.drone.star`), document each step:
 - Step name and image
 - Docker Compose commands executed (which services, detached or foreground)
@@ -1498,20 +1514,19 @@ Command Adaptor (compose) → Pre-Integration Tests (compose) →
 Integration Tests (compose) → Sonar → Trivy → Slack
 ```
 
-### Acceptance criteria
+## Acceptance criteria
 - [ ] All CI pipeline steps are listed with their purpose
 - [ ] Docker Compose commands and services per step are documented
 - [ ] DIND usage points are identified
 - [ ] Step durations are captured (from recent Drone runs if available)
 - [ ] Potential duplicate work or unnecessary waits are flagged
 
----
 
-## Docs / Stories / Story 1   Pipeline Assessment / Task 4   Testcontainers Feasibility
+---
 
 > Source: `docs/stories/story-1-pipeline-assessment/task-4-testcontainers-feasibility.md`
 
-## T1.4 — Assess Testcontainers feasibility in Drone/DIND
+# T1.4 — Assess Testcontainers feasibility in Drone/DIND
 
 **Story:** [Story 1 — Pipeline Assessment](./README.md)
 
@@ -1529,13 +1544,13 @@ Integration Tests (compose) → Sonar → Trivy → Slack
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
+## Why
 Testcontainers requires Docker daemon access from within the test JVM. The current Drone pipeline provides DIND but it's unclear whether the Maven step can reach it. The ECR pipeline already sets `TESTCONTAINERS_RYUK_DISABLED=true` — this suggests prior exploration but also a known compatibility issue. Without confirming feasibility, Story 4 cannot determine whether Testcontainers will work in CI or only locally.
 
-### Goal
+## Goal
 Determine whether Testcontainers can run in the Drone CI pipeline and document any constraints.
 
-### Scope
+## Scope
 Investigate:
 - Can the `mvn clean install` step access `DOCKER_HOST=tcp://docker:2375`? (currently it may not have this env var)
 - Does `TESTCONTAINERS_RYUK_DISABLED=true` need to be set? What are the cleanup implications?
@@ -1549,25 +1564,24 @@ Known findings from `.drone.star`:
 - DIND service is named `docker` and exposes port 2375
 - The Maven step image is `quay.io/ukhomeofficedigital/ileap-java17-mvn`
 
-### Decision outcomes (fill in after investigation)
+## Decision outcomes (fill in after investigation)
 - [ ] **CI feasible:** Testcontainers can run in CI with these env vars: _TBD_
 - [ ] **CI feasible with constraints:** works but with limitations: _TBD_
 - [ ] **Local only:** Testcontainers cannot run in CI; pilot stays local-only (fallback per ADR-0002)
 
-### Acceptance criteria
+## Acceptance criteria
 - [ ] Docker daemon accessibility from Maven step is confirmed or denied
 - [ ] Required environment variables for Testcontainers in Drone are documented
 - [ ] Ryuk disabled implications are understood and documented
 - [ ] A clear "feasible / feasible with constraints / local only" decision is made
 - [ ] Finding informs Story 4 scope (CI or local-only)
 
----
 
-## Docs / Stories / Story 1   Pipeline Assessment / Task 5   Buildkit Feasibility
+---
 
 > Source: `docs/stories/story-1-pipeline-assessment/task-5-buildkit-feasibility.md`
 
-## T1.5 — Assess BuildKit/cache feasibility in current Drone/DIND setup
+# T1.5 — Assess BuildKit/cache feasibility in current Drone/DIND setup
 
 **Story:** [Story 1 — Pipeline Assessment](./README.md)
 
@@ -1585,13 +1599,13 @@ Known findings from `.drone.star`:
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
+## Why
 ADR-0004 proposes BuildKit multi-stage builds with cache mounts and potentially remote registry cache. But the current pipeline runs `docker build` inside DIND — it's unclear whether BuildKit is enabled, whether `docker buildx` is available, and whether registry cache writes are permitted.
 
-### Goal
+## Goal
 Determine what level of BuildKit optimisation is feasible in the current Drone/DIND setup.
 
-### Scope
+## Scope
 Investigate:
 - Is `DOCKER_BUILDKIT=1` set or settable in the current DIND image?
 - Does the DIND image include `docker buildx`?
@@ -1605,38 +1619,37 @@ Likely outcomes:
 - **Local cache mounts:** work per-build but lost between CI runs (still useful for local dev)
 - **Remote registry cache:** likely requires ACP/ETO (registry namespace + permissions + .drone.star env vars)
 
-### Acceptance criteria
+## Acceptance criteria
 - [ ] BuildKit availability in DIND is confirmed or denied
 - [ ] `docker buildx` availability is confirmed or denied
 - [ ] Cache mount behaviour in CI is documented (ephemeral vs persistent)
 - [ ] Remote cache feasibility is assessed (registry permissions, .drone.star changes needed)
 - [ ] Finding informs Story 3 scope (what can be done locally vs what needs platform)
 
----
 
-## Docs / Stories / Story 2   Baseline / Overview
+---
 
 > Source: `docs/stories/story-2-baseline/README.md`
 
-## Story 2 — Baseline & Pilot Scope
+# Story 2 — Baseline & Pilot Scope
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
 **Depends on:** Story 1 · **Parallel with:** —
 
-### Goal
+## Goal
 Compare at least two candidate pipelines/repos, select the pilot repository, and capture a trustworthy "before" state so every later change can be measured and proven.
 
-### Why
+## Why
 Without a baseline there is no way to prove whether an optimisation actually helped. This story fixes the pilot scope and records the starting numbers before any change is made.
 
-### Acceptance criteria
+## Acceptance criteria
 - [ ] At least two candidate pipelines/repos compared for portability
 - [ ] Pilot repository selected with documented rationale
 - [ ] Pipeline, build, image-size and integration-test baselines captured
 - [ ] Measurement method recorded so it can be repeated for the "after" comparison
 - [ ] Baseline reviewed and agreed with stakeholders
 
-### Tasks
+## Tasks
 | Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
 | T2.1 | [Compare candidate pipelines and select pilot repo](./task-1-select-repo.md) | 1 | Must | Not started |
@@ -1644,13 +1657,12 @@ Without a baseline there is no way to prove whether an optimisation actually hel
 | T2.3 | [Capture Docker build & image-size baseline](./task-3-build-image-baseline.md) | 1 | Must | Not started |
 | T2.4 | [Capture integration-test baseline](./task-4-integration-test-baseline.md) | 2 | Must | Not started |
 
----
 
-## Docs / Stories / Story 2   Baseline / Task 1   Select Repo
+---
 
 > Source: `docs/stories/story-2-baseline/task-1-select-repo.md`
 
-## T2.1 — Compare candidate pipelines and select pilot repo
+# T2.1 — Compare candidate pipelines and select pilot repo
 
 **Story:** [Story 2 — Baseline & Pilot Scope](./README.md)
 
@@ -1658,25 +1670,25 @@ Without a baseline there is no way to prove whether an optimisation actually hel
 |----|:--------:|:--------:|-------|--------|------------|
 | T2.1 | 1 | Must | _TBD_ | Not started | T1.2 |
 
-### Why
+## Why
 The pilot needs a single, representative target, but the recommendation should be portable. Comparing at least two candidate pipelines/repos keeps one eye on whether the pattern can later be replicated through RepoSync.
 
-### Goal
+## Goal
 Compare at least two FDP repositories/services, then agree on one repository/service to use for the pilot.
 
-### Scope
+## Scope
 - Review at least two candidate FDP repositories/pipelines.
 - Weigh each against: pipeline duration, Docker Compose usage, integration-test complexity, current delivery priority/risk, and portability of the proposed pattern.
 - Recommend one repository and record why.
 
-### Acceptance criteria
+## Acceptance criteria
 - [ ] At least two candidate repositories/pipelines are compared
 - [ ] One candidate repository/service is selected
 - [ ] Selection rationale is documented (why this one, why not others)
 - [ ] Portability notes are captured: what would transfer cleanly to another pipeline/repo, and what is repo-specific
 - [ ] Pilot scope is agreed with relevant stakeholders
 
-### Selection output (fill in when T2.1 is complete)
+## Selection output (fill in when T2.1 is complete)
 
 | Field | Value |
 |-------|-------|
@@ -1692,13 +1704,12 @@ Compare at least two FDP repositories/services, then agree on one repository/ser
 
 > After filling in this table: confirm the tracker, verify Docker/Drone access, and confirm the Maven cache paths in `Dockerfile` / CI steps.
 
----
 
-## Docs / Stories / Story 2   Baseline / Task 2   Pipeline Baseline
+---
 
 > Source: `docs/stories/story-2-baseline/task-2-pipeline-baseline.md`
 
-## T2.2 — Capture CI/CD pipeline baseline
+# T2.2 — Capture CI/CD pipeline baseline
 
 **Story:** [Story 2 — Baseline & Pilot Scope](./README.md)
 
@@ -1716,30 +1727,29 @@ Compare at least two FDP repositories/services, then agree on one repository/ser
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
+## Why
 Pipeline duration is the headline metric stakeholders care about. Capturing it now, with a documented method, makes any later improvement provable rather than anecdotal.
 
-### Goal
+## Goal
 Record current CI/CD pipeline timings for the selected repository.
 
-### Scope
+## Scope
 - Capture average pipeline duration.
 - Break down by stage: build, unit test, integration test.
 - Capture failed-pipeline frequency if available.
 - Note the data source and measurement method (e.g. last N runs from CI history).
 
-### Acceptance criteria
+## Acceptance criteria
 - [ ] Baseline pipeline metrics are documented
 - [ ] Data source / measurement method is recorded
 - [ ] Metrics are in a form that can be re-measured later for before/after comparison
 
----
 
-## Docs / Stories / Story 2   Baseline / Task 3   Build Image Baseline
+---
 
 > Source: `docs/stories/story-2-baseline/task-3-build-image-baseline.md`
 
-## T2.3 — Capture Docker build & image-size baseline
+# T2.3 — Capture Docker build & image-size baseline
 
 **Story:** [Story 2 — Baseline & Pilot Scope](./README.md)
 
@@ -1757,30 +1767,29 @@ Record current CI/CD pipeline timings for the selected repository.
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
+## Why
 Build optimisation (Story 3) targets build time and image size directly. These numbers must exist before changes are made, otherwise the optimisation cannot be judged.
 
-### Goal
+## Goal
 Record current Docker build time and image size for the selected repository.
 
-### Scope
+## Scope
 - Local Docker build time (if applicable).
 - CI Docker build time (if available).
 - Final image size.
 - Current base image / build approach.
 
-### Acceptance criteria
+## Acceptance criteria
 - [ ] Current Docker build duration is documented (local and/or CI)
 - [ ] Current final image size is documented
 - [ ] Current base image and build approach are identified
 
----
 
-## Docs / Stories / Story 2   Baseline / Task 4   Integration Test Baseline
+---
 
 > Source: `docs/stories/story-2-baseline/task-4-integration-test-baseline.md`
 
-## T2.4 — Capture integration-test baseline
+# T2.4 — Capture integration-test baseline
 
 **Story:** [Story 2 — Baseline & Pilot Scope](./README.md)
 
@@ -1798,63 +1807,77 @@ Record current Docker build time and image size for the selected repository.
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
+## Why
 The Testcontainers (Story 4) and Compose (Story 5) work both depend on understanding how integration tests run today, what they depend on, and where the pain is. This task captures that starting picture.
 
-### Goal
+## Goal
 Document how integration tests currently start and behave for the selected repository.
 
-### Scope
+## Scope
 - How integration tests are currently started (command / pipeline step).
 - Docker Compose dependencies involved.
 - Startup / wait time before tests can run.
 - Known flaky or environment-related issues, if any.
 
-### Acceptance criteria
+## Acceptance criteria
 - [ ] Current integration-test setup is documented
 - [ ] Required dependencies are listed
 - [ ] Known pain points / flaky behaviours are captured
 
----
 
-## Docs / Stories / Story 3   Build / Overview
+---
 
 > Source: `docs/stories/story-3-build/README.md`
 
-## Story 3 — Docker Build Optimisation
+# Story 3 — Docker Build Optimisation
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
-**Depends on:** Story 2 · **Parallel with:** Story 4
+**Depends on:** T2.3 Docker build & image baseline · **Parallel with:** Story 4
 
-### Goal
-Apply one or more practical Dockerfile / build-context improvements and prove their impact with before/after numbers.
+## Goal
+Select and apply one safe Dockerfile or build-context optimisation for the SNS pilot repository, using the measured T2.3 before-state and proving the impact with before/after numbers.
 
-> **Drone constraint:** Multi-stage builds and `.dockerignore` work locally and in any Docker environment. BuildKit cache mounts work locally but are ephemeral in CI (DIND resets per build). Remote registry cache requires ACP/ETO action (see T1.5). Focus local-first.
+> **Drone / ownership constraint:** Local Dockerfile and `.dockerignore` prototypes are in scope for Story 3. Durable production Dockerfile changes are expected to require RepoSync; `.dockerignore` ownership still needs confirmation. BuildKit cache mounts can be tested locally, but Drone/DIND CI support is unproven and cache is ephemeral between CI runs unless ACP/ETO provide registry cache support (see T1.5).
 
-### Why
-Build time and image size are recurring sources of friction. Small, well-targeted changes (layer ordering, `.dockerignore`, cache mounts, multi-stage) often deliver disproportionate gains without changing application behaviour.
+## Why
+Build time and image size are recurring sources of friction. Story 2 provides the measured before-state for SNS: final image size `906MB`, cold local Docker build `real 1m17.855s`, warm cached build `real 0m0.851s`, full Docker build context `191.27MB`, and N=10 CI elapsed average `13:35`. Story 3 uses these measured baselines and keeps claim boundaries explicit.
 
-### Acceptance criteria
-- [ ] Current Dockerfile and build context reviewed; cache-invalidation risks identified
-- [ ] `.dockerignore` present and appropriate
-- [ ] At least one layering/cache improvement applied
-- [ ] Build time and image size compared before/after, with a keep/adjust recommendation
+## Outcome
 
-### Tasks
+Story 3 produced one keep-now change and one carry-forward prototype:
+
+- **Keep now:** targeted `.dockerignore`, reducing Docker build context from `191.27MB` to `189B` while preserving required runtime artefacts. The targeted `.dockerignore` was validated successfully in the SNS repository. For durable reuse and consistency across command-adaptor repositories, `.dockerignore` ownership and distribution should be considered through RepoSync. RepoSync adoption is a recommended follow-up.
+- **Carry forward:** layer-order Dockerfile prototype, improving local same-daemon warm-cache rebuild after a real JAR content change from `75.82-77.90s` to `4.62-5.08s`.
+
+No image-size reduction, cold-build improvement, CI saving, production Dockerfile change, RepoSync approval or broad adaptor-family rollout is claimed.
+
+## Acceptance criteria
+- [x] T2.3 Docker/image baseline is reviewed as the before-state
+- [x] Dockerfile and `.dockerignore` ownership route is confirmed or documented
+- [x] One safe Docker/build-context optimisation candidate is selected
+- [x] `.dockerignore`, if added or changed, preserves the runtime artefacts required by the Dockerfile
+- [x] At least one focused Dockerfile/build-context improvement is applied locally or prepared as a RepoSync-ready change
+- [x] Build time, build context and image size are compared before/after where the change is applied, with a keep/adjust recommendation
+- [x] No production/base-image change is recommended without RepoSync, ownership, approved image-source and security validation
+
+## Implementation sequencing
+
+T3.2 may satisfy the first implementation candidate where `.dockerignore` / build-context reduction is selected. T3.3 is used for the selected Dockerfile/build optimisation where a non-`.dockerignore` candidate is chosen, or where a second focused candidate is explicitly selected after T3.1. Story 3 should apply one focused change at a time so before/after impact can be attributed.
+
+## Tasks
 | Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
-| T3.1 | [Review current Dockerfile & build context](./task-1-review-dockerfile.md) | 2 | Must | Not started |
-| T3.2 | [Add or validate .dockerignore](./task-2-dockerignore.md) | 1 | Must | Not started |
-| T3.3 | [Apply Dockerfile layering / cache improvement](./task-3-layering-improvement.md) | 2 | Must | Not started |
-| T3.4 | [Measure local & CI build impact](./task-4-measure-impact.md) | 2 | Should | Not started |
+| T3.1 | [Confirm Dockerfile ownership route and select optimisation candidate](./task-1-review-dockerfile.md) | 2 | Must | Completed |
+| T3.2 | [Add or validate .dockerignore while preserving runtime artefacts](./task-2-dockerignore.md) | 1 | Must | Completed - targeted `.dockerignore` validated locally |
+| T3.3 | [Apply one safe Docker build optimisation](./task-3-layering-improvement.md) | 2 | Must | Completed - layer-order prototype measured locally; carry forward only |
+| T3.4 | [Measure local Docker build and image impact](./task-4-measure-impact.md) | 2 | Should | Completed - impact summary published |
+
 
 ---
 
-## Docs / Stories / Story 3   Build / Task 1   Review Dockerfile
-
 > Source: `docs/stories/story-3-build/task-1-review-dockerfile.md`
 
-## T3.1 — Review current Dockerfile & build context
+# T3.1 — Confirm Dockerfile ownership route and select optimisation candidate
 
 **Story:** [Story 3 — Docker Build Optimisation](./README.md)
 
@@ -1866,39 +1889,60 @@ Build time and image size are recurring sources of friction. Small, well-targete
 | **Story** | Story 3 — Docker Build Optimisation |
 | **Estimate** | 2 |
 | **Priority** | Must |
-| **Labels** | `docker`, `dockerfile`, `build-context` |
+| **Labels** | `docker`, `dockerfile`, `build-context`, `ownership` |
 | **Sprint** | Week 2 |
-| **Depends on** | T2.1 |
+| **Depends on** | T2.3 |
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
-Optimisation should be evidence-led, not guesswork. Reviewing the current Dockerfile reveals where the cache breaks and which layers are rebuilt unnecessarily, so effort goes where it actually helps.
+## Why
+Optimisation should start from the measured T2.3 Docker/image baseline rather than repeating broad discovery. This task turns the T2.3 findings into an ownership route and one safe implementation candidate for Story 3.
 
-### Goal
-Understand and document the current Dockerfile structure and build context, and identify concrete optimisation opportunities.
+## Goal
+Use the T2.3 Docker/image baseline to confirm the RepoSync/platform ownership route and select one safe Docker/build-context optimisation candidate.
 
-### Scope
-Review:
-- current base image
-- layer ordering
-- dependency installation steps
-- COPY instructions
-- build-context size
-- unnecessary files pulled into the Docker context
+## Scope
+Review the T2.3 evidence and decide:
+- which Dockerfile or build-context candidate is safest to attempt first
+- whether Dockerfile changes must go through RepoSync/platform ownership
+- whether `.dockerignore` is repo-local or centrally managed
+- whether any base-image option has an approved image-source / Artifactory / security route
 
-### Acceptance criteria
-- [ ] Current Dockerfile structure is documented
-- [ ] Cache-invalidation risks are identified
-- [ ] A prioritised list of optimisation opportunities is produced
+Use the T2.3 measured SNS baseline as the starting point:
+
+| Metric | Baseline |
+|--------|----------|
+| Final image size | `906MB` |
+| Cold local Docker build | `real 1m17.855s` |
+| Warm cached local Docker build | `real 0m0.851s` |
+| Full Docker build context transferred | `191.27MB` |
+| Base/rootfs layers visible in Docker history | `165MB + 300MB` |
+| Executable JAR layer | `173MB` |
+| `yum install/update` layer | `249MB` |
+| Docker ignore status | Not found in SNS local checkout during T2.3 local file search |
+
+DVLA and RoRo TSV may be used as structural portability evidence only unless direct measurements are captured for them.
+
+Candidate options include:
+- `.dockerignore` / build-context reduction while preserving runtime artefacts
+- `yum install/update` layer repeatability review
+- layer-order improvement for the current packaging-only Dockerfile
+- runtime base-image review only after approved image-source / Artifactory validation
+
+## Acceptance criteria
+- [ ] T2.3 baseline is reviewed as the before-state.
+- [ ] Dockerfile and `.dockerignore` ownership route is confirmed or documented.
+- [ ] One safe optimisation candidate is selected.
+- [ ] RepoSync/platform route is captured where required.
+- [ ] No production/base-image change is recommended without image-source, Artifactory and security validation.
+- [ ] No optimisation saving is claimed without before/after measurement.
+
 
 ---
 
-## Docs / Stories / Story 3   Build / Task 2   Dockerignore
-
 > Source: `docs/stories/story-3-build/task-2-dockerignore.md`
 
-## T3.2 — Add or validate .dockerignore
+# T3.2 — Add or validate .dockerignore while preserving runtime artefacts
 
 **Story:** [Story 3 — Docker Build Optimisation](./README.md)
 
@@ -1916,42 +1960,63 @@ Review:
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
+## Why
 A missing or weak `.dockerignore` sends unnecessary files into the build context, slowing builds and invalidating cache when irrelevant files change. This is one of the cheapest, lowest-risk wins available.
 
-### Goal
-Ensure the pilot repository has an appropriate `.dockerignore` that keeps the build context lean.
+## Goal
+Add or validate `.dockerignore` to reduce build context without breaking the required Docker `COPY` inputs for the current packaging-only Dockerfile.
 
-### Scope
+## Scope
 - Check whether a `.dockerignore` exists and what it covers.
-- Exclude build output, IDE/editor files, VCS metadata, logs and local artefacts.
+- Confirm whether `.dockerignore` is repo-local or RepoSync-managed.
+- Exclude IDE/editor files, VCS metadata, logs, local artefacts and unnecessary generated files while explicitly retaining the runtime artefacts copied by the Dockerfile.
+- Retain the two runtime artefacts required by the current Dockerfile:
+  - `target/cmd-adaptor-sns-exec.jar`
+  - `target/dependencies/opentelemetry-javaagent.jar`
 
 Suggested baseline:
 ```gitignore
-.git
-.gitlab
-target
-build
-.idea
-.vscode
+# Source is not needed by the current Dockerfile; it packages pre-built artefacts.
+src/
+
+# Keep only the runtime artefacts copied by the Dockerfile.
+target/**
+!target/
+!target/cmd-adaptor-sns-exec.jar
+!target/dependencies/
+!target/dependencies/opentelemetry-javaagent.jar
+
+# Local tooling and noise.
+.git/
+.gitignore
+.idea/
+.vscode/
 *.iml
 *.log
 .DS_Store
-.tmp
+tmp/
+.tmp/
 ```
 
-### Acceptance criteria
-- [ ] `.dockerignore` exists and is appropriate for the repository
-- [ ] Unnecessary files are excluded from the build context
-- [ ] Build-context reduction is noted where measurable
+Do not use a blanket `target` exclusion unless the required JAR and OpenTelemetry agent are explicitly re-included and a Docker build verifies that the context still contains them.
+
+Excluding `src/` is valid only while the Dockerfile continues to package pre-built artefacts and does not copy source files.
+
+## Acceptance criteria
+- [ ] `.dockerignore` exists or the ownership route preventing direct addition is documented.
+- [ ] Required artefacts are preserved:
+  - `target/cmd-adaptor-sns-exec.jar`
+  - `target/dependencies/opentelemetry-javaagent.jar`
+- [ ] Docker build succeeds after the `.dockerignore` change or validation.
+- [ ] Unnecessary files are excluded from the build context.
+- [ ] Build context before/after is recorded where measurable.
+
 
 ---
 
-## Docs / Stories / Story 3   Build / Task 3   Layering Improvement
-
 > Source: `docs/stories/story-3-build/task-3-layering-improvement.md`
 
-## T3.3 — Apply Dockerfile layering / cache improvement
+# T3.3 — Apply one safe Docker build optimisation
 
 **Story:** [Story 3 — Docker Build Optimisation](./README.md)
 
@@ -1963,58 +2028,47 @@ build
 | **Story** | Story 3 — Docker Build Optimisation |
 | **Estimate** | 2 |
 | **Priority** | Must |
-| **Labels** | `docker`, `dockerfile`, `layering`, `cache` |
+| **Labels** | `docker`, `dockerfile`, `build-context`, `cache` |
 | **Sprint** | Week 2 |
 | **Depends on** | T3.1 |
+| **Related to** | T3.2 where `.dockerignore` / build-context reduction is the selected candidate |
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
-The biggest build-time wins usually come from ordering layers so dependencies are cached separately from source code, and from using build cache mounts. Applying one focused change keeps the impact measurable and easy to review.
+## Why
+The T2.3 baseline identifies several Docker/build-context optimisation candidates, but Story 3 should apply only one safe change at a time so the impact can be measured and attributed. The current SNS Dockerfile packages pre-built Maven artefacts; it does not build the application inside Docker.
 
-### Goal
-Apply a single, well-understood layering or cache improvement to the pilot Dockerfile.
+## Goal
+Apply one focused Docker/build-context optimisation aligned with the SNS Dockerfile shape and ownership route.
 
-### Scope
+## Scope
 Consider (pick the highest-value one for this repo):
-- copy dependency metadata before source code
-- separate dependency resolution from application build
-- use multi-stage builds
-- use cache mounts for the dependency cache
+- `.dockerignore` / build-context reduction
+- layer-order improvement for the current packaging-only Dockerfile
+- `yum install/update` layer repeatability review
+- runtime base-image review only after approved image-source / Artifactory / security validation
 
-Reference pattern:
-```dockerfile
-# syntax=docker/dockerfile:1
-FROM company/java17-maven-base:1.0 AS deps
-WORKDIR /app
-COPY pom.xml .mvn mvnw ./
-RUN --mount=type=cache,target=/root/.m2 ./mvnw -B dependency:go-offline
+T3.3 should not duplicate T3.2. If `.dockerignore` / build-context reduction is the selected candidate, T3.2 may be the implementation task. Use T3.3 for a non-`.dockerignore` candidate or for a second focused candidate only after T3.1 explicitly selects it.
 
-FROM deps AS build
-COPY src ./src
-RUN --mount=type=cache,target=/root/.m2 ./mvnw -B package -DskipTests
+Do not change the lifecycle to build Maven inside the Dockerfile unless that larger design is explicitly selected. The existing pipeline builds Maven artefacts first, then the Dockerfile copies `target/cmd-adaptor-sns-exec.jar` and `target/dependencies/opentelemetry-javaagent.jar`.
 
-FROM company/java17-runtime-base:1.0
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app/app.jar"]
-```
+Do not introduce a generic Maven multi-stage Dockerfile pattern unless the repo build design changes. Production Dockerfile changes should be routed through RepoSync unless ownership is confirmed otherwise.
 
-> Apply **one** focused change at a time — not a full rewrite — so the effect can be attributed clearly.
+## Acceptance criteria
+- [ ] One change is applied only.
+- [ ] Expected benefit is documented against the T2.3 baseline.
+- [ ] Compatibility risks or concerns are noted.
+- [ ] Ownership risks are documented.
+- [ ] No generic Maven multi-stage build is introduced unless the repo build design changes.
+- [ ] Runtime base-image changes are not recommended without approved image-source / Artifactory / security validation.
+- [ ] Built image completes the same local Docker build verification used in T2.3, or an explicitly documented equivalent local verification; Trivy scan result is captured if a candidate image is built.
 
-### Acceptance criteria
-- [ ] One layering/cache change is applied
-- [ ] Expected benefit is described
-- [ ] Compatibility risks or concerns are noted
-- [ ] Built image passes Trivy scan without new Critical vulnerabilities (non-blocking report)
 
 ---
 
-## Docs / Stories / Story 3   Build / Task 4   Measure Impact
-
 > Source: `docs/stories/story-3-build/task-4-measure-impact.md`
 
-## T3.4 — Measure local & CI build impact
+# T3.4 — Measure local Docker build and image impact
 
 **Story:** [Story 3 — Docker Build Optimisation](./README.md)
 
@@ -2028,109 +2082,197 @@ ENTRYPOINT ["java","-jar","/app/app.jar"]
 | **Priority** | Should |
 | **Labels** | `docker`, `metrics`, `before-after` |
 | **Sprint** | Week 3 |
-| **Depends on** | T3.3 |
+| **Depends on** | T3.2 and T3.3 |
 | **Owner** | _TBD_ |
-| **Status** | Not started |
+| **Status** | Completed - T3.2 and T3.3 measurements consolidated into the impact summary |
+| **Execution result** | [T3.4 impact summary](../../../solution/story-3/T3.4-impact-summary.md) |
 
-### Why
+## Why
 A change is only worth keeping if it measurably helps. Comparing against the Story 2 baseline turns the optimisation into evidence stakeholders can trust.
 
-### Goal
-Quantify the effect of the build changes on build time and image size.
+## Goal
+Compare before/after local Docker build impact using the measured SNS before-state from T2.3 and the measured Story 3 results from T3.2 and T3.3. Keep build-context reduction, image-size impact, cold/no-cache build behaviour, and warm-cache rebuild behaviour separate.
 
-### Scope
+## Scope
 Compare against the baseline:
 - local build time before/after
-- CI build time before/after (if available)
+- build context before/after
 - final image size before/after
+- runtime artefact preservation after `.dockerignore`
+- no-change warm-cache rebuild vs real JAR-change warm-cache rebuild
+- same-daemon local warm-cache benefit vs CI benefit
+- CI build time before/after only if the CI change is actually run and the metric can be interpreted safely
 
-### Acceptance criteria
-- [ ] Before/after build metrics are captured
-- [ ] Any improvement or regression is documented
-- [ ] A keep/adjust recommendation is made
+T3.4 should treat T3.2 and T3.3 as separate optimisation effects:
+
+- T3.2 measures targeted `.dockerignore` impact on Docker build context, image size and cold build behaviour.
+- T3.3 measures local same-daemon warm-cache rebuild behaviour after a real application JAR content change.
+
+Before-state from T2.3:
+
+| Metric | Before-state baseline |
+|--------|-----------------------|
+| Final image size | `906MB` |
+| Cold local Docker build | `real 1m17.855s` |
+| Warm cached local Docker build | `real 0m0.851s` |
+| Full Docker build context transferred | `191.27MB` |
+
+T3.2 measured after-state:
+
+| Metric | T3.2 after-state |
+|--------|------------------|
+| Build context transfer | `189B` |
+| Cold build | `real 78.14s` |
+| Final image size | `906MB` |
+| Runtime artefacts | Confirmed present |
+
+T3.3 measured after-state:
+
+| Scenario | Current Dockerfile | Layer-order prototype |
+|----------|--------------------|-----------------------|
+| Warm rebuild after real JAR content change | `77.90s` / `75.82s` | `5.08s` / `4.62s` |
+
+Result: the layer-order prototype is approximately `15-16x` faster for a same-daemon local warm-cache rebuild after a real application JAR content change.
+
+Important measurement boundary:
+
+The T2.3 warm cached local Docker build value (`real 0m0.851s`) represents a no-change warm cached rebuild. It should not be compared directly with the T3.3 warm-cache rebuild after a real application JAR content change. T3.3 measures a different and more meaningful scenario: whether the expensive setup layer is reused when the application artefact changes.
+
+The T2.2 `Command Adaptor` Drone step is useful as CI cost-concentration evidence, but it is not an isolated Docker build timer. Do not subtract local Docker savings directly from total CI elapsed time unless CI after-measurements support that conclusion.
+
+## Claim boundaries
+
+- No CI saving is claimed.
+- No cold-build improvement is claimed.
+- No image-size reduction is claimed.
+- No production Dockerfile change is claimed.
+- T3.2 recommendation: keep `.dockerignore` as the proven build-context reduction, subject to repository vs RepoSync/platform ownership confirmation.
+- T3.3 recommendation: carry forward the layer-order prototype to the ownership discussion; do not recommend production adoption without RepoSync/platform ownership confirmation.
+
+## Acceptance criteria
+- [x] Before/after local Docker build metrics are captured.
+- [x] Before/after build-context and image-size metrics are captured.
+- [x] T3.2 `.dockerignore` impact is summarised separately from T3.3 layer-order impact.
+- [x] No-change warm-cache rebuild and real JAR-change warm-cache rebuild are not mixed.
+- [x] Same-daemon local warm-cache benefit is scoped separately from CI benefit.
+- [x] Production adoption is not recommended without RepoSync/platform ownership confirmation.
+- [x] Production adoption recommendation distinguishes between "keep locally validated change" and "carry forward prototype for RepoSync/platform discussion".
+- [x] Improvement or regression is documented.
+- [x] CI impact is measured only if available; otherwise it is explicitly recorded as not measured.
+- [x] No CI saving is claimed without CI measurement.
+- [x] A keep/adjust recommendation is made.
+
 
 ---
 
-## Docs / Stories / Story 4   Testcontainers / Overview
-
 > Source: `docs/stories/story-4-testcontainers/README.md`
 
-## Story 4 — Testcontainers Pilot
+# Story 4 — Testcontainers Pilot
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
 **Depends on:** Story 2 · **Parallel with:** Story 3
 
-### Goal
-Prove whether Testcontainers can replace part of the docker-compose integration setup for one dependency, with better isolation and determinism.
+## Goal
+Validate the Redis-first Testcontainers pilot route identified by the T2.4/T2.5 evidence. Phase 1 is a local, opt-in Redis smoke/wiring pilot that tests feasibility, dependency wiring, isolation and the developer workflow without changing the full integration-test flow.
 
-> **Drone constraint:** CI feasibility depends on Story 1 findings (T1.4). The Drone pipeline uses DIND with `DOCKER_HOST=tcp://docker:2375`. Testcontainers may need `TESTCONTAINERS_RYUK_DISABLED=true` (already present in ECR pipeline). If CI is not feasible, this story stays **local-only** — still valuable for proving the pattern.
+> **Drone constraint:** CI feasibility depends on Story 1 findings (T1.4) and the centrally managed Drone/DIND environment. The Drone pipeline uses DIND with `DOCKER_HOST=tcp://docker:2375`, and Testcontainers may need a Ryuk constraint such as `TESTCONTAINERS_RYUK_DISABLED=true`. CI remains a follow-up unless it is explicitly attempted and measured; production or default CI adoption is not part of Phase 1.
 
-### Why
-Full docker-compose setups can be slow to start, share hidden state, and cause flaky, environment-dependent failures. Testcontainers offers isolated, deterministic, per-test environments. The stronger value here is reliability and local/CI consistency — not only speed.
+## Why
+Redis was selected as the lower-complexity first candidate because it can validate Testcontainers startup, connectivity and local workflow with limited scope. Redis is a support dependency in the current docker-compose/application/pre-integration setup; it is not the central Kafka-driven input and assertion path observed in the integration tests.
 
-### Acceptance criteria
-- [ ] One candidate dependency/test selected with rationale
-- [ ] Testcontainers setup implemented or prototyped and connecting successfully
-- [ ] Flow compared with the existing docker-compose flow
-- [ ] Findings, constraints and a continue/stop recommendation documented
+Kafka and Schema Registry remain higher-value follow-up candidates because they are central to that path and carry topic, message and offset isolation risks. Their additional value and complexity make them unsuitable for the first wiring pilot.
 
-### Tasks
+Phase 1 does not replace docker-compose Redis or the full docker-compose integration stack. It does not claim faster execution, CI savings, fewer flaky tests, improved Kafka isolation or full-stack replacement. Any such outcome requires separate implementation and measurement.
+
+## Acceptance criteria
+- [x] Redis is confirmed as the Phase 1 candidate and its scope and non-goals are documented
+- [x] A local, opt-in Redis Testcontainers smoke/wiring test is implemented or prototyped and connects successfully
+- [ ] The Redis pilot is compared fairly with the existing docker-compose Redis/support-dependency flow
+- [ ] Findings, limits and a continue/stop recommendation are documented without unmeasured claims
+
+## Tasks
 | Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
-| T4.1 | [Select candidate dependency/test](./task-1-select-candidate.md) | 1 | Must | Not started |
-| T4.2 | [Implement Testcontainers setup](./task-2-implement-setup.md) | 3 | Must | Not started |
-| T4.3 | [Compare with docker-compose flow](./task-3-compare-flows.md) | 2 | Should | Not started |
-| T4.4 | [Document findings & constraints](./task-4-document-findings.md) | 1 | Should | Not started |
+| T4.1 | [Confirm Redis pilot candidate and scope](./task-1-select-candidate.md) | 1 | Must | Completed |
+| T4.2 | [Implement Redis Testcontainers smoke/wiring pilot](./task-2-implement-setup.md) | 3 | Must | Completed |
+| T4.3 | [Compare Redis pilot with docker-compose support flow](./task-3-compare-flows.md) | 2 | Should | In progress - target-machine Compose runtime measurement pending |
+| T4.4 | [Document Redis pilot findings, limits and recommendation](./task-4-document-findings.md) | 1 | Should | Not started |
+
 
 ---
 
-## Docs / Stories / Story 4   Testcontainers / Task 1   Select Candidate
-
 > Source: `docs/stories/story-4-testcontainers/task-1-select-candidate.md`
 
-## T4.1 — Select candidate dependency/test
+# T4.1 — Confirm Redis pilot candidate and scope
 
 **Story:** [Story 4 — Testcontainers Pilot](./README.md)
 
 | Field | Value |
 |-------|-------|
 | **ID** | T4.1 |
-| **Type** | Research |
+| **Type** | Scope confirmation |
 | **Epic** | Pilot Container & CI/CD Optimisation |
 | **Story** | Story 4 — Testcontainers Pilot |
 | **Estimate** | 1 |
 | **Priority** | Must |
-| **Labels** | `testcontainers`, `integration-test`, `selection` |
+| **Labels** | `testcontainers`, `redis`, `integration-test`, `scope` |
 | **Sprint** | Week 2 |
-| **Depends on** | T2.1 |
+| **Depends on** | T2.4, T2.5 |
 | **Owner** | _TBD_ |
-| **Status** | Not started |
+| **Status** | Completed |
 
-### Why
-The first Testcontainers pilot should de-risk the idea, not stress-test it. Picking a manageable dependency that is already exercised by existing tests gives a fair, low-cost signal about whether the approach is worth expanding.
+## Why
+T2.4/T2.5 already identified Redis as the lower-complexity first Testcontainers candidate. This task confirms that decision and fixes the implementation boundary before T4.2; it does not restart open-ended candidate selection.
 
-### Goal
-Choose one integration dependency/test for the Testcontainers pilot.
+T4.1 should reuse the published T2.4/T2.5 decision and perform only the repository-level prerequisite checks needed to make T4.2 implementation-ready. It should not repeat the candidate analysis. Its purpose is to formalise the existing Redis-first decision, verify implementation prerequisites against the actual repository and record the selected opt-in execution route for T4.2—not to reconsider Redis, Kafka, Schema Registry and LocalStack from scratch.
 
-### Scope
-Assess candidates such as Redis, Kafka, Schema Registry, LocalStack. Prefer one that:
-- is already used by existing integration tests
-- has manageable setup complexity
-- provides useful validation value
-- does not require large-scale refactoring for a first pilot
+## Goal
+Confirm Redis as the first low-complexity Testcontainers pilot candidate, using the T2.4/T2.5 evidence, and define a safe Phase 1 scope for implementation.
 
-### Acceptance criteria
-- [ ] One candidate dependency/test is selected
-- [ ] Selection rationale is documented
-- [ ] Pilot scope is agreed before implementation
+## Expected output
+
+T4.1 should produce a short implementation-readiness record containing:
+
+- confirmed target integration-test module and test framework
+- selected Testcontainers dependency/version-management route
+- selected Redis image, tag and image-source route
+- selected Redis connectivity approach
+- selected opt-in Maven profile, include pattern or isolated test-class approach
+- confirmed non-goals and RepoSync constraints
+- a T4.2 ready / blocked decision with any unresolved prerequisites listed
+
+## Scope
+Confirm and document that:
+
+- Redis is selected first because its lower setup complexity provides a small test of Testcontainers startup, connectivity, wiring, isolation and local workflow.
+- Redis is an infrastructure/support dependency in the current flow, not the central Kafka-driven integration-test input and assertion path.
+- Kafka and Schema Registry remain higher-value follow-up candidates because they are central to that path and carry higher setup complexity plus topic, message and offset isolation risk.
+- Phase 1 is a local, opt-in Redis smoke/wiring pilot.
+- Phase 1 does not replace docker-compose Redis or the full docker-compose stack, change the full E2E flow, change `local-int-cmd` or `local-int-snapshot`, modify RepoSync-managed pre-integration files, or run in CI by default.
+
+Before T4.2, check and record these implementation prerequisites:
+
+- the relevant integration-test module POM and test framework
+- the Testcontainers dependency and version-management approach
+- an existing Redis client dependency or a simple alternative connectivity approach
+- an opt-in Maven profile, test include pattern or clearly isolated test-class approach
+- the exact Redis image/tag and image-source route to use, aligned with the compose baseline where available; do not assume direct public-registry access without local or approved registry validation
+- confirmation that no local-only edit to `pre-integration-test/app.py` is required or permitted
+
+## Acceptance criteria
+- [x] Redis is confirmed as the first candidate and the rationale is documented
+- [x] The Kafka and Schema Registry follow-up rationale is documented
+- [x] Phase 1 scope and non-goals are documented
+- [x] Repository-level implementation prerequisites are checked and recorded, including the confirmed target module, test framework, dependency-management route, Redis image/source, Redis connectivity approach and intended opt-in execution mechanism
+- [x] A T4.2 implementation-ready or blocked decision is recorded; any unresolved prerequisite is identified explicitly as a blocker or follow-up
+- [x] No CI saving or flaky-test improvement is claimed
+
 
 ---
 
-## Docs / Stories / Story 4   Testcontainers / Task 2   Implement Setup
-
 > Source: `docs/stories/story-4-testcontainers/task-2-implement-setup.md`
 
-## T4.2 — Implement Testcontainers setup
+# T4.2 — Implement Redis Testcontainers smoke/wiring pilot
 
 **Story:** [Story 4 — Testcontainers Pilot](./README.md)
 
@@ -2142,52 +2284,110 @@ Assess candidates such as Redis, Kafka, Schema Registry, LocalStack. Prefer one 
 | **Story** | Story 4 — Testcontainers Pilot |
 | **Estimate** | 3 |
 | **Priority** | Must |
-| **Labels** | `testcontainers`, `integration-test`, `implementation` |
+| **Labels** | `testcontainers`, `redis`, `integration-test`, `implementation` |
 | **Sprint** | Week 2 |
 | **Depends on** | T4.1 |
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
-A working, runnable setup is the only way to get real numbers and a real developer-experience signal. Prototyping it for one dependency proves feasibility before any wider commitment.
+## Why
+A small, runnable Redis test provides evidence about Testcontainers feasibility, wiring and local developer workflow before any higher-risk work on the Kafka-driven assertion path.
 
-### Goal
-Implement or prototype a Testcontainers setup for the selected dependency so an integration test can run against it.
+## Goal
+Implement a Redis Testcontainers smoke/wiring pilot that can be run locally and explicitly, independently of the full docker-compose E2E flow.
 
-### Scope
-Implement:
-- container definition
-- required environment / property wiring
-- readiness / wait strategy
-- cleanup / isolation approach
+## Expected implementation changes
+T4.2 should produce only the minimum repo-local changes required for the Redis pilot, following the repository's existing Maven structure and the T4.1 implementation-readiness decision.
 
-Reference pattern:
-```java
-@Container
-static KafkaContainer kafka = new KafkaContainer(
-    DockerImageName.parse("confluentinc/cp-kafka:7.6.0"));
+Expected changes are limited to:
 
-@DynamicPropertySource
-static void props(DynamicPropertyRegistry r) {
-    r.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
-}
-```
+- Testcontainers dependency/version configuration in the appropriate Maven dependency-management location
+- test-scoped Testcontainers and Redis client dependencies in `cmd-adaptor-sns-integration-tests`
+- one isolated JUnit Jupiter test class, such as `MinimalRedisTest`
+- an opt-in Maven profile, test include pattern or documented explicit `-Dtest=MinimalRedisTest` route
+- a short execution/result note recording the command, dependency versions, image source, timing method and observed outcome
 
-Use the same dependency image/tag as the Compose baseline unless T4.1 explicitly documents a reason to change it.
+T4.2 must not change these files or routes unless temporary isolated pilot experimentation is needed:
 
-### Acceptance criteria
-- [ ] The dependency starts via Testcontainers
-- [ ] The test connects to the dependency successfully
-- [ ] The setup runs locally
-- [ ] CI suitability is assessed or noted
+- RepoSync-managed docker-compose resources (temporary experimentation allowed if clearly documented; durable changes via RepoSync)
+- `pre-integration-test/app.py` (temporary experimentation allowed if clearly documented; durable changes via RepoSync)
+- `local-int-cmd`
+- `local-int-snapshot`
+- `ci-cmd`
+- `ci-snapshot`
+- Drone/CI configuration
+- the full Cucumber E2E flow
+
+## Scope
+In the relevant integration-test module:
+
+- use the implementation-readiness decisions recorded by T4.1 for the target module, test framework, dependency-management route, Redis image/source, connectivity approach and opt-in execution mechanism; do not reopen those choices in T4.2 unless repository evidence shows that the selected route is not implementable
+- add a small, clearly named Redis Testcontainers test
+- prefer opt-in local execution through a Maven profile, test include pattern or otherwise clearly isolated test class
+- use the Redis image, tag and approved/local image-source route confirmed by T4.1, aligned with the compose baseline where available; do not assume direct public-registry access
+- record the exact resolved Testcontainers version, Redis client version, dependency source/repository route and Redis image source used by the successful local run
+- keep all new implementation dependencies test-scoped unless repository evidence requires a different route and that exception is documented
+- start Redis through Testcontainers and verify that the container becomes ready
+- ensure the test fails clearly if the Redis container does not become ready, mapped-port connectivity fails, or the expected Redis interaction does not return the required result
+- verify connectivity with a minimal Redis interaction, such as `PING` or `SET`/`GET`, using an existing Redis client dependency if one exists or the minimal test-scoped Redis client route selected from T4.1
+- define cleanup and isolation behaviour appropriate to the smoke test
+- verify that the test does not depend on Redis state from a previous run and that repeated local executions start from a clean or explicitly reset state
+- record how state isolation is achieved, for example unique keys, explicit cleanup, container lifecycle isolation or database reset
+- keep the pilot separate from the full docker-compose E2E flow
+- RepoSync-controlled files may be changed temporarily in the target repository for isolated pilot experimentation when needed, provided the change is clearly documented and not presented as the durable ownership route. Long-term adoption should still be handled through the relevant RepoSync/MR process.
+- do not change `local-int-cmd` or `local-int-snapshot` as the durable route
+- do not replace compose Redis in Phase 1
+- do not wire the pilot into CI by default
+- document the exact local execution command and, if the test is run, the measurement method and observed local smoke-test time
+- if execution time is recorded, identify whether the value is Maven elapsed time, test-framework-reported time or container startup time; do not present one as another
+- if more than one timing type is available, report them separately; do not derive docker-compose, CI or full-suite savings from the Redis smoke-test measurement
+
+## Environment and CI note
+
+Docker availability is required for local execution. Drone/DIND feasibility is follow-up work unless CI is explicitly attempted. If it is attempted, record the relevant `DOCKER_HOST` and Ryuk constraints, execution method and result. Otherwise record CI suitability as **not measured**.
+
+The pilot must not claim CI savings, flaky-test improvement or full-stack replacement from a successful Redis smoke test.
+
+## Execution boundary
+
+If local implementation or execution is blocked by missing Docker access, dependency resolution or repository prerequisites, record the environment blocker explicitly and leave the implementation acceptance criteria incomplete. A prepared plan alone does not complete T4.2.
+
+## Completion validation
+
+Before marking T4.2 complete:
+
+- review the final Git diff
+- confirm only intended repo-local pilot files changed
+- confirm production and RepoSync-managed files were not modified
+- confirm existing Maven profiles and E2E commands retain their prior semantics
+- confirm the exact opt-in command runs only the Redis smoke/wiring pilot
+- confirm the full E2E flow is not required for the pilot execution
+
+## Acceptance criteria
+- [ ] A Redis Testcontainers smoke/wiring test is implemented in the relevant integration-test module and is runnable locally through the documented opt-in mechanism
+- [ ] Expected implementation changes are limited to the Maven dependency/version route, test-scoped pilot dependencies, one isolated Redis smoke test, the opt-in execution route and the execution/result note
+- [ ] Exact Testcontainers version, Redis client version, Redis image/tag and dependency/image-source routes used by the local pilot are documented
+- [ ] New pilot dependencies are test-scoped or any exception is explicitly justified
+- [ ] Redis starts locally through Testcontainers when the pilot is executed
+- [ ] The test connects successfully and completes its minimal Redis interaction
+- [ ] Container-startup, connectivity and Redis-interaction failures produce a clear failing test result rather than a silent skip or false pass
+- [ ] Repeated local executions pass without depending on state left by a previous run, and the isolation/cleanup mechanism is documented
+- [ ] The test is opt-in or otherwise isolated from the full E2E flow
+- [ ] The existing docker-compose E2E flow is not replaced
+- [ ] RepoSync-managed files may only be modified for isolated pilot experimentation; durable changes must go through RepoSync
+- [ ] The local execution command and any measured smoke-test time are documented
+- [ ] Final Git diff confirms only intended repo-local pilot files changed
+- [ ] Existing Maven profiles and full E2E execution semantics remain unchanged
+- [ ] The documented opt-in command runs the Redis pilot without requiring the full docker-compose E2E stack
+- [ ] CI suitability is assessed or explicitly recorded as follow-up/not measured
+- [ ] No CI saving, flaky-test improvement or full-stack replacement is claimed
+
 
 ---
 
-## Docs / Stories / Story 4   Testcontainers / Task 3   Compare Flows
-
 > Source: `docs/stories/story-4-testcontainers/task-3-compare-flows.md`
 
-## T4.3 — Compare with docker-compose flow
+# T4.3 — Compare Redis pilot with docker-compose support flow
 
 **Story:** [Story 4 — Testcontainers Pilot](./README.md)
 
@@ -2199,39 +2399,61 @@ Use the same dependency image/tag as the Compose baseline unless T4.1 explicitly
 | **Story** | Story 4 — Testcontainers Pilot |
 | **Estimate** | 2 |
 | **Priority** | Should |
-| **Labels** | `testcontainers`, `docker-compose`, `comparison` |
+| **Labels** | `testcontainers`, `redis`, `docker-compose`, `comparison` |
 | **Sprint** | Week 3 |
 | **Depends on** | T4.2 |
 | **Owner** | _TBD_ |
-| **Status** | Not started |
+| **Status** | In progress — T4.2 evidence available; target-machine Compose runtime measurement pending |
 
-### Why
-The decision to adopt Testcontainers should rest on a like-for-like comparison, not impressions. Comparing both flows on the same dependency makes the trade-offs explicit.
+## Why
+The Redis smoke test and the full integration-test suite exercise different scopes. A fair comparison must isolate the Redis/support-dependency workflow and avoid presenting a minimal wiring test as a replacement for the Kafka-driven E2E path.
 
-### Goal
-Compare the Testcontainers-based flow against the existing docker-compose flow for the selected dependency.
+## Goal
+Compare the Phase 1 Redis Testcontainers smoke/wiring pilot with the existing docker-compose Redis/support-dependency flow and decide whether the evidence justifies a follow-up.
 
-### Scope
-Compare:
-- setup / startup time
-- test runtime
-- complexity
-- local developer experience
-- CI suitability
-- isolation / determinism
+## Scope
+Distinguish clearly between:
 
-### Acceptance criteria
-- [ ] Comparison is documented across the dimensions above
-- [ ] Benefits and drawbacks are identified
-- [ ] A recommendation is made on whether to continue with Testcontainers for further tests
+- the existing docker-compose Redis/support-dependency path
+- the local, opt-in Redis Testcontainers smoke/wiring path
+- the full E2E Kafka and Schema Registry input/assertion path, which remains out of scope for Phase 1
+
+Compare the two Redis-related paths across:
+
+- startup/setup time, only where measured with a documented method
+- local command complexity
+- developer feedback loop
+- isolation and determinism
+- dependency wiring complexity
+- repeated-run behaviour, where practical, to distinguish one-off startup cost from stable local behaviour
+- CI feasibility, recorded as not measured when no CI run was attempted
+- benefits, drawbacks and limitations
+- whether the evidence is sufficient to attempt Redis Option B or prioritise a Kafka and Schema Registry follow-up
+
+## Comparison boundary
+
+Do not compare the minimal Redis smoke test with the full integration-test suite as though they provide equivalent coverage or as though the pilot replaces the suite. Do not infer speed, CI or reliability improvements that were not measured.
+
+The existing `redis_kafka` pre-integration readiness stage combines Redis readiness with Kafka, Schema Registry and Kafdrop readiness plus Kafka topic creation. If Redis startup time cannot be isolated safely from that combined flow, record docker-compose Redis startup time as not separately measured rather than assigning an estimate or treating the combined stage as a Redis-only timing.
+
+Full E2E compose timing may be captured as contextual evidence, but it must not be compared directly with the Redis-only Testcontainers smoke test.
+
+## Acceptance criteria
+- [ ] Redis Testcontainers and the docker-compose Redis/support-dependency flow are compared fairly across the defined dimensions
+- [ ] Full E2E and docker-compose replacement are explicitly marked out of scope
+- [ ] Benefits, drawbacks and limitations are documented
+- [ ] CI suitability is not claimed unless it was attempted and measured
+- [ ] Existing docker-compose Redis startup time is reported only if it can be isolated with a documented measurement method; otherwise it is explicitly recorded as not separately measured
+- [ ] If a Redis-only docker-compose comparison cannot be isolated safely, the limitation and reason are documented, and no like-for-like performance conclusion is made
+- [ ] The comparison records the exact commands, environment and measurement method used for each measured value
+- [ ] The recommendation states whether to continue to Redis Option B and/or a Kafka and Schema Registry follow-up
+
 
 ---
 
-## Docs / Stories / Story 4   Testcontainers / Task 4   Document Findings
-
 > Source: `docs/stories/story-4-testcontainers/task-4-document-findings.md`
 
-## T4.4 — Document findings & constraints
+# T4.4 — Document Redis pilot findings, limits and recommendation
 
 **Story:** [Story 4 — Testcontainers Pilot](./README.md)
 
@@ -2243,393 +2465,344 @@ Compare:
 | **Story** | Story 4 — Testcontainers Pilot |
 | **Estimate** | 1 |
 | **Priority** | Should |
-| **Labels** | `testcontainers`, `documentation`, `findings` |
+| **Labels** | `testcontainers`, `redis`, `documentation`, `findings` |
 | **Sprint** | Week 3 |
 | **Depends on** | T4.3 |
 | **Owner** | _TBD_ |
 | **Status** | Not started |
 
-### Why
-A pilot only pays off if its lessons are captured. Clear findings and constraints let stakeholders decide on wider adoption without repeating the experiment.
+## Why
+The Redis-first pilot is intentionally narrow. Clear findings, constraints and non-claims are needed so stakeholders can decide whether to stop, deepen the Redis experiment or progress to the higher-value Kafka and Schema Registry candidates without overstating what Option A proved.
 
-### Goal
-Document what the Testcontainers pilot showed, including limits and a recommendation.
+## Goal
+Document the final evidence and recommendation from the Redis-first Option A pilot, including what remains untested.
 
-### Scope
+## Scope
 Document:
+
 - what was tested
-- what worked / what did not
-- performance observations
-- reliability / isolation observations
-- limitations
-- recommended next steps
+- what was intentionally not tested
+- the local result and any measured timing, including the measurement method
+- CI status: attempted and measured, or explicitly not measured/follow-up
+- RepoSync constraints, any temporary target-repository pilot changes, and confirmation that no durable RepoSync-managed adoption was approved
+- whether Redis Option A succeeded against its smoke/wiring goal
+- whether Redis Option B, a local-profile Redis override, should be attempted
+- whether Kafka and Schema Registry should be prioritised as the next higher-value follow-up
+- limitations, non-claims and the continue/stop recommendation
 
-Apply the reuse policy: container reuse may be enabled locally for faster feedback, but disabled in CI for clean, deterministic runs with no hidden shared state.
+Where a metric was not captured, record it explicitly as not measured and do not delay the final recommendation unless that metric is decision-critical.
 
-### Acceptance criteria
-- [ ] Findings are documented and shared
-- [ ] Constraints are clearly identified
-- [ ] A recommendation is available for stakeholders
+Apply the reuse policy: Testcontainers reuse may be enabled locally for faster feedback only when the setup and effect are documented. Reuse must be disabled in CI for deterministic runs with no hidden shared state.
+
+## Required non-claims
+
+Unless separately implemented and measured, state explicitly:
+
+- no full docker-compose replacement was demonstrated
+- no Kafka topic, message or offset isolation improvement results from the Redis pilot
+- no flaky-test improvement was demonstrated
+- no CI saving was demonstrated
+- no broad adaptor rollout is recommended or approved
+- no durable RepoSync-managed adoption or broad rollout is approved
+- no production or default pipeline change is implemented or approved
+
+## Acceptance criteria
+- [ ] Findings and intentionally untested areas are documented
+- [ ] Local, CI and RepoSync constraints are documented
+- [ ] Every measured value is linked to its measurement method or source evidence
+- [ ] Missing or unavailable measurements are explicitly recorded and are not replaced with estimates
+- [ ] A continue/stop recommendation is documented
+- [ ] The final recommendation distinguishes measured evidence, interpretation and follow-up assumptions
+- [ ] Required non-claims are documented
+- [ ] Next-step recommendations are separated into:
+  - [ ] Option A complete / incomplete
+  - [ ] Option B candidate / not candidate
+  - [ ] Kafka and Schema Registry follow-up candidate / not candidate
+  - [ ] CI follow-up required / not required
+
 
 ---
-
-## Docs / Stories / Story 5   Compose / Overview
 
 > Source: `docs/stories/story-5-compose/README.md`
 
-## Story 5 — Docker Compose Rationalisation
+# Story 5 — Docker Compose Rationalisation
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
-**Depends on:** Story 4 (uses its findings) · **Parallel with:** —
+**Depends on:** T1.3, T1.4 and current Story 4 evidence · **Parallel with:** —
 
-### Goal
-Clarify which Compose services are truly needed for CI integration tests versus local debugging, and recommend a reduced/clearer role.
+## Goal
+Define an evidence-backed target role for Docker Compose across CI, full E2E and local debugging, without changing the current default flows.
 
-> **Note:** Docker Compose should not be removed without first mapping current CI and local debugging usage. The goal is to reduce unnecessary CI orchestration where appropriate, not to remove useful local debugging workflows.
+## Why
+The repository uses Compose in more than one orchestration path. Reviewers need one clear account of what is used and one safe recommendation, rather than separate tickets for mapping, classification and documentation.
 
-### Why
-Compose files tend to grow and serve mixed purposes, dragging extra services into every CI run. Separating "needed for CI" from "useful for local debugging" reduces CI overhead without removing tools developers rely on locally.
+## Boundaries / non-claims
 
-### Acceptance criteria
-- [ ] All Compose services mapped (image, ports, dependencies, purpose)
-- [ ] Services classified: required for CI tests / local-debug only / optional / removable
-- [ ] CI vs local usage separated; mixed-purpose usage flagged
-- [ ] Reduced Compose role recommended with risk/impact
+- This story maps and recommends; it does not change Compose, Maven profiles, CI or production defaults.
+- Full E2E, Redis-only and Kafka/Schema Registry scopes remain distinct.
+- A local Testcontainers result does not prove that a Compose service can be removed from CI.
+- Any durable change to RepoSync-controlled files requires the RepoSync/platform route.
+- Unavailable timing, reliability and CI evidence is recorded as `not measured`.
 
-### Tasks
+## Acceptance criteria
+
+- [x] Compose services and invocation paths are mapped and classified.
+- [x] CI, full E2E and local-debug roles are kept distinct.
+- [x] A target Compose role and unresolved decisions are recorded.
+- [x] Implementation, ownership and evidence limits are explicit.
+
+## Tasks
+
 | Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
-| T5.1 | [Map services started by docker-compose](./task-1-map-services.md) | 1 | Must | Not started |
-| T5.2 | [Classify services & usage](./task-2-classify-usage.md) | 2 | Must | Not started |
-| T5.3 | [Recommend reduced Compose role](./task-3-recommend-role.md) | 2 | Should | Not started |
+| T5.1 | [Validate current Compose scope](./task-1-validate-compose-scope.md) | 3 | Must | Done — evidence prepared |
+| T5.2 | [Decide the target Compose role](./task-2-decide-compose-role.md) | 2 | Must | Done — recommendation prepared |
+
+**Supporting outputs:** [T5.1 evidence](../../../solution/story-5/T5.1-validate-compose-scope.md) · [T5.2 evidence](../../../solution/story-5/T5.2-decide-compose-role.md)
+
+**Consolidation mapping:** [Story 5 and Story 6 consolidation](../STORY-5-6-CONSOLIDATION.md)
+
 
 ---
 
-## Docs / Stories / Story 5   Compose / Task 1   Map Services
+> Source: `docs/stories/story-5-compose/task-1-validate-compose-scope.md`
 
-> Source: `docs/stories/story-5-compose/task-1-map-services.md`
-
-## T5.1 — Map services started by docker-compose
+# T5.1 — Validate Current Compose Scope
 
 **Story:** [Story 5 — Docker Compose Rationalisation](./README.md)
 
 | Field | Value |
-|-------|-------|
+|---|---|
 | **ID** | T5.1 |
-| **Type** | Research |
-| **Epic** | Pilot Container & CI/CD Optimisation |
-| **Story** | Story 5 — Docker Compose Rationalisation |
-| **Estimate** | 1 |
-| **Priority** | Must |
-| **Labels** | `docker-compose`, `mapping`, `inventory` |
-| **Sprint** | Week 3 |
-| **Depends on** | T4.4 |
-| **Owner** | _TBD_ |
-| **Status** | Not started |
-
-### Why
-You cannot rationalise what you have not mapped. A clear inventory of compose services is the foundation for deciding what is genuinely needed in CI.
-
-### Goal
-Produce a complete inventory of the services the pilot repository starts via docker-compose.
-
-### Scope
-For each service capture:
-- service name
-- image / build source
-- dependency relationships
-- exposed ports
-- purpose, if known
-
-### Acceptance criteria
-- [ ] All Compose services are listed
-- [ ] Dependencies between services are understood
-- [ ] Services with unclear purpose are flagged for review
-
----
-
-## Docs / Stories / Story 5   Compose / Task 2   Classify Usage
-
-> Source: `docs/stories/story-5-compose/task-2-classify-usage.md`
-
-## T5.2 — Classify services & usage
-
-**Story:** [Story 5 — Docker Compose Rationalisation](./README.md)
-
-| Field | Value |
-|-------|-------|
-| **ID** | T5.2 |
 | **Type** | Analysis |
-| **Epic** | Pilot Container & CI/CD Optimisation |
-| **Story** | Story 5 — Docker Compose Rationalisation |
-| **Estimate** | 2 |
+| **Estimate** | 3 |
 | **Priority** | Must |
-| **Labels** | `docker-compose`, `classification`, `ci-vs-local` |
-| **Sprint** | Week 3 |
-| **Depends on** | T5.1 |
+| **Depends on** | T1.3, T1.4 and current Story 4 evidence |
 | **Owner** | _TBD_ |
-| **Status** | Not started |
+| **Status** | Done — evidence prepared |
+| **Primary output** | [T5.1 — Validate Current Compose Scope](../../../solution/story-5/T5.1-validate-compose-scope.md) |
 
-### Why
-Not every service in the compose file is needed for CI tests — some exist only for local debugging or are leftovers. Classifying them is what makes a safe reduction possible.
+## Why
 
-### Goal
-Classify each Compose service by necessity and by where it is actually used.
+A safe Compose decision needs one trusted view of service topology and actual CI, full E2E and local usage.
 
-### Scope
-For each service, mark:
-- required for integration tests
-- required only for local debugging
-- optional / unclear
-- potentially removable from the CI flow
+## Goal
 
-Also note where Compose is invoked (CI vs local) and whether one file serves multiple purposes.
+Validate the current Compose scope and identify which roles are confirmed, unclear or only candidates for change.
 
-### Acceptance criteria
-- [ ] Required test dependencies are identified
-- [ ] Non-essential services are identified
-- [ ] CI vs local usage is documented; mixed-purpose usage flagged
-- [ ] Any uncertainty is recorded for follow-up
+## Scope
+
+Map services, dependencies and invocation paths; classify their CI, full E2E and local-debug roles; record uncertainties and relevant Story 1–4 evidence.
+
+## Boundaries / non-goals
+
+- No Compose, Maven-profile or CI change.
+- No service removal based only on static analysis or a Redis-only pilot.
+- Kafka/Schema Registry and full E2E behaviour remain outside the Redis-only evidence.
+
+## Acceptance criteria
+
+- [x] All defined services and material dependencies are represented.
+- [x] CI, full E2E and local-debug use are distinguished.
+- [x] Confirmed facts, structural observations and inferences are labelled.
+- [x] Unclear or unmeasured behaviour is recorded without an optimisation claim.
+- [x] The evidence needed for a safe target-role decision is linked.
+
 
 ---
 
-## Docs / Stories / Story 5   Compose / Task 3   Recommend Role
+> Source: `docs/stories/story-5-compose/task-2-decide-compose-role.md`
 
-> Source: `docs/stories/story-5-compose/task-3-recommend-role.md`
-
-## T5.3 — Recommend reduced Compose role
+# T5.2 — Decide the Target Compose Role
 
 **Story:** [Story 5 — Docker Compose Rationalisation](./README.md)
 
 | Field | Value |
-|-------|-------|
-| **ID** | T5.3 |
-| **Type** | Documentation |
-| **Epic** | Pilot Container & CI/CD Optimisation |
-| **Story** | Story 5 — Docker Compose Rationalisation |
+|---|---|
+| **ID** | T5.2 |
+| **Type** | Decision recommendation |
 | **Estimate** | 2 |
-| **Priority** | Should |
-| **Labels** | `docker-compose`, `recommendation`, `rationalisation` |
-| **Sprint** | Week 4 |
-| **Depends on** | T4.4, T5.2 |
+| **Priority** | Must |
+| **Depends on** | T5.1 and current Story 4 evidence |
 | **Owner** | _TBD_ |
-| **Status** | Not started |
+| **Status** | Done — recommendation prepared; adoption not approved |
+| **Primary output** | [T5.2 — Decide the Target Compose Role](../../../solution/story-5/T5.2-decide-compose-role.md) |
 
-### Why
-The pilot's aim is not to remove Docker Compose, but to right-size its role: lean in CI, still useful locally. A clear recommendation prevents accidental over-reach and preserves valuable local workflows.
+## Why
 
-### Goal
-Recommend a reduced/clarified Compose role for the pilot scope, informed by the Testcontainers findings (Story 4).
+The pilot needs a clear Compose boundary that preserves useful workflows and makes unproven reductions visible as candidates, not completed changes.
 
-### Scope
-Recommend:
-- what should remain in Docker Compose
-- what could move to Testcontainers
-- what should remain for local debugging
-- what should **not** be changed during the pilot
+## Goal
 
-Target model:
-```text
-CI integration tests   → prefer Testcontainers where suitable
-Local manual debugging → keep Docker Compose where useful
-E2E / exploratory      → consider ephemeral environments selectively
-```
+Recommend the target role of Compose and state the evidence and ownership required before any adoption.
 
-### Acceptance criteria
-- [ ] Recommendation is documented
-- [ ] Risk / impact is noted
-- [ ] Recommendation is reviewed with relevant stakeholders
+## Scope
+
+Define what should remain for full E2E and local debugging, which changes remain candidates, the preferred orchestration boundary, and the next validation/ownership route.
+
+## Boundaries / non-goals
+
+- No reduced Compose implementation or default pipeline change.
+- No CI benefit, reliability improvement or stakeholder approval is assumed.
+- RepoSync/platform ownership remains separate from technical feasibility.
+
+## Acceptance criteria
+
+- [x] Keep, candidate and stop/not-now decisions are explicit.
+- [x] Full E2E and local-debug safeguards are retained.
+- [x] Missing functional, timing and CI evidence is identified.
+- [x] RepoSync/platform-owned changes have a durable adoption route.
+- [x] The recommendation does not present a prototype as production-approved.
+
 
 ---
-
-## Docs / Stories / Story 6   Findings / Overview
 
 > Source: `docs/stories/story-6-findings/README.md`
 
-## Story 6 — CST-local vs ACP/ETO Ownership Assessment
+# Story 6 — Pilot Outcome, Ownership and Adoption
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
-**Depends on:** Stories 3, 4, 5 · **Parallel with:** —
+**Depends on:** T3.4, current Story 4 evidence and T5.2 · **Parallel with:** —
 
-### Goal
-Consolidate the pilot evidence, classify each item into the three ownership categories (CST/Cerberus Delivery, ACP, DSA ETO/Enabling/CIT), and recommend the target operating model for reusable patterns.
+## Goal
+Turn the validated pilot evidence into clear ownership routes and an explicit adopt, retain-as-candidate or stop decision for each outcome.
 
-### Why
-A pilot is only valuable if it ends in a clear decision. This story turns scattered results into one narrative, assigns ownership, and routes follow-up work to the right board — so good patterns are adopted deliberately, not by accident.
+## Why
+A PoC is useful only when reviewers can see what was actually proved, who can act, and what remains unapproved. This story keeps the evidence in supporting documents and makes the decision path concise.
 
-### Acceptance criteria
-- [ ] Consolidated findings summary (baseline → results) exists
-- [ ] Each item classified into CST, ACP, or DSA ETO/Enabling with rationale
-- [ ] Each candidate mapped to a suggested board/owner
-- [ ] Target operating model recommendation explains what should be replicated through ACP/RepoSync
-- [ ] Findings and next steps shared; feedback captured
+## Boundaries / non-claims
 
-### Tasks
+- Measured, observed, structural and inferred evidence remain separate.
+- Missing metrics are `not measured`; local evidence is not represented as CI evidence.
+- The Docker layer-order result is only a local same-daemon warm-cache JAR-change observation of approximately 15–16x; no image-size, cold-build or CI improvement was demonstrated.
+- The Redis pilot does not prove flaky-test improvement, Kafka/Schema Registry scope or full E2E replacement.
+- A prototype, temporary repository experiment or prepared stakeholder pack is not production adoption, RepoSync approval or completed rollout.
+
+## Acceptance criteria
+
+- [x] Validated outcomes and non-claims are consolidated with evidence links.
+- [x] Each candidate has a CST-local, RepoSync/platform or wider-owner route.
+- [ ] Adopt/candidate/stop recommendations are reviewed with the relevant owners.
+- [ ] Stakeholder feedback, approvals and next actions are recorded.
+
+## Tasks
+
 | Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
-| T6.1 | [Consolidate pilot findings](./task-1-consolidate-findings.md) | 2 | Must | Not started |
-| T6.2 | [Classify ownership & recommend target board](./task-2-classify-ownership.md) | 2 | Must | Not started |
-| T6.3 | [Share findings with stakeholders](./task-3-share-stakeholders.md) | 1 | Should | Not started |
+| T6.1 | [Classify pilot outcomes and ownership routes](./task-1-classify-outcomes.md) | 4 | Must | Done — evidence prepared |
+| T6.2 | [Decide the adoption route and publish the pilot outcome](./task-2-decide-adoption.md) | 2 | Must | Not completed — materials prepared |
+
+**Supporting outputs:** [T6.1 evidence](../../../solution/story-6/T6.1-classify-outcomes-and-ownership.md) · [T6.2 evidence](../../../solution/story-6/T6.2-decide-adoption-route.md)
+
+**Consolidation mapping:** [Story 5 and Story 6 consolidation](../STORY-5-6-CONSOLIDATION.md)
+
 
 ---
 
-## Docs / Stories / Story 6   Findings / Task 1   Consolidate Findings
+> Source: `docs/stories/story-6-findings/task-1-classify-outcomes.md`
 
-> Source: `docs/stories/story-6-findings/task-1-consolidate-findings.md`
+# T6.1 — Classify Pilot Outcomes and Ownership Routes
 
-## T6.1 — Consolidate pilot findings
-
-**Story:** [Story 6 — Findings, Ownership & Recommendations](./README.md)
+**Story:** [Story 6 — Pilot Outcome, Ownership and Adoption](./README.md)
 
 | Field | Value |
-|-------|-------|
+|---|---|
 | **ID** | T6.1 |
-| **Type** | Documentation |
-| **Epic** | Pilot Container & CI/CD Optimisation |
-| **Story** | Story 6 — Findings, Ownership & Recommendations |
-| **Estimate** | 2 |
+| **Type** | Evidence and ownership decision |
+| **Estimate** | 4 |
 | **Priority** | Must |
-| **Labels** | `findings`, `summary`, `consolidation` |
-| **Sprint** | Week 4 |
-| **Depends on** | T3.4, T4.4, T5.3 |
+| **Depends on** | T3.4, current Story 4 evidence and T5.2 |
 | **Owner** | _TBD_ |
-| **Status** | Not started |
+| **Status** | Done — evidence prepared |
+| **Primary output** | [T6.1 — Classify Pilot Outcomes and Ownership Routes](../../../solution/story-6/T6.1-classify-outcomes-and-ownership.md) |
 
-### Why
-Evidence spread across stories is hard to act on. A single consolidated summary turns the pilot into something stakeholders can review and decide on quickly.
+## Why
 
-### Goal
-Bring all pilot evidence into one shareable findings summary.
+Reviewers need one evidence-led view of what the pilot proved and which owner controls each durable next step.
 
-### Scope
-Consolidate:
-- baseline (Story 2)
-- build optimisation results (Story 3)
-- Testcontainers comparison (Story 4)
-- Docker Compose review (Story 5)
-- Pipeline assessment findings (Story 1) — local vs RepoSync boundaries
+## Goal
 
-Present as a clear before → after / observations narrative. Explicitly classify each item as:
-- CST-local (repo changes, no RepoSync involvement)
-- RepoSync/platform (`.drone.star` changes, DIND config, registry)
-- ETO/wider (base images, shared templates, org-wide standards)
+Classify validated outcomes, limitations and follow-ups by evidence type and ownership route.
 
-Include a short target operating model recommendation: which parts should stay local to the pilot repo, which should be proposed for ACP/RepoSync distribution, and which are wider DSA ETO/Enabling considerations.
+## Scope
 
-### Acceptance criteria
-- [ ] A single consolidated findings summary exists
-- [ ] It links back to the supporting story evidence
-- [ ] It includes a target operating model / RepoSync distribution recommendation
-- [ ] It is in a form suitable for sharing with stakeholders
+Consolidate relevant Story 1–5 evidence; distinguish CST-local, RepoSync/platform and wider ETO ownership; identify temporary target-repository work and durable adoption routes.
+
+## Boundaries / non-goals
+
+- No fabricated timing, CI, reliability or rollout result.
+- No broad command-adaptor or production-adoption claim.
+- Technical feasibility does not override RepoSync/platform ownership.
+
+## Acceptance criteria
+
+- [x] Each outcome links to its primary evidence.
+- [x] Measured, observed, structural and inferred statements are separated.
+- [x] Missing metrics are recorded as `not measured`.
+- [x] Each candidate has an owner/board route and rationale.
+- [x] Temporary experiments are separated from durable adoption.
+- [x] Production, CI and broad-rollout non-claims are explicit.
+
 
 ---
 
-## Docs / Stories / Story 6   Findings / Task 2   Classify Ownership
+> Source: `docs/stories/story-6-findings/task-2-decide-adoption.md`
 
-> Source: `docs/stories/story-6-findings/task-2-classify-ownership.md`
+# T6.2 — Decide the Adoption Route and Publish the Pilot Outcome
 
-## T6.2 — Classify ownership & recommend target board
-
-**Story:** [Story 6 — Findings, Ownership & Recommendations](./README.md)
+**Story:** [Story 6 — Pilot Outcome, Ownership and Adoption](./README.md)
 
 | Field | Value |
-|-------|-------|
+|---|---|
 | **ID** | T6.2 |
-| **Type** | Analysis |
-| **Epic** | Pilot Container & CI/CD Optimisation |
-| **Story** | Story 6 — Findings, Ownership & Recommendations |
+| **Type** | Adoption decision and communication |
 | **Estimate** | 2 |
 | **Priority** | Must |
-| **Labels** | `ownership`, `cst-vs-eto`, `classification`, `target-board` |
-| **Sprint** | Week 4 |
 | **Depends on** | T6.1 |
 | **Owner** | _TBD_ |
-| **Status** | Not started |
+| **Status** | Not completed — materials prepared; review and feedback not evidenced |
+| **Primary output** | [T6.2 — Decide the Adoption Route and Publish the Pilot Outcome](../../../solution/story-6/T6.2-decide-adoption-route.md) |
 
-### Why
-Some improvements are safe to own inside CST/Cerberus Delivery; others touch CI tooling (ACP) or wider platform patterns (DSA ETO/Enabling/CIT). Classification without a board/owner recommendation is incomplete — both must happen together.
+## Why
 
-### Goal
-Classify each optimisation item into the three ownership categories and recommend which board/owner should carry it forward.
+Prepared findings do not close the pilot until the relevant owners review the recommendations and the resulting next steps are recorded.
 
-### Scope
-**Classify** each item:
-- **CST / Cerberus Delivery**: baseline measurement, Dockerfile review, `.dockerignore`, local layering experiment, Testcontainers local prototype, Compose review. Subject to agreement with Thomas Reddy.
-- **ACP (CI/CD tooling)**: `.drone.star` / RepoSync changes, DIND environment, BuildKit enablement, Testcontainers CI environment variables, CI cache infrastructure. Requires ACP prioritisation.
-- **DSA ETO / Enabling / CIT**: org base images, shared engineering templates, reusable Testcontainers libraries, cross-project adoption model, remote cache infrastructure. Subject to DSA Tech Strategy alignment.
+## Goal
 
-**Recommend** for each item one of:
-- CST / Cerberus Delivery board
-- ACP board
-- DSA ETO / Enabling board
-- Shared visibility only
-- Further discussion needed
+Agree adopt, retain-as-candidate or stop decisions, publish the concise pilot outcome, and record owner feedback.
 
-### Acceptance criteria
-- [ ] Each item is classified into CST, ACP, or DSA ETO/Enabling with short rationale
-- [ ] Each item is mapped to a suggested owner/board
-- [ ] ACP-owned items identify whether they should become RepoSync MR candidates
-- [ ] No wider-impact item is progressed without appropriate visibility
-- [ ] Assumptions are documented
+## Scope
 
----
+Prioritise follow-ups; define CI validation and rollout constraints; share the outcome with CST and relevant RepoSync/platform or wider stakeholders; capture decisions and unresolved items.
 
-## Docs / Stories / Story 6   Findings / Task 3   Share Stakeholders
+## Boundaries / non-goals
 
-> Source: `docs/stories/story-6-findings/task-3-share-stakeholders.md`
+- Prepared materials are not evidence that sharing or approval occurred.
+- No ticket, MR, production change or organisation-wide rollout is pre-approved.
+- CI claims require CI measurement after the relevant owner enables the route.
 
-## T6.3 — Share findings with stakeholders
+## Acceptance criteria
 
-**Story:** [Story 6 — Findings, Ownership & Recommendations](./README.md)
+- [ ] Each candidate has an agreed adopt, retain-as-candidate or stop decision.
+- [ ] RepoSync/platform and wider-owner actions are prioritised and routed.
+- [ ] Required CI validation and rollout constraints are explicit.
+- [ ] The concise outcome is shared with the agreed stakeholders.
+- [ ] Feedback, approvals and unresolved decisions are recorded.
+- [ ] No prototype or recommendation is described as adopted without evidence.
 
-| Field | Value |
-|-------|-------|
-| **ID** | T6.3 |
-| **Type** | Documentation |
-| **Epic** | Pilot Container & CI/CD Optimisation |
-| **Story** | Story 6 — Findings, Ownership & Recommendations |
-| **Estimate** | 1 |
-| **Priority** | Should |
-| **Labels** | `stakeholders`, `communication`, `findings` |
-| **Sprint** | Week 4 |
-| **Depends on** | T6.2 |
-| **Owner** | _TBD_ |
-| **Status** | Not started |
-
-### Why
-The pilot's purpose is to inform a decision. Sharing the findings and capturing feedback is what closes the loop and determines whether any patterns move forward.
-
-### Goal
-Share the consolidated findings and ownership recommendations with the agreed engineering stakeholders, and capture their feedback.
-
-### Scope
-Share:
-- pilot scope
-- baseline findings
-- build optimisation results
-- Testcontainers findings
-- ownership recommendations
-- suggested next steps
-
-### Acceptance criteria
-- [ ] Findings are shared with agreed stakeholders
-- [ ] Feedback is captured
-- [ ] Next steps are agreed or documented
 
 ---
-
-## Docs / Adr / Overview
 
 > Source: `docs/adr/README.md`
 
-## Architecture Decision Records (ADR)
+# Architecture Decision Records (ADR)
 
 ADRs capture **why** a significant decision was made — the context, the decision, and its consequences — so the reasoning survives beyond the conversation. [← Back to overview](../../README.md)
 
-### What is an ADR?
+## What is an ADR?
 A short, immutable record of one architecturally significant decision. When a decision changes, we don't rewrite history — we add a new ADR that **supersedes** the old one.
 
-### Index
+## Index
 
 | ID | Title | Status | Related ADRs |
 |----|-------|--------|--------------|
@@ -2639,28 +2812,27 @@ A short, immutable record of one architecturally significant decision. When a de
 | [ADR-0004](0004-buildkit-cache-and-layering.md) | Use BuildKit cache + layered multi-stage builds | Proposed | 0001, 0003, 0005 |
 | [ADR-0005](0005-ci-runner-docker-mode.md) | CI runner Docker execution mode (Drone Kubernetes + DIND) | Proposed | 0001, 0002, 0004 |
 
-### Statuses
+## Statuses
 `Proposed` → under discussion · `Accepted` → decided · `Superseded by ADR-XXXX` · `Deprecated`.
 
-### Adding an ADR
+## Adding an ADR
 1. Copy [`template.md`](template.md) to `NNNN-short-title.md` (next number).
 2. Fill in **Context · Decision · Consequences · Alternatives**.
 3. Add it to the index above and link it from the relevant story if useful.
 
----
 
-## Docs / Adr / ADR Pilot Not Rollout
+---
 
 > Source: `docs/adr/0001-pilot-not-rollout.md`
 
-## ADR-0001: Run a measured pilot, not a big-bang rollout
+# ADR-0001: Run a measured pilot, not a big-bang rollout
 
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** Pilot team, stakeholders
 - **Related:** [Epic](../../README.md) · [Project plan](../../PROJECT-PLAN.md) · [ADR-0002](0002-testcontainers-for-integration-tests.md) · [ADR-0003](0003-reduce-compose-in-ci.md) · [ADR-0004](0004-buildkit-cache-and-layering.md)
 
-### Context
+## Context
 
 The FDP CI/CD pipeline currently suffers from long build times (~12 min average), heavy Docker Compose integration test setup, flaky environment-dependent test failures, and inconsistent Dockerfile patterns. Multiple optimisation ideas exist (Testcontainers, BuildKit caching, Compose rationalisation, base-image strategy), but none are proven in this specific context.
 
@@ -2668,7 +2840,7 @@ Implementing all of these at once across multiple repositories would be high-ris
 
 Additionally, some improvements are CST-local (the team can act immediately), some require RepoSync/platform template changes, and others require wider ETO infrastructure (shared base images, remote cache). Starting a rollout without knowing this boundary creates organisational friction.
 
-### Decision
+## Decision
 
 We will validate the optimisation ideas through a **small, measurable pilot on one representative repository**, capturing before/after evidence, before proposing any wider rollout.
 
@@ -2682,7 +2854,7 @@ The pilot:
 
 Only after evidence is available and ownership is clear will any wider rollout be proposed.
 
-### Consequences
+## Consequences
 
 - **Positive:**
   - Low delivery risk — one repo, controlled scope, revertable changes.
@@ -2700,7 +2872,7 @@ Only after evidence is available and ownership is clear will any wider rollout b
   - Recommend a second repo before any org-wide rollout.
   - Route RepoSync/platform and wider ETO items via Story 6 with evidence attached.
 
-### Alternatives considered
+## Alternatives considered
 
 | Option | Pros | Cons | Why not chosen |
 |--------|------|------|----------------|
@@ -2709,20 +2881,19 @@ Only after evidence is available and ownership is clear will any wider rollout b
 | Pilot across many repos simultaneously | Broader evidence base | Heavy coordination; defeats "small and controlled" intent; blocks on more teams | Disproportionate for a first pilot |
 | Start with ACP/ETO changes first | Addresses infra gaps | Slow; depends on another team's priority; no CST evidence to justify the ask | Better to show local evidence first, then make the platform ask |
 
----
 
-## Docs / Adr / ADR Testcontainers For Integration Tests
+---
 
 > Source: `docs/adr/0002-testcontainers-for-integration-tests.md`
 
-## ADR-0002: Use Testcontainers for selected integration tests
+# ADR-0002: Use Testcontainers for selected integration tests
 
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** Pilot team
 - **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0003 — Compose role](0003-reduce-compose-in-ci.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 4](../stories/story-4-testcontainers/README.md)
 
-### Context
+## Context
 
 Integration tests in the pilot repository currently rely on a full Docker Compose stack (`docker-compose.yml`) that starts all dependent services (Redis, Kafka, Schema Registry, etc.) before any test runs. This creates several problems:
 
@@ -2735,7 +2906,7 @@ Testcontainers (a Java library) offers a different model: each test (or test cla
 
 The stronger value proposition for Testcontainers is **determinism and isolation**, not just speed. A test that manages its own dependencies is reproducible by definition.
 
-### Decision
+## Decision
 
 We will pilot Testcontainers for **one selected integration dependency** (e.g. Redis or Kafka), managing its lifecycle from the test code, and compare it against the existing Compose flow before any wider adoption.
 
@@ -2747,7 +2918,7 @@ Specifics:
 - The comparison (T4.3) covers: startup time, test runtime, complexity, local developer experience, CI suitability, and determinism.
 - A continue/stop recommendation is documented in T4.4.
 
-### Consequences
+## Consequences
 
 - **Positive:**
   - Isolated, deterministic, per-test environments — no shared state between tests.
@@ -2768,7 +2939,7 @@ Specifics:
   - If successful: expand to more dependencies in post-pilot phase.
   - Route runner-mode decision to ACP/ETO via [ADR-0005](0005-ci-runner-docker-mode.md).
 
-### Alternatives considered
+## Alternatives considered
 
 | Option | Pros | Cons | Why not chosen |
 |--------|------|------|----------------|
@@ -2777,20 +2948,19 @@ Specifics:
 | Mock all external dependencies | Very fast; no Docker needed | Lower fidelity; misses real integration bugs (serialisation, timeouts, version drift) | Defeats the purpose of integration testing |
 | Testcontainers for all dependencies at once | Full isolation immediately | Large refactor; higher pilot risk; hard to attribute improvements | Too much for a first pilot — start with one and expand |
 
----
 
-## Docs / Adr / ADR Reduce Compose In Ci
+---
 
 > Source: `docs/adr/0003-reduce-compose-in-ci.md`
 
-## ADR-0003: Reduce Docker Compose role in CI, keep it for local
+# ADR-0003: Reduce Docker Compose role in CI, keep it for local
 
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** Pilot team
 - **Related:** [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md) · [ADR-0004 — BuildKit](0004-buildkit-cache-and-layering.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 5](../stories/story-5-compose/README.md)
 
-### Context
+## Context
 
 The pilot repository uses a single `docker-compose.yml` that serves multiple purposes:
 
@@ -2805,13 +2975,12 @@ This mixed usage causes problems:
 
 [ADR-0002](0002-testcontainers-for-integration-tests.md) introduces Testcontainers as a way for tests to manage their own dependencies. Once a dependency is managed by Testcontainers, the corresponding Compose service is no longer needed in CI — but may still be useful locally.
 
-### Decision
+## Decision
 
 We will reduce Docker Compose's role in **CI** while **keeping it for local debugging**. Specifically:
 
-1. **Map** all services currently in `docker-compose.yml` (T5.1).
-2. **Classify** each service: required for CI tests / local-debug only / optional / removable (T5.2).
-3. **Recommend** which services to remove from the CI flow, which to keep, and which to move to Testcontainers (T5.3).
+1. **Validate scope** by mapping and classifying the services and invocation paths (T5.1).
+2. **Decide the target role** by identifying what to retain and which changes remain evidence/ownership candidates (T5.2).
 
 We will **not remove Compose entirely**. Docker Compose remains valuable for:
 - Spinning up the full stack for local manual testing.
@@ -2825,7 +2994,7 @@ Local manual debugging → Docker Compose (convenient, full-stack)
 E2E / exploratory      → Compose or ephemeral environments (future)
 ```
 
-### Consequences
+## Consequences
 
 - **Positive:**
   - Leaner, faster CI runs — only services the tests actually need are started.
@@ -2835,16 +3004,16 @@ E2E / exploratory      → Compose or ephemeral environments (future)
 
 - **Negative / trade-offs:**
   - Risk of breaking a hidden local workflow (risk R4) — a service assumed "not needed" turns out to be required.
-  - Requires accurate service mapping first (T5.1–T5.2) — cannot skip straight to removal.
+  - Requires accurate service mapping and classification first (T5.1) — cannot skip straight to removal.
   - Two ways to start dependencies (Testcontainers in code, Compose on CLI) adds mental overhead until the team internalises the split.
 
 - **Follow-ups:**
-  - T5.1–T5.2: map and classify before changing anything.
+  - T5.1: map and classify before changing anything; T5.2 records the recommendation and adoption limits.
   - Change **CI usage only** in the pilot — do not change local Compose usage.
   - Document any hidden dependency discovered during mapping.
   - If a service is borderline, keep it in CI during the pilot and flag for review.
 
-### Alternatives considered
+## Alternatives considered
 
 | Option | Pros | Cons | Why not chosen |
 |--------|------|------|----------------|
@@ -2853,13 +3022,12 @@ E2E / exploratory      → Compose or ephemeral environments (future)
 | Split into two compose files (CI vs local) | Clear separation without Testcontainers | More files to maintain; still shared-state in CI; doesn't improve test isolation | Possible follow-up, but heavier than what the pilot needs |
 | Use Testcontainers for everything, drop Compose | Full isolation in CI and locally | Large refactor; loss of the "full stack" local convenience | Over-rotation — Compose has legitimate local value |
 
----
 
-## Docs / Adr / ADR Buildkit Cache And Layering
+---
 
 > Source: `docs/adr/0004-buildkit-cache-and-layering.md`
 
-## ADR-0004: Use BuildKit cache + layered multi-stage builds
+# ADR-0004: Use BuildKit cache + layered multi-stage builds
 
 - **Status:** Proposed
 - **Date:** 2026-06-03
@@ -2868,7 +3036,7 @@ E2E / exploratory      → Compose or ephemeral environments (future)
 
 > **Drone constraint:** Multi-stage builds work in any Docker environment. BuildKit cache mounts work locally but are ephemeral in Drone DIND (lost between builds). Remote registry cache requires a `.drone.star` (RepoSync) change + ACP/ETO registry namespace — this is post-pilot.
 
-### Context
+## Context
 
 The pilot repository's Dockerfile currently follows a pattern that causes unnecessary rebuilds:
 
@@ -2884,7 +3052,7 @@ BuildKit (Docker's modern build backend) supports:
 - **Multi-stage builds:** separate "resolve dependencies" → "compile" → "runtime" into distinct stages. Only the final runtime stage ships to production.
 - **Registry remote cache** (`--cache-from`/`--cache-to`): store cache layers in the container registry so CI runners can reuse them across jobs (requires ACP/ETO infrastructure).
 
-### Decision
+## Decision
 
 We will restructure the pilot Dockerfile using BuildKit features:
 
@@ -2918,7 +3086,7 @@ USER 1001
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 ```
 
-### Consequences
+## Consequences
 
 - **Positive:**
   - Faster rebuilds: dependency layer cached separately — source-only changes rebuild in seconds locally.
@@ -2935,10 +3103,10 @@ ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 - **Follow-ups:**
   - T3.3: apply one layering change at a time and measure (not a full rewrite at once).
   - T3.4: compare before/after locally and in CI; verify a `--no-cache` build still succeeds.
-  - Story 6 / T6.2: route remote-cache infra requirement to ACP/ETO.
+  - Story 6 / T6.1: classify and route remote-cache infrastructure to RepoSync/platform or the relevant wider owner.
   - Post-pilot: ACP/ETO provisions cache namespace; request RepoSync change to add `--cache-from`/`--cache-to` to the Drone build step.
 
-### Alternatives considered
+## Alternatives considered
 
 | Option | Pros | Cons | Why not chosen |
 |--------|------|------|----------------|
@@ -2947,20 +3115,19 @@ ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 | Pre-built dependency image (build deps baked into a base) | Very fast builds; no dep resolution at all | Governance overhead; must rebuild when deps change; another image to maintain | Heavier than pilot scope — possible future platform item |
 | Kaniko (daemonless build) | No Docker daemon needed in CI | Less mature BuildKit features; no cache mounts; limited multi-stage support | BuildKit is the standard; Kaniko is a workaround for environments without Docker |
 
----
 
-## Docs / Adr / ADR Ci Runner Docker Mode
+---
 
 > Source: `docs/adr/0005-ci-runner-docker-mode.md`
 
-## ADR-0005: CI runner Docker execution mode (Drone Kubernetes + DIND)
+# ADR-0005: CI runner Docker execution mode (Drone Kubernetes + DIND)
 
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** CST + ACP/ETO (RepoSync pipeline owner)
 - **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md) · [ADR-0004 — BuildKit](0004-buildkit-cache-and-layering.md) · [PROJECT-PLAN.md — R3](../../PROJECT-PLAN.md) · [T1.4](../stories/story-1-pipeline-assessment/task-4-testcontainers-feasibility.md) · [Drone considerations](../../examples/ci/drone-considerations.md)
 
-### Context
+## Context
 
 The FDP CI pipeline runs on **Drone with Kubernetes runner**. Docker access is provided via a **Docker-in-Docker (DIND) service** named `docker`, accessible at `tcp://docker:2375`.
 
@@ -2979,7 +3146,7 @@ For Testcontainers to work in CI:
 
 These are **environment variable changes in `.drone.star`** — controlled by RepoSync, not the adaptor repo.
 
-### Decision
+## Decision
 
 The current Drone setup provides DIND. We will assess its suitability for Testcontainers in T1.4 and select the appropriate execution model:
 
@@ -2988,7 +3155,7 @@ The current Drone setup provides DIND. We will assess its suitability for Testco
 
 The final decision is documented in T1.4 findings and carried into Story 4 and Story 6.
 
-### Consequences
+## Consequences
 
 - **Positive:**
   - Uses the existing DIND service — no new infrastructure required.
@@ -3004,10 +3171,10 @@ The final decision is documented in T1.4 findings and carried into Story 4 and S
 - **Follow-ups:**
   - T1.4: confirm DIND connectivity from Maven step.
   - If feasible: submit RepoSync change request with env vars.
-  - T6.2: classify as RepoSync/platform-owned change.
+  - T6.1: classify as a RepoSync/platform-owned change.
   - Document the workaround for the team (env vars needed in CI vs local).
 
-### Alternatives considered
+## Alternatives considered
 
 | Option | Pros | Cons | Why not chosen (default) |
 |--------|------|------|--------------------------|
@@ -3016,50 +3183,48 @@ The final decision is documented in T1.4 findings and carried into Story 4 and S
 | Rootless Docker / Sysbox | Secure; no host privilege escalation | Requires specific kernel/runner setup | Assess in T1.4; not assumed available |
 | No Docker in CI (fallback) | No privilege concerns | No Testcontainers in CI; Compose remains | Valid fallback per ADR-0002 — not ideal but acceptable |
 
----
 
-## Docs / Adr / Template
+---
 
 > Source: `docs/adr/template.md`
 
-## ADR-NNNN: <short title of the decision>
+# ADR-NNNN: <short title of the decision>
 
 - **Status:** Proposed | Accepted | Superseded by ADR-XXXX | Deprecated
 - **Date:** YYYY-MM-DD
 - **Deciders:** <names / roles>
 - **Related:** <story / task / ADR links>
 
-### Context
+## Context
 What is the situation and the forces at play? What problem or question forced a decision? Keep it factual.
 
-### Decision
+## Decision
 The decision, stated in active voice: "We will …".
 
-### Consequences
+## Consequences
 What becomes easier and what becomes harder as a result. Include trade-offs, risks, and follow-up actions.
 
 - **Positive:**
 - **Negative / trade-offs:**
 - **Follow-ups:**
 
-### Alternatives considered
+## Alternatives considered
 | Option | Pros | Cons | Why not chosen |
 |--------|------|------|----------------|
 | | | | |
 
----
 
-## Examples / Overview
+---
 
 > Source: `examples/README.md`
 
-## Examples
+# Examples
 
 Reference code samples based on the **real FDP project structure**. These match the actual live environment (fdp-cmd-adaptor-dvla, docker-compose via RepoSync, Maven multi-module).
 
 Copy, adapt, and rename as needed when applying to the pilot repository.
 
-### Real project context
+## Real project context
 
 | Property | Value |
 |----------|-------|
@@ -3077,9 +3242,9 @@ Copy, adapt, and rename as needed when applying to the pilot repository.
 | Test framework | Cucumber + JUnit 4 (vintage) + JUnit 5 Platform |
 | Integration test orchestration | docker-compose-maven-plugin (currently) |
 
-### Contents
+## Contents
 
-#### Testcontainers + Cucumber + Spring Boot
+### Testcontainers + Cucumber + Spring Boot
 
 | File | What it shows |
 |------|---------------|
@@ -3090,7 +3255,7 @@ Copy, adapt, and rename as needed when applying to the pilot repository.
 | [KafkaContainerConfig.java](testcontainers/KafkaContainerConfig.java) | Zookeeper + Kafka + Schema Registry (cp-7.5.5, matching production MSK) |
 | [LocalStackContainerConfig.java](testcontainers/LocalStackContainerConfig.java) | LocalStack (IAM) — if chosen as candidate |
 
-#### Docker (build optimisation)
+### Docker (build optimisation)
 
 | File | What it shows |
 |------|---------------|
@@ -3098,7 +3263,7 @@ Copy, adapt, and rename as needed when applying to the pilot repository.
 | [docker-compose.yml](docker/docker-compose.yml) | Infrastructure services only (mirrors real RepoSync-controlled compose, without FDP app services) |
 | [.dockerignore](docker/.dockerignore) | Lean build context for Java/Maven multi-module project |
 
-#### CI/CD (GitLab — illustrative only)
+### CI/CD (GitLab — illustrative only)
 
 > **Note:** The real FDP CI uses **Drone** (`.drone.star` via RepoSync), not GitLab CI. These snippets show how integration tests *would* look in a GitLab CI context. For Drone, see [drone-considerations.md](ci/drone-considerations.md).
 
@@ -3107,7 +3272,7 @@ Copy, adapt, and rename as needed when applying to the pilot repository.
 | [gitlab-ci-integration-test.yml](ci/gitlab-ci-integration-test.yml) | Two jobs: Testcontainers mode (`-P testcontainers`) + Compose fallback (`-P ci-cmd`) — illustrative |
 | [drone-considerations.md](ci/drone-considerations.md) | How Testcontainers/BuildKit would work in the real Drone pipeline |
 
-### How to apply
+## How to apply
 
 1. **Add Testcontainers BOM** to parent pom.xml `<dependencyManagement>` (see pom-dependencies.xml)
 2. **Add 3 dependencies** to `cmd-adaptor-dvla-integration-tests/pom.xml` (testcontainers, junit-jupiter, kafka)
@@ -3117,13 +3282,12 @@ Copy, adapt, and rename as needed when applying to the pilot repository.
 6. **Run locally:** `./mvnw verify -pl cmd-adaptor-dvla-integration-tests -P testcontainers`
 7. **Compare (T4.3):** same tests, Testcontainers vs `-P ci-cmd`, measure timing
 
----
 
-## Examples / Ci / Drone Considerations
+---
 
 > Source: `examples/ci/drone-considerations.md`
 
-## Drone CI — Testcontainers & BuildKit Considerations
+# Drone CI — Testcontainers & BuildKit Considerations
 
 How the pilot proposals would work within the real FDP Drone pipeline.
 
@@ -3131,7 +3295,7 @@ How the pilot proposals would work within the real FDP Drone pipeline.
 
 ---
 
-### Current pipeline structure (from .drone.star)
+## Current pipeline structure (from .drone.star)
 
 ```text
 Pipeline type: Kubernetes
@@ -3155,9 +3319,9 @@ CI Pipeline steps:
 
 ---
 
-### Testcontainers in Drone
+## Testcontainers in Drone
 
-#### What needs to happen
+### What needs to happen
 
 For Testcontainers to work in the `mvn clean install` step (or a new Maven step):
 
@@ -3169,17 +3333,17 @@ environment:
   TESTCONTAINERS_CHECKS_DISABLE: "true"   # Skip pre-flight checks
 ```
 
-#### Why Ryuk must be disabled
+### Why Ryuk must be disabled
 
 Ryuk is a Testcontainers helper container that cleans up other containers. In Drone's Kubernetes pipeline model, Ryuk cannot connect to the DIND daemon reliably. The ECR pipeline already has this workaround.
 
 **Implication:** Without Ryuk, container cleanup is the responsibility of the pipeline. Since Drone pipelines are ephemeral (pod is destroyed after the pipeline), this is acceptable — containers die with the pod.
 
-#### Where this change lives
+### Where this change lives
 
 This is a **RepoSync-controlled change** — the Maven step environment in `.drone.star` must be modified. It cannot be done in the adaptor repo.
 
-#### Fallback (from ADR-0002)
+### Fallback (from ADR-0002)
 
 If Drone CI execution is not feasible or the RepoSync change is not approved:
 - Testcontainers runs **locally only** (developer machines)
@@ -3188,13 +3352,13 @@ If Drone CI execution is not feasible or the RepoSync change is not approved:
 
 ---
 
-### BuildKit in Drone
+## BuildKit in Drone
 
-#### Multi-stage builds
+### Multi-stage builds
 
 **Works today** — `docker build` with multi-stage Dockerfiles is standard Docker behaviour. No DIND or pipeline change needed. The existing `docker build -f Dockerfile` step already supports this.
 
-#### BuildKit cache mounts (`--mount=type=cache`)
+### BuildKit cache mounts (`--mount=type=cache`)
 
 **Works per-build** — `DOCKER_BUILDKIT=1` enables cache mounts. But since DIND is ephemeral per pipeline, the cache is lost between builds. Still useful for multi-stage builds within a single pipeline run (deps stage → build stage).
 
@@ -3207,7 +3371,7 @@ environment:
 
 This is a **RepoSync-controlled change** (environment variable in `.drone.star`).
 
-#### Remote registry cache (`--cache-from` / `--cache-to`)
+### Remote registry cache (`--cache-from` / `--cache-to`)
 
 **Requires ACP/ETO:**
 - Registry namespace for cache layers (e.g. `docker.digital.homeoffice.gov.uk/dacc-aws/fdp-cache`)
@@ -3219,7 +3383,7 @@ This is **post-pilot** — classify in Story 6 as RepoSync/platform or wider ETO
 
 ---
 
-### What CST can do locally (no RepoSync change)
+## What CST can do locally (no RepoSync change)
 
 | Action | Works locally | Works in CI |
 |--------|:------------:|:-----------:|
@@ -3232,10 +3396,9 @@ This is **post-pilot** — classify in Story 6 as RepoSync/platform or wider ETO
 
 ---
 
-### Recommended approach for the pilot
+## Recommended approach for the pilot
 
 1. **Story 1:** confirm T1.4 (Testcontainers) and T1.5 (BuildKit) feasibility
 2. **Story 3:** apply Dockerfile optimisation locally; measure local before/after; CI benefit comes from multi-stage (no special config) and `.dockerignore` (reduces context sent to DIND)
 3. **Story 4:** prototype Testcontainers locally; if T1.4 confirms CI feasibility, request RepoSync change to add DOCKER_HOST + RYUK env vars to Maven step
 4. **Story 6:** document what was local vs what needs RepoSync/platform action
-

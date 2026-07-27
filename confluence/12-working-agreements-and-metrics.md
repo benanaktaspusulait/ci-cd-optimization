@@ -117,13 +117,11 @@ Update the **Status** column as work moves. Estimates use story points: `1`, `2`
 | T4.3 | Compare with docker-compose flow | 2 | Should | Not started | TBC | — |
 | T4.4 | Document findings & constraints | 1 | Should | Not started | TBC | — |
 | **S5** | **Docker Compose Rationalisation** | — | Should | Not started | TBC | — |
-| T5.1 | Map services started by docker-compose | 1 | Must | Not started | TBC | — |
-| T5.2 | Classify services & usage | 2 | Must | Not started | TBC | — |
-| T5.3 | Recommend reduced Compose role | 2 | Should | Not started | TBC | — |
-| **S6** | **Findings, Ownership and Recommendations** | — | Must | Not started | TBC | — |
-| T6.1 | Consolidate pilot findings | 2 | Must | Not started | TBC | — |
-| T6.2 | Classify ownership and recommend target board | 2 | Must | Not started | TBC | — |
-| T6.3 | Share findings with stakeholders | 1 | Should | Not started | TBC | — |
+| T5.1 | Validate current Compose scope | 3 | Must | Done — evidence prepared | TBC | — |
+| T5.2 | Decide the target Compose role | 2 | Must | Done — recommendation prepared | TBC | — |
+| **S6** | **Pilot Outcome, Ownership and Adoption** | — | Must | In progress | TBC | — |
+| T6.1 | Classify pilot outcomes and ownership routes | 4 | Must | Done — evidence prepared | TBC | — |
+| T6.2 | Decide adoption route and publish pilot outcome | 2 | Must | Not completed — materials prepared | TBC | — |
 
 ### Ticket-Creation Order
 

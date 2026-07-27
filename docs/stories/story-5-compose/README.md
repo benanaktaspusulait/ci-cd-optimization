@@ -1,25 +1,36 @@
 # Story 5 — Docker Compose Rationalisation
 
 **Epic:** [Container & CI/CD Optimisation Pilot](../../../README.md)
-**Depends on:** Story 4 (uses its findings) · **Parallel with:** —
+**Depends on:** T1.3, T1.4 and current Story 4 evidence · **Parallel with:** —
 
 ## Goal
-Clarify which Compose services are truly needed for CI integration tests versus local debugging, and recommend a reduced/clearer role.
-
-> **Note:** Docker Compose should not be removed without first mapping current CI and local debugging usage. The goal is to reduce unnecessary CI orchestration where appropriate, not to remove useful local debugging workflows.
+Define an evidence-backed target role for Docker Compose across CI, full E2E and local debugging, without changing the current default flows.
 
 ## Why
-Compose files tend to grow and serve mixed purposes, dragging extra services into every CI run. Separating "needed for CI" from "useful for local debugging" reduces CI overhead without removing tools developers rely on locally.
+The repository uses Compose in more than one orchestration path. Reviewers need one clear account of what is used and one safe recommendation, rather than separate tickets for mapping, classification and documentation.
+
+## Boundaries / non-claims
+
+- This story maps and recommends; it does not change Compose, Maven profiles, CI or production defaults.
+- Full E2E, Redis-only and Kafka/Schema Registry scopes remain distinct.
+- A local Testcontainers result does not prove that a Compose service can be removed from CI.
+- Any durable change to RepoSync-controlled files requires the RepoSync/platform route.
+- Unavailable timing, reliability and CI evidence is recorded as `not measured`.
 
 ## Acceptance criteria
-- [ ] All Compose services mapped (image, ports, dependencies, purpose)
-- [ ] Services classified: required for CI tests / local-debug only / optional / removable
-- [ ] CI vs local usage separated; mixed-purpose usage flagged
-- [ ] Reduced Compose role recommended with risk/impact
+
+- [x] Compose services and invocation paths are mapped and classified.
+- [x] CI, full E2E and local-debug roles are kept distinct.
+- [x] A target Compose role and unresolved decisions are recorded.
+- [x] Implementation, ownership and evidence limits are explicit.
 
 ## Tasks
+
 | Task | Title | SP | Priority | Status |
 |------|-------|:---:|:--------:|--------|
-| T5.1 | [Map services started by docker-compose](./task-1-map-services.md) | 1 | Must | Not started |
-| T5.2 | [Classify services & usage](./task-2-classify-usage.md) | 2 | Must | Not started |
-| T5.3 | [Recommend reduced Compose role](./task-3-recommend-role.md) | 2 | Should | Not started |
+| T5.1 | [Validate current Compose scope](./task-1-validate-compose-scope.md) | 3 | Must | Done — evidence prepared |
+| T5.2 | [Decide the target Compose role](./task-2-decide-compose-role.md) | 2 | Must | Done — recommendation prepared |
+
+**Supporting outputs:** [T5.1 evidence](../../../solution/story-5/T5.1-validate-compose-scope.md) · [T5.2 evidence](../../../solution/story-5/T5.2-decide-compose-role.md)
+
+**Consolidation mapping:** [Story 5 and Story 6 consolidation](../STORY-5-6-CONSOLIDATION.md)
