@@ -36,10 +36,11 @@ This mapping separates recommendations from delivery. It does not approve any ca
 
 | Pilot outcome | Follow-up destination |
 |---|---|
-| `.dockerignore`, layer ordering, Redis, Kafka and Schema Registry | [Epic 2 — build and Testcontainers task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-1-build-and-testcontainers.md); non-Redis implementation requires new evidence |
-| Compose application/helper topology and Kafdrop/Jaeger/LocalStack candidates | [Epic 2 — full integration-topology task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-2-e2e-compose-topology.md); no automatic migration or removal |
-| CI validation and adoption of approved SNS changes | [Epic 2 — CI validation/adoption task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-3-ci-validation-adoption.md) |
-| `kd`/Helm, PVC lifecycle and legacy CD components | [Epic 2 — CD transition task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-4-cd-transition.md) |
+| `.dockerignore` and layer ordering | [Epic 2 — SNS image-build task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-1-sns-image-build.md) |
+| Redis, Kafka and Schema Registry | [Epic 2 — Testcontainers infrastructure task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-2-testcontainers-infrastructure.md); non-Redis implementation requires new evidence |
+| Compose application/helper topology and Kafdrop/Jaeger/LocalStack candidates | [Epic 2 — full integration-topology task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-3-e2e-compose-topology.md); no automatic migration or removal |
+| CI validation and adoption of approved SNS changes | [Epic 2 — CI validation/adoption task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-4-ci-validation-adoption.md) |
+| `kd`/Helm, PVC lifecycle and legacy CD components | [Epic 2 — CD transition task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-5-cd-transition.md) |
 | Build-once-promote | Related release/platform work; coordinate only where ownership overlaps |
 
 The pilot retains Stories 1–6 only. T6.2 remains incomplete until owner review, stakeholder sharing, dispositions and next actions are recorded.
