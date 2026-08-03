@@ -3,7 +3,7 @@
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** Pilot team
-- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0003 — Compose role](0003-reduce-compose-in-ci.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 4](../stories/story-4-testcontainers/README.md)
+- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0003 — Compose role](0003-reduce-compose-in-ci.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 4](../epics/epic-1-pivot-study/stories/story-4-testcontainers/README.md)
 
 ## Context
 

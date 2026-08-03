@@ -11,7 +11,7 @@
 
 > **This page is context only.** Deployment and release improvements are outside the initial pilot scope. This information is documented for awareness and to inform future work.
 
-> The proposed `kd`/Helm, PVC lifecycle and legacy-component review is a separately gated task workstream in **Post-Pilot Container and CD Delivery**. It is not Story 7, part of Story 6 or an approved migration.
+> The proposed `kd`/Helm, PVC lifecycle and legacy-component review is independently tracked in **Epic 2 Story E2-S2**. It is not Story 7, part of Story 6 or an approved migration.
 
 ---
 

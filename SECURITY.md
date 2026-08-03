@@ -1,6 +1,6 @@
 # Security Plan
 
-Concrete security practices for the pilot. Turns the high-level notes in [tech-notes](docs/stories/tech-notes.md#security--compliance) into an actionable plan. [← Back to overview](README.md)
+Concrete security practices for the pilot. Turns the high-level notes in [tech-notes](docs/epics/epic-1-pivot-study/stories/tech-notes.md#security--compliance) into an actionable plan. [← Back to overview](README.md)
 
 > **Scope:** practices the pilot will apply or assess. Items needing org-wide infrastructure (shared scanners, signing infra) are flagged as **ACP/ETO** and routed via Story 6.
 

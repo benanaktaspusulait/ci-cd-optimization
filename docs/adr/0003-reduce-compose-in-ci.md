@@ -3,7 +3,7 @@
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** Pilot team
-- **Related:** [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md) · [ADR-0004 — BuildKit](0004-buildkit-cache-and-layering.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 5](../stories/story-5-compose/README.md)
+- **Related:** [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md) · [ADR-0004 — BuildKit](0004-buildkit-cache-and-layering.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 5](../epics/epic-1-pivot-study/stories/story-5-compose/README.md)
 
 ## Context
 

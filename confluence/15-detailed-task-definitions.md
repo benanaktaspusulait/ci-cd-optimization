@@ -11,7 +11,7 @@
 
 This page is the index for full task definitions. Each child page below contains the why, goal, scope and acceptance criteria for its stories.
 
-The pilot task structure ends at T6.2. Proposed production implementation and CD review tasks are independently gated within one Epic 2 planning record; no T7 task exists.
+The pilot task structure ends at T6.2. Validated SNS productionisation is planned in Epic 2 Story E2-S1 and independent CD review/target planning in Story E2-S2; no T7 task exists.
 
 ---
 

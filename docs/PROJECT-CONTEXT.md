@@ -22,7 +22,7 @@ Concrete baseline numbers are **not assumed**. Story 2 captures real build time,
 
 ## Current State (to be confirmed in Story 2)
 
-These are **placeholder estimates** based on initial observations. Exact values will be captured in T2.2–T2.4 and recorded in the [metrics template](stories/metrics-template.md).
+These are **placeholder estimates** based on initial observations. Exact values will be captured in T2.2–T2.4 and recorded in the [metrics template](epics/epic-1-pivot-study/stories/metrics-template.md).
 
 | Metric | Estimated current state | Target (pilot, local) |
 |--------|-------------------------|------------------------|

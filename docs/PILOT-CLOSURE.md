@@ -10,7 +10,7 @@
 
 The optimisation pilot has established current-state evidence, validated bounded local experiments, recorded limitations and non-claims, and identified ownership and adoption routes.
 
-No additional implementation will be added to this epic. Approved SNS productionisation and the separately gated CD pipeline review are tracked under a [new delivery epic](epics/INDEX.md), not as Story 7.
+No additional implementation will be added to this epic. Validated SNS productionisation and independent CD review/design are tracked as separate stories under a [follow-up delivery epic](epics/INDEX.md), not as Story 7.
 
 The pilot cannot yet be marked `Done` because the [T6.2 publishing record](../solution/story-6/T6.2-decide-adoption-route.md#required-publishing-record) contains no stakeholder/owner review, share-out date, agreed dispositions or routed next actions.
 
@@ -47,7 +47,7 @@ Until that evidence exists:
 
 | Area | Destination | Status |
 |---|---|---|
-| Approved SNS image-build, Redis/Kafka/Schema Registry integration topology and CI-validation delivery | [Epic 2 — Post-Pilot Container and CD Delivery](epics/epic-2-post-pilot-delivery/README.md), SNS tasks | Proposed / New; non-Redis scope requires new evidence |
-| Evidence-gated `kd`/Helm, PVC and legacy CD target transition | [Epic 2 — Post-Pilot Container and CD Delivery](epics/epic-2-post-pilot-delivery/README.md), CD transition task | Proposed / New; implementation requires target approval |
-| Kafdrop, Jaeger and LocalStack | Separately scoped and approved validation work | Not approved |
+| Validated SNS image-build, opt-in Redis and component-level CI evaluation | [Epic 2 — E2-S1 SNS productionisation](epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/README.md) | Proposed / New |
+| `kd`/Helm, PVC and legacy CD current-state review and target planning | [Epic 2 — E2-S2 CD review and planning](epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md) | Proposed / New; no migration implementation |
+| Kafka/Schema Registry and broad topology candidates, including Kafdrop, Jaeger and LocalStack | [Deferred candidate register](epics/DEFERRED-CANDIDATES.md) | Not approved implementation |
 | Build-once-promote | Related release/platform work where ownership overlaps | Candidate only |

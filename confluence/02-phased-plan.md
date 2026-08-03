@@ -124,7 +124,7 @@ Post-pilot delivery is not Phase 4 or Story 7 of this pilot.
 
 | Epic | Initial scope | Status | Gate |
 |---|---|---|---|
-| Post-Pilot Container and CD Delivery | SNS delivery and evidence-gated CD transition as independently controlled task workstreams | Proposed / New | Task-specific evidence, ownership and approval gates |
+| Post-Pilot Container and CD Delivery | Independent SNS productionisation and CD review/target-planning stories | Proposed / New | Story-specific evidence and ownership; no CD migration implementation |
 
 Build-once-promote and wider platform opportunities remain related release/platform candidates. They are coordinated only where ownership overlaps and are not automatic dependencies or approved delivery.
 

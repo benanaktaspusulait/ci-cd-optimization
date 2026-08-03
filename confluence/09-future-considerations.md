@@ -15,7 +15,7 @@
 
 This page captures improvements, architecture decisions, and technical opportunities that are **out of scope for the current pilot** but may be pursued after pilot evidence is collected. Items here require either ACP/DSA ETO prioritisation or further investigation beyond the single-repo pilot.
 
-SNS production implementation and the evidence-gated `kd`/Helm, PVC and legacy CD target transition are task workstreams under **Post-Pilot Container and CD Delivery**. The epic is proposed/new; it is not an additional pilot story or an approval.
+Validated SNS productionisation is tracked in **Epic 2 Story E2-S1**. Independent `kd`/Helm, PVC and legacy CD review/target planning is tracked in **Epic 2 Story E2-S2**. Both stories are proposed/new; neither is an additional pilot story or an approval. Kafka/Schema Registry and broad SNS topology work remain deferred candidates.
 
 > **Prioritisation disclaimer:** ACP and DSA ETO capacity is currently focused on Core Cloud and Data Platform. Any request for platform-level work must be backed by measured evidence from the pilot and aligned with ETO prioritisation cycles. Items on this page are candidates, not commitments.
 

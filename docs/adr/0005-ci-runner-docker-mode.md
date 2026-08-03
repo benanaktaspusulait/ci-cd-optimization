@@ -3,7 +3,7 @@
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** CST + ACP/ETO (RepoSync pipeline owner)
-- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md) · [ADR-0004 — BuildKit](0004-buildkit-cache-and-layering.md) · [PROJECT-PLAN.md — R3](../../PROJECT-PLAN.md) · [T1.4](../stories/story-1-pipeline-assessment/task-4-testcontainers-feasibility.md) · [Drone considerations](../../examples/ci/drone-considerations.md)
+- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0002 — Testcontainers](0002-testcontainers-for-integration-tests.md) · [ADR-0004 — BuildKit](0004-buildkit-cache-and-layering.md) · [PROJECT-PLAN.md — R3](../../PROJECT-PLAN.md) · [T1.4](../epics/epic-1-pivot-study/stories/story-1-pipeline-assessment/task-4-testcontainers-feasibility.md) · [Drone considerations](../../examples/ci/drone-considerations.md)
 
 ## Context
 

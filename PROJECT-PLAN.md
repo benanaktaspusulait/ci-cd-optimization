@@ -26,7 +26,7 @@ Sized from story point estimates (`1`, `2`, `3`, `5`; `1 SP` is roughly 1 day). 
 | Sequence | Epic | Outcome | Gate |
 |---|---|---|---|
 | 1 | Container & CI/CD Optimisation Pilot | Evidence, bounded experiments, non-claims and ownership routes | T6.2 owner review/share-out still required for truthful closure |
-| 2 | [Post-Pilot Container and CD Delivery](docs/epics/epic-2-post-pilot-delivery/README.md) | SNS delivery plus CD review/design through independently gated tasks | Task-specific implementation approval, evidence and durable ownership |
+| 2 | [Post-Pilot Container and CD Delivery](docs/epics/epic-2-post-pilot-delivery/README.md) | Independent SNS productionisation and CD review/target-planning stories | Story-specific approval, evidence and durable ownership; no CD migration implementation |
 
 The SNS and CD workstreams have independent task completion and approval gates. Build-once-promote remains related release/platform work and is coordinated only where ownership overlaps.
 
@@ -95,9 +95,9 @@ feature branch  ──MR──>  develop  ──(stabilise)──>  main
 - **Branch naming:** `pilot/<story>-<short-desc>` (e.g. `pilot/s3-dockerfile-layering`).
 - **Merge request (MR) required** into `develop`; no direct pushes to `develop` or `main`.
 - **On MR open / update**, Drone CI runs the pipeline (if configured for MR events — confirm in T1.1).
-- **Merge to `develop`** when: pipeline green, acceptance criteria met, [Definition of Done](docs/stories/DEFINITION-OF-DONE.md) satisfied, one review approved.
+- **Merge to `develop`** when: pipeline green, acceptance criteria met, [Definition of Done](docs/epics/epic-1-pivot-study/stories/DEFINITION-OF-DONE.md) satisfied, one review approved.
 - **Promote `develop` → `main`** at a milestone, once the pilot increment is stable.
-- **On merge**, the [status board](docs/stories/STATUS-BOARD.md) entry for the task moves to `Done` and the result is noted.
+- **On merge**, the [status board](docs/epics/epic-1-pivot-study/stories/STATUS-BOARD.md) entry for the task moves to `Done` and the result is noted.
 
 ---
 
@@ -112,7 +112,7 @@ Testcontainers (Story 4) covers integration tests. Everything else still needs v
 | **Build cache (T3.3)** | Two consecutive builds: second reuses cache; a clean build (no cache) still succeeds (guards R6) |
 | **Testcontainers (T4.2)** | Integration test passes locally; dependency reachable; runs in Drone CI or documented why not |
 | **Compose change candidate (T5.2)** | Before adoption, the equivalent integration scope passes with the proposed set and the local debugging workflow is preserved |
-| **Metrics (T2.x, T3.4, T4.3)** | Captured via the [metrics template](docs/stories/metrics-template.md); method documented so it's repeatable |
+| **Metrics (T2.x, T3.4, T4.3)** | Captured via the [metrics template](docs/epics/epic-1-pivot-study/stories/metrics-template.md); method documented so it's repeatable |
 
 **Verification principles**
 - Every build/config change is proven by an actual build + run, not by inspection alone.

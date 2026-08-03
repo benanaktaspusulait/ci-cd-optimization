@@ -35,7 +35,7 @@ docs/
 
 ## How to navigate
 
-- Start at the [backlog index](docs/stories/INDEX.md) for the full outline.
+- Start at the [backlog index](docs/epics/epic-1-pivot-study/stories/INDEX.md) for the full outline.
 - Drill into a story README for its goal and task list.
 - Open a task file for the full detail (why · goal · scope · acceptance criteria).
 
@@ -56,19 +56,19 @@ Every task file follows the same shape:
 - **Status:** `Not started` · `In progress` · `Blocked` · `Done`
 - **IDs:** stories `S1…S6`, tasks `T<story>.<n>` (e.g. `T3.3`)
 
-> The [status board](docs/stories/STATUS-BOARD.md) is the only live progress tracker. Any status values in story/task files are planning snapshots and should not be maintained separately.
+> The [status board](docs/epics/epic-1-pivot-study/stories/STATUS-BOARD.md) is the only live progress tracker. Any status values in story/task files are planning snapshots and should not be maintained separately.
 
 ## Working a task
 
-1. Set the task **Status** to `In progress` on the [status board](docs/stories/STATUS-BOARD.md).
+1. Set the task **Status** to `In progress` on the [status board](docs/epics/epic-1-pivot-study/stories/STATUS-BOARD.md).
 2. Do the work within the task's **scope**.
-3. Capture any measurement in the [metrics template](docs/stories/metrics-template.md).
+3. Capture any measurement in the [metrics template](docs/epics/epic-1-pivot-study/stories/metrics-template.md).
 4. Tick the task's **acceptance criteria**.
-5. Confirm the shared [Definition of Done](docs/stories/DEFINITION-OF-DONE.md).
+5. Confirm the shared [Definition of Done](docs/epics/epic-1-pivot-study/stories/DEFINITION-OF-DONE.md).
 6. If the task settles a significant choice, record an [ADR](docs/adr/README.md).
 7. Set **Status** to `Done` (or `Blocked`, with a note on what's blocking).
 
-> The [status board](docs/stories/STATUS-BOARD.md) is the single source of truth for progress. Update it there, not in individual files.
+> The [status board](docs/epics/epic-1-pivot-study/stories/STATUS-BOARD.md) is the single source of truth for progress. Update it there, not in individual files.
 
 ## Raising tickets
 

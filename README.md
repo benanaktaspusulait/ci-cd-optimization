@@ -14,7 +14,7 @@ The optimisation pilot has established current-state evidence, validated bounded
 
 The epic is not marked `Done` because [T6.2](solution/story-6/T6.2-decide-adoption-route.md) does not yet record stakeholder/owner review, a share-out date, agreed dispositions or routed next actions. These details will not be fabricated. The exact result and missing evidence are captured in the [pilot closure record](docs/PILOT-CLOSURE.md).
 
-Approved SNS productionisation and the CD pipeline review are tracked as separate workstreams in a [new delivery epic](docs/epics/INDEX.md), not as Story 7.
+Validated SNS productionisation and the independent CD pipeline review/design are tracked as separate stories in a [follow-up delivery epic](docs/epics/INDEX.md), not as Story 7.
 
 ---
 
@@ -24,15 +24,15 @@ Approved SNS productionisation and the CD pipeline review are tracked as separat
 |------|-------|
 | Understand the pilot quickly | This README |
 | Review the pilot closure evidence and blockers | [Pilot closure record](docs/PILOT-CLOSURE.md) |
-| Track live task progress | [Status board](docs/stories/STATUS-BOARD.md) |
-| See every story and task | [Backlog index](docs/stories/INDEX.md) |
+| Track live task progress | [Status board](docs/epics/epic-1-pivot-study/stories/STATUS-BOARD.md) |
+| See every story and task | [Backlog index](docs/epics/epic-1-pivot-study/stories/INDEX.md) |
 | See pilot and post-pilot epic separation | [Delivery epic index](docs/epics/INDEX.md) |
 | Understand why this matters | [Project context](docs/PROJECT-CONTEXT.md) |
 | Understand Drone / RepoSync constraints | [Pipeline context](docs/PIPELINE-CONTEXT.md) |
 | Check in/out of scope and deferred work | [Scope and guardrails](docs/SCOPE-AND-GUARDRAILS.md) |
 | Follow the timeline, risks and verification plan | [Project plan](PROJECT-PLAN.md) |
 
-**Audience shortcuts:** developers usually start with the [backlog index](docs/stories/INDEX.md), [status board](docs/stories/STATUS-BOARD.md), [technical notes](docs/stories/tech-notes.md), and [ADRs](docs/adr/README.md). Ops/platform readers should also review the [security plan](SECURITY.md), [pipeline context](docs/PIPELINE-CONTEXT.md), and Story 6 ownership classification.
+**Audience shortcuts:** developers usually start with the [backlog index](docs/epics/epic-1-pivot-study/stories/INDEX.md), [status board](docs/epics/epic-1-pivot-study/stories/STATUS-BOARD.md), [technical notes](docs/epics/epic-1-pivot-study/stories/tech-notes.md), and [ADRs](docs/adr/README.md). Ops/platform readers should also review the [security plan](SECURITY.md), [pipeline context](docs/PIPELINE-CONTEXT.md), and Story 6 ownership classification.
 
 ---
 
@@ -107,7 +107,7 @@ These may require wider DSA ETO/Enabling prioritisation and should be assessed a
 
 ## Success Targets Summary
 
-Targets are proposed and confirmed against the real baseline in Story 2. Detailed measurement fields live in the [metrics template](docs/stories/metrics-template.md).
+Targets are proposed and confirmed against the real baseline in Story 2. Detailed measurement fields live in the [metrics template](docs/epics/epic-1-pivot-study/stories/metrics-template.md).
 
 **CST-local targets:**
 
@@ -136,12 +136,12 @@ Targets are proposed and confirmed against the real baseline in Story 2. Detaile
 
 | # | Story | Tasks | Depends on | Parallel with |
 |---|-------|:-----:|------------|----------------|
-| 1 | [Pipeline Assessment (Drone/RepoSync)](docs/stories/story-1-pipeline-assessment/README.md) | 5 | — | — |
-| 2 | [Baseline & Pilot Scope](docs/stories/story-2-baseline/README.md) | 4 | 1 | — |
-| 3 | [Docker Build Optimisation](docs/stories/story-3-build/README.md) | 4 | 2 | 4 |
-| 4 | [Testcontainers Pilot](docs/stories/story-4-testcontainers/README.md) | 4 | 2 | 3 |
-| 5 | [Docker Compose Rationalisation](docs/stories/story-5-compose/README.md) | 2 | 4 | — |
-| 6 | [Pilot Outcome, Ownership and Adoption](docs/stories/story-6-findings/README.md) | 2 | 3, 4, 5 | — |
+| 1 | [Pipeline Assessment (Drone/RepoSync)](docs/epics/epic-1-pivot-study/stories/story-1-pipeline-assessment/README.md) | 5 | — | — |
+| 2 | [Baseline & Pilot Scope](docs/epics/epic-1-pivot-study/stories/story-2-baseline/README.md) | 4 | 1 | — |
+| 3 | [Docker Build Optimisation](docs/epics/epic-1-pivot-study/stories/story-3-build/README.md) | 4 | 2 | 4 |
+| 4 | [Testcontainers Pilot](docs/epics/epic-1-pivot-study/stories/story-4-testcontainers/README.md) | 4 | 2 | 3 |
+| 5 | [Docker Compose Rationalisation](docs/epics/epic-1-pivot-study/stories/story-5-compose/README.md) | 2 | 4 | — |
+| 6 | [Pilot Outcome, Ownership and Adoption](docs/epics/epic-1-pivot-study/stories/story-6-findings/README.md) | 2 | 3, 4, 5 | — |
 
 ```text
 Story 1 (pipeline assessment, gate)
@@ -151,19 +151,19 @@ Story 1 (pipeline assessment, gate)
                          └──> Story 6
 ```
 
-Progress is tracked in the [status board](docs/stories/STATUS-BOARD.md). The [backlog index](docs/stories/INDEX.md) is the compact list of story/task files.
+Progress is tracked in the [status board](docs/epics/epic-1-pivot-study/stories/STATUS-BOARD.md). The [backlog index](docs/epics/epic-1-pivot-study/stories/INDEX.md) is the compact list of story/task files.
 
 ## Post-Pilot Delivery Epic
 
 | Epic | Workstreams | Status |
 |---|---|---|
-| [Post-Pilot Container and CD Delivery](docs/epics/epic-2-post-pilot-delivery/README.md) | Full SNS build/integration/CI transition and evidence-gated CD implementation | Proposed / New |
+| [Post-Pilot Container and CD Delivery](docs/epics/epic-2-post-pilot-delivery/README.md) | Two independent stories: validated SNS productionisation and CD current-state review/target planning | Proposed / New |
 
 ```text
 Container & CI/CD Optimisation Pilot (evidence source; T6.2 closure pending)
-   └──> Post-Pilot Container and CD Delivery
-           ├── SNS repository delivery tasks
-           └── CD target transition task
+   └──> Epic 2 — Post-Pilot Container and CD Delivery
+           ├── E2-S1 — Validated SNS productionisation
+           └── E2-S2 — CD review and target planning
 ```
 
 The delivery epic may cite pilot evidence but is not an additional story within the pilot.
@@ -179,11 +179,11 @@ The delivery epic may cite pilot evidence but is not an additional story within 
 | [Pipeline context](docs/PIPELINE-CONTEXT.md) | Drone/RepoSync constraint and CI vs deploy pipeline boundary |
 | [Scope and guardrails](docs/SCOPE-AND-GUARDRAILS.md) | Pilot scope, assumptions, open questions, deferred work |
 | [Project plan](PROJECT-PLAN.md) | Timeline, risk register, branching, test strategy |
-| [Status board](docs/stories/STATUS-BOARD.md) | Single source of truth for task status |
-| [Backlog index](docs/stories/INDEX.md) | Story/task outline with links |
+| [Status board](docs/epics/epic-1-pivot-study/stories/STATUS-BOARD.md) | Single source of truth for task status |
+| [Backlog index](docs/epics/epic-1-pivot-study/stories/INDEX.md) | Story/task outline with links |
 | [Delivery epic index](docs/epics/INDEX.md) | Pilot-to-delivery separation, follow-up epic and transition routes |
 | [Security plan](SECURITY.md) | Secret handling, scanning, supply-chain hardening |
-| [Technical notes](docs/stories/tech-notes.md) | Base images, BuildKit, Testcontainers and security references |
+| [Technical notes](docs/epics/epic-1-pivot-study/stories/tech-notes.md) | Base images, BuildKit, Testcontainers and security references |
 | [ADRs](docs/adr/README.md) | Architecture decisions and trade-offs |
 | [Examples](examples/README.md) | Docker, CI and Testcontainers examples |
 | [Glossary](docs/glossary.md) | FDP/CST/ETO/Drone terminology |

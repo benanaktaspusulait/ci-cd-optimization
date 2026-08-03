@@ -60,4 +60,4 @@ Turn validated pilot evidence into clear ownership routes and an explicit adopt,
 
 Legacy mapping: former T6.1 + T6.2 → T6.1; former T6.3 → T6.2.
 
-The pilot task structure ends at T6.2. SNS productionisation and the separately gated CD pipeline review are task workstreams in one proposed follow-up epic; no T7 task is created here.
+The pilot task structure ends at T6.2. Validated SNS productionisation is planned in Epic 2 Story E2-S1 and independent CD review/target planning in Story E2-S2; no T7 task is created here.

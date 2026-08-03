@@ -2,7 +2,7 @@
 
 > **Closure status:** Evidence and recommendations are prepared. The pilot remains open only for the unrecorded T6.2 owner review, stakeholder share-out, dispositions and routed next actions. No additional implementation story will be added to the pilot.
 
-> **Delivery routing:** Approved SNS work and the separately gated CD pipeline review are task workstreams in [Epic 2](../docs/epics/epic-2-post-pilot-delivery/README.md).
+> **Delivery routing:** Validated SNS work is in [Epic 2 Story E2-S1](../docs/epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/README.md); independent CD review and target planning is in [Epic 2 Story E2-S2](../docs/epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md).
 
 ## Validated Changes
 
@@ -21,8 +21,9 @@
 ## Future Recommendations
 
 - **Taskfile Workflow:** Evaluate a Taskfile-based developer workflow to encapsulate prerequisite builds, pilot execution and measurement commands, reducing reliance on lengthy handover instructions. This is a recommended follow-up for developer experience improvement.
-- **SNS productionisation:** Route approved `.dockerignore`, Dockerfile and Redis workflow work through the SNS tasks in Epic 2 rather than extending the pilot. A later inspection of SNS snapshot `6bec7c579c9a244503850fad3072859fa809e41b` also places Kafka/Schema Registry implementation, full integration-topology equivalence and real-CI validation in that delivery epic; those additions are proposed work and do not broaden the Redis pilot evidence.
-- **CD transition:** Route current-state analysis, target approval, implementation and deployment validation for `kd`/Helm, PVC lifecycle and legacy CD components through the evidence-gated CD task in Epic 2.
+- **SNS productionisation:** Route only approved `.dockerignore`, Dockerfile, opt-in Redis and component-level CI-evaluation work through Epic 2 rather than extending the pilot.
+- **Broader SNS topology:** Keep Kafka/Schema Registry, command/snapshot migration and service-role questions in the deferred candidate register until separately scoped and approved.
+- **CD review and planning:** Route `kd`/Helm, PVC lifecycle and legacy CD current-state analysis and target planning through E2-S2. Migration implementation follows only as separate stories after evidence and owner approval.
 
 ## Not Claimed
 

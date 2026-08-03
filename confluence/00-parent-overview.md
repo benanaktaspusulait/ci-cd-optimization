@@ -14,7 +14,7 @@
 
 ## Executive Summary
 
-> **Lifecycle update:** No implementation story will be added after Story 6. Owner review, stakeholder share-out, dispositions and routed next actions are still missing from T6.2, so the pilot is not marked Done. Approved SNS productionisation and the separately gated CD pipeline review are task workstreams in one proposed follow-up epic.
+> **Lifecycle update:** No implementation story will be added after Story 6. Owner review, stakeholder share-out, dispositions and routed next actions are still missing from T6.2, so the pilot is not marked Done. Validated SNS productionisation and independent CD review/target planning are separate proposed follow-up epics.
 
 This page presents a proposed pilot to improve container build and integration-test performance for one FDP adaptor repository. The pilot validates improvement ideas locally with before/after evidence before proposing any wider rollout.
 
@@ -154,7 +154,7 @@ Story 1 (pipeline assessment, gate)
 
 | Epic | Scope | Status |
 |---|---|---|
-| Post-Pilot Container and CD Delivery | Full SNS build/integration/CI transition plus evidence-gated CD implementation | Proposed / New |
+| Post-Pilot Container and CD Delivery | Two independent stories: validated SNS productionisation and CD current-state review/target planning | Proposed / New |
 
 These are not Story 7 or further implementation stories within the pilot.
 

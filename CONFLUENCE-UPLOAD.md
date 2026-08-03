@@ -13,7 +13,7 @@
 
 The `confluence/` folder contains the Confluence-ready pages for the CI/CD Optimisation Pilot proposal. Each page is self-contained for Confluence readers.
 
-> The upload set describes the bounded pilot only. Proposed SNS productionisation and CD pipeline review work is maintained as independently gated tasks in one delivery epic under `docs/epics/`; it is not Story 7 of this pilot. T6.2 owner review/share-out remains unrecorded.
+> The upload set describes the bounded pilot only. Validated SNS productionisation and independent CD review/target planning are maintained as separate stories in one follow-up epic under `docs/epics/`; neither is Story 7 of this pilot. T6.2 owner review/share-out remains unrecorded.
 
 ---
 

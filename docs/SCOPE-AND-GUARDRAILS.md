@@ -2,7 +2,7 @@
 
 What the pilot may change, what needs central coordination, and what is deliberately deferred. [← Back to overview](../README.md)
 
-> **Lifecycle boundary:** No implementation story will be added after Story 6. Proposed SNS productionisation and the evidence-gated CD transition are tracked as task workstreams in a [post-pilot delivery epic](epics/INDEX.md). The pilot remains open only because T6.2 owner review/share-out evidence is absent.
+> **Lifecycle boundary:** No implementation story will be added after Story 6. Validated SNS productionisation and independent CD review/design are tracked as separate stories in a [follow-up delivery epic](epics/INDEX.md). The pilot remains open only because T6.2 owner review/share-out evidence is absent.
 
 ---
 
@@ -62,9 +62,9 @@ This is the negative scope / guardrail list. These items may be valid later, but
 
 ## Post-Pilot Routing
 
-- Approved SNS Dockerfile and `.dockerignore` changes, Redis productisation, new Kafka/Schema Registry implementation, full integration-topology equivalence and real-CI validation route to the SNS tasks in [Epic 2](epics/epic-2-post-pilot-delivery/README.md). Non-Redis work requires its own implementation evidence and does not inherit the Redis pilot result.
-- `kd`/Helm, PVC lifecycle and legacy CD work routes to the staged CD transition task in [Epic 2](epics/epic-2-post-pilot-delivery/README.md); implementation remains gated by current-state evidence and target approval.
-- Kafdrop, Jaeger, LocalStack and other Compose helpers are included in the topology task for separately scoped validation and disposition, not automatic migration or removal.
+- Validated SNS Dockerfile/`.dockerignore`, opt-in Redis and component-level real-CI evaluation route to [Epic 2 Story E2-S1](epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/README.md).
+- `kd`/Helm, PVC lifecycle and legacy CD review/target planning route to independent [Epic 2 Story E2-S2](epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md); migration implementation is not yet defined.
+- Kafka, Schema Registry, Kafdrop, Jaeger, LocalStack and wider topology questions remain in the [deferred candidate register](epics/DEFERRED-CANDIDATES.md), not automatic implementation or removal.
 - Build-once-promote remains related release/platform work and is not a prerequisite for either new epic unless owners decide otherwise.
 
 ---

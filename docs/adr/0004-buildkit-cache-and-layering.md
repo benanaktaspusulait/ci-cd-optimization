@@ -3,7 +3,7 @@
 - **Status:** Proposed
 - **Date:** 2026-06-03
 - **Deciders:** Pilot team
-- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0003 — Compose role](0003-reduce-compose-in-ci.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 3](../stories/story-3-build/README.md) · [tech notes](../stories/tech-notes.md#buildkit-remote-cache) · [Drone considerations](../../examples/ci/drone-considerations.md)
+- **Related:** [ADR-0001 — Pilot approach](0001-pilot-not-rollout.md) · [ADR-0003 — Compose role](0003-reduce-compose-in-ci.md) · [ADR-0005 — CI runner mode](0005-ci-runner-docker-mode.md) · [Story 3](../epics/epic-1-pivot-study/stories/story-3-build/README.md) · [tech notes](../epics/epic-1-pivot-study/stories/tech-notes.md#buildkit-remote-cache) · [Drone considerations](../../examples/ci/drone-considerations.md)
 
 > **Drone constraint:** Multi-stage builds work in any Docker environment. BuildKit cache mounts work locally but are ephemeral in Drone DIND (lost between builds). Remote registry cache requires a `.drone.star` (RepoSync) change + ACP/ETO registry namespace — this is post-pilot.
 
@@ -34,7 +34,7 @@ We will restructure the pilot Dockerfile using BuildKit features:
 
 2. **BuildKit cache mounts** for the Maven local repository (`/root/.m2`), enabled for local builds immediately.
 
-3. **Registry remote cache** (branch-aware: `--cache-from` main + current branch): documented in [tech-notes](../stories/tech-notes.md) and [drone-considerations](../../examples/ci/drone-considerations.md), but requires a RepoSync `.drone.star` change + ACP/ETO registry namespace. This is a post-pilot item (see [FUTURE-CONSIDERATIONS](../stories/FUTURE-CONSIDERATIONS.md)).
+3. **Registry remote cache** (branch-aware: `--cache-from` main + current branch): documented in [tech-notes](../epics/epic-1-pivot-study/stories/tech-notes.md) and [drone-considerations](../../examples/ci/drone-considerations.md), but requires a RepoSync `.drone.star` change + ACP/ETO registry namespace. This is a post-pilot item (see [FUTURE-CONSIDERATIONS](../epics/epic-1-pivot-study/stories/FUTURE-CONSIDERATIONS.md)).
 
 4. **Clean build must always work:** a `--no-cache` build must succeed, so cache is an optimisation, never a hard dependency (guards risk R6).
 
