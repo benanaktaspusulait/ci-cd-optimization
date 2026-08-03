@@ -6,6 +6,8 @@
 ## Goal
 Turn the validated pilot evidence into clear ownership routes and an explicit adopt, retain-as-candidate or stop decision for each outcome.
 
+> **Epic boundary:** Story 6 closes the pilot decision record; it does not own production implementation. Proposed SNS delivery and CD pipeline review work is tracked in the [delivery epic index](../../epics/INDEX.md). No Story 7 will be added to the pilot.
+
 ## Why
 A PoC is useful only when reviewers can see what was actually proved, who can act, and what remains unapproved. This story keeps the evidence in supporting documents and makes the decision path concise.
 

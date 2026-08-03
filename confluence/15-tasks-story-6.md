@@ -59,3 +59,5 @@ Turn validated pilot evidence into clear ownership routes and an explicit adopt,
 - [x] No recommendation is described as adopted without evidence.
 
 Legacy mapping: former T6.1 + T6.2 → T6.1; former T6.3 → T6.2.
+
+The pilot task structure ends at T6.2. SNS productionisation and the separately gated CD pipeline review are task workstreams in one proposed follow-up epic; no T7 task is created here.

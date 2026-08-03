@@ -4,8 +4,8 @@
 |-------|-------|
 | **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
-| **Status** | Draft |
-| **Last updated** | 2026-06-09 |
+| **Status** | Candidate register — routed to the proposed follow-up epic where applicable |
+| **Last updated** | 2026-08-03 |
 | **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
@@ -14,6 +14,8 @@
 ## Purpose
 
 This page captures improvements, architecture decisions, and technical opportunities that are **out of scope for the current pilot** but may be pursued after pilot evidence is collected. Items here require either ACP/DSA ETO prioritisation or further investigation beyond the single-repo pilot.
+
+SNS production implementation and the separately gated `kd`/Helm, PVC and legacy CD pipeline review are task workstreams under **Post-Pilot Container and CD Delivery**. The epic is proposed/new; it is not an additional pilot story or an approval.
 
 > **Prioritisation disclaimer:** ACP and DSA ETO capacity is currently focused on Core Cloud and Data Platform. Any request for platform-level work must be backed by measured evidence from the pilot and aligned with ETO prioritisation cycles. Items on this page are candidates, not commitments.
 

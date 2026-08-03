@@ -4,12 +4,14 @@
 |-------|-------|
 | **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
-| **Status** | Draft |
-| **Last updated** | 2026-06-09 |
+| **Status** | Context retained; separate CD review proposed |
+| **Last updated** | 2026-08-03 |
 | **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 > **This page is context only.** Deployment and release improvements are outside the initial pilot scope. This information is documented for awareness and to inform future work.
+
+> The proposed `kd`/Helm, PVC lifecycle and legacy-component review is a separately gated task workstream in **Post-Pilot Container and CD Delivery**. It is not Story 7, part of Story 6 or an approved migration.
 
 ---
 

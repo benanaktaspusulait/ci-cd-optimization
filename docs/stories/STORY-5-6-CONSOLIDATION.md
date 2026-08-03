@@ -29,3 +29,19 @@ This inventory records the task structure reviewed before the Story 5 and Story 
 - Story 5 evidence has been prepared, so both consolidated documentation outcomes are complete. This does not mean a reduced Compose configuration was implemented or adopted.
 - Story 6 classification material has been prepared. Stakeholder sharing, feedback, approval and adoption are not evidenced, so the final adoption/publishing outcome remains not completed.
 - Existing Story 1–4 technical evidence remains unchanged. Documentation references to retired task identifiers point directly to the consolidated evidence.
+
+## Post-pilot epic transition
+
+This mapping separates recommendations from delivery. It does not approve any candidate or add another pilot story.
+
+| Pilot outcome | Follow-up destination |
+|---|---|
+| `.dockerignore` and layer ordering | [Epic 2 — SNS image-build task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-1-sns-image-build.md) |
+| Redis Option A local workflow | [Epic 2 — Redis task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-2-redis-testcontainers.md) |
+| Kafka/Schema Registry and Avro integration coverage | [Epic 2 — Kafka/Schema Registry task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-3-kafka-schema-registry-testcontainers.md); new evidence required |
+| Compose application/helper topology and Kafdrop/Jaeger/LocalStack candidates | [Epic 2 — SNS topology task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-4-compose-e2e-topology.md); no automatic migration or removal |
+| CI validation of approved SNS changes | [Epic 2 — SNS delivery-validation task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-5-sns-delivery-validation.md) |
+| `kd`/Helm, PVC lifecycle and legacy CD components | [Epic 2 — CD review/design tasks](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/README.md) |
+| Build-once-promote | Related release/platform work; coordinate only where ownership overlaps |
+
+The pilot retains Stories 1–6 only. T6.2 remains incomplete until owner review, stakeholder sharing, dispositions and next actions are recorded.

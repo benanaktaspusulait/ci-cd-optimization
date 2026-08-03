@@ -4,15 +4,17 @@
 |-------|-------|
 | **Owner** | TBC (CST / Cerberus Delivery) |
 | **Created by** | Benan Aktas |
-| **Status** | Draft |
+| **Status** | In progress — pilot evidence prepared; T6.2 closure evidence missing |
 | **Created** | 2026-06-09 |
-| **Last updated** | 2026-06-09 |
+| **Last updated** | 2026-08-03 |
 | **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 ---
 
 ## Executive Summary
+
+> **Lifecycle update:** No implementation story will be added after Story 6. Owner review, stakeholder share-out, dispositions and routed next actions are still missing from T6.2, so the pilot is not marked Done. Approved SNS productionisation and the separately gated CD pipeline review are task workstreams in one proposed follow-up epic.
 
 This page presents a proposed pilot to improve container build and integration-test performance for one FDP adaptor repository. The pilot validates improvement ideas locally with before/after evidence before proposing any wider rollout.
 
@@ -137,8 +139,8 @@ Evidence-first: every change is proved with before/after numbers. No change is a
 | 2 | Baseline & Pilot Scope | 4 | 1 | 1 |
 | 3 | Docker Build Optimisation | 4 | 2 | 1–2 |
 | 4 | Testcontainers Pilot | 4 | 2 | 2 |
-| 5 | Docker Compose Rationalisation | 3 | 4 | 2–3 |
-| 6 | Findings, Ownership and Recommendations | 3 | 3, 4, 5 | 3 |
+| 5 | Docker Compose Rationalisation | 2 | 4 | 2–3 |
+| 6 | Pilot Outcome, Ownership and Adoption | 2 | 3, 4, 5 | 3 |
 
 ```text
 Story 1 (pipeline assessment, gate)
@@ -147,6 +149,14 @@ Story 1 (pipeline assessment, gate)
            └──> Story 4 (testcontainers) ─┼──> Story 5 (compose)
                                           └──> Story 6 (findings/ownership)
 ```
+
+## Proposed follow-up delivery epic
+
+| Epic | Scope | Status |
+|---|---|---|
+| Post-Pilot Container and CD Delivery | Full SNS integration-infrastructure productionisation/CI validation plus separately gated CD review/design tasks | Proposed / New |
+
+These are not Story 7 or further implementation stories within the pilot.
 
 ---
 

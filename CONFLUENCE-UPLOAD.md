@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
-| **Status** | Draft |
-| **Last updated** | 2026-06-09 |
+| **Status** | Pilot upload set retained; closure evidence pending |
+| **Last updated** | 2026-08-03 |
 | **Last reviewed** | 2026-06-09 |
 
 ---
@@ -12,6 +12,8 @@
 ## What Is the Upload Set?
 
 The `confluence/` folder contains the Confluence-ready pages for the CI/CD Optimisation Pilot proposal. Each page is self-contained for Confluence readers.
+
+> The upload set describes the bounded pilot only. Proposed SNS productionisation and CD pipeline review work is maintained as independently gated tasks in one delivery epic under `docs/epics/`; it is not Story 7 of this pilot. T6.2 owner review/share-out remains unrecorded.
 
 ---
 

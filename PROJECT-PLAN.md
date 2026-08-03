@@ -2,6 +2,8 @@
 
 Operational plan for the Container & CI/CD Optimisation pilot: timeline, risk register, branching/CI flow, and test strategy. [← Back to overview](README.md)
 
+> **Current position:** The four-week table below is the pilot plan. Pilot evidence is prepared, but T6.2 owner review/share-out remains unrecorded. Production implementation and CD review are now separate workstreams in a [post-pilot delivery epic](docs/epics/INDEX.md); they are not a fifth pilot phase or Story 7.
+
 > Dates are **relative** (Week 1 = pilot kick-off week). Fill in calendar dates once the team agrees a start date.
 
 ---
@@ -18,6 +20,15 @@ Sized from story point estimates (`1`, `2`, `3`, `5`; `1 SP` is roughly 1 day). 
 | **Week 4** | Rationalise + decide | Story 5 (T5.2), Story 6 (T6.1–T6.2) | Compose role recommended; outcomes and ownership classified; adoption decisions and share-out recorded |
 
 > This is a ~4-week part-time pilot, not a full-time programme. Adjust per team capacity.
+
+## Post-Pilot Delivery Roadmap
+
+| Sequence | Epic | Outcome | Gate |
+|---|---|---|---|
+| 1 | Container & CI/CD Optimisation Pilot | Evidence, bounded experiments, non-claims and ownership routes | T6.2 owner review/share-out still required for truthful closure |
+| 2 | [Post-Pilot Container and CD Delivery](docs/epics/epic-2-post-pilot-delivery/README.md) | SNS delivery plus CD review/design through independently gated tasks | Task-specific implementation approval, evidence and durable ownership |
+
+The SNS and CD workstreams have independent task completion and approval gates. Build-once-promote remains related release/platform work and is coordinated only where ownership overlaps.
 
 ### Milestones
 - **M1 — Pipeline assessed + baseline agreed** (end of Week 1): boundaries known, scope locked, numbers captured.

@@ -1,6 +1,8 @@
 # Status Board
 
-Single source of truth for pilot task progress. [← Back to overview](../../README.md)
+Single source of truth for pilot task progress and proposed follow-up epic status. [← Back to overview](../../README.md)
+
+> **Pilot closure:** evidence and recommendations are prepared, but T6.2 owner review, share-out and decisions are not recorded. The pilot therefore remains `In progress`. No further implementation stories will be added to it.
 
 > **Note:** The backlog below is a **candidate structure only**. Individual tickets should not be created until priority, ownership and target board are agreed. The purpose is to support review and prioritisation — not to imply that every task will be implemented immediately.
 
@@ -38,6 +40,24 @@ Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of ef
 | **S6** | **Pilot Outcome, Ownership and Adoption** | — | Must | In progress | _TBD_ | — |
 | T6.1 | Classify pilot outcomes and ownership routes | 4 | Must | Done — evidence prepared | _TBD_ | — |
 | T6.2 | Decide adoption route and publish pilot outcome | 2 | Must | Not completed — materials prepared | _TBD_ | — |
+
+---
+
+## Separate Proposed Delivery Epics
+
+| ID | Item | Status | Dependency |
+|---|---|---|---|
+| **E2** | [Post-Pilot Container and CD Delivery](../epics/epic-2-post-pilot-delivery/README.md) | Proposed / New | Pilot evidence and task-specific owner approval |
+| E2-S1 | Deliver and validate post-pilot outcomes | Proposed / New | Pilot evidence |
+| E2-S1.1 | Implement validated SNS image-build changes | Proposed / New | Story 3 evidence and owner approval |
+| E2-S1.2 | Productise the opt-in Redis Testcontainers workflow | Proposed / New | Story 4 evidence |
+| E2-S1.3 | Implement Kafka and Schema Registry Testcontainers coverage | Proposed / New | SNS integration-test evidence and owner approval |
+| E2-S1.4 | Implement and validate the target SNS integration topology | Proposed / New | E2-S1.2/E2-S1.3 and Story 5 evidence |
+| E2-S1.5 | Validate approved SNS changes in the real delivery path | Proposed / New | Approved SNS task output and platform route |
+| E2-S1.6 | Review the current CD pipeline | Proposed / New | Current pipeline/configuration evidence |
+| E2-S1.7 | Define the CD target design and delivery plan | Proposed / New | E2-S1.6 evidence and owner decisions |
+
+These entries are planning records, not approvals or pilot stories.
 
 ---
 

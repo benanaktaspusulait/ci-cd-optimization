@@ -2,6 +2,8 @@
 
 Why this pilot exists, what it is trying to improve, and how success is measured. [← Back to overview](../README.md)
 
+> **Current lifecycle:** Pilot evidence and recommendations are prepared. T6.2 owner review/share-out remains unrecorded, so formal closure is still pending. Approved SNS implementation and the separate CD pipeline review are planned in the [delivery epic index](epics/INDEX.md), not as additional pilot stories.
+
 ---
 
 ## Background

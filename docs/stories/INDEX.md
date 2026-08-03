@@ -1,9 +1,9 @@
-# Backlog Index
+# Pilot Backlog Index
 
-A single-page outline of the whole backlog: every story and its task titles with initial planning info.
+A single-page outline of the bounded pilot backlog. No Story 7 or production implementation work will be added here.
 For full detail, follow the links. [← Back to overview](../../README.md)
 
-**Related:** [Status board](STATUS-BOARD.md) · [Project plan](../../PROJECT-PLAN.md) · [Security](../../SECURITY.md) · [ADRs](../adr/README.md) · [Metrics](metrics-template.md) · [Definition of Done](DEFINITION-OF-DONE.md) · [Future considerations](FUTURE-CONSIDERATIONS.md)
+**Related:** [Delivery epic index](../epics/INDEX.md) · [Status board](STATUS-BOARD.md) · [Project plan](../../PROJECT-PLAN.md) · [Security](../../SECURITY.md) · [ADRs](../adr/README.md) · [Metrics](metrics-template.md) · [Definition of Done](DEFINITION-OF-DONE.md) · [Future considerations](FUTURE-CONSIDERATIONS.md)
 
 > Live progress is tracked only in the [status board](STATUS-BOARD.md); status values here are initial backlog snapshots.
 
@@ -61,3 +61,11 @@ For full detail, follow the links. [← Back to overview](../../README.md)
 | T6.2 | [Decide the adoption route and publish the pilot outcome](story-6-findings/task-2-decide-adoption.md) | 2 | _TBD_ | Not completed — materials prepared | Week 4 |
 
 See the [Story 5 and Story 6 consolidation map](STORY-5-6-CONSOLIDATION.md) for legacy task traceability.
+
+## Separate Delivery Epics
+
+| Epic | Stories | Status |
+|---|---:|---|
+| [Epic 2 — Post-Pilot Container and CD Delivery](../epics/epic-2-post-pilot-delivery/README.md) | 1 | Proposed / New |
+
+This epic consumes pilot evidence through independently gated SNS and CD tasks. It is not Story 7 or an extension of Story 6.

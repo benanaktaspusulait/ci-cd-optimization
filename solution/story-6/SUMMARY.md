@@ -5,6 +5,8 @@
 | **Status** | In progress — classification prepared; owner review/share-out not evidenced |
 | **Date consolidated** | 2026-07-27 |
 
+> **Epic boundary:** No implementation story follows Story 6 in the pilot. Proposed SNS productionisation and CD pipeline review work is tracked in the [delivery epic index](../../docs/epics/INDEX.md). Formal pilot closure still depends on the missing T6.2 owner-review/share-out record.
+
 ---
 
 ## Deliverables

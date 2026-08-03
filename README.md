@@ -1,12 +1,20 @@
 # Container & CI/CD Optimisation Pilot
 
-> **Status:** Pilot planning — not an approved implementation programme.
+> **Status:** In progress — pilot evidence prepared; T6.2 owner review, stakeholder share-out and dispositions are not evidenced.
 > **Scope:** FDP as the pilot context; patterns may be reusable more widely if proven.
 > **Intent:** Validate a few optimisation ideas through a small, measurable pilot before any wider rollout.
 
 **Key message:** the difference is not Docker vs no Docker — it's *optimised, standardised, cached and test-driven* Docker usage.
 
 > **Repository type:** this repository is a planning and template pack, not the selected application repository. Root-level files (`Dockerfile`, `docker-compose.yml`, `scripts/measure-baseline.sh`) are starting templates to copy/adapt after T2.1 selects a pilot repo with application sources (`pom.xml`, `mvnw`, `.mvn/`, `src/`).
+
+## Pilot Closure Position
+
+The optimisation pilot has established current-state evidence, validated bounded local experiments, recorded limitations and non-claims, and identified ownership and adoption routes. No additional implementation story will be added to this epic.
+
+The epic is not marked `Done` because [T6.2](solution/story-6/T6.2-decide-adoption-route.md) does not yet record stakeholder/owner review, a share-out date, agreed dispositions or routed next actions. These details will not be fabricated. The exact result and missing evidence are captured in the [pilot closure record](docs/PILOT-CLOSURE.md).
+
+Approved SNS productionisation and the CD pipeline review are tracked as separate workstreams in a [new delivery epic](docs/epics/INDEX.md), not as Story 7.
 
 ---
 
@@ -15,8 +23,10 @@
 | Need | Go to |
 |------|-------|
 | Understand the pilot quickly | This README |
+| Review the pilot closure evidence and blockers | [Pilot closure record](docs/PILOT-CLOSURE.md) |
 | Track live task progress | [Status board](docs/stories/STATUS-BOARD.md) |
 | See every story and task | [Backlog index](docs/stories/INDEX.md) |
+| See pilot and post-pilot epic separation | [Delivery epic index](docs/epics/INDEX.md) |
 | Understand why this matters | [Project context](docs/PROJECT-CONTEXT.md) |
 | Understand Drone / RepoSync constraints | [Pipeline context](docs/PIPELINE-CONTEXT.md) |
 | Check in/out of scope and deferred work | [Scope and guardrails](docs/SCOPE-AND-GUARDRAILS.md) |
@@ -130,8 +140,8 @@ Targets are proposed and confirmed against the real baseline in Story 2. Detaile
 | 2 | [Baseline & Pilot Scope](docs/stories/story-2-baseline/README.md) | 4 | 1 | — |
 | 3 | [Docker Build Optimisation](docs/stories/story-3-build/README.md) | 4 | 2 | 4 |
 | 4 | [Testcontainers Pilot](docs/stories/story-4-testcontainers/README.md) | 4 | 2 | 3 |
-| 5 | [Docker Compose Rationalisation](docs/stories/story-5-compose/README.md) | 3 | 4 | — |
-| 6 | [CST-local vs ACP/ETO Ownership Assessment](docs/stories/story-6-findings/README.md) | 3 | 3, 4, 5 | — |
+| 5 | [Docker Compose Rationalisation](docs/stories/story-5-compose/README.md) | 2 | 4 | — |
+| 6 | [Pilot Outcome, Ownership and Adoption](docs/stories/story-6-findings/README.md) | 2 | 3, 4, 5 | — |
 
 ```text
 Story 1 (pipeline assessment, gate)
@@ -143,6 +153,21 @@ Story 1 (pipeline assessment, gate)
 
 Progress is tracked in the [status board](docs/stories/STATUS-BOARD.md). The [backlog index](docs/stories/INDEX.md) is the compact list of story/task files.
 
+## Post-Pilot Delivery Epic
+
+| Epic | Workstreams | Status |
+|---|---|---|
+| [Post-Pilot Container and CD Delivery](docs/epics/epic-2-post-pilot-delivery/README.md) | Full SNS integration-infrastructure productionisation/CI validation; CD current-state review/target design | Proposed / New |
+
+```text
+Container & CI/CD Optimisation Pilot (evidence source; T6.2 closure pending)
+   └──> Post-Pilot Container and CD Delivery
+           ├── SNS repository delivery tasks
+           └── CD pipeline review/design tasks
+```
+
+The delivery epic may cite pilot evidence but is not an additional story within the pilot.
+
 ---
 
 ## Documentation Map
@@ -150,11 +175,13 @@ Progress is tracked in the [status board](docs/stories/STATUS-BOARD.md). The [ba
 | Document | Purpose |
 |----------|---------|
 | [Project context](docs/PROJECT-CONTEXT.md) | Background, current state, business impact, technology stack |
+| [Pilot closure record](docs/PILOT-CLOSURE.md) | Final evidence boundaries, missing T6.2 closure record and follow-up destinations |
 | [Pipeline context](docs/PIPELINE-CONTEXT.md) | Drone/RepoSync constraint and CI vs deploy pipeline boundary |
 | [Scope and guardrails](docs/SCOPE-AND-GUARDRAILS.md) | Pilot scope, assumptions, open questions, deferred work |
 | [Project plan](PROJECT-PLAN.md) | Timeline, risk register, branching, test strategy |
 | [Status board](docs/stories/STATUS-BOARD.md) | Single source of truth for task status |
 | [Backlog index](docs/stories/INDEX.md) | Story/task outline with links |
+| [Delivery epic index](docs/epics/INDEX.md) | Pilot-to-delivery separation, follow-up epic and transition routes |
 | [Security plan](SECURITY.md) | Secret handling, scanning, supply-chain hardening |
 | [Technical notes](docs/stories/tech-notes.md) | Base images, BuildKit, Testcontainers and security references |
 | [ADRs](docs/adr/README.md) | Architecture decisions and trade-offs |

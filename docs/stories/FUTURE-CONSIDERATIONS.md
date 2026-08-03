@@ -4,7 +4,7 @@ Items that are **out of scope for the pilot** but should be addressed if the pat
 
 > **Disclaimer:** These opportunities are subject to ACP / DSA ETO prioritisation and alignment with DSA Tech Strategy, Core Cloud and Data Platform direction. They are not part of the immediate pilot.
 
-> **When to revisit:** after Story 6 is complete and stakeholders decide to progress beyond the pilot.
+> **Routing:** SNS productionisation and the separately gated CD pipeline review are task workstreams in [Epic 2](../epics/epic-2-post-pilot-delivery/README.md). The epic remains proposed and each task requires its own owner approval; T6.2 pilot closure evidence is still missing.
 
 ---
 
@@ -147,7 +147,7 @@ These are concrete next steps that build on the pilot's findings. They do not re
 
 **Coordination:** The CI optimisation pilot and the release automation project are complementary but separate. The pilot improves **build + test speed**; the release automation improves **deploy + release management**. Findings from Story 6 should be shared with Gareth's project to avoid conflicting changes to the pipeline or Helm chart structure.
 
-**When:** After Story 6 findings are shared — include Gareth as a stakeholder.
+**When:** Coordinate through the relevant release/platform work where ownership overlaps. This is not a dependency of the SNS productionisation or CD review epic unless the responsible owners decide otherwise.
 
 
 ---

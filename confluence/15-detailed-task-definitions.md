@@ -4,12 +4,14 @@
 |-------|-------|
 | **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
-| **Status** | Draft |
-| **Last updated** | 2026-06-09 |
+| **Status** | In progress — pilot T6.2 closure evidence pending |
+| **Last updated** | 2026-08-03 |
 | **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
 This page is the index for full task definitions. Each child page below contains the why, goal, scope and acceptance criteria for its stories.
+
+The pilot task structure ends at T6.2. Proposed production implementation and CD review tasks are independently gated within one Epic 2 planning record; no T7 task exists.
 
 ---
 

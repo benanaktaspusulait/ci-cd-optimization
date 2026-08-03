@@ -2,6 +2,8 @@
 
 What the pilot may change, what needs central coordination, and what is deliberately deferred. [← Back to overview](../README.md)
 
+> **Lifecycle boundary:** No implementation story will be added after Story 6. Proposed SNS productionisation and CD pipeline review work is tracked as separate task workstreams in a [post-pilot delivery epic](epics/INDEX.md). The pilot remains open only because T6.2 owner review/share-out evidence is absent.
+
 ---
 
 ## Pilot Approach
@@ -57,6 +59,13 @@ This is the negative scope / guardrail list. These items may be valid later, but
 - Opening all candidate tasks as delivery tickets before ownership is agreed
 - Changing anything on `main` branch of the pilot repo without baseline captured first
 - Assuming CI-level Testcontainers works without completing Story 1 (pipeline feasibility)
+
+## Post-Pilot Routing
+
+- Approved SNS Dockerfile and `.dockerignore` changes, Redis productisation, new Kafka/Schema Registry implementation, full integration-topology equivalence and real-CI validation route to the SNS tasks in [Epic 2](epics/epic-2-post-pilot-delivery/README.md). Non-Redis work requires its own implementation evidence and does not inherit the Redis pilot result.
+- `kd`/Helm, PVC lifecycle and legacy CD component review routes to the CD tasks in [Epic 2](epics/epic-2-post-pilot-delivery/README.md).
+- Kafdrop, Jaeger, LocalStack and other Compose helpers are included in the topology task for separately scoped validation and disposition, not automatic migration or removal.
+- Build-once-promote remains related release/platform work and is not a prerequisite for either new epic unless owners decide otherwise.
 
 ---
 

@@ -4,8 +4,8 @@
 |-------|-------|
 | **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
-| **Status** | Draft |
-| **Last updated** | 2026-06-09 |
+| **Status** | In progress — pilot closure evidence pending |
+| **Last updated** | 2026-08-03 |
 | **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
@@ -21,8 +21,8 @@
 | 2 | Baseline & Pilot Scope | 4 | 1 | 1 |
 | 3 | Docker Build Optimisation | 4 | 2 | 1–2 |
 | 4 | Testcontainers Pilot | 4 | 2 | 2 |
-| 5 | Docker Compose Rationalisation | 3 | 4 | 2–3 |
-| 6 | Findings, Ownership and Recommendations | 3 | 3, 4, 5 | 3 |
+| 5 | Docker Compose Rationalisation | 2 | 4 | 2–3 |
+| 6 | Pilot Outcome, Ownership and Adoption | 2 | 3, 4, 5 | 3 |
 
 ```text
 Story 1 (pipeline assessment, gate)
@@ -31,6 +31,16 @@ Story 1 (pipeline assessment, gate)
            └──> Story 4 (testcontainers) ─┼──> Story 5 (compose)
                                           └──> Story 6 (findings/ownership)
 ```
+
+The pilot stops at Story 6. T6.2 owner review/share-out is not recorded, so formal closure remains pending.
+
+## Proposed follow-up delivery epic
+
+| Epic | Stories | Status |
+|---|---:|---|
+| Post-Pilot Container and CD Delivery | 1 | Proposed / New |
+
+This epic consumes pilot evidence but is not part of the pilot backlog.
 
 ---
 

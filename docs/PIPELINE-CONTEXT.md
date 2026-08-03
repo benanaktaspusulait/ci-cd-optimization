@@ -2,6 +2,8 @@
 
 The Drone/RepoSync and CI/deploy boundary that shapes the pilot. [← Back to overview](../README.md)
 
+> **Delivery routing:** SNS CI implementation and the separately gated deploy/CD review are task workstreams in [Epic 2](epics/epic-2-post-pilot-delivery/README.md). Neither is an additional pilot story.
+
 ---
 
 ## Drone / RepoSync Constraint
@@ -45,4 +47,4 @@ There are **two separate pipelines** in the FDP ecosystem — the pilot targets 
 └─────────────────────────────────────────────────────────────┘
 ```
 
-The pilot optimises the **CI pipeline** (build time, test setup, Docker image). Deploy pipeline improvements (rollback automation, release flow) are captured in [Future considerations](stories/FUTURE-CONSIDERATIONS.md).
+The pilot assessed the **CI pipeline** (build time, test setup, Docker image). Deploy pipeline review remains outside the pilot and is routed through the CD tasks in [Epic 2](epics/epic-2-post-pilot-delivery/README.md), with wider opportunities retained in [Future considerations](stories/FUTURE-CONSIDERATIONS.md).

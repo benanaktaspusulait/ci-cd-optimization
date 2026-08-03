@@ -4,8 +4,8 @@
 |-------|-------|
 | **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
 | **Created by** | Benan Aktas |
-| **Status** | Draft |
-| **Last updated** | 2026-06-09 |
+| **Status** | In progress — pilot closure evidence pending |
+| **Last updated** | 2026-08-03 |
 | **Last reviewed** | 2026-06-09 |
 | **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
 
@@ -118,29 +118,15 @@
 
 ---
 
-## Phase 4: Future / Post-Pilot (ACP / DSA ETO dependent)
+## Post-pilot delivery epic
 
-**Objective:** Implement improvements that require platform coordination, informed by pilot evidence.
+Post-pilot delivery is not Phase 4 or Story 7 of this pilot.
 
-**Candidate changes:**
-- BuildKit remote cache (registry namespace + RepoSync `.drone.star` change).
-- Testcontainers CI execution (RepoSync Maven step environment change).
-- Shared base image hierarchy (platform-owned, rebuild cadence, deprecation policy).
-- Reusable Drone pipeline templates (Starlark functions for optimised patterns).
-- Rollback automation in deploy pipeline.
-- Release process automation (coordinate with Gareth Andrews' project).
+| Epic | Initial scope | Status | Gate |
+|---|---|---|---|
+| Post-Pilot Container and CD Delivery | SNS delivery and CD review/design as independent task workstreams | Proposed / New | Task-specific evidence, ownership and approval gates |
 
-**Expected outcome:**
-- CI-level gains matching the local pilot evidence.
-- Repeatable patterns available to all FDP adaptor repositories.
-
-**Success criteria:**
-- TBC — dependent on ACP/DSA ETO prioritisation decisions.
-
-**Risks / dependencies:**
-- Subject to ACP / DSA ETO prioritisation and alignment with DSA Tech Strategy.
-- Current DSA focus is Core Cloud and Data Platform — timing uncertain.
-- Pilot evidence strengthens the case but does not guarantee priority.
+Build-once-promote and wider platform opportunities remain related release/platform candidates. They are coordinated only where ownership overlaps and are not automatic dependencies or approved delivery.
 
 ---
 
