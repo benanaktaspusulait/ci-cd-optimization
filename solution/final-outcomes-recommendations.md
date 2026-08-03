@@ -2,7 +2,7 @@
 
 > **Closure status:** Evidence and recommendations are prepared. The pilot remains open only for the unrecorded T6.2 owner review, stakeholder share-out, dispositions and routed next actions. No additional implementation story will be added to the pilot.
 
-> **Delivery routing:** Validated SNS work is in [Epic 2 Story E2-S1](../docs/epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/README.md); independent CD review and target planning is in [Epic 2 Story E2-S2](../docs/epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md).
+> **Delivery routing:** Validated SNS work is in [Epic 2 Story E2-S1](../docs/epics/epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/README.md); independent CD review and target planning is in [Epic 2 Story E2-S2](../docs/epics/epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md).
 
 ## Validated Changes
 

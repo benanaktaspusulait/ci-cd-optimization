@@ -1,6 +1,6 @@
 # E2-S2 — Review the CD Pipeline and Define the Target
 
-**Epic:** [Epic 2 — Post-Pilot Container and CD Delivery](../README.md)
+**Epic:** [Epic 2 — SNS Delivery Pipeline Optimisation](../README.md)
 
 | Field | Value |
 |---|---|

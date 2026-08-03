@@ -62,8 +62,8 @@ This is the negative scope / guardrail list. These items may be valid later, but
 
 ## Post-Pilot Routing
 
-- Validated SNS Dockerfile/`.dockerignore`, opt-in Redis and component-level real-CI evaluation route to [Epic 2 Story E2-S1](epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/README.md).
-- `kd`/Helm, PVC lifecycle and legacy CD review/target planning route to independent [Epic 2 Story E2-S2](epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md); migration implementation is not yet defined.
+- Validated SNS Dockerfile/`.dockerignore`, opt-in Redis and component-level real-CI evaluation route to [Epic 2 Story E2-S1](epics/epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/README.md).
+- `kd`/Helm, PVC lifecycle and legacy CD review/target planning route to independent [Epic 2 Story E2-S2](epics/epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md); migration implementation is not yet defined.
 - Kafka, Schema Registry, Kafdrop, Jaeger, LocalStack and wider topology questions remain in the [deferred candidate register](epics/DEFERRED-CANDIDATES.md), not automatic implementation or removal.
 - Build-once-promote remains related release/platform work and is not a prerequisite for either new epic unless owners decide otherwise.
 

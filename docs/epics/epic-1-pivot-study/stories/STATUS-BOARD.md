@@ -47,7 +47,7 @@ Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of ef
 
 | ID | Item | Status | Dependency |
 |---|---|---|---|
-| **E2** | [Post-Pilot Container and CD Delivery](../../epic-2-post-pilot-delivery/README.md) | Proposed / New | Pilot evidence and story-specific owner approval |
+| **E2** | [SNS Delivery Pipeline Optimisation](../../epic-2-sns-delivery-pipeline-optimisation/README.md) | Proposed / New | Pilot evidence and story-specific owner approval |
 | E2-S1 | Productionise validated SNS outcomes | Proposed / New | Validated Story 3/4 evidence |
 | E2-S1.1 | Implement validated SNS image-build changes | Proposed / New | Story 3 evidence and owner approval |
 | E2-S1.2 | Productise the opt-in Redis Testcontainers workflow | Proposed / New | Story 4 evidence and owner approval |

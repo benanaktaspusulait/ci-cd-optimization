@@ -38,7 +38,7 @@ The pilot stops at Story 6. T6.2 owner review/share-out is not recorded, so form
 
 | Epic | Stories | Status |
 |---|---:|---|
-| Post-Pilot Container and CD Delivery | 2 | Proposed / New |
+| SNS Delivery Pipeline Optimisation | 2 | Proposed / New |
 
 This epic consumes pilot evidence but is not part of the pilot backlog.
 

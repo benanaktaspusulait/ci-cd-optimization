@@ -26,7 +26,7 @@ Sized from story point estimates (`1`, `2`, `3`, `5`; `1 SP` is roughly 1 day). 
 | Sequence | Epic | Outcome | Gate |
 |---|---|---|---|
 | 1 | Container & CI/CD Optimisation Pilot | Evidence, bounded experiments, non-claims and ownership routes | T6.2 owner review/share-out still required for truthful closure |
-| 2 | [Post-Pilot Container and CD Delivery](docs/epics/epic-2-post-pilot-delivery/README.md) | Independent SNS productionisation and CD review/target-planning stories | Story-specific approval, evidence and durable ownership; no CD migration implementation |
+| 2 | [SNS Delivery Pipeline Optimisation](docs/epics/epic-2-sns-delivery-pipeline-optimisation/README.md) | Independent SNS productionisation and CD review/target-planning stories | Story-specific approval, evidence and durable ownership; no CD migration implementation |
 
 The SNS and CD workstreams have independent task completion and approval gates. Build-once-promote remains related release/platform work and is coordinated only where ownership overlaps.
 

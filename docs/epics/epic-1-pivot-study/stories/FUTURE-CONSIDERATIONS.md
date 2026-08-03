@@ -4,7 +4,7 @@ Items that are **out of scope for the pilot** but should be addressed if the pat
 
 > **Disclaimer:** These opportunities are subject to ACP / DSA ETO prioritisation and alignment with DSA Tech Strategy, Core Cloud and Data Platform direction. They are not part of the immediate pilot.
 
-> **Routing:** Validated SNS productionisation is tracked in [Epic 2 Story E2-S1](../../epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/README.md); independent CD review and target planning is tracked in [Epic 2 Story E2-S2](../../epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md). Broader SNS topology work remains in the [deferred candidate register](../../DEFERRED-CANDIDATES.md). Each item requires its own owner approval; T6.2 pilot closure evidence is still missing.
+> **Routing:** Validated SNS productionisation is tracked in [Epic 2 Story E2-S1](../../epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/README.md); independent CD review and target planning is tracked in [Epic 2 Story E2-S2](../../epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md). Broader SNS topology work remains in the [deferred candidate register](../../DEFERRED-CANDIDATES.md). Each item requires its own owner approval; T6.2 pilot closure evidence is still missing.
 
 ---
 

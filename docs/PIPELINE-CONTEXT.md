@@ -2,7 +2,7 @@
 
 The Drone/RepoSync and CI/deploy boundary that shapes the pilot. [← Back to overview](../README.md)
 
-> **Delivery routing:** Validated SNS implementation/CI evaluation is in [Epic 2 Story E2-S1](epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/README.md); independent deploy/CD review and target planning is in [Epic 2 Story E2-S2](epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md). Neither is an additional pilot story.
+> **Delivery routing:** Validated SNS implementation/CI evaluation is in [Epic 2 Story E2-S1](epics/epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/README.md); independent deploy/CD review and target planning is in [Epic 2 Story E2-S2](epics/epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md). Neither is an additional pilot story.
 
 ---
 
@@ -47,4 +47,4 @@ There are **two separate pipelines** in the FDP ecosystem — the pilot targets 
 └─────────────────────────────────────────────────────────────┘
 ```
 
-The pilot assessed the **CI pipeline** (build time, test setup, Docker image). Deploy pipeline review remains outside the pilot and is routed through [Epic 2 Story E2-S2](epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md), with wider opportunities retained in [Future considerations](epics/epic-1-pivot-study/stories/FUTURE-CONSIDERATIONS.md).
+The pilot assessed the **CI pipeline** (build time, test setup, Docker image). Deploy pipeline review remains outside the pilot and is routed through [Epic 2 Story E2-S2](epics/epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md), with wider opportunities retained in [Future considerations](epics/epic-1-pivot-study/stories/FUTURE-CONSIDERATIONS.md).

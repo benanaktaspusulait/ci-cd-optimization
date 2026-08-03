@@ -5,7 +5,7 @@ This index separates the bounded optimisation pilot from subsequent delivery wor
 | Epic | Purpose | Status | Primary record |
 |---|---|---|---|
 | Epic 1 — Container & CI/CD Optimisation Pilot | Baseline, bounded local experiments, evidence, limitations, Compose mapping and ownership/adoption recommendations | In progress — evidence prepared; T6.2 owner review, share-out and decisions not evidenced | [Pilot closure record](../PILOT-CLOSURE.md) |
-| Epic 2 — Post-Pilot Container and CD Delivery | Two independently owned stories: validated SNS productionisation and CD current-state review/target planning | Proposed / New | [Epic 2](./epic-2-post-pilot-delivery/README.md) |
+| Epic 2 — SNS Delivery Pipeline Optimisation | Two independently owned stories: validated SNS productionisation and CD current-state review/target planning | Proposed / New | [Epic 2](./epic-2-sns-delivery-pipeline-optimisation/README.md) |
 
 ## Separation rule
 
@@ -18,11 +18,11 @@ This index separates the bounded optimisation pilot from subsequent delivery wor
 
 | Pilot outcome | Follow-up destination |
 |---|---|
-| `.dockerignore` and layer ordering | [E2-S1 — SNS image-build task](./epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/task-1-sns-image-build.md) |
-| Redis Option A local workflow | [E2-S1 — opt-in Redis task](./epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/task-2-redis-testcontainers.md) |
-| CI validation and adoption of approved SNS changes | [E2-S1 — component-level CI/adoption task](./epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/task-3-ci-validation-adoption.md) |
+| `.dockerignore` and layer ordering | [E2-S1 — SNS image-build task](./epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/task-1-sns-image-build.md) |
+| Redis Option A local workflow | [E2-S1 — opt-in Redis task](./epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/task-2-redis-testcontainers.md) |
+| CI validation and adoption of approved SNS changes | [E2-S1 — component-level CI/adoption task](./epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/task-3-ci-validation-adoption.md) |
 | Kafka/Schema Registry and broad SNS topology questions | [Deferred candidate register](./DEFERRED-CANDIDATES.md); not Epic 2 implementation |
-| `kd`/Helm, PVC lifecycle and legacy CD components | [E2-S2 — CD review and target planning](./epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md) |
+| `kd`/Helm, PVC lifecycle and legacy CD components | [E2-S2 — CD review and target planning](./epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md) |
 | Build-once-promote | Related release/platform work; coordinate only where ownership overlaps |
 
 ## Pilot closure dependency

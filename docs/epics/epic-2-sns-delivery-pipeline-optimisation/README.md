@@ -1,4 +1,4 @@
-# Epic 2 — Post-Pilot Container and CD Delivery
+# Epic 2 — SNS Delivery Pipeline Optimisation
 
 | Field | Value |
 |---|---|

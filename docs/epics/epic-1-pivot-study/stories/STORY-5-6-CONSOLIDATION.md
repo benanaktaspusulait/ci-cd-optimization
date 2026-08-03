@@ -36,11 +36,11 @@ This mapping separates recommendations from delivery. It does not approve any ca
 
 | Pilot outcome | Follow-up destination |
 |---|---|
-| `.dockerignore` and layer ordering | [E2-S1 — SNS image-build task](../../epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/task-1-sns-image-build.md) |
-| Redis Option A local workflow | [E2-S1 — opt-in Redis task](../../epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/task-2-redis-testcontainers.md) |
-| Component-level CI validation/adoption | [E2-S1 — CI/adoption task](../../epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/task-3-ci-validation-adoption.md) |
+| `.dockerignore` and layer ordering | [E2-S1 — SNS image-build task](../../epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/task-1-sns-image-build.md) |
+| Redis Option A local workflow | [E2-S1 — opt-in Redis task](../../epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/task-2-redis-testcontainers.md) |
+| Component-level CI validation/adoption | [E2-S1 — CI/adoption task](../../epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/task-3-ci-validation-adoption.md) |
 | Kafka/Schema Registry and broad SNS topology candidates | [Deferred candidate register](../../DEFERRED-CANDIDATES.md); not approved implementation |
-| `kd`/Helm, PVC lifecycle and legacy CD components | [E2-S2 — CD review and target planning](../../epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md) |
+| `kd`/Helm, PVC lifecycle and legacy CD components | [E2-S2 — CD review and target planning](../../epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md) |
 | Build-once-promote | Related release/platform work; coordinate only where ownership overlaps |
 
 The pilot retains Stories 1–6 only. T6.2 remains incomplete until owner review, stakeholder sharing, dispositions and next actions are recorded.

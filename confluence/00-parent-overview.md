@@ -154,7 +154,7 @@ Story 1 (pipeline assessment, gate)
 
 | Epic | Scope | Status |
 |---|---|---|
-| Post-Pilot Container and CD Delivery | Two independent stories: validated SNS productionisation and CD current-state review/target planning | Proposed / New |
+| SNS Delivery Pipeline Optimisation | Two independent stories: validated SNS productionisation and CD current-state review/target planning | Proposed / New |
 
 These are not Story 7 or further implementation stories within the pilot.
 

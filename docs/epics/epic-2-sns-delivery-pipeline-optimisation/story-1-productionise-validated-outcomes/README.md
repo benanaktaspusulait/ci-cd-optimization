@@ -1,6 +1,6 @@
 # E2-S1 — Productionise Validated SNS Outcomes
 
-**Epic:** [Epic 2 — Post-Pilot Container and CD Delivery](../README.md)
+**Epic:** [Epic 2 — SNS Delivery Pipeline Optimisation](../README.md)
 
 | Field | Value |
 |---|---|

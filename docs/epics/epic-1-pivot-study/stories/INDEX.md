@@ -66,6 +66,6 @@ See the [Story 5 and Story 6 consolidation map](STORY-5-6-CONSOLIDATION.md) for 
 
 | Epic | Stories | Status |
 |---|---:|---|
-| [Epic 2 — Post-Pilot Container and CD Delivery](../../epic-2-post-pilot-delivery/README.md) | 2 | Proposed / New |
+| [Epic 2 — SNS Delivery Pipeline Optimisation](../../epic-2-sns-delivery-pipeline-optimisation/README.md) | 2 | Proposed / New |
 
 The two follow-up stories have independent ownership and evidence gates. Neither is Story 7 or an extension of Story 6.

@@ -221,11 +221,11 @@ Progress is tracked in the [status board](docs/stories/STATUS-BOARD.md). The [ba
 
 | Epic | Workstreams | Status |
 |---|---|---|
-| [Post-Pilot Container and CD Delivery](docs/epics/epic-2-post-pilot-delivery/README.md) | Independent SNS productionisation and CD review/target-planning stories | Proposed / New |
+| [SNS Delivery Pipeline Optimisation](docs/epics/epic-2-sns-delivery-pipeline-optimisation/README.md) | Independent SNS productionisation and CD review/target-planning stories | Proposed / New |
 
 ```text
 Container & CI/CD Optimisation Pilot (evidence source; T6.2 closure pending)
-   └──> Epic 2 — Post-Pilot Container and CD Delivery
+   └──> Epic 2 — SNS Delivery Pipeline Optimisation
            ├── E2-S1 — Validated SNS productionisation
            └── E2-S2 — CD review and target planning
 ```
@@ -330,7 +330,7 @@ These numbers will be replaced with real data once Story 2 is complete.
 
 The Drone/RepoSync and CI/deploy boundary that shapes the pilot. [← Back to overview](../README.md)
 
-> **Delivery routing:** Validated SNS implementation/CI evaluation is in [E2-S1](epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/README.md); independent deploy/CD review and target planning is in [E2-S2](epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md). Neither is an additional pilot story.
+> **Delivery routing:** Validated SNS implementation/CI evaluation is in [E2-S1](epics/epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/README.md); independent deploy/CD review and target planning is in [E2-S2](epics/epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md). Neither is an additional pilot story.
 
 ---
 
@@ -375,7 +375,7 @@ There are **two separate pipelines** in the FDP ecosystem — the pilot targets 
 └─────────────────────────────────────────────────────────────┘
 ```
 
-The pilot assessed the **CI pipeline** (build time, test setup, Docker image). Deploy pipeline review remains outside the pilot and is routed through [E2-S2](epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md), with wider opportunities retained in [Future considerations](stories/FUTURE-CONSIDERATIONS.md).
+The pilot assessed the **CI pipeline** (build time, test setup, Docker image). Deploy pipeline review remains outside the pilot and is routed through [E2-S2](epics/epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md), with wider opportunities retained in [Future considerations](stories/FUTURE-CONSIDERATIONS.md).
 
 
 ---
@@ -446,8 +446,8 @@ This is the negative scope / guardrail list. These items may be valid later, but
 
 ## Post-Pilot Routing
 
-- Validated SNS Dockerfile/`.dockerignore`, opt-in Redis and component-level CI evaluation route to [E2-S1](epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/README.md).
-- `kd`/Helm, PVC lifecycle and legacy CD review/target planning route to [E2-S2](epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md).
+- Validated SNS Dockerfile/`.dockerignore`, opt-in Redis and component-level CI evaluation route to [E2-S1](epics/epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/README.md).
+- `kd`/Helm, PVC lifecycle and legacy CD review/target planning route to [E2-S2](epics/epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md).
 - Kafdrop, Jaeger and LocalStack remain separately scoped validation candidates, not automatic implementation.
 - Build-once-promote remains related release/platform work and is not a prerequisite for either new epic unless owners decide otherwise.
 
@@ -542,7 +542,7 @@ Sized from story point estimates (`1`, `2`, `3`, `5`; `1 SP` is roughly 1 day). 
 | Sequence | Epic | Outcome | Gate |
 |---|---|---|---|
 | 1 | Container & CI/CD Optimisation Pilot | Evidence, bounded experiments, non-claims and ownership routes | T6.2 owner review/share-out still required for truthful closure |
-| 2 | [Post-Pilot Container and CD Delivery](docs/epics/epic-2-post-pilot-delivery/README.md) | Independent SNS productionisation and CD review/target-planning stories | Story-specific approval, evidence and ownership; no CD migration implementation |
+| 2 | [SNS Delivery Pipeline Optimisation](docs/epics/epic-2-sns-delivery-pipeline-optimisation/README.md) | Independent SNS productionisation and CD review/target-planning stories | Story-specific approval, evidence and ownership; no CD migration implementation |
 
 The SNS and CD workstreams have independent task completion and approval gates. Build-once-promote remains related release/platform work and is coordinated only where ownership overlaps.
 
@@ -939,7 +939,7 @@ Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of ef
 
 | ID | Item | Status | Dependency |
 |---|---|---|---|
-| **E2** | [Post-Pilot Container and CD Delivery](../epics/epic-2-post-pilot-delivery/README.md) | Proposed / New | Pilot evidence and story-specific owner approval |
+| **E2** | [SNS Delivery Pipeline Optimisation](../epics/epic-2-sns-delivery-pipeline-optimisation/README.md) | Proposed / New | Pilot evidence and story-specific owner approval |
 | E2-S1 | Productionise validated SNS outcomes | Proposed / New | Validated Story 3/4 evidence |
 | E2-S1.1 | Implement validated SNS image-build changes | Proposed / New | Story 3 evidence and owner approval |
 | E2-S1.2 | Productise the opt-in Redis Testcontainers workflow | Proposed / New | Story 4 evidence and owner approval |
@@ -1035,7 +1035,7 @@ See the [Story 5 and Story 6 consolidation map](STORY-5-6-CONSOLIDATION.md) for 
 
 | Epic | Stories | Status |
 |---|---:|---|
-| [Epic 2 — Post-Pilot Container and CD Delivery](../epics/epic-2-post-pilot-delivery/README.md) | 2 | Proposed / New |
+| [Epic 2 — SNS Delivery Pipeline Optimisation](../epics/epic-2-sns-delivery-pipeline-optimisation/README.md) | 2 | Proposed / New |
 
 This epic consumes pilot evidence through independently gated SNS and CD tasks. It is not Story 7 or an extension of Story 6.
 
@@ -1082,11 +1082,11 @@ This mapping separates recommendations from delivery. It does not approve any ca
 
 | Pilot outcome | Follow-up destination |
 |---|---|
-| `.dockerignore` and layer ordering | [E2-S1 — SNS image-build task](../docs/epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/task-1-sns-image-build.md) |
-| Redis Option A local workflow | [E2-S1 — opt-in Redis task](../docs/epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/task-2-redis-testcontainers.md) |
-| Component-level CI validation/adoption | [E2-S1 — CI/adoption task](../docs/epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/task-3-ci-validation-adoption.md) |
+| `.dockerignore` and layer ordering | [E2-S1 — SNS image-build task](../docs/epics/epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/task-1-sns-image-build.md) |
+| Redis Option A local workflow | [E2-S1 — opt-in Redis task](../docs/epics/epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/task-2-redis-testcontainers.md) |
+| Component-level CI validation/adoption | [E2-S1 — CI/adoption task](../docs/epics/epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/task-3-ci-validation-adoption.md) |
 | Kafka/Schema Registry and broad topology candidates | [Deferred candidate register](../docs/epics/DEFERRED-CANDIDATES.md); not approved implementation |
-| `kd`/Helm, PVC lifecycle and legacy CD components | [E2-S2 — CD review and planning](../docs/epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md) |
+| `kd`/Helm, PVC lifecycle and legacy CD components | [E2-S2 — CD review and planning](../docs/epics/epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md) |
 | Build-once-promote | Related release/platform work; coordinate only where ownership overlaps |
 
 The pilot retains Stories 1–6 only. T6.2 remains incomplete until owner review, stakeholder sharing, dispositions and next actions are recorded.
@@ -1265,7 +1265,7 @@ Items that are **out of scope for the pilot** but should be addressed if the pat
 
 > **Disclaimer:** These opportunities are subject to ACP / DSA ETO prioritisation and alignment with DSA Tech Strategy, Core Cloud and Data Platform direction. They are not part of the immediate pilot.
 
-> **Routing:** Validated SNS productionisation is tracked in [E2-S1](../epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/README.md); independent CD review and target planning is tracked in [E2-S2](../epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md). Broader SNS topology work remains deferred. Each item requires owner approval; T6.2 pilot closure evidence is still missing.
+> **Routing:** Validated SNS productionisation is tracked in [E2-S1](../epics/epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/README.md); independent CD review and target planning is tracked in [E2-S2](../epics/epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md). Broader SNS topology work remains deferred. Each item requires owner approval; T6.2 pilot closure evidence is still missing.
 
 ---
 

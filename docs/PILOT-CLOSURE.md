@@ -47,7 +47,7 @@ Until that evidence exists:
 
 | Area | Destination | Status |
 |---|---|---|
-| Validated SNS image-build, opt-in Redis and component-level CI evaluation | [Epic 2 — E2-S1 SNS productionisation](epics/epic-2-post-pilot-delivery/story-1-productionise-validated-outcomes/README.md) | Proposed / New |
-| `kd`/Helm, PVC and legacy CD current-state review and target planning | [Epic 2 — E2-S2 CD review and planning](epics/epic-2-post-pilot-delivery/story-2-review-cd-and-plan/README.md) | Proposed / New; no migration implementation |
+| Validated SNS image-build, opt-in Redis and component-level CI evaluation | [Epic 2 — E2-S1 SNS productionisation](epics/epic-2-sns-delivery-pipeline-optimisation/story-1-productionise-validated-outcomes/README.md) | Proposed / New |
+| `kd`/Helm, PVC and legacy CD current-state review and target planning | [Epic 2 — E2-S2 CD review and planning](epics/epic-2-sns-delivery-pipeline-optimisation/story-2-review-cd-and-plan/README.md) | Proposed / New; no migration implementation |
 | Kafka/Schema Registry and broad topology candidates, including Kafdrop, Jaeger and LocalStack | [Deferred candidate register](epics/DEFERRED-CANDIDATES.md) | Not approved implementation |
 | Build-once-promote | Related release/platform work where ownership overlaps | Candidate only |

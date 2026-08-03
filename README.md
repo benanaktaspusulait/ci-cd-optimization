@@ -157,11 +157,11 @@ Progress is tracked in the [status board](docs/epics/epic-1-pivot-study/stories/
 
 | Epic | Workstreams | Status |
 |---|---|---|
-| [Post-Pilot Container and CD Delivery](docs/epics/epic-2-post-pilot-delivery/README.md) | Two independent stories: validated SNS productionisation and CD current-state review/target planning | Proposed / New |
+| [SNS Delivery Pipeline Optimisation](docs/epics/epic-2-sns-delivery-pipeline-optimisation/README.md) | Two independent stories: validated SNS productionisation and CD current-state review/target planning | Proposed / New |
 
 ```text
 Container & CI/CD Optimisation Pilot (evidence source; T6.2 closure pending)
-   └──> Epic 2 — Post-Pilot Container and CD Delivery
+   └──> Epic 2 — SNS Delivery Pipeline Optimisation
            ├── E2-S1 — Validated SNS productionisation
            └── E2-S2 — CD review and target planning
 ```
