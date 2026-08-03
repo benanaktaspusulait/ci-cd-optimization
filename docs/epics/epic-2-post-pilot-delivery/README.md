@@ -11,7 +11,7 @@
 Deliver and validate approved post-pilot outcomes through two explicitly separated workstreams:
 
 1. SNS repository productionisation, full integration-infrastructure coverage and real delivery-path validation.
-2. CD pipeline current-state review and target-design planning.
+2. Evidence-gated CD current-state review, target decision, implementation and deployment validation.
 
 The shared epic simplifies tracking. Task-level dependencies, owners and approval gates keep the two workstreams independent.
 
@@ -31,7 +31,7 @@ The inspected working tree already contained a modification to `redis-only-compo
 - Compose-hosted application containers and helper services remain until their scenario role is traced and an equivalent approved target is validated.
 - Kafdrop, Jaeger, LocalStack, `wait4localstack`, aggregator variants, `kafka-rest` and `kafka-topic-extract` are explicit validation/decision scope, not pre-approved removals.
 - RepoSync-controlled files require the durable owner route.
-- The CD tasks do not implement a `kd`/Helm migration, remove PVCs or delete legacy components.
+- CD changes are permitted only after current-state evidence, target ownership, rollout and rollback gates are approved; the epic does not preselect a `kd`, Helm, PVC or legacy-component outcome.
 - An umbrella-chart direction is not assumed to be approved.
 - Build-once-promote remains related release/platform work and is coordinated only where ownership overlaps.
 
@@ -49,6 +49,6 @@ The inspected working tree already contained a modification to `redis-only-compo
 - [ ] Every retained, changed or removed Compose service has scenario evidence, an owner-approved disposition and rollback coverage.
 - [ ] Real CI evidence is recorded separately from local evidence.
 - [ ] The current CD pipeline, `kd`/Helm, PVC and legacy-component paths are evidence-mapped.
-- [ ] CD target direction, risks, validation, rollback and ownership gates are documented before implementation stories are proposed.
+- [ ] The approved CD target is implemented and validated with artefact traceability, rollout, rollback and owner evidence.
 - [ ] Each task records its own owner, approval and adoption state.
 - [ ] No candidate is described as implemented or adopted without evidence.

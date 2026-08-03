@@ -4,7 +4,7 @@ Items that are **out of scope for the pilot** but should be addressed if the pat
 
 > **Disclaimer:** These opportunities are subject to ACP / DSA ETO prioritisation and alignment with DSA Tech Strategy, Core Cloud and Data Platform direction. They are not part of the immediate pilot.
 
-> **Routing:** SNS productionisation and the separately gated CD pipeline review are task workstreams in [Epic 2](../epics/epic-2-post-pilot-delivery/README.md). The epic remains proposed and each task requires its own owner approval; T6.2 pilot closure evidence is still missing.
+> **Routing:** SNS productionisation and the evidence-gated CD target transition are task workstreams in [Epic 2](../epics/epic-2-post-pilot-delivery/README.md). The epic remains proposed and each task requires its own owner approval; T6.2 pilot closure evidence is still missing.
 
 ---
 

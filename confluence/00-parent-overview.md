@@ -154,7 +154,7 @@ Story 1 (pipeline assessment, gate)
 
 | Epic | Scope | Status |
 |---|---|---|
-| Post-Pilot Container and CD Delivery | Full SNS integration-infrastructure productionisation/CI validation plus separately gated CD review/design tasks | Proposed / New |
+| Post-Pilot Container and CD Delivery | Full SNS build/integration/CI transition plus evidence-gated CD implementation | Proposed / New |
 
 These are not Story 7 or further implementation stories within the pilot.
 

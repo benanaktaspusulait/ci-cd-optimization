@@ -22,7 +22,7 @@
 
 - **Taskfile Workflow:** Evaluate a Taskfile-based developer workflow to encapsulate prerequisite builds, pilot execution and measurement commands, reducing reliance on lengthy handover instructions. This is a recommended follow-up for developer experience improvement.
 - **SNS productionisation:** Route approved `.dockerignore`, Dockerfile and Redis workflow work through the SNS tasks in Epic 2 rather than extending the pilot. A later inspection of SNS snapshot `6bec7c579c9a244503850fad3072859fa809e41b` also places Kafka/Schema Registry implementation, full integration-topology equivalence and real-CI validation in that delivery epic; those additions are proposed work and do not broaden the Redis pilot evidence.
-- **CD review:** Route `kd`/Helm, PVC lifecycle and legacy CD component analysis through the separately gated CD tasks in Epic 2.
+- **CD transition:** Route current-state analysis, target approval, implementation and deployment validation for `kd`/Helm, PVC lifecycle and legacy CD components through the evidence-gated CD task in Epic 2.
 
 ## Not Claimed
 

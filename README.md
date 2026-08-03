@@ -157,13 +157,13 @@ Progress is tracked in the [status board](docs/stories/STATUS-BOARD.md). The [ba
 
 | Epic | Workstreams | Status |
 |---|---|---|
-| [Post-Pilot Container and CD Delivery](docs/epics/epic-2-post-pilot-delivery/README.md) | Full SNS integration-infrastructure productionisation/CI validation; CD current-state review/target design | Proposed / New |
+| [Post-Pilot Container and CD Delivery](docs/epics/epic-2-post-pilot-delivery/README.md) | Full SNS build/integration/CI transition and evidence-gated CD implementation | Proposed / New |
 
 ```text
 Container & CI/CD Optimisation Pilot (evidence source; T6.2 closure pending)
    └──> Post-Pilot Container and CD Delivery
            ├── SNS repository delivery tasks
-           └── CD pipeline review/design tasks
+           └── CD target transition task
 ```
 
 The delivery epic may cite pilot evidence but is not an additional story within the pilot.

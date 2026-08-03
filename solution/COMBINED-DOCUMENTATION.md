@@ -941,11 +941,10 @@ Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of ef
 |---|---|---|---|
 | **E2** | [Post-Pilot Container and CD Delivery](../epics/epic-2-post-pilot-delivery/README.md) | Proposed / New | Pilot evidence and task-specific owner approval |
 | E2-S1 | Deliver and validate post-pilot outcomes | Proposed / New | Pilot evidence |
-| E2-S1.1 | Implement validated SNS image-build changes | Proposed / New | Story 3 evidence and owner approval |
-| E2-S1.2 | Productise the opt-in Redis Testcontainers workflow | Proposed / New | Story 4 evidence |
-| E2-S1.3 | Validate approved SNS changes in the real delivery path | Proposed / New | Approved SNS task output and platform route |
-| E2-S1.4 | Review the current CD pipeline | Proposed / New | Current pipeline/configuration evidence |
-| E2-S1.5 | Define the CD target design and delivery plan | Proposed / New | E2-S1.4 evidence and owner decisions |
+| E2-S1.1 | Implement SNS build and Testcontainers infrastructure | Proposed / New | Story 3/4 evidence, SNS code and owner approval |
+| E2-S1.2 | Implement and validate the full SNS integration topology | Proposed / New | E2-S1.1 and Story 5 evidence |
+| E2-S1.3 | Validate CI and decide adoption | Proposed / New | Approved SNS output and platform route |
+| E2-S1.4 | Deliver the CD target transition | Proposed / New | Current CD evidence and explicit target approval |
 
 These entries are planning records, not approvals or pilot stories.
 
@@ -1081,12 +1080,10 @@ This mapping separates recommendations from delivery. It does not approve any ca
 
 | Pilot outcome | Follow-up destination |
 |---|---|
-| `.dockerignore` and layer ordering | [Epic 2 — SNS image-build task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-1-sns-image-build.md) |
-| Redis Option A local workflow | [Epic 2 — Redis task](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-2-redis-testcontainers.md) |
-| Kafka/Schema Registry and Avro integration coverage | [Epic 2 — Kafka/Schema Registry task](../docs/epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-3-kafka-schema-registry-testcontainers.md); new evidence required |
-| Compose application/helper topology and Kafdrop/Jaeger/LocalStack candidates | [Epic 2 — SNS topology task](../docs/epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-4-compose-e2e-topology.md); no automatic migration or removal |
-| CI validation of approved SNS changes | [Epic 2 — SNS delivery-validation task](../docs/epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-5-sns-delivery-validation.md) |
-| `kd`/Helm, PVC lifecycle and legacy CD components | [Epic 2 — CD review/design tasks](../epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/README.md) |
+| `.dockerignore`, layer ordering, Redis, Kafka and Schema Registry | [Epic 2 — build and Testcontainers task](../docs/epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-1-build-and-testcontainers.md); non-Redis implementation requires new evidence |
+| Compose application/helper topology and Kafdrop/Jaeger/LocalStack candidates | [Epic 2 — full integration-topology task](../docs/epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-2-e2e-compose-topology.md); no automatic migration or removal |
+| CI validation and adoption of approved SNS changes | [Epic 2 — CI validation/adoption task](../docs/epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-3-ci-validation-adoption.md) |
+| `kd`/Helm, PVC lifecycle and legacy CD components | [Epic 2 — CD transition task](../docs/epics/epic-2-post-pilot-delivery/story-1-deliver-and-validate/task-4-cd-transition.md) |
 | Build-once-promote | Related release/platform work; coordinate only where ownership overlaps |
 
 The pilot retains Stories 1–6 only. T6.2 remains incomplete until owner review, stakeholder sharing, dispositions and next actions are recorded.

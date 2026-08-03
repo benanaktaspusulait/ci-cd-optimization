@@ -48,6 +48,6 @@ Until that evidence exists:
 | Area | Destination | Status |
 |---|---|---|
 | Approved SNS image-build, Redis/Kafka/Schema Registry integration topology and CI-validation delivery | [Epic 2 — Post-Pilot Container and CD Delivery](epics/epic-2-post-pilot-delivery/README.md), SNS tasks | Proposed / New; non-Redis scope requires new evidence |
-| `kd`/Helm, PVC lifecycle and legacy CD pipeline review | [Epic 2 — Post-Pilot Container and CD Delivery](epics/epic-2-post-pilot-delivery/README.md), CD tasks | Proposed / New |
+| Evidence-gated `kd`/Helm, PVC and legacy CD target transition | [Epic 2 — Post-Pilot Container and CD Delivery](epics/epic-2-post-pilot-delivery/README.md), CD transition task | Proposed / New; implementation requires target approval |
 | Kafdrop, Jaeger and LocalStack | Separately scoped and approved validation work | Not approved |
 | Build-once-promote | Related release/platform work where ownership overlaps | Candidate only |

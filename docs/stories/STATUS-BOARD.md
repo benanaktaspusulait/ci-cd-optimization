@@ -49,13 +49,10 @@ Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of ef
 |---|---|---|---|
 | **E2** | [Post-Pilot Container and CD Delivery](../epics/epic-2-post-pilot-delivery/README.md) | Proposed / New | Pilot evidence and task-specific owner approval |
 | E2-S1 | Deliver and validate post-pilot outcomes | Proposed / New | Pilot evidence |
-| E2-S1.1 | Implement validated SNS image-build changes | Proposed / New | Story 3 evidence and owner approval |
-| E2-S1.2 | Productise the opt-in Redis Testcontainers workflow | Proposed / New | Story 4 evidence |
-| E2-S1.3 | Implement Kafka and Schema Registry Testcontainers coverage | Proposed / New | SNS integration-test evidence and owner approval |
-| E2-S1.4 | Implement and validate the target SNS integration topology | Proposed / New | E2-S1.2/E2-S1.3 and Story 5 evidence |
-| E2-S1.5 | Validate approved SNS changes in the real delivery path | Proposed / New | Approved SNS task output and platform route |
-| E2-S1.6 | Review the current CD pipeline | Proposed / New | Current pipeline/configuration evidence |
-| E2-S1.7 | Define the CD target design and delivery plan | Proposed / New | E2-S1.6 evidence and owner decisions |
+| E2-S1.1 | Implement SNS build and Testcontainers infrastructure | Proposed / New | Story 3/4 evidence, SNS code and owner approval |
+| E2-S1.2 | Implement and validate the full SNS integration topology | Proposed / New | E2-S1.1 and Story 5 evidence |
+| E2-S1.3 | Validate CI and decide adoption | Proposed / New | Approved SNS output and platform route |
+| E2-S1.4 | Deliver the CD target transition | Proposed / New | Current CD evidence and explicit target approval |
 
 These entries are planning records, not approvals or pilot stories.
 

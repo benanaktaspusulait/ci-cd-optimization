@@ -6,14 +6,15 @@
 
 ## Goal
 
-Manage the approved SNS productionisation work and the separate CD review through a small task set while preserving independent evidence, ownership and completion gates.
+Deliver the approved SNS build, integration-test, CI and CD transition through four outcome-focused tasks while preserving independent evidence, ownership and completion gates.
 
 ## Workstream boundaries
 
 | Workstream | Tasks | Completion boundary |
 |---|---|---|
-| SNS repository delivery | E2-S1.1–E2-S1.5 | Image build, Redis/Kafka/Schema Registry implementation, full-E2E topology, local validation, real CI evidence and an approved disposition |
-| CD pipeline review/design | E2-S1.6–E2-S1.7 | Current-state evidence, owner decisions and a target delivery plan; no migration implementation |
+| SNS repository implementation | E2-S1.1–E2-S1.2 | Image build, Redis/Kafka/Schema Registry implementation and equivalent command/snapshot full-E2E coverage |
+| CI adoption | E2-S1.3 | Real branch/MR evidence, rollback and an owner-approved disposition |
+| CD transition | E2-S1.4 | Current-state evidence, target decision, approved migration, rollout and deployment validation |
 
 Completion of one workstream does not imply completion or approval of the other.
 
@@ -21,13 +22,10 @@ Completion of one workstream does not imply completion or approval of the other.
 
 | ID | Task | Status | Depends on |
 |---|---|---|---|
-| E2-S1.1 | [Implement validated SNS image-build changes](./task-1-sns-image-build.md) | Proposed / New | Story 3 evidence and owner approval |
-| E2-S1.2 | [Productise the opt-in Redis Testcontainers workflow](./task-2-redis-testcontainers.md) | Proposed / New | Story 4 evidence |
-| E2-S1.3 | [Implement Kafka and Schema Registry Testcontainers coverage](./task-3-kafka-schema-registry-testcontainers.md) | Proposed / New | SNS integration-test code evidence and owner approval |
-| E2-S1.4 | [Implement and validate the target SNS integration topology](./task-4-compose-e2e-topology.md) | Proposed / New | E2-S1.2/E2-S1.3 plus Story 5 service-role evidence |
-| E2-S1.5 | [Validate approved SNS changes in the real delivery path](./task-5-sns-delivery-validation.md) | Proposed / New | Approved E2-S1.1–E2-S1.4 output and required platform route |
-| E2-S1.6 | [Review the current CD pipeline](./task-6-review-cd-pipeline.md) | Proposed / New | Current pipeline/configuration access and owners |
-| E2-S1.7 | [Define the CD target design and delivery plan](./task-7-define-cd-target.md) | Proposed / New | E2-S1.6 evidence and owner decisions |
+| E2-S1.1 | [Implement SNS build and Testcontainers infrastructure](./task-1-build-and-testcontainers.md) | Proposed / New | Story 3/4 evidence, inspected SNS code and owner approval |
+| E2-S1.2 | [Implement and validate the full SNS integration topology](./task-2-e2e-compose-topology.md) | Proposed / New | E2-S1.1 plus Story 5 service-role evidence |
+| E2-S1.3 | [Validate CI and decide adoption](./task-3-ci-validation-adoption.md) | Proposed / New | Approved E2-S1.1/E2-S1.2 output and required platform route |
+| E2-S1.4 | [Deliver the CD target transition](./task-4-cd-transition.md) | Proposed / New | Current CD evidence, target owners and implementation approval |
 
 ## Story acceptance criteria
 
