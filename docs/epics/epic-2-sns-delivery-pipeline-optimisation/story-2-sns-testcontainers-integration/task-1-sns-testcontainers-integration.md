@@ -10,21 +10,20 @@
 | **Priority** | Must |
 | **Depends on** | Validated Redis Testcontainers pilot and repository access; CI Docker availability only for optional branch-CI validation |
 | **Status** | Proposed / New |
-| **Primary output** | A maintained opt-in Testcontainers path covering Redis, Kafka, Schema Registry and one real SNS application flow, validated locally and, where approved, in branch CI |
+| **Primary output** | A maintained opt-in Testcontainers path covering Redis, Kafka and Schema Registry with all technically suitable SNS integration tests migrated, validated locally and, where approved, in branch CI |
 
 ## Why
 
-The pilot established that Redis can be started and validated through a narrow Testcontainers
-workflow using dynamic endpoints, isolated data and explicit cleanup. Kafka, Schema Registry
-and one real SNS application flow form one coherent technical outcome and should be
-implemented and validated together.
+The pilot established that Redis can be started and validated through Testcontainers
+using dynamic endpoints, isolated data and explicit cleanup. The next step is to build
+the shared Testcontainers environment and migrate all technically suitable existing
+SNS integration tests to it — not just one scenario.
 
 ## Goal
 
-Extend the validated Redis Testcontainers foundation into a maintained, repeatable SNS
-integration path that starts Redis, Kafka and Schema Registry through Testcontainers,
-runs one representative `cmd-adaptor-sns` application scenario and preserves the existing
-Compose/full-E2E workflow.
+Create a shared Testcontainers environment for Redis, Kafka and Schema Registry, migrate
+all technically suitable existing `cmd-adaptor-sns` integration tests to it, and validate
+the complete migrated suite locally and in opt-in branch CI.
 
 ## Scope
 
@@ -33,97 +32,84 @@ Compose/full-E2E workflow.
 - Retain or appropriately refactor the existing `MinimalRedisTest`.
 - Preserve dynamic endpoint resolution, `PING`/`SET`/`GET` assertions, UUID-based
   isolated data and explicit cleanup.
-- Do not duplicate the existing Redis lifecycle unnecessarily.
 
-### 2. Add Kafka Testcontainers support
+### 2. Shared Testcontainers environment
 
-- Add a Kafka container using a repository-compatible image and version.
-- Resolve the bootstrap endpoint dynamically — no fixed host ports.
-- Add explicit readiness handling.
-- Create isolated topic names per run.
-- Demonstrate a basic produce-and-consume path.
+- Create one shared Testcontainers fixture for Redis, Kafka and Schema Registry.
+- Run all three on the same isolated Testcontainers network.
+- Resolve all endpoints dynamically — no fixed host ports.
+- Configure Schema Registry through Kafka's network alias.
+- Add explicit readiness handling for each container.
 - Make container logs available on startup or assertion failure.
 
-### 3. Add Schema Registry container support
+### 3. Integration test inventory and migration
 
-- Add a Schema Registry container compatible with the selected Kafka setup.
-- Run Kafka and Schema Registry on the same isolated Testcontainers network.
-- Configure Schema Registry through Kafka's network alias, not a host port assumption.
-- Resolve the externally accessible Schema Registry URL dynamically.
-- Register and retrieve a representative schema.
+- Inventory all existing `cmd-adaptor-sns` integration tests.
+- Migrate all technically suitable tests to the shared Testcontainers path.
+- Preserve every existing meaningful assertion and application behaviour.
+- Do not leave tests on Compose merely to reduce implementation scope.
+- Record only tests that genuinely cannot be migrated, with the exact external
+  dependency or technical blocker.
 
-### 4. Implement one real SNS application flow
+### 4. Isolated test data
 
-Select one representative existing integration scenario that exercises real
-`cmd-adaptor-sns` behaviour.
-
-The scenario must:
-
-- configure the application with dynamically resolved endpoints
-- publish a representative input message
-- allow `cmd-adaptor-sns` to process the message
-- assert one meaningful output, state or observable side effect
-- use isolated topic names and Redis data
-- provide useful diagnostics on failure
-
-The test must validate application behaviour, not only container connectivity.
+- Use isolated topic names and Redis keys per run.
+- Avoid dependency on state from previous runs throughout the migrated suite.
 
 ### 5. Opt-in invocation
 
 - Keep the Testcontainers path explicitly opt-in via the existing Maven profile or
   repository-standard equivalent.
-- Document the exact local command.
+- Document the exact local command for the complete migrated suite.
 - Do not change the default developer or CI path unless separately approved.
 
-### 6. Branch CI validation
+### 6. Compose preservation
 
-Where CI Docker access is approved, run the complete path in a real branch pipeline
-and record the run reference and result. If approval is not available within the task
-window, record the explicit blocker and preserve the implementation as local opt-in.
+- Keep the existing Compose path available until migration parity is demonstrated.
+- Do not remove Compose in this task unless every dependent test has migrated
+  and explicit approval is provided.
 
-### 7. Validation
+### 7. Branch CI validation
 
-- Run the complete path twice locally.
+Where CI Docker access is approved, run the complete migrated suite in a real branch
+pipeline and record the run reference and result. If approval is not available within
+the task window, record the explicit blocker and preserve the implementation as local
+opt-in.
+
+### 8. Validation
+
+- Run the complete migrated suite twice locally.
 - Record the exact command, pass/fail result and duration for each run.
 - Where approved, record one opt-in branch-CI run reference.
 - Record any failure, retry or CI approval blocker.
 
 ## Acceptance criteria
 
-- [ ] The existing Redis Testcontainers workflow is retained or cleanly refactored.
-- [ ] Redis uses dynamic endpoint resolution and isolated test data.
-- [ ] Kafka starts through Testcontainers without fixed host ports.
-- [ ] Kafka readiness is explicitly validated.
-- [ ] A unique topic is created and a produce/consume assertion succeeds.
-- [ ] Schema Registry starts on the same isolated network as Kafka.
-- [ ] Schema Registry connects to Kafka through a network alias.
-- [ ] A representative schema is registered and retrieved successfully.
-- [ ] One real `cmd-adaptor-sns` application scenario runs using the Testcontainers dependencies.
-- [ ] The application test validates a meaningful output, state or side effect.
-- [ ] Topic names and Redis data are isolated between runs.
-- [ ] Failure diagnostics include relevant application and container logs.
-- [ ] The complete path succeeds in at least two consecutive local runs.
-- [ ] Exact local invocation and prerequisites are documented.
-- [ ] An opt-in branch-CI path is validated where approval is available.
-- [ ] The existing Compose/full-E2E workflow remains available and unchanged.
-- [ ] No full-suite migration or Compose replacement claim is made.
-- [ ] No speed or reliability improvement is claimed without equivalent measurements.
+- [ ] Redis, Kafka and Schema Registry use one maintained Testcontainers fixture.
+- [ ] All existing SNS integration tests are inventoried.
+- [ ] All technically suitable SNS integration tests are migrated.
+- [ ] Existing meaningful assertions and behaviours are preserved.
+- [ ] Any non-migrated test has a concrete documented technical blocker.
+- [ ] Dynamic endpoints and isolated topics/data are used throughout.
+- [ ] The complete migrated suite passes twice consecutively locally.
+- [ ] The complete migrated suite passes in opt-in branch CI where approved.
+- [ ] Existing Compose tests remain available until parity is demonstrated.
+- [ ] No test is excluded merely to keep the task small.
 
 ## Required final result
 
 The result must state:
 
 - files changed
-- selected real SNS scenario and meaningful assertion
+- inventory of existing tests and migration disposition for each
 - exact local invocation and two run results
 - branch-CI run reference or approval blocker
-- confirmation that Compose/full-E2E remains unchanged
+- confirmation that Compose path remains available until parity is demonstrated
 - final disposition: `adopt as opt-in` / `revise` / `retain local pending CI approval` / `stop`
 
 ## Boundaries / non-goals
 
-- No migration of the complete integration-test suite.
-- No removal of the existing Compose environment.
+- No removal of the existing Compose environment before migration parity is demonstrated.
 - No default-CI enablement without explicit approval.
 - No unrelated Docker image-build work.
 - No CD pipeline, Helm, `kd`, PVC or deployment review.
