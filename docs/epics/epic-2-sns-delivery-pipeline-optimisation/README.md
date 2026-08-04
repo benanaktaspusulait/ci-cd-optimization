@@ -2,60 +2,53 @@
 
 | Field | Value |
 |---|---|
-| **Status** | Proposed / New — work not started or approved by this document |
+| **Status** | In progress |
 | **Type** | Post-pilot delivery epic |
 | **Depends on** | [Pilot closure record](../../PILOT-CLOSURE.md), task-specific pilot evidence and the relevant repository/platform/release owners |
 
 ## Why
 
-Pilot follow-up work has two distinct outcomes: productionising validated SNS changes,
-and extending the Testcontainers foundation into a full SNS integration path. A single
-epic keeps the post-pilot phase coherent while separate stories prevent scope, ownership
-and completion from being conflated.
+Pilot follow-up work has two distinct technical outcomes: optimising the SNS image build
+and extending the Testcontainers foundation into a full SNS integration path. Each outcome
+has a single task covering implementation, validation and adoption.
 
 ## Goal
 
-Deliver validated SNS outcomes and extend the Testcontainers path into a maintainable
-SNS integration workflow through independently owned stories with separate acceptance
-and approval gates.
+Deliver both outcomes through independently owned stories, each with one task that covers
+implementation, CI validation and adoption end to end.
 
 ## Stories
 
-| ID | Story | Status | Dependency boundary |
+| ID | Story | Status | Single task |
 |---|---|---|---|
-| E2-S1 | [Productionise Validated SNS Outcomes](./story-1-productionise-validated-outcomes/README.md) | Proposed / New | Validated Story 3/4 evidence and task-specific implementation approval |
-| E2-S2 | [Productise the SNS Testcontainers Integration Path](./story-2-sns-testcontainers-integration/README.md) | Proposed / New | Validated Redis Testcontainers pilot, repository access and CI Docker availability |
+| E2-S1 | [Productionise the SNS Image-Build Optimisation](./story-1-sns-image-build-optimisation/README.md) | In progress | E2-S1.1 — Implement, Validate and Prepare Adoption |
+| E2-S2 | [Productise the SNS Testcontainers Integration Path](./story-2-sns-testcontainers-integration/README.md) | Proposed / New | E2-S2.1 — Implement and Validate the SNS Testcontainers Integration Path |
 
-## Evidence and ownership boundaries
+## Structure
 
-- E2-S1 implements only the validated image-build and local opt-in Redis outcomes, then
-  validates explicitly approved components in CI.
-- E2-S2 extends the Redis Testcontainers foundation to cover Kafka, Schema Registry and
-  one real SNS application flow, validated locally and in branch CI.
-- E2-S1 completion is not a hard prerequisite for E2-S2.
-- Coordinate the stories only where artefact flow, pipeline ownership or RepoSync changes
-  overlap.
+```
+Epic 2 — SNS Delivery Pipeline Optimisation
+├── Story 1 — Productionise the SNS Image-Build Optimisation
+│   └── E2-S1.1 — Implement, Validate and Prepare Adoption
+│                 of the SNS Image-Build Optimisation
+│
+└── Story 2 — Productise the SNS Testcontainers Integration Path
+    └── E2-S2.1 — Implement and Validate the SNS
+                  Testcontainers Integration Path
+```
 
 ## Boundaries / non-goals
 
 - No Compose migration or service removal.
-- No `kd`-to-Helm migration, umbrella-chart adoption, PVC removal or legacy-component
-  deletion.
-- No CD implementation story before evidence, target approval, ownership, validation
-  and rollback gates exist.
+- No `kd`-to-Helm migration, umbrella-chart adoption, PVC removal or legacy-component deletion.
+- No CD pipeline review or target definition — preserved in [future-backlog/](./future-backlog/).
 - No local result is represented as CI evidence.
-- No production, CI or CD adoption is claimed without the responsible owner's decision.
-
-## CD review backlog
-
-CD pipeline review and target definition tasks have been preserved in
-[future-backlog/](./future-backlog/) and are not part of active story scope.
+- No production or CI adoption is claimed without the responsible owner's decision.
 
 ## Epic acceptance criteria
 
-- [ ] E2-S1 and E2-S2 retain independent scope, dependencies, owners and completion states.
-- [ ] Only validated SNS outcomes are implemented in E2-S1.
-- [ ] E2-S2 produces a maintained, repeatable SNS integration path with local and CI evidence.
-- [ ] Local and CI evidence remain distinguishable.
+- [ ] E2-S1 and E2-S2 retain independent scope, dependencies and completion states.
+- [ ] Each story is implemented, validated and ready for adoption in a single task.
+- [ ] Local and CI evidence remain distinguishable across both stories.
 - [ ] Existing Compose/full-E2E path remains unchanged.
-- [ ] Any approved CD implementation and rollout are created later as separate stories.
+- [ ] No adoption is claimed until the responsible owner records the decision.
