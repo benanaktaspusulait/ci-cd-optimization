@@ -9,8 +9,8 @@
 | **Estimate** | 2 |
 | **Priority** | Must |
 | **Depends on** | [Story 3 consolidated evidence](../../../../solution/story-3/T3.4-impact-summary.md) and confirmed repository/RepoSync ownership |
-| **Status** | Proposed / New — not started |
-| **Primary output** | Reviewable Dockerfile/`.dockerignore` diff, local measurement record, runtime validation and rollback instructions |
+| **Status** | In progress — local implementation validated; durable RepoSync ownership/adoption route pending |
+| **Primary output** | [E2-S1.1 implementation result](../../../../solution/epic-2/E2-S1.1-sns-image-build-result.md) |
 
 ## Why
 
@@ -39,13 +39,13 @@ Apply only the validated image-build changes and produce reviewable local eviden
 
 ## Acceptance criteria
 
-- [ ] Exact changed files and intended diff are reviewable.
-- [ ] No unrelated Dockerfile functional change is included.
-- [ ] Cold and warm no-change builds succeed.
-- [ ] A real JAR-content-change rebuild is measured.
-- [ ] Runtime smoke validation succeeds and required artefacts remain present.
-- [ ] Environment, image state, commands, failures and retries are recorded.
-- [ ] Local evidence is not represented as CI evidence.
-- [ ] No image-size, cold-build or CI benefit is claimed unless newly measured.
-- [ ] Rollback is executable and documented.
+- [x] Exact changed files and intended diff are reviewable.
+- [x] No unrelated Dockerfile functional change is included.
+- [x] Cold and warm no-change builds succeed.
+- [x] A real JAR-content-change rebuild is measured.
+- [x] Runtime smoke validation succeeds and required artefacts remain present.
+- [x] Environment, image state, commands, failures and retries are recorded.
+- [x] Local evidence is not represented as CI evidence.
+- [x] No image-size, cold-build or CI benefit is claimed unless newly measured.
+- [x] Rollback is executable and documented.
 - [ ] The durable repository/RepoSync review route is recorded, and no owner-controlled change is merged outside that route.

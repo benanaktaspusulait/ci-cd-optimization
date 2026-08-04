@@ -7,14 +7,23 @@
 
 ## Purpose
 
-Preserve unvalidated SNS integration-topology and orchestration candidates without presenting them as Epic 2 committed work. A candidate is a recommendation for separately scoped and approved investigation, not permission to implement or adopt.
+Preserve unvalidated SNS integration-topology and orchestration candidates without
+presenting them as Epic 2 committed work. A candidate is a recommendation for separately
+scoped and approved investigation, not permission to implement or adopt.
+
+## Promoted to active scope
+
+The following candidates have been promoted out of this register into active story scope:
+
+| Candidate | Promoted to | Notes |
+|---|---|---|
+| Kafka Testcontainers | [E2-S2.1](./epic-2-sns-delivery-pipeline-optimisation/story-2-sns-testcontainers-integration/task-1-sns-testcontainers-integration.md) | Approved as part of the SNS Testcontainers integration path |
+| Schema Registry Testcontainers | [E2-S2.1](./epic-2-sns-delivery-pipeline-optimisation/story-2-sns-testcontainers-integration/task-1-sns-testcontainers-integration.md) | Approved as part of the SNS Testcontainers integration path |
 
 ## Candidate register
 
 | Candidate | Current evidence boundary | Required before implementation |
 |---|---|---|
-| Kafka Testcontainers | Not implemented or measured by the pilot | Separately approved feasibility objective, representative scenario and environment evidence |
-| Schema Registry Testcontainers | Not implemented or measured by the pilot | Compatibility design, schema lifecycle validation and owner approval |
 | Complete command/snapshot equivalence | Existing Compose path is the validated mechanism | Scenario/assertion inventory, target design and equivalent local/CI validation |
 | Application-container boundary | Compose, Testcontainers-generic and hybrid options were not compared | Separately approved architecture analysis and representative implementation evidence |
 | Kafdrop readiness decoupling | Current readiness dependency is mapped; functional necessity is unresolved | Equivalent readiness/topic-setup validation and readiness-owner decision |
@@ -27,7 +36,8 @@ Preserve unvalidated SNS integration-topology and orchestration candidates witho
 
 ## Boundaries / non-goals
 
-- No candidate is part of Epic 2 implementation scope.
+- No remaining candidate is part of Epic 2 implementation scope.
 - No service is approved for removal.
-- No Kafka/Schema Registry, full-E2E, CI saving or reliability result is inferred from the Redis pilot.
-- A future epic or task may be created only after the objective, owner, evidence plan and approval route are explicit.
+- No full-E2E, CI saving or reliability result is inferred from the Redis pilot.
+- A future epic or task may be created only after the objective, owner, evidence plan
+  and approval route are explicit.
