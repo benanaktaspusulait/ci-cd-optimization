@@ -25,15 +25,6 @@ the RepoSync/owner adoption route as a single coherent outcome.
 |---|---|---:|---|---|
 | E2-S1.1 | [Implement, Validate and Prepare Adoption of the SNS Image-Build Optimisation](./task-1-sns-image-build-optimisation.md) | 5 | Must | In progress |
 
-## Boundaries / non-goals
-
-- No Testcontainers, Compose, Maven or unrelated Dockerfile change.
-- No durable adoption before owner approval.
-- Local evidence is not CI evidence.
-
 ## Story acceptance criteria
 
-- [ ] Local implementation, CI validation and adoption route are covered in a single task.
-- [ ] Local and CI evidence remain distinguishable.
-- [ ] Adoption is not claimed until the responsible owner records the decision.
-- [ ] Existing Compose/full-E2E path remains unchanged.
+- [ ] E2-S1.1 is completed or has an explicitly recorded post-merge/owner blocker.

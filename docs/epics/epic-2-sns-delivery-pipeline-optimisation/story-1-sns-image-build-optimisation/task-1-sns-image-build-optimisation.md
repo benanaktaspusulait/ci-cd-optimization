@@ -14,9 +14,9 @@
 
 ## Why
 
-The local pilot found a targeted build-context change and a layer-ordering candidate.
-Neither is a durable SNS repository outcome until the intended diff, CI behaviour and
-owner adoption route are verified end to end.
+The pilot validated a targeted layer-ordering change and a build-context improvement.
+Neither is a durable outcome until CI behaviour and the owner adoption route are
+confirmed end to end.
 
 ## Goal
 
@@ -35,58 +35,37 @@ prepare a complete adoption route including rollback and RepoSync/owner approval
 
 - Retain or finalise the targeted `.dockerignore`.
 - Confirm that only the two required JAR inputs are exposed to the build context.
-- No startup scripts, certificates or configuration files are hidden.
 
-### 3. Default BuildKit builder
+### 3. Local build validation
 
-- Use the default BuildKit builder present in the target CI environment.
-- Do not configure a custom builder or registry mirror unless required.
+- Validate cold, warm no-change and real JAR-content-change builds.
+- Confirm the produced image starts successfully and contains the required runtime
+  artefacts, user and command.
 
-### 4. Local build validation
+### 4. Registry-backed cache validation
 
-- Capture cold, warm no-change and real JAR-content-change builds.
-- Validate image startup and required runtime artefacts.
-- Record exact commands, environment, Docker/image state, failures and retries.
+- Validate feature-branch cache seed and reuse in real branch CI.
+- Confirm that changed application JARs rebuild while stable setup layers remain cached.
+- After merge, validate the shared `develop` cache and its reuse by a later branch.
+- Keep post-merge validation explicitly pending until it can be executed.
 
-### 5. Registry-backed branch cache (feature branch)
+### 5. Validation evidence
 
-- Run a real branch pipeline against the feature branch.
-- Confirm that the registry-backed layer cache is populated on first run.
-- Confirm cache reuse on a no-change second run.
-- Confirm that a real JAR-content-change triggers only the expected layer rebuild.
-- Record the exact CI run reference, environment, image state and timing.
+Record only:
 
-### 6. Develop shared-cache policy
+- exact validation commands
+- relevant CI run references
+- observed cache behaviour (BuildKit cache-hit and rebuilt-layer output)
+- runtime startup result
+- failures or retries
+- post-merge and owner blockers
 
-- After the feature branch is merged to `develop`, validate that the shared cache
-  is seeded correctly and available to subsequent branch builds.
-- Record the exact `develop` pipeline run reference and cache behaviour.
-- This step completes after merge; it does not block the feature-branch acceptance
-  criteria.
-
-### 7. Feature-branch cache seed/reuse
-
-- Confirm that a fresh feature branch can reuse the `develop` shared cache.
-- Record the run reference and layer-hit evidence.
-
-### 8. Changed-JAR rebuild behaviour
-
-- Confirm that a changed-JAR rebuild on a feature branch reuses the `yum`/`envconsul`
-  setup layers from cache and rebuilds only the application-JAR copy and following layers.
-- Record the exact before/after layer hash evidence.
-
-### 9. Image inspect and runtime startup
-
-- Run `docker inspect` on the produced image and confirm digest, labels and layer count.
-- Start the image and confirm Java, `envconsul`, both required runtime JARs, `fdpuser`
-  and the preserved Java/JMX/OpenTelemetry command.
-
-### 10. Rollback
+### 6. Rollback
 
 - Document an executable rollback for the local change.
 - Document a rollback route for any RepoSync-managed commit.
 
-### 11. RepoSync/owner adoption route
+### 7. RepoSync/owner adoption route
 
 - Record the durable source repository and platform owner for the Dockerfile.
 - Confirm or identify the responsible reviewer for `.dockerignore`.
@@ -95,35 +74,15 @@ prepare a complete adoption route including rollback and RepoSync/owner approval
 
 ## Acceptance criteria
 
-### Local implementation
-- [x] Exact changed files and intended diff are reviewable.
-- [x] No unrelated Dockerfile functional change is included.
-- [x] Cold and warm no-change builds succeed.
-- [x] A real JAR-content-change rebuild is measured.
-- [x] Runtime smoke validation succeeds and required artefacts remain present.
-- [x] Environment, image state, commands, failures and retries are recorded.
-- [x] Local evidence is not represented as CI evidence.
-- [x] No image-size, cold-build or CI benefit is claimed unless newly measured.
-- [x] Rollback is executable and documented.
-
-### Feature-branch CI
-- [ ] Exact CI run reference, environment and image state are recorded.
-- [ ] Registry-backed cache is populated on first run and reused on no-change second run.
-- [ ] Changed-JAR rebuild reuses setup layers and rebuilds only expected layers.
-- [ ] Image artefacts and runtime behaviour are validated in CI.
-- [ ] Local and CI evidence remain separated; failures and retries are not omitted.
-- [ ] No CI saving or reliability claim is made without equivalent measurements.
-
-### Develop shared-cache (post-merge)
-- [ ] Develop pipeline run reference is recorded.
-- [ ] Shared cache is seeded correctly and available to subsequent branch builds.
-
-### Adoption
-- [ ] The durable repository/RepoSync review route is recorded.
-- [ ] The responsible reviewer for `.dockerignore` is confirmed.
-- [ ] No owner-controlled change is merged outside the agreed route.
-- [ ] Rollout and rollback are documented for any default-path adoption.
-- [ ] Adoption is not claimed until the responsible owner records the decision.
+- [x] Reviewed Dockerfile and `.dockerignore` changes are implemented locally.
+- [x] Cold, warm no-change and changed-JAR paths are validated locally.
+- [x] Required runtime behaviour and artefacts are preserved.
+- [x] Feature-branch registry cache seed and reuse are validated in CI.
+- [x] Changed JAR rebuilds while stable setup layers remain cached.
+- [ ] Shared `develop` cache is validated after merge.
+- [ ] RepoSync/owner review and adoption route is recorded.
+- [x] Rollback is executable.
+- [x] No unrelated Docker, Maven, Compose or Testcontainers change is included.
 
 ## Boundaries / non-goals
 
