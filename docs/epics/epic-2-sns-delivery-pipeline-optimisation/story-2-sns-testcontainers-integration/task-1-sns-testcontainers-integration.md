@@ -5,10 +5,10 @@
 | Field | Value |
 |---|---|
 | **ID** | E2-S2.1 |
-| **Type** | Testcontainers implementation and CI validation |
+| **Type** | Testcontainers implementation and optional CI validation |
 | **Estimate** | 5 |
 | **Priority** | Must |
-| **Depends on** | Validated Redis Testcontainers pilot, repository access and CI Docker availability |
+| **Depends on** | Validated Redis Testcontainers pilot and repository access; CI Docker availability only for optional branch-CI validation |
 | **Status** | Proposed / New |
 | **Primary output** | A maintained opt-in Testcontainers path covering Redis, Kafka, Schema Registry and one real SNS application flow, validated locally and, where approved, in branch CI |
 
