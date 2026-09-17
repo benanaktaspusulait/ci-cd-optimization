@@ -1,36 +1,59 @@
-# Technical Details
+# Technical Details — Validated CI/CD Pattern
 
 | Field | Value |
-|-------|-------|
-| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
-| **Created by** | Benan Aktas |
-| **Status** | Draft |
-| **Last updated** | 2026-06-09 |
-| **Last reviewed** | 2026-06-09 |
-| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
+|---|---|
+| **Parent page** | FDP Container & CI/CD Optimisation |
+| **Status** | Validated across SNS, PNR and PCDP |
+| **Last updated** | 2026-09-17 |
 
-> This page contains deep technical content for engineers. Non-technical readers should refer to the parent overview and proposal matrix.
+## Technical Model
 
----
+The final pattern has four coupled tracks:
+
+1. **Build/context/cache** — minimise Docker inputs, order stable layers before volatile application artefacts, and reuse cache through the simplest supported builder path.
+2. **Test-owned integration lifecycle** — Maven/Failsafe/Cucumber owns the infrastructure required by the suite through Testcontainers.
+3. **Packaged-image validation** — after in-JVM integration tests succeed, build the Docker image and start that exact image against compatible test infrastructure.
+4. **Critical-path/security preservation** — overlap independent preparation such as Trivy DB downloads while retaining the final scan and validation gates.
+
+## Reference CI Dependency Graph
+
+```text
+Retrieve secrets
+   |-----------------------> Prepare Trivy DB --------------------+
+   |-----------------------> Extract adaptor information ----+    |
+   +--> Wait for Docker ------------------------------------+|    |
+                                                            vv    |
+                                             Build/Test with Testcontainers
+                                                        |
+                                                   Build image
+                                                        |
+                                             Validate built image runtime
+                                                        |
+                                                        +----------+
+                                                                   |
+                                                               Trivy scan
+```
+
+The visible steps are not additive because some execute in parallel. End-to-end pipeline duration is the primary measurement; component timings are supporting evidence only when their boundaries are comparable.
+
+## Cross-Repository Evidence
+
+| Repository | Validation focus | Key guard / adaptation |
+|---|---|---|
+| SNS | Reference implementation | 7 feature files / 14 business scenarios; five aggregate containers; dynamic topic suffix; exact-image smoke |
+| PNR | Portability | Custom feature inventory; scenario-outline expansion; selective aggregate startup; exact-image runtime test |
+| PCDP | Scale/complexity | 131 feature files / 1382 executable cases; 229 executable snapshot cases; larger aggregate/infrastructure set |
 
 ## Technical Child Pages
 
-| Page | Covers |
-|------|--------|
-| Technical Details — Docker Build & Infrastructure | Dockerfile optimisation (current vs proposed multi-stage), .dockerignore, Docker Compose CI services, BuildKit cache strategy, base image strategy |
-| Technical Details — Testcontainers | Testcontainers approach, container configurations (Redis, Kafka, LocalStack), Spring/Cucumber integration, Maven dependencies and profile, CI feasibility, reuse policy |
+- **Docker Build & Infrastructure** — `.dockerignore`, layer ordering, BuildKit/registry cache, runtime-image constraints.
+- **Testcontainers** — DIND compatibility, infrastructure/application lifecycle, scenario guards and exact-image validation.
+- **Pipeline & Drone Context** — RepoSync boundary and before/after CI ownership.
 
----
+## Evidence Rules
 
-## Summary
+- Mark values as **measured**, **observed**, **controlled experiment**, **structural**, or **inferred**.
+- Do not add durations from overlapping steps.
+- Do not claim a cross-repository timing benefit without target-repository measurement.
+- Do not call a branch implementation centrally adopted until the RepoSync source is updated and verified.
 
-The pilot's technical approach has two main tracks:
-
-1. **Docker Build** — multi-stage Dockerfile, .dockerignore, BuildKit cache mounts (local), reduced Compose CI role.
-2. **Testcontainers** — isolated, deterministic integration tests starting with one dependency (Redis or Kafka), running locally first, CI feasibility assessed in Story 1.
-
-Both tracks produce measurable before/after evidence. Code Examples and Templates page provides copy/adapt snippets.
-
----
-
-*Feedback or questions? Contact the page owner or comment below.*
