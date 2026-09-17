@@ -1,238 +1,97 @@
 # Technical Details — Docker Build & Infrastructure
 
 | Field | Value |
-|-------|-------|
-| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
-| **Created by** | Benan Aktas |
-| **Status** | Draft |
-| **Last updated** | 2026-06-09 |
-| **Last reviewed** | 2026-06-09 |
-| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
+|---|---|
+| **Parent page** | FDP Container & CI/CD Optimisation |
+| **Status** | Validated pattern; RepoSync centralisation pending |
+| **Last updated** | 2026-09-17 |
 
-> This page contains deep technical content for engineers. Non-technical readers should refer to the parent overview and proposal matrix.
+## Final Direction
 
----
+The validated work did **not** standardise on a new multi-stage application build. The adaptor pipeline already builds the executable JAR before Docker packaging. The useful optimisation was therefore to keep expensive, stable runtime setup ahead of volatile application artefacts and to minimise the build context.
 
-## 1. Dockerfile Optimisation
+This distinction matters: the final pattern is based on the actual build architecture, not the original pilot assumption that every adaptor should compile inside a multi-stage Docker build.
 
-### Current State
+## Docker Context
 
-The existing Dockerfile (`amazoncorretto:17` base) is single-stage:
+The application-level `.dockerignore` should expose only what the Dockerfile consumes, typically:
+
+- the Dockerfile;
+- the packaged executable JAR;
+- the OpenTelemetry Java agent and any other explicitly required runtime artefact.
+
+Do not copy source, test resources, repository metadata or unrelated build outputs merely because they exist in the module.
+
+SNS measured the original context at approximately **191.27 MB**. A controlled BuildKit/content-store observation after the targeted ignore rules showed **189 B** of context metadata for the unchanged required inputs. This is not presented as a universal CI network-transfer saving; context transfer depends on builder/content-store state.
+
+## Layer Ordering
+
+Stable and expensive runtime setup should be completed before the application JAR is copied.
+
+Typical structure:
 
 ```dockerfile
 FROM amazoncorretto:17
 
-COPY ./target/cmd-adaptor-dvla-exec.jar /local
-COPY ./target/dependencies/opentelemetry-javaagent.jar /local/opentelemetry-javaagent.jar
-
 WORKDIR /tmp
 
-RUN yum install -y shadow-utils unzip \
-    && yum update -y ca-certificates ... \
-    && curl --silent --output /tmp/envconsul.zip https://releases.hashicorp.com/envconsul/0.13.1/envconsul_0.13.1_linux_amd64.zip \
-    && unzip envconsul.zip && mv envconsul /usr/local/bin/envconsul \
-    && adduser -u 1000 -U -m -s /bin/bash fdpuser \
-    && chmod 0755 /local/cmd-adaptor-dvla-exec.jar \
-    && chown fdpuser:fdpuser /local/cmd-adaptor-dvla-exec.jar
+RUN <install/update runtime packages and create runtime user>
+
+# Volatile application artefacts come after stable setup
+COPY ./target/<adaptor>-exec.jar /local/<adaptor>-exec.jar
+COPY ./target/dependencies/opentelemetry-javaagent.jar /local/opentelemetry-javaagent.jar
+
+RUN <permissions/ownership required for copied artefacts>
 
 USER fdpuser
-WORKDIR /home/fdpuser
-
-CMD ["java", "-javaagent:/local/opentelemetry-javaagent.jar", ... "-jar", "/local/cmd-adaptor-dvla-exec.jar"]
 ```
 
-**Problems:**
-- Ships full JDK and OS/runtime tools in production image (~450 MB).
-- No layer separation — depending on the build path, source changes may trigger full dependency re-resolution.
-- No BuildKit cache mounts — Maven `.m2` not persisted between builds.
-- `yum update` in same layer as app code — invalidates frequently.
+In the SNS controlled same-daemon real-JAR-change experiment, the old/current ordering was approximately **75.82–77.90s** and the improved ordering approximately **4.62–5.08s**. This is a warm-cache controlled Docker measurement, not a cold-build or full-CI claim.
 
-### Proposed Multi-Stage Dockerfile
+## BuildKit / Registry Cache
 
-```dockerfile
-# syntax=docker/dockerfile:1
+Validated principles:
 
-# ══════════════════════════════════════════════════════════════════════════════
-# Stage 1: Resolve dependencies (cached independently of source changes)
-# ══════════════════════════════════════════════════════════════════════════════
-FROM amazoncorretto:17 AS deps
-WORKDIR /app
+- prefer the existing/default BuildKit builder where it performs adequately;
+- read shared stable cache where appropriate;
+- avoid independent work overwriting a common cache without ownership/isolation;
+- keep a fallback path where buildx is unavailable;
+- measure the target pipeline rather than assuming cache benefit.
 
-# Copy only dependency metadata — rebuilds ONLY when pom.xml changes.
-COPY pom.xml ./
-COPY cmd-adaptor-dvla/pom.xml cmd-adaptor-dvla/
-COPY cmd-adaptor-dvla-common/pom.xml cmd-adaptor-dvla-common/
-COPY cmd-adaptor-dvla-test-common/pom.xml cmd-adaptor-dvla-test-common/
-COPY cmd-adaptor-dvla-integration-tests/pom.xml cmd-adaptor-dvla-integration-tests/
+A custom docker-container builder was slower than the default builder in the SNS comparison. The observed approximately **18–20s** difference is a builder-path comparison; it must not be labelled as the isolated benefit of registry caching.
 
-COPY .mvn .mvn
-COPY mvnw ./
-RUN chmod +x mvnw
+## Runtime Image
 
-# Cache mount: persists /root/.m2 across builds locally (ephemeral in CI DIND).
-RUN --mount=type=cache,target=/root/.m2/repository \
-    ./mvnw -B dependency:go-offline -pl cmd-adaptor-dvla -am -DskipTests
+No image-size reduction is claimed as a core result of this work. The runtime base and required runtime tools were preserved unless a separate requirement justified changing them.
 
-# ══════════════════════════════════════════════════════════════════════════════
-# Stage 2: Build the application
-# ══════════════════════════════════════════════════════════════════════════════
-FROM deps AS build
+`envconsul` remains part of the runtime where required. The validated SNS path used a fixed version with checksum verification and fail-fast download behaviour; this is security/correctness hardening, not a performance claim.
 
-COPY cmd-adaptor-dvla/src cmd-adaptor-dvla/src
-COPY cmd-adaptor-dvla-common/src cmd-adaptor-dvla-common/src
+## Build Validation
 
-RUN --mount=type=cache,target=/root/.m2/repository \
-    ./mvnw -B package -pl cmd-adaptor-dvla -am -DskipTests \
-    && cp cmd-adaptor-dvla/target/cmd-adaptor-dvla-exec.jar /app/app.jar
+Every Docker optimisation must retain:
 
-# Download OpenTelemetry agent
-RUN --mount=type=cache,target=/root/.m2/repository \
-    ./mvnw -B dependency:copy \
-      -Dartifact=io.opentelemetry.javaagent:opentelemetry-javaagent:1.30.0:jar \
-      -DoutputDirectory=/app/agent
+- clean build success;
+- required runtime artefacts;
+- non-root/runtime ownership behaviour already expected by the application;
+- application startup/readiness;
+- exact-image validation after the CI image is built.
 
-# ══════════════════════════════════════════════════════════════════════════════
-# Stage 3: Runtime (minimal — no JDK, no Maven, no source)
-# ══════════════════════════════════════════════════════════════════════════════
-FROM amazoncorretto:17 AS runtime
+## Reusable vs Repository-Specific
 
-# Install envconsul (HashiCorp Vault integration)
-RUN yum install -y shadow-utils unzip \
-    && curl --silent --output /tmp/envconsul.zip \
-       https://releases.hashicorp.com/envconsul/0.13.1/envconsul_0.13.1_linux_amd64.zip \
-    && unzip /tmp/envconsul.zip -d /usr/local/bin/ \
-    && rm -f /tmp/envconsul.zip \
-    && yum clean all && rm -rf /var/cache/yum
+### Reusable
 
-RUN adduser -u 1000 -U -m -s /bin/bash fdpuser
+- strict Docker context;
+- stable-before-volatile layer ordering;
+- default-builder-first strategy;
+- registry-cache reuse when supported;
+- no performance claim without measurement;
+- exact-image validation.
 
-WORKDIR /home/fdpuser
-COPY --from=build --chown=fdpuser:fdpuser /app/app.jar ./cmd-adaptor-dvla-exec.jar
-COPY --from=build --chown=fdpuser:fdpuser /app/agent/opentelemetry-javaagent-1.30.0.jar ./opentelemetry-javaagent.jar
+### Repository-specific
 
-USER fdpuser
-EXPOSE 7112 8077
+- JAR/agent paths;
+- base image;
+- envconsul/runtime package requirements;
+- registry/cache refs;
+- health endpoint and exposed ports.
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-    CMD ["sh", "-c", "curl -sf http://localhost:7112/actuator/health || exit 1"]
-
-CMD ["java", \
-     "-javaagent:/home/fdpuser/opentelemetry-javaagent.jar", \
-     "-jar", "/home/fdpuser/cmd-adaptor-dvla-exec.jar"]
-```
-
-### Expected Gains
-
-| Metric | Before (estimated) | After (estimated) | Improvement |
-|--------|--------------------|--------------------|-------------|
-| Image size | ~450 MB | ~300 MB | ≥ 30% ↓ |
-| Local rebuild (source change) | ~5 min | ~1.5 min | ≥ 70% ↓ |
-| Local rebuild (dep change) | ~5 min | ~3 min | ~40% ↓ |
-| Build context | ~200 MB | ~50 MB | ≥ 75% ↓ |
-
----
-
-## 2. .dockerignore
-
-```gitignore
-.git/
-.gitignore
-.idea/
-*.iml
-target/
-build/
-out/
-docs/
-*.md
-*.log
-scripts/
-docker-compose*.yml
-src/test/
-```
-
----
-
-## 3. Docker Compose — Current CI Services
-
-The integration test `docker-compose.yml` (RepoSync-controlled) starts these services:
-
-| Service | Image | Version | Purpose | CI-required? |
-|---------|-------|---------|---------|:------------:|
-| zookeeper | confluentinc/cp-zookeeper | 7.5.5 | Kafka dependency | Yes |
-| kafka | confluentinc/cp-kafka | 7.5.5 | Event streaming (matches MSK 3.5.1 prod) | Yes |
-| schema-registry | confluentinc/cp-schema-registry | 7.5.5 | Avro schema management | Yes |
-| redis | redis | 5.0.6 | Cache / state store | Yes |
-| localstack | localstack/localstack | 0.12.18 | AWS IAM emulation | TBC |
-| jaeger | jaegertracing/all-in-one | 1.65.0 | OpenTelemetry trace UI | No (local debug) |
-| kafdrop | obsidiandynamics/kafdrop | 3.30.0 | Kafka UI | No (local debug) |
-| kafka-rest | confluentinc/cp-kafka-rest | 7.5.5 | REST API for Kafka | TBC |
-| aggregate-party | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
-| aggregate-object | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
-| aggregate-location | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
-| aggregate-event | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
-| aggregate-service | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
-| aggregate-matching | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
-| aggregate-v1id-v2id | Internal FDP image | CORE_TAG | Stream processor | Snapshot tests only |
-| command-adaptor | Built from source | — | The service under test | Yes |
-| pre-integration-test | Custom build | — | Wait/health-check orchestrator | Yes (startup only) |
-| integration-tests | ileap-java17-mvn:1.3 | — | Runs Maven integration tests | Yes |
-
-Story 5 maps and classifies these to determine what can be reduced in CI.
-
----
-
-## 5. BuildKit
-
-### Local Cache Mounts
-
-`DOCKER_BUILDKIT=1 docker build .` enables `--mount=type=cache`. The Maven `.m2` repository persists across local builds — deps are not re-downloaded unless `pom.xml` changes.
-
-### Remote Cache (post-pilot, requires ACP)
-
-```bash
-docker buildx build \
-  --cache-from=type=registry,ref=$REGISTRY_IMAGE/cache:main \
-  --cache-from=type=registry,ref=$REGISTRY_IMAGE/cache:$BRANCH \
-  --cache-to=type=registry,ref=$REGISTRY_IMAGE/cache:$BRANCH,mode=max \
-  --tag $REGISTRY_IMAGE:$COMMIT_SHA --push .
-```
-
-**Not implementable without ACP:** requires registry namespace (`docker.digital.homeoffice.gov.uk/dacc-aws/fdp-cache`), write permissions, DIND BuildKit support, and RepoSync `.drone.star` change.
-
-### Build Measurement
-
-Local measurement approach (before/after):
-
-```bash
-# Warm build (with cache)
-time DOCKER_BUILDKIT=1 docker build -t pilot:test .
-
-# Cold build (no cache)
-time DOCKER_BUILDKIT=1 docker build --no-cache -t pilot:nocache .
-
-# Image size
-docker images pilot:test --format '{{.Size}}'
-```
-
----
-
-## 6. Base Image Strategy (Post-Pilot, DSA ETO)
-
-Target hierarchy:
-
-```text
-base-os (patched OS — e.g. Amazon Linux)
-  └── base-runtime (JRE + core runtime deps)
-        └── base-build (JDK + Maven — build stages only)
-              └── application (team-built)
-```
-
-> The initial pilot may identify where shared base images would help, but creating and maintaining organisation-level base images would require DSA ETO ownership, lifecycle management, rebuild cadence, and compatibility guarantees.
-
----
-
-*Feedback or questions? Contact the page owner or comment below.*
-
----
-
-*Feedback or questions? Contact the page owner or comment below.*
