@@ -1,54 +1,44 @@
-# Risks and DACI Decision Areas
+# Risks, Ownership and Decision Areas
 
 | Field | Value |
-|-------|-------|
-| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
-| **Created by** | Benan Aktas |
-| **Status** | Draft |
-| **Last updated** | 2026-06-09 |
-| **Last reviewed** | 2026-06-09 |
-| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
+|---|---|
+| **Parent page** | FDP Container & CI/CD Optimisation |
+| **Status** | Cross-repository validation complete; adoption decisions active |
+| **Last updated** | 2026-09-17 |
 
----
+## Current Risk Register
 
-## Risk Register
+| # | Risk | Status | Impact | Mitigation / next action |
+|---|---|---|---|---|
+| R1 | Optimisation is valid only for one repository | **Reduced** | High | SNS, PNR and PCDP provide three validation points with different scale/structure. |
+| R2 | Faster pipeline silently runs fewer tests | **Controlled** | High | Feature/scenario inventory, completed-scenario, zero-test and Docker-required guards are part of the pattern. |
+| R3 | Testcontainers cannot run in Drone DIND | **Resolved for validated repos** | High | Explicit Docker/Testcontainers CI configuration has been validated. |
+| R4 | Repo-local `.drone.star` changes are overwritten by RepoSync | **Active** | High | Do not merge durable shared pipeline logic as repo-specific copies; implement common pieces in RepoSync. |
+| R5 | A common pattern accidentally embeds SNS/PNR/PCDP-specific assumptions | **Active** | High | Centralise only lifecycle/dependency-graph patterns; keep topics, counts, aggregates and application wiring repo-specific. |
+| R6 | Cache use makes clean builds unreliable | **Controlled** | High | Cache is an optimisation, not a dependency; clean build/runtime validation remains required. |
+| R7 | Exact Docker packaging/runtime behaviour is no longer tested after moving tests in-JVM | **Controlled** | High | Built image is started and health/readiness validated after the Maven/Testcontainers phase. |
+| R8 | Security work is weakened for speed | **Controlled** | High | Existing Trivy policy and scanning/reporting are retained; only DB preparation timing/dependency placement changed. |
+| R9 | More performance tuning creates scope creep or business-test changes | **Controlled** | Medium | Final repository implementations were frozen after evidence-based cleanup; rejected experiments are not retained. |
+| R10 | Central RepoSync adoption regresses validated timings or coverage | **Active** | High | Re-run representative repositories after centralisation and compare like-for-like workload/coverage. |
 
-| # | Risk | Probability | Impact | Mitigation | Fallback | Owner |
-|---|------|:-----------:|:------:|------------|----------|-------|
-| R1 | Pilot repo selection slips or stakeholders disagree | Med | High | Time-box selection to Week 1; agree criteria up front | Pick the repo with the slowest known pipeline by default | CST / Thomas Reddy |
-| R2 | Drone pipeline history lacks reliable timing data for baseline | Med | Med | Use last N pipeline runs from Drone UI; document method | Fall back to repeatable local measurements | CST |
-| R3 | Drone DIND does not support Testcontainers in CI (DOCKER_HOST not accessible from Maven step) | Med | High | Assess in Story 1 (T1.4) early; treat as a finding, not a blocker | Testcontainers stays local-only; Docker Compose remains in CI | CST + ACP |
-| R4 | Reducing Compose services breaks a hidden local workflow | Low | Med | Change CI usage only; keep Compose for local; map before removing anything | Revert Compose change; document the dependency found | CST |
-| R5 | Optimisations turn out to be ACP/ETO-owned, not CST-local | Med | Med | Classify ownership early (Story 6) before progressing wider changes | Hand item to ACP/ETO board with evidence attached | CST |
-| R6 | Build cache change produces inconsistent/incorrect images | Low | High | Verify image runs after each change; clean (no-cache) build must always succeed | Disable cache mount; rebuild from clean context | CST |
-| R7 | RepoSync overwrites local pipeline changes — pilot cannot modify `.drone.star` | Med | High | Complete Story 1 to identify boundaries; only propose changes through ACP route | Keep pipeline changes as recommendations in Story 6 | CST + ACP |
-| R8 | Deploy pipeline (Helm/service repo) confused with CI pipeline scope | Low | Med | Document CI vs Deploy boundary clearly (see Pipeline & Drone page) | Route deploy topics to Future Considerations | CST |
+## Decision / Ownership Areas
 
----
+| Area | Current decision | Durable owner / route | Status |
+|---|---|---|---|
+| Testcontainers CI execution | Validated in Drone Kubernetes + DIND | RepoSync/shared pipeline for common env/step wiring; repo code for test lifecycle | Validated; centralisation pending |
+| Docker/BuildKit cache strategy | Validated pattern; measure per repo | RepoSync/shared pipeline for common build commands | Centralisation pending |
+| Exact-image runtime validation | Required correctness gate | Common pipeline step + repo-specific health/runtime properties | Validated |
+| Compose role | Reduced in validated CI path; retain where useful for local/exploratory workflows | Repository owners for local Compose; shared pipeline for CI orchestration | Validated |
+| Trivy policy | Existing policy unchanged | Existing security/platform ownership | No policy change in this work |
+| RepoSync adoption | Common reusable pipeline elements must move to central source | RepoSync/shared pipeline ownership | Next action |
 
-## DACI Decision Areas
+## When a New Decision Record Is Required
 
-Some proposals may require a multi-stakeholder decision before proceeding. The pilot itself does not require DACI — it is CST-local exploratory work. DACI applies to the **follow-up actions** that emerge from the pilot findings.
+Create/update an ADR when a change:
 
-| # | Decision Area | Why DACI May Be Needed | Suggested DACI Roles | Status |
-|---|---------------|------------------------|----------------------|--------|
-| D1 | Testcontainers CI execution | Requires `DOCKER_HOST` + `RYUK_DISABLED` in Drone Maven step — RepoSync change affecting all adaptors | **Driver:** CST. **Approver:** ACP. **Contributors:** Cerberus Dev leads. **Informed:** DSA ETO. | Not started |
-| D2 | BuildKit remote cache infrastructure | Requires registry namespace, write permissions, retention policy, and RepoSync change | **Driver:** CST. **Approver:** ACP. **Contributors:** Platform/Registry team. **Informed:** DSA ETO. | Not started |
-| D3 | Shared base image ownership | Org-maintained base images require lifecycle governance, rebuild cadence, deprecation policy | **Driver:** TBC. **Approver:** DSA ETO / Ezhil. **Contributors:** ACP, CST. **Informed:** All adaptor teams. | Not started |
-| D4 | Drone pipeline template changes | Reusable Starlark functions in central `.drone.star` affect all repos receiving RepoSync | **Driver:** ACP. **Approver:** ACP lead. **Contributors:** CST (pilot evidence). **Informed:** All adaptor teams. | Not started |
-| D5 | Docker Compose CI reduction | Reducing services in CI may affect QAT debugging if they rely on compose-based logs | **Driver:** CST. **Approver:** Thomas Reddy. **Contributors:** QAT, Dev leads. **Informed:** ACP. | Not started |
+- alters the shared RepoSync-generated pipeline;
+- changes the mandatory validation surface;
+- changes security-gating policy rather than execution order;
+- introduces a common abstraction used by multiple repos;
+- requires an exception for a repository that cannot follow the common pattern.
 
----
-
-## When to Raise a DACI
-
-Create a DACI record when pilot findings (Story 6) confirm that an item:
-- Affects multiple teams.
-- Changes shared tooling or infrastructure.
-- Has delivery risk beyond CST.
-- Requires ACP or DSA ETO/Enabling prioritisation.
-- Needs ownership agreement before work starts.
-
----
-
-*Feedback or questions? Contact the page owner or comment below.*
