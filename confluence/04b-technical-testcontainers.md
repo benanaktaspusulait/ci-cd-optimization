@@ -1,228 +1,123 @@
-# Technical Details — Testcontainers
+# Technical Details — Testcontainers and Integration-Test Lifecycle
 
 | Field | Value |
-|-------|-------|
-| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
-| **Created by** | Benan Aktas |
-| **Status** | Draft |
-| **Last updated** | 2026-06-09 |
-| **Last reviewed** | 2026-06-09 |
-| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
+|---|---|
+| **Parent page** | FDP Container & CI/CD Optimisation |
+| **Status** | Validated in CI across SNS, PNR and PCDP |
+| **Last updated** | 2026-09-17 |
 
-> This page contains deep technical content for engineers. Non-technical readers should refer to the parent overview and proposal matrix.
+## Final Decision
 
----
+Testcontainers is no longer a one-dependency local prototype. The validated CI pattern moves suitable integration infrastructure into test ownership and executes it from the Maven/Failsafe/Cucumber lifecycle against the Drone DIND Docker daemon.
 
-## 4. Testcontainers
+The application can run in the test JVM for business/integration scenarios, followed by a separate exact-Docker-image runtime validation step.
 
-### Approach
+## CI Docker Model
 
-Replace one Docker Compose dependency with Testcontainers. The existing Cucumber + JUnit 4 (vintage) test structure is preserved.
+Validated CI configuration uses the existing Drone Kubernetes + DIND model. The common configuration includes the DIND endpoint and the Testcontainers host/network settings required by the runner.
 
-### RedisContainerConfig.java
+Representative settings used by the validated implementations include:
 
-```java
-package uk.gov.ho.dacc.fdp.integration;
-
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.utility.DockerImageName;
-
-public class RedisContainerConfig {
-
-    // Pin to same version as production docker-compose
-    private static final DockerImageName REDIS_IMAGE = DockerImageName.parse("redis:5.0.6");
-
-    public static final GenericContainer<?> REDIS = new GenericContainer<>(REDIS_IMAGE)
-            .withExposedPorts(6379);
-
-    static {
-        REDIS.start();
-    }
-
-    public static String getRedisNodes() {
-        return REDIS.getHost() + ":" + REDIS.getMappedPort(6379);
-    }
-}
+```text
+DOCKER_HOST=tcp://docker:2375
+DOCKER_API_VERSION=1.41
+TESTCONTAINERS_HOST_OVERRIDE=docker
+TESTCONTAINERS_RYUK_DISABLED=true
 ```
 
-### KafkaContainerConfig.java (Zookeeper + Kafka + Schema Registry)
+Ryuk is disabled for this DIND CI setup. Explicit Java lifecycle ownership, root-scope cleanup and bounded shutdown remain responsible for releasing resources during the test run; the ephemeral CI pod remains an additional isolation boundary.
 
-```java
-package uk.gov.ho.dacc.fdp.integration;
+Mandatory CI suites must fail if Docker is unavailable. Local developer profiles may choose a softer behaviour, but that must not leak into the mandatory CI path.
 
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.containers.Network;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.utility.DockerImageName;
+## Infrastructure Lifecycle
 
-public class KafkaContainerConfig {
+The exact dependency set is repository-specific, but the validated architecture uses:
 
-    // Pin to versions matching production MSK (PM-71719: MSK 3.5.1 = cp-kafka 7.5.5)
-    private static final DockerImageName ZOOKEEPER_IMAGE = DockerImageName.parse("confluentinc/cp-zookeeper:7.5.5");
-    private static final DockerImageName KAFKA_IMAGE = DockerImageName.parse("confluentinc/cp-kafka:7.5.5");
-    private static final DockerImageName SCHEMA_REGISTRY_IMAGE = DockerImageName.parse("confluentinc/cp-schema-registry:7.5.5");
+- Redis;
+- ZooKeeper/Kafka;
+- Schema Registry;
+- the aggregate services required by the selected business suite;
+- dynamic topic suffixes / isolated topic naming;
+- bounded readiness checks;
+- failure diagnostics;
+- deterministic shutdown.
 
-    private static final Network NETWORK = Network.newNetwork();
+Independent containers/readiness checks should start concurrently only where the dependency graph allows it.
 
-    private static final GenericContainer<?> ZOOKEEPER = new GenericContainer<>(ZOOKEEPER_IMAGE)
-            .withNetwork(NETWORK)
-            .withNetworkAliases("zookeeper")
-            .withEnv("ZOOKEEPER_CLIENT_PORT", "2181")
-            .withEnv("ZOOKEEPER_TICK_TIME", "2000")
-            .withExposedPorts(2181)
-            .waitingFor(Wait.forListeningPort());
+## Repository Adaptations
 
-    public static final KafkaContainer KAFKA = new KafkaContainer(KAFKA_IMAGE)
-            .withNetwork(NETWORK)
-            .withNetworkAliases("kafka")
-            .withExternalZookeeper("zookeeper:2181")
-            .withEnv("KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR", "1")
-            .withEnv("KAFKA_AUTO_CREATE_TOPICS_ENABLE", "false")
-            .dependsOn(ZOOKEEPER);
+### SNS
 
-    private static final GenericContainer<?> SCHEMA_REGISTRY = new GenericContainer<>(SCHEMA_REGISTRY_IMAGE)
-            .withNetwork(NETWORK)
-            .withNetworkAliases("schema-registry")
-            .withExposedPorts(8081)
-            .withEnv("SCHEMA_REGISTRY_HOST_NAME", "schema-registry")
-            .withEnv("SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS", "PLAINTEXT://kafka:9092")
-            .dependsOn(KAFKA)
-            .waitingFor(Wait.forHttp("/subjects").forStatusCode(200));
+- Redis, ZooKeeper, Kafka, Schema Registry.
+- Five aggregates: party, object, location, event and service.
+- Application starts in the test JVM.
+- Current business coverage guard: at least **7 feature files / 14 business scenarios**.
+- Dynamic topic suffixes and topic catalogue are created by the test environment.
 
-    public static final String BOOTSTRAP_SERVERS;
-    public static final String SCHEMA_REGISTRY_URL;
+### PNR
 
-    static {
-        ZOOKEEPER.start();
-        KAFKA.start();
-        SCHEMA_REGISTRY.start();
-        BOOTSTRAP_SERVERS = KAFKA.getBootstrapServers();
-        SCHEMA_REGISTRY_URL = "http://" + SCHEMA_REGISTRY.getHost() + ":" + SCHEMA_REGISTRY.getMappedPort(8081);
-    }
-}
-```
+- Same high-level lifecycle, adapted for PNR topics and test inventory.
+- Inventory logic distinguishes declared scenarios from scenario-outline expansion.
+- Current protected inventory includes **15 feature files**, **15 declared non-ignored scenarios** and **21 expanded executable cases**.
+- Aggregate startup is selected from the effective test scope rather than assumed globally.
+- Exact built-image runtime validation is separate from the in-JVM test suite.
 
-### CucumberSpringConfig.java
+### PCDP
 
-```java
-package uk.gov.ho.dacc.fdp.integration;
+- Larger infrastructure/test surface with repository-specific aggregate requirements.
+- Feature inventory guard protects **131 feature files / 480 declared / 1382 executable cases**.
+- Snapshot inventory protects **125 declared / 229 executable cases**.
+- Non-snapshot inventory is **355 declared / 1153 executable cases**.
+- The mandatory CI Testcontainers profile must not silently skip because Docker is unavailable.
 
-import io.cucumber.spring.CucumberContextConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+## False-Green Protection
 
-@CucumberContextConfiguration
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("integration-test")
-public class CucumberSpringConfig {
+The speed-up is not valid if the new pipeline runs less validation. The reusable guardrail set therefore includes:
 
-    @DynamicPropertySource
-    static void kafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", () -> KafkaContainerConfig.BOOTSTRAP_SERVERS);
-        registry.add("fdp.kafka.broker", () -> KafkaContainerConfig.BOOTSTRAP_SERVERS);
-        registry.add("fdp.kafka.schema-registry-url", () -> KafkaContainerConfig.SCHEMA_REGISTRY_URL);
-        registry.add("fdp.app.kafka.stream.replication-factor", () -> "1");
-        registry.add("fdp.app.kafka.stream.min-insync-replicas", () -> "1");
-        registry.add("fdp.app.kafka.topic.suffix", () -> "0");
-    }
+- Maven Failsafe `failIfNoTests` / specified-test protections;
+- Docker-required hard failure for mandatory CI;
+- feature/scenario inventory guards;
+- completed-scenario counters;
+- exact test runner/profile selection;
+- readiness timeouts;
+- failure diagnostics and container logs;
+- no hidden `disabledWithoutDocker=true`-style bypass for the mandatory suite.
 
-    @DynamicPropertySource
-    static void redisProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.redis.host", RedisContainerConfig.REDIS::getHost);
-        registry.add("spring.data.redis.port", () -> RedisContainerConfig.REDIS.getMappedPort(6379));
-        registry.add("fdp.app.redis.nodes", RedisContainerConfig::getRedisNodes);
-    }
+## Exact Built-Image Runtime Validation
 
-    @DynamicPropertySource
-    static void otelProperties(DynamicPropertyRegistry registry) {
-        registry.add("otel.traces.exporter", () -> "none");
-        registry.add("otel.metrics.exporter", () -> "none");
-    }
-}
-```
+In-JVM integration tests validate application behaviour but not the packaged Docker image. The final pipeline therefore:
 
-### TestcontainersBaseIT.java (Cucumber runner)
+1. completes the Maven/Testcontainers business suite;
+2. builds the command-adaptor image;
+3. starts the **exact image built by that pipeline**;
+4. verifies runtime readiness against compatible test infrastructure;
+5. runs the final vulnerability scan against the built image.
 
-```java
-package uk.gov.ho.dacc.fdp.integration;
+This boundary is intentionally retained even when the application also ran successfully inside the test JVM.
 
-import io.cucumber.junit.Cucumber;
-import io.cucumber.junit.CucumberOptions;
-import org.junit.runner.RunWith;
+## Polling, Consumers and Shutdown
 
-@RunWith(Cucumber.class)
-@CucumberOptions(
-        features = "classpath:features",
-        glue = "uk.gov.ho.dacc.fdp.integration",
-        plugin = {"pretty", "json:target/cucumber-report.json"},
-        tags = "not @snapshot"
-)
-public class TestcontainersBaseIT {
-}
-```
+Reusable optimisation rules include:
 
-### Maven Dependencies to Add
+- correct time units for poll durations;
+- bounded polling rather than unbounded waits;
+- larger poll batches where behaviour permits;
+- stop polling once the expected count is reached;
+- bounded producer/consumer close;
+- deterministic Kafka Streams shutdown;
+- shared/reused HTTP clients where safe;
+- no readiness-result caching that changes validation semantics.
 
-Add to parent `pom.xml` `<dependencyManagement>`:
+## What Not to Standardise Blindly
 
-```xml
-<dependency>
-    <groupId>org.testcontainers</groupId>
-    <artifactId>testcontainers-bom</artifactId>
-    <version>1.19.8</version>
-    <type>pom</type>
-    <scope>import</scope>
-</dependency>
-```
+Do not centralise repository-specific:
 
-Add to `cmd-adaptor-dvla-integration-tests/pom.xml`:
+- topic names/catalogues;
+- scenario counts;
+- aggregate lists;
+- Spring/application properties;
+- health paths/ports;
+- stream topology assumptions.
 
-```xml
-<dependency>
-    <groupId>org.testcontainers</groupId>
-    <artifactId>testcontainers</artifactId>
-    <scope>test</scope>
-</dependency>
-<dependency>
-    <groupId>org.testcontainers</groupId>
-    <artifactId>junit-jupiter</artifactId>
-    <scope>test</scope>
-</dependency>
-<dependency>
-    <groupId>org.testcontainers</groupId>
-    <artifactId>kafka</artifactId>
-    <scope>test</scope>
-</dependency>
-```
+RepoSync should centralise the pipeline/lifecycle pattern, not business-test knowledge.
 
-All other dependencies (Cucumber, Spring Boot Test, JUnit) already exist in the project.
-
-### Maven Profile
-
-```xml
-<profile>
-    <id>testcontainers</id>
-    <properties>
-        <skip.containers>true</skip.containers>
-        <skip.aggregators>true</skip.aggregators>
-        <skip.integration.tests>false</skip.integration.tests>
-    </properties>
-</profile>
-```
-
-Usage: `./mvnw verify -pl cmd-adaptor-dvla-integration-tests -P testcontainers`
-
-### Reuse Policy
-
-- **Local:** reuse enabled (`testcontainers.reuse.enable=true` in `~/.testcontainers.properties`) for faster feedback.
-- **CI:** reuse disabled (default) — clean containers per pipeline run (deterministic).
-
----
-
-
----
-
-*Feedback or questions? Contact the page owner or comment below.*
