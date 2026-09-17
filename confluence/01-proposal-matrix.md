@@ -1,54 +1,49 @@
-# Proposal Overview Matrix
+# Proposal Overview Matrix — Validated Outcome
 
 | Field | Value |
-|-------|-------|
-| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
-| **Created by** | Benan Aktas |
-| **Status** | Draft |
-| **Last updated** | 2026-06-09 |
-| **Last reviewed** | 2026-06-09 |
-| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
+|---|---|
+| **Parent page** | FDP Container & CI/CD Optimisation |
+| **Status** | Validated outcome |
+| **Last updated** | 2026-09-17 |
 
----
+The original proposal matrix is retained here as a record of what was investigated. The important change is that proposal status is now based on implementation evidence from SNS, PNR and PCDP rather than aspiration.
 
-## Proposal Ratings
+| # | Original proposal | Final outcome | Reuse classification | Notes |
+|---|---|---|---|---|
+| 1 | `.dockerignore` validation | **Retained** | Reusable | Restrict context to actual Dockerfile inputs; exact patterns remain repo-specific. |
+| 2 | Multi-stage Dockerfile | **Not adopted as a blanket requirement** | Reassess per repo | Existing adaptor build flow already produces the executable JAR before image packaging. Layer ordering around expensive stable setup was the useful change. |
+| 3 | BuildKit local cache mounts | **Partially superseded** | Reusable principle | Final work focused on default BuildKit builder and registry-backed reuse where supported; do not require cache mounts merely because they were in the original proposal. |
+| 4 | One-dependency Testcontainers prototype | **Expanded and retained** | Core reusable pattern | Progressed to test-owned Redis/Kafka/Schema Registry and required aggregate dependencies in CI, with repo-specific application/test wiring. |
+| 5 | Docker Compose CI rationalisation | **Retained / implemented in CI path** | Core reusable pattern | Compose-heavy orchestration was replaced by consolidated Maven/Testcontainers ownership for the validated path; Compose can remain for local/exploratory use. |
+| 6 | Trivy scan in CI | **Retained and optimised** | Core reusable pattern | Existing scan policy remains; vulnerability/Java DB preparation moved earlier so the final scan contributes less to the critical path. |
+| 7 | BuildKit remote cache | **Validated in repository work; durable centralisation pending** | Shared RepoSync pattern | Shared-read / isolated-write cache strategy used where applicable. Do not attribute unrelated builder differences to cache benefit. |
+| 8 | Testcontainers in CI | **Validated** | Core reusable pattern | Works with Drone Kubernetes + DIND and explicit Docker/Testcontainers configuration. |
+| 9 | Shared base-image strategy | **Not required by this optimisation** | Separate platform concern | No image-size or base-image programme is claimed as part of the validated result. |
+| 10 | Reusable Drone pipeline templates | **Next adoption step** | RepoSync-managed | Cross-repository evidence now exists; common pipeline elements should move to the durable RepoSync source rather than remain duplicated. |
 
-Each proposal is assessed on Value, Risk, Complexity, Effort, and MoSCoW priority.
+## Reusable Pattern vs Repository-Specific Adaptation
 
-**Rating guidance:**
-- Low risk + low effort + high value = strong quick win (Phase 1 candidate).
-- High risk + high complexity + unclear value = needs more investigation.
-- Items with cross-team or ACP/ETO impact may need a DACI decision record.
+### Reusable
 
-> **Note:** Numeric improvement estimates (e.g. "~450 MB → ~300 MB") are initial targets, subject to validation after Story 2 baseline capture.
+- Test-owned infrastructure lifecycle.
+- Mandatory Docker/test/scenario guards.
+- Exact built-image runtime validation.
+- Maven local-repository/reactor reuse.
+- Docker context restriction and stable-before-volatile layer ordering.
+- Independent preparation work overlapped where safe.
+- Trivy DB preparation before the final scan.
+- Deterministic cleanup and bounded readiness/polling.
 
-| # | Proposal | Description | Value | Risk | Complexity | Effort | MoSCoW | Owner | Phase | Notes |
-|---|----------|-------------|:-----:|:----:|:----------:|:------:|:------:|-------|:-----:|-------|
-| 1 | `.dockerignore` validation | Exclude `.git`, `target`, `docs`, `src/test`, IDE files from Docker build context. Reduces context from ~200 MB to ~50 MB. | High | Low | Low | Low | Must | CST | 1 | Quick win — 30 min effort, immediate measurable gain |
-| 2 | Dockerfile multi-stage build | Separate dependency resolution → build → runtime. Ship only the application JAR and minimal runtime base (no build tools, no source). Reduces image ~450 MB → ~300 MB. | High | Low | Medium | Medium | Must | CST | 1 | Local-only; no pipeline change needed |
-| 3 | BuildKit cache mounts (local) | `--mount=type=cache,target=/root/.m2` persists Maven repository across local builds. Dependencies not re-downloaded. | High | Low | Low | Low | Must | CST | 1 | Works locally; ephemeral per-build in CI DIND |
-| 4 | Testcontainers local prototype | Replace one Compose dependency (Redis recommended) with Testcontainers. Proves isolation/determinism with before/after timing. | High | Medium | Medium | Medium | Must | CST | 2 | Redis = simplest candidate. Kafka+ZK = complex but higher value |
-| 5 | Docker Compose CI rationalisation | Map all Compose services, classify CI-required vs local-debug, recommend reduced CI set. Produces evidence for what to remove. | Medium | Low | Low | Medium | Should | CST | 2 | Does not remove Compose — clarifies its role |
-| 6 | Trivy security scan (CI) | Scan built image for HIGH+CRITICAL vulnerabilities. Report-only (non-blocking during pilot). | Medium | Low | Low | Low | Should | CST | 1 | Already in tag pipeline; extend to CI flow |
-| 7 | BuildKit remote cache (CI) | Registry-backed cache (`--cache-from`/`--cache-to`). CI builds reuse layers across runs. | High | Medium | High | High | Could | ACP | 4 | Requires ACP: registry namespace, write permissions, `.drone.star` change |
-| 8 | Testcontainers in CI | Run Testcontainers in Drone pipeline (DIND + `DOCKER_HOST` + `RYUK_DISABLED`). | High | Medium | High | Medium | Could | ACP | 3–4 | Requires ACP: RepoSync Maven step env var change |
-| 9 | Shared base image strategy | Org-maintained `base-os → base-runtime → base-build → application` hierarchy. Digest-pinned, centrally rebuilt. | Medium | Medium | High | High | Won't (this pilot) | DSA ETO | 4+ | Requires governance, lifecycle, rebuild cadence — post-pilot |
-| 10 | Reusable Drone pipeline templates | Extract optimised patterns into Starlark functions in central `.drone.star`. All adaptors inherit via RepoSync. | Medium | Low | Medium | Medium | Won't (this pilot) | ACP | 4+ | After pilot proves patterns; requires ACP/RepoSync ownership |
+### Repository-specific
 
----
+- Topic catalogue and suffix rules.
+- Feature/scenario inventory counts.
+- Which aggregate containers are required.
+- Application startup mechanism and health endpoint.
+- Kafka listener/stream topology details.
+- Runtime environment/property names.
 
-## Quick Win Summary
+## Rejected or Reverted Experiments
 
-Proposals 1–3 are the lowest-hanging fruit:
-- **Low risk, low effort, high value, no coordination needed.**
-- Can be delivered in Week 1–2 of the pilot.
-- Provide immediate measurable evidence (build time, image size, context size).
-- Proven approach in the industry — no experimental risk.
+A proposed optimisation is not retained simply because it appears faster in theory. Examples evaluated during the work and rejected/reverted where they did not provide reproducible value or changed validation semantics include Maven parallelism, broad image prefetch, readiness caching and broad logging changes.
 
-Proposals 4–6 are medium-effort and form the core pilot validation work (Week 2–3).
-
-Proposals 7–10 require ACP or DSA ETO coordination and are post-pilot recommendations backed by the pilot's evidence.
-
----
-
-*Feedback or questions? Contact the page owner or comment below.*
