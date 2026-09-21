@@ -1,217 +1,70 @@
-# Working Agreements and Metrics
+# Working Agreements and Metrics — Cross-Repository Evidence
 
 | Field | Value |
-|-------|-------|
-| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
-| **Created by** | Benan Aktas |
-| **Status** | Draft |
-| **Last updated** | 2026-06-09 |
-| **Last reviewed** | 2026-06-09 |
-| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
+|---|---|
+| **Parent page** | FDP Container & CI/CD Optimisation |
+| **Status** | Validated pattern; central adoption pending |
+| **Last updated** | 2026-09-21 |
 
-This page consolidates the contributing guide, live status rules, Definition of Done, and metrics template.
+## Working Agreements
 
----
+1. **Evidence before claims.** Performance improvements must be tied to an observed or controlled measurement.
+2. **Coverage is part of performance.** A faster pipeline is not an improvement if fewer business scenarios or runtime/security checks execute.
+3. **Do not sum overlapping Drone steps.** End-to-end duration is the primary pipeline metric.
+4. **Separate evidence types.** Use labels such as measured, observed, controlled experiment and structural improvement.
+5. **Keep rejected experiments out of the final design.** Record what was tried so it is not reintroduced without new evidence.
+6. **Shared pipeline logic belongs in RepoSync.** Repository branches can prove the pattern; centrally generated logic must be adopted through the central source.
+7. **Repository-specific test knowledge stays local.** Topics, scenario counts, aggregate dependencies and application wiring are not central-template concerns.
+8. **No unrelated cleanup in optimisation MRs.** Business behaviour/test semantics must not change merely to improve CI timing.
 
-## Documentation Structure
+## Cross-Repository Evidence Summary
 
-This proposal is organised as a set of Confluence pages beneath a single parent page. The levels are **Epic → Story → Task**:
+| Repository | Role | Baseline | Validated result | Coverage / guard evidence | Delivery status |
+|---|---|---:|---:|---|---|
+| SNS | Reference implementation | 13m35s average, N=10 successful runs | 4m57s and 4m44s observed | 7 feature files / 14 business scenarios; mandatory Docker/zero-test/scenario guards; exact-image runtime validation | Reviewed / accepted; merge deferred for RepoSync common work |
+| PNR | Portability validation | Not recorded in supplied evidence | No numeric claim on this page | 15 feature files / 15 declared non-ignored / 21 expanded cases; inventory guard; selective aggregate startup; exact-image runtime validation | Reviewed / accepted; merge deferred for RepoSync common work |
+| PCDP | Large-pipeline validation | ~16m30s observed reference | 7m38s observed | 131 feature files / 480 declared / 1382 executable; snapshot 125 declared / 229 executable; exact-image/runtime/security path retained | Reviewed / accepted; merge deferred for RepoSync common work |
 
-- **Parent Overview** — entry point: purpose, key constraint, success targets, story map.
-- **Working Agreements and Metrics** (this page) — working guide, status board rules, Definition of Done, metrics template.
-- **Project Plan and Governance** — timeline, milestones, risk register, branching/CI flow, test strategy.
-- **Security Plan** — secret management, scanning policy, policy-as-code.
-- **Proposal Matrix**, **Phased Plan**, **Risks and DACI** — decision and prioritisation content.
-- **Pipeline & Drone Context** and **Deployment & Release** — current CI/CD and deploy environment.
-- **Backlog Summary** — one-page list of every story and task with story points.
-- **Detailed Task Definitions** — full why, goal, scope and acceptance criteria for every task.
-- **Architecture Decisions (ADRs)** — significant decisions with context and consequences.
-- **Technical Details** and **Code Examples and Templates** — Dockerfile, Compose, Testcontainers and CI examples.
-- **Glossary** and **Supporting Context** — terminology and supporting context.
+## SNS Measured Evidence
 
-**Decisions** are recorded as ADRs. **Plan and risks** live in the Project Plan. **Security** lives in the Security Plan.
+| Area | Before | After | Evidence type |
+|---|---:|---:|---|
+| Full CI | 13m35s average (N=10) | 4m57s / 4m44s | Direct CI measurement |
+| Docker layer rebuild | ~75.82–77.90s | ~4.62–5.08s | Controlled same-daemon warm-cache real-JAR-change experiment |
+| Runtime image validation | ~1m06s | ~30–34s | Direct CI step observation |
+| Adaptor information | ~15–21s | ~11s | Direct CI step observation |
+| Final Trivy contribution | ~40–49s | ~14–15s | Direct CI step observation; DB prep moved earlier |
 
----
+Do not add the component rows together: their scopes overlap and differ.
 
-## How to Navigate
+## PNR Evidence Rule
 
-- Start at the backlog summary for the full outline.
-- Drill into a story section for its goal and task list.
-- Use the detailed task definitions page for full task why, goal, scope and acceptance criteria.
-- Use the status board as the only live progress tracker.
+PNR currently contributes portability/correctness evidence. Until a comparable baseline/final timing set is recorded, do not publish an end-to-end percentage or speed-up for PNR.
 
-## Reading a Task
+## PCDP Evidence Rule
 
-Every task follows the same shape:
+The ~16m30s → 7m38s comparison is an observed validation comparison, not a multi-run statistical baseline. It may be used as an observed result, but not described as an N-run average.
 
-- **Metadata header:** ID, estimate, priority, owner, status, depends on.
-- **Why:** the reason the task exists.
-- **Goal:** the outcome it must achieve.
-- **Scope:** what is covered.
-- **Acceptance criteria:** checklist that must pass.
+## Definition of Done for Shared RepoSync Adoption
 
-## Conventions
+- [ ] Common pipeline pieces extracted from the three implementations.
+- [ ] Repository-specific topics/counts/aggregates are not embedded centrally.
+- [ ] Mandatory Docker/test/scenario guards remain active.
+- [ ] Exact built-image runtime validation remains active.
+- [ ] Final Trivy scan/reporting remains active with existing policy.
+- [ ] Representative repositories re-run successfully after RepoSync generation.
+- [ ] Timing captured using the same evidence rules.
+- [ ] Any regression or exception documented before rollout expands.
 
-- **Estimate:** story points `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of effort.
-- **Priority:** `Must`, `Should`, `Could`, `Won't (this pilot)`.
-- **Status:** `Not started`, `In progress`, `Blocked`, `Done`.
-- **IDs:** stories `S1` to `S6`; tasks `T<story>.<n>`, for example `T3.3`.
+## Metrics Template for Future Repositories
 
-> The status board is the only live progress tracker. Status values in story/task files are planning snapshots and should not be maintained separately.
+| Metric | Baseline | After | Evidence type | Source/method |
+|---|---:|---:|---|---|
+| End-to-end successful CI duration | | | | |
+| Build/Test with Testcontainers | | | | |
+| Image build | | | | |
+| Exact-image runtime validation | | | | |
+| Final Trivy contribution | | | | |
+| Feature/scenario inventory | | | correctness | |
+| Failed/zero-test/Docker guard behaviour | | | correctness | |
 
----
-
-## Working a Task
-
-1. Set the task **Status** to `In progress` on the status board.
-2. Do the work within the task's **scope**.
-3. Capture any measurement in the metrics template.
-4. Tick the task's **acceptance criteria**.
-5. Confirm the shared Definition of Done.
-6. If the task settles a significant choice, record an ADR.
-7. Set **Status** to `Done` or `Blocked`, with a note on what is blocking.
-
-## Raising Tickets
-
-Use Jira for pilot task tracking unless the delivery owner confirms a different tracker. Link the Jira ticket in the `Issue` column. Source changes should still go through the normal merge-request review process for the selected repository.
-
-Route cross-team follow-ups to the CST, RepoSync/platform, or wider ETO board in Story 6.
-
-Create tickets incrementally. Do not raise everything at once; keep work controlled until pipeline boundaries, baseline data, and ownership are agreed.
-
----
-
-## Status Board Rules
-
-Single source of truth for pilot task progress.
-
-> The backlog is a candidate structure only. Individual tickets should not be created until priority, ownership and target board are agreed. The purpose is to support review and prioritisation, not to imply that every task will be implemented immediately.
-
-Update the **Status** column as work moves. Estimates use story points: `1`, `2`, `3`, or `5`; `1 SP` is roughly 1 day of effort. Priority uses MoSCoW.
-
-**Tickets:** Use Jira for task links unless the delivery owner confirms a different tracker. Record the final tracker choice in T2.1 once the pilot repo is selected. Source changes should still go through the normal merge-request review process for the selected repository.
-
-**Issue creation order:** Epic -> S1 -> T1.1 -> T1.2 -> S2 -> T2.1.
-
-| ID | Item | SP | Priority | Status | Owner | Issue |
-|----|------|:--:|:--------:|--------|-------|-------|
-| **S1** | **Pipeline Assessment (Drone/RepoSync)** | — | Must | Not started | TBC | — |
-| T1.1 | Review `.drone.star` pipeline structure | 2 | Must | Not started | TBC | — |
-| T1.2 | Identify local vs RepoSync boundaries | 1 | Must | Not started | TBC | — |
-| T1.3 | Map CI steps, DIND and Compose usage | 2 | Must | Not started | TBC | — |
-| T1.4 | Assess Testcontainers feasibility in Drone | 2 | Must | Not started | TBC | — |
-| T1.5 | Assess BuildKit/cache feasibility | 1 | Should | Not started | TBC | — |
-| **S2** | **Baseline & Pilot Scope** | — | Must | Not started | TBC | — |
-| T2.1 | Compare candidate pipelines and select pilot repo | 1 | Must | Not started | TBC | — |
-| T2.2 | Capture CI/CD pipeline baseline | 2 | Must | Not started | TBC | — |
-| T2.3 | Capture Docker build & image-size baseline | 1 | Must | Not started | TBC | — |
-| T2.4 | Capture integration-test baseline | 2 | Must | Not started | TBC | — |
-| **S3** | **Docker Build Optimisation** | — | Must | Not started | TBC | — |
-| T3.1 | Review current Dockerfile & build context | 2 | Must | Not started | TBC | — |
-| T3.2 | Add or validate `.dockerignore` | 1 | Must | Not started | TBC | — |
-| T3.3 | Apply Dockerfile layering / cache improvement | 2 | Must | Not started | TBC | — |
-| T3.4 | Measure local & CI build impact | 2 | Should | Not started | TBC | — |
-| **S4** | **Testcontainers Pilot** | — | Must | Not started | TBC | — |
-| T4.1 | Select candidate dependency/test | 1 | Must | Not started | TBC | — |
-| T4.2 | Implement Testcontainers setup | 3 | Must | Not started | TBC | — |
-| T4.3 | Compare with docker-compose flow | 2 | Should | Not started | TBC | — |
-| T4.4 | Document findings & constraints | 1 | Should | Not started | TBC | — |
-| **S5** | **Docker Compose Rationalisation** | — | Should | Not started | TBC | — |
-| T5.1 | Validate current Compose scope | 3 | Must | Done — evidence prepared | TBC | — |
-| T5.2 | Decide the target Compose role | 2 | Must | Done — target-role recommendation prepared; implementation and adoption not approved | TBC | — |
-| **S6** | **Pilot Outcome, Ownership and Adoption** | — | Must | In progress | TBC | — |
-| T6.1 | Classify pilot outcomes and ownership routes | 4 | Must | Done — evidence prepared | TBC | — |
-| T6.2 | Decide adoption route and publish pilot outcome | 2 | Must | Not completed — materials prepared | TBC | — |
-
-### Ticket-Creation Order
-
-1. Epic.
-2. Story 1 -> T1.1 (pipeline structure) -> T1.2 (local vs RepoSync boundaries).
-3. Story 2 -> T2.1 (select repo) -> T2.2 (pipeline baseline).
-
-Open the rest once pipeline boundaries are understood and the baseline is underway.
-
----
-
-## Definition of Done
-
-Project-wide rules apply to every task, in addition to each task's own acceptance criteria.
-
-### Every Task
-
-- [ ] Task-specific acceptance criteria are all met.
-- [ ] Output (findings, change, or decision) is written down in a shareable form.
-- [ ] Any assumptions or open questions are recorded.
-- [ ] Result is reviewed by at least one other person.
-- [ ] Task status is updated on the status board.
-
-### Tasks That Produce a Measurement
-
-- [ ] Metric is captured using the shared metrics template.
-- [ ] Measurement method/source is noted so it can be repeated.
-
-### Tasks That Change Code or Config
-
-- [ ] Change is small, focused, and reviewable.
-- [ ] Compatibility / rollback risk is noted.
-- [ ] No secrets are added to the repository or build context.
-
----
-
-## Metrics Template
-
-Fill this in as the pilot progresses. Baseline values come from Story 2; after values from Stories 3-5. Copy a fresh block per pilot iteration if measuring more than once.
-
-> Record the method/source for every number so it can be repeated identically for the after run. Pipeline duration = rolling average over the last **N** runs, set in T2.2.
-
-### Pilot Context
-
-| Field | Value |
-|-------|-------|
-| Pilot repository | TBC (T2.1) |
-| Measurement date (baseline) | YYYY-MM-DD |
-| Measurement date (after) | YYYY-MM-DD |
-| N (runs averaged) | TBC |
-| Measured by | TBC |
-
-### Core Metrics
-
-> **Note:** Target values are initial aspirations, subject to validation after baseline capture. They may be adjusted.
-
-| Metric | Baseline | After | Delta | Target | Source / method |
-|--------|----------|-------|-------|--------|-----------------|
-| Pipeline duration (avg) | | | | >= 20% reduction (post-platform) | |
-| Build stage duration | | | | — | |
-| Unit test duration | | | | — | |
-| Integration test duration | | | | — | |
-| Docker build time (local) | | | | >= 30% reduction | |
-| Docker build time (CI) | | | | >= 20% reduction (post-platform) | |
-| Final image size | | | | >= 30% reduction | |
-| Integration test startup time | | | | < 30 sec | |
-| Build context size | | | | >= 50% reduction | |
-| Failed-pipeline / flaky rate | | | | no regression | |
-| Developer feedback loop (change -> test green) | | | | <= 5 min | |
-| Cache hit/miss rate (if available) | | | | — | |
-
-### Notes and Observations
-
-- Record anything that affects interpretation: environment differences, one-off slow runs, cache warm/cold state, etc.
-
-### Source Data
-
-- Link to pipeline runs, build logs, or commands used.
-
-### Source Artefact Mapping
-
-| Source | Produced by | Use for |
-|--------|-------------|---------|
-| `metrics-output/build-metrics.csv` | `scripts/measure-baseline.sh` in the selected pilot repo | Local warm/cold Docker build time and local image size |
-| Drone build step logs | Drone CI pipeline UI (`docker build` step) | CI build duration and registry image size |
-| Drone integration-test step logs | Drone CI pipeline UI (integration-tests step) | Integration-test startup + run duration |
-| Drone pipeline UI / API | Pipeline listing and step timings | Rolling average pipeline duration and failed/flaky pipeline rate |
-
-The metrics template remains the final human-readable summary. Raw artefacts are supporting evidence and should be linked in the Source / method column.
-
----
-
-*Feedback or questions? Contact the page owner or comment below.*
