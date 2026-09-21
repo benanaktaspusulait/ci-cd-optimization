@@ -1,61 +1,38 @@
-# Detailed Task Definitions
+# Detailed Task Definitions — Historical Pilot and Current Adoption Work
 
 | Field | Value |
-|-------|-------|
-| **Parent page** | Container & CI/CD Optimisation Pilot — FDP Initial Scope |
-| **Created by** | Benan Aktas |
-| **Status** | In progress — pilot T6.2 closure evidence pending |
-| **Last updated** | 2026-08-03 |
-| **Last reviewed** | 2026-06-09 |
-| **Labels** | `proposal`, `ci-cd`, `pilot`, `cerberus-delivery` |
+|---|---|
+| **Status** | Historical pilot tasks complete in substance; RepoSync adoption tasks active |
+| **Last updated** | 2026-09-21 |
 
-This page is the index for full task definitions. Each child page below contains the why, goal, scope and acceptance criteria for its stories.
+The original T1.1–T6.2 task set is retained as the history of the initial pilot. It should no longer be used as the live status source for the current cross-repository/adoption phase.
 
-The pilot task structure ends at T6.2. Validated SNS productionisation is planned in Epic 2 Story E2-S1 and independent CD review/target planning in Story E2-S2; no T7 task exists.
+## Historical Task Pages
 
----
+| Story | Tasks | Current interpretation |
+|---|---|---|
+| Story 1 — Pipeline Assessment | T1.1–T1.5 | Superseded by implementation evidence from three repos |
+| Story 2 — Baseline & Pilot Scope | T2.1–T2.4 | SNS baseline established; later repos used for portability/scale validation |
+| Story 3 — Docker Build Optimisation | T3.1–T3.4 | Validated context/layer/cache pattern |
+| Story 4 — Testcontainers Pilot | T4.1–T4.4 | Expanded from prototype to validated CI lifecycle |
+| Story 5 — Compose Rationalisation | T5.1–T5.2 | Validated reduced CI role / local retention as needed |
+| Story 6 — Outcome / Adoption | T6.1–T6.2 | Cross-repo validation completed; central RepoSync adoption remains |
 
-## Task Definition Pages
+## Current Adoption Tasks
 
-| Page | Story | Tasks |
-|------|-------|:-----:|
-| Task Definitions — Story 1: Pipeline Assessment | 1 | T1.1–T1.5 |
-| Task Definitions — Story 2: Baseline & Pilot Scope | 2 | T2.1–T2.4 |
-| Task Definitions — Story 3: Docker Build Optimisation | 3 | T3.1–T3.4 |
-| Task Definitions — Story 4: Testcontainers Pilot | 4 | T4.1–T4.4 |
-| Task Definitions — Story 5: Docker Compose Rationalisation | 5 | T5.1–T5.2 |
-| Task Definitions — Story 6: Pilot Outcome, Ownership and Adoption | 6 | T6.1–T6.2 |
+### A1 — Extract common RepoSync-managed elements
 
----
+**Goal:** derive the shared pipeline pattern from SNS, PNR and PCDP without embedding repository-specific test knowledge.
 
-## Quick Reference
+### A2 — Implement shared pattern in RepoSync
 
-| ID | Title | Story | SP |
-|----|-------|-------|:--:|
-| T1.1 | Review .drone.star pipeline structure | 1 | 2 |
-| T1.2 | Identify local vs RepoSync boundaries | 1 | 1 |
-| T1.3 | Map CI steps, DIND and Compose usage | 1 | 2 |
-| T1.4 | Assess Testcontainers feasibility in Drone | 1 | 2 |
-| T1.5 | Assess BuildKit/cache feasibility | 1 | 1 |
-| T2.1 | Compare candidate pipelines and select pilot repo | 2 | 1 |
-| T2.2 | Capture CI/CD pipeline baseline | 2 | 2 |
-| T2.3 | Capture Docker build & image-size baseline | 2 | 1 |
-| T2.4 | Capture integration-test baseline | 2 | 2 |
-| T3.1 | Review current Dockerfile & build context | 3 | 2 |
-| T3.2 | Add or validate .dockerignore | 3 | 1 |
-| T3.3 | Apply Dockerfile layering / cache improvement | 3 | 2 |
-| T3.4 | Measure local & CI build impact | 3 | 2 |
-| T4.1 | Select candidate dependency/test | 4 | 1 |
-| T4.2 | Implement Testcontainers setup | 4 | 3 |
-| T4.3 | Compare with docker-compose flow | 4 | 2 |
-| T4.4 | Document findings & constraints | 4 | 1 |
-| T5.1 | Validate current Compose scope | 5 | 3 |
-| T5.2 | Decide the target Compose role | 5 | 2 |
-| T6.1 | Classify pilot outcomes and ownership routes | 6 | 4 |
-| T6.2 | Decide adoption route and publish pilot outcome | 6 | 2 |
+**Goal:** make the common CI behaviour durable in the centrally managed source.
 
-**Total: 21 tasks, 36 SP** (indicative sizing; part-time over 4 weeks).
+### A3 — Verify generated pipelines
 
----
+**Goal:** run representative repositories after RepoSync adoption and confirm coverage, exact-image validation, scanning and performance.
 
-*Feedback or questions? Contact the page owner or comment below.*
+### A4 — Publish final reuse standard
+
+**Goal:** replace pilot/proposal language with the accepted common pattern, evidence boundaries and repository adaptation rules.
+
